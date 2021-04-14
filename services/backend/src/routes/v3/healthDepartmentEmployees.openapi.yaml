@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: Health department employees
+  version: '1.0'
+  contact: {}
+  description: See main doc.
+tags:
+  - name: HealthDepartmentEmployees
+paths:
+  /healthDepartmentEmployees:
+    get:
+      summary: Health department employee list
+      tags:
+        - HealthDepartmentEmployees
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      minLength: 1
+                    email:
+                      type: string
+                      minLength: 1
+                    phone:
+                      type: string
+                    firstName:
+                      type: string
+                      minLength: 1
+                    lastName:
+                      type: string
+                      minLength: 1
+                  required:
+                    - uuid
+      operationId: get-healthDepartmentEmployees
+      description: 'Returns all employees of the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department), except the current user.'
+    post:
+      tags:
+        - HealthDepartmentEmployees
+      summary: Create new employee
+      operationId: post-healthDepartmentEmployees
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  password:
+                    type: string
+                    minLength: 1
+                required:
+                  - password
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      required:
+                        - validation
+                        - code
+                        - message
+                      properties:
+                        validation:
+                          type: string
+                          minLength: 1
+                        code:
+                          type: string
+                          minLength: 1
+                        path:
+                          type: array
+                          items:
+                            properties: {}
+                        message:
+                          type: string
+                          minLength: 1
+                required:
+                  - errors
+      description: Create a new employee in the current user's department.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                phone:
+                  type: string
+              required:
+                - email
+                - firstName
+                - lastName
+                - phone
+            examples:
+              example:
+                value:
+                  email: luca2@nexenio.com
+                  firstName: Luca
+                  lastName: App
+                  phone: '555670925'
+  '/healthDepartmentEmployees/{employeeId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: employeeId
+        in: path
+        required: true
+    delete:
+      tags:
+        - HealthDepartmentEmployees
+      summary: Delete an employee
+      operationId: delete-healthDepartmentEmployees-employeeId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      description: 'Delete a [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) employee from the HealthDepartmentEmployee database table.'

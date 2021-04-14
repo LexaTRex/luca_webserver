@@ -1,0 +1,42 @@
+.primaryButton:hover,
+.primaryButton:focus,
+.ant-btn:hover,
+.ant-btn:focus {
+  background: inherit;
+  color: inherit;
+  background-color: inherit;
+}
+
+.secondaryButton:hover,
+.secondaryButton:focus,
+.ant-btn:hover,
+.ant-btn:focus {
+  background: rgb(184, 192, 202);
+  color: rgb(0, 0, 0);
+}
+
+.ant-checkbox-inner {
+  border-radius: 2px;
+  width: 24px !important;
+  height: 24px !important;
+  background-color: #ffffff !important;
+}
+.ant-checkbox-checked .ant-checkbox-inner::after {
+  top: 49% !important;
+  left: 25% !important;
+  width: 7px !important;
+  height: 12px !important;
+  border-color: #000000 !important;
+}
+
+.ant-notification {
+  width: 100vw;
+  padding: 0 8px;
+  top: 18px !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+  max-width: unset !important;
+}
+.ant-notification-notice {
+  width: 100%;
+}

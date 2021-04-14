@@ -1,0 +1,14 @@
+FROM node:14.16.0-alpine3.13
+WORKDIR /app
+
+ARG NPM_CONFIG__AUTH
+ENV NODE_ENV=test
+
+COPY package.json yarn.lock .npmrc .yarnrc ./
+RUN yarn install --check-files && yarn cache clean
+
+COPY * ./
+COPY src/  ./src/
+COPY ci/  ./ci/
+
+CMD ["sh"]

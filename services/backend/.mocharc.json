@@ -1,0 +1,6 @@
+{
+  "file": ["src/setupTests.js"],
+  "spec": ["src/**/*.test.js"],
+  "bail": true,
+  "check-leaks": true
+}

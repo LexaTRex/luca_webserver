@@ -1,0 +1,306 @@
+openapi: 3.0.0
+info:
+  title: keys
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+tags:
+  - name: Locations
+paths:
+  /locations/search:
+    get:
+      summary: Search
+      tags:
+        - Locations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/Location'
+        '401':
+          description: Unauthorized
+      operationId: get-locationGroups-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          required: true
+        - schema:
+            type: string
+            default: '10'
+          in: query
+          name: limit
+        - schema:
+            type: string
+            default: '0'
+          in: query
+          name: offset
+      description: 'Search locations (also referred to as [venues](https://luca-app.de/securityconcept/processes/venue_registration.html)).'
+  /locations/private:
+    post:
+      tags:
+        - Locations
+      summary: ''
+      operationId: post-locations-private
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scannerId:
+                    type: string
+                    minLength: 1
+                    format: uuid
+                  locationId:
+                    type: string
+                    minLength: 1
+                    format: uuid
+                  accessId:
+                    type: string
+                    format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicKey:
+                  type: string
+                  minLength: 88
+                  maxLength: 88
+              required:
+                - publicKey
+  '/locations/{locationId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: locationId
+        in: path
+        required: true
+    get:
+      tags:
+        - Locations
+      summary: Gets a location by ID
+      operationId: get-locations-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+      description: |-
+        Gets a location (also referred to as [venue](https://luca-app.de/securityconcept/processes/venue_registration.html)) by its primary ID.
+  '/locations/traces/{accessId}':
+    parameters:
+      - schema:
+          type: string
+        name: accessId
+        in: path
+        required: true
+    get:
+      summary: Get traces for an access ID
+      tags:
+        - Locations
+      operationId: get-locations-traces-accessId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    traceId:
+                      type: string
+                      minLength: 1
+                    checkin:
+                      type: number
+                    checkout:
+                      type: number
+                    data:
+                      type: object
+                  required:
+                    - traceId
+                    - checkin
+                    - checkout
+  '/locations/additionalDataSchema/{locationId}':
+    parameters:
+      - schema:
+          type: string
+        name: locationId
+        in: path
+        required: true
+    get:
+      summary: Get additional data schemas
+      tags:
+        - Locations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    key:
+                      type: string
+                    label:
+                      type: string
+                    isRequired:
+                      type: boolean
+      operationId: get-locations-additionalDataSchema-locationId
+      description: Get additional data schemas for the location.
+    post:
+      summary: Create new
+      operationId: post-locations-additionalDataSchema-locationId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  label:
+                    type: string
+                  uuid:
+                    type: string
+                  isRequired:
+                    type: boolean
+        '404':
+          description: Not Found
+      description: Create new additional data schema.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                label:
+                  type: string
+                isRequired:
+                  type: string
+      tags:
+        - Locations
+  '/locations/additionalDataSchema/{additionalDataId}':
+    parameters:
+      - schema:
+          type: string
+        name: additionalDataId
+        in: path
+        required: true
+    patch:
+      summary: Change schema
+      operationId: patch-locations-additionalDataSchema-additionalDataId
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Locations
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                label:
+                  type: string
+                isRequired:
+                  type: string
+    delete:
+      summary: Delete schema
+      operationId: delete-locations-additionalDataSchema-additionalDataId
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+  '/locations/{accessId}':
+    parameters:
+      - schema:
+          type: string
+        name: accessId
+        in: path
+        required: true
+    delete:
+      tags:
+        - Locations
+      summary: Delete location
+      operationId: delete-locations-accessId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      description: Deletes a location (by accessId) and ends all ongoing traces.
+components:
+  schemas:
+    Location:
+      description: ''
+      type: object
+      properties:
+        uuid:
+          type: string
+          minLength: 1
+        name: {}
+        streetName:
+          type: string
+          minLength: 1
+        streetNr:
+          type: string
+          minLength: 1
+        city:
+          type: string
+          minLength: 1
+        zipCode:
+          type: string
+          minLength: 1
+        lat:
+          type: number
+        lng:
+          type: number
+        state:
+          type: string
+          minLength: 1
+        phone:
+          type: string
+          minLength: 1
+      required:
+        - uuid
+        - streetName
+        - streetNr
+        - city
+        - zipCode
+        - lat
+        - lng
+        - state
+        - phone

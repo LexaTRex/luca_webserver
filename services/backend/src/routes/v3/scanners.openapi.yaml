@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Scanners
+  description: Scanners
+  version: '1.0'
+  contact: {}
+paths:
+  '/scanners/{scannerId}':
+    parameters:
+      - schema:
+          type: string
+        name: scannerId
+        in: path
+        required: true
+    get:
+      summary: Get scanner information
+      description: 'Get [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend) information'
+      tags:
+        - Scanners
+      responses:
+        '200':
+          description: OK
+      operationId: get-scanners-scannerId
+  '/scanners/{scannerAccessId}/traces/count/current':
+    parameters:
+      - schema:
+          type: string
+        name: scannerAccessId
+        in: path
+        required: true
+    get:
+      summary: Count of traces at location currently active
+      tags:
+        - Scanners
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                Example:
+                  value: '9001'
+      operationId: get-scanners-scannerId-traces-count-current
+      description: 'Count of currently active traces at the [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)''s location.'
+  '/scanners/{scannerAccessId}/traces/count/total':
+    parameters:
+      - schema:
+          type: string
+        name: scannerAccessId
+        in: path
+        required: true
+    get:
+      summary: Count of traces at location
+      tags:
+        - Scanners
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                Example:
+                  value: '9001'
+      operationId: get-scanners-scannerId-traces-count-total
+      description: 'Count of all traces at the [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)''s location'
+  '/scanners/access/{scannerAccessId}':
+    parameters:
+      - schema:
+          type: string
+        name: scannerAccessId
+        in: path
+        required: true
+    get:
+      summary: Access information
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  groupName:
+                    type: string
+                    minLength: 1
+                  locationName:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  scannerId:
+                    type: string
+                    minLength: 1
+                  scannerAccessId:
+                    type: string
+                    minLength: 1
+                  locationId:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  endsAt:
+                    type: string
+                    minLength: 1
+                  tableCount:
+                    type: integer
+                required:
+                  - groupName
+                  - name
+                  - scannerId
+                  - scannerAccessId
+                  - locationId
+                  - publicKey
+      operationId: get-scanners-access-scannerAccessId
+tags:
+  - name: Scanners

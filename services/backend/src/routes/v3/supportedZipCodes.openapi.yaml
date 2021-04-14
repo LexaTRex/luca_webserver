@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: SupportedZipCodes
+  description: SupportedZipCodes
+  version: '1.0'
+  contact: {}
+paths:
+  /supportedZipCodes:
+    get:
+      summary: Get all supported ZIP codes
+      tags: [SupportedZipCodes]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties: {}
+      operationId: get-supportedZipCodes
+      description: Get all supported ZIP codes.
+  '/supportedZipCodes/{zipCode}':
+    parameters:
+      - schema:
+          type: string
+        name: zipCode
+        in: path
+        required: true
+    get:
+      summary: Check if ZIP code is supported
+      tags: [SupportedZipCodes]
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      operationId: get-supportedZipCodes-zipCode
+      description: Check if ZIP code is supported.
+tags:
+  - name: SupportedZipCodes

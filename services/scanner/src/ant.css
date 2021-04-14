@@ -1,0 +1,24 @@
+.ant-form-item {
+  display: block;
+}
+
+.ant-form label::before {
+  display: none !important;
+}
+
+.ant-modal-header {
+  border: none;
+}
+
+.ant-modal-body {
+  padding-bottom: 0;
+}
+
+.ant-modal-content {
+  padding: 32px;
+}
+
+.ant-modal-title {
+  font-size: 32px;
+  font-weight: 600;
+}

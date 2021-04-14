@@ -1,0 +1,310 @@
+openapi: 3.0.0
+tags:
+  - name: Keys
+    description: API to manage your keys.
+info:
+  title: daily
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+paths:
+  /keys/daily:
+    get:
+      summary: All current daily keys
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/DailyPublicKey'
+      operationId: get-keys-daily
+      description:
+        'Get the public aspects of [daily
+        keypairs](https://luca-app.de/securityconcept/properties/secrets.html#term-daily-keypair).'
+  /keys/daily/current:
+    get:
+      summary: Get the most current daily key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyPublicKey'
+        '404':
+          description: Not Found
+      operationId: get-keys-daily-current
+      description:
+        'Get the most current [daily
+        keypair](https://luca-app.de/securityconcept/properties/secrets.html#term-daily-keypair)
+        public details.'
+  '/keys/daily/encrypted/{keyId}':
+    parameters:
+      - schema:
+          type: integer
+          example: 0
+        name: keyId
+        in: path
+        required: true
+    get:
+      summary: Get the encrypted daily key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  keyId:
+                    type: integer
+                  issuerId:
+                    type: string
+                    minLength: 1
+                  data:
+                    type: string
+                    minLength: 1
+                  iv:
+                    type: string
+                    minLength: 1
+                  mac:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  signature:
+                    type: string
+                    minLength: 1
+                  createdAt:
+                    type: integer
+                required:
+                  - keyId
+                  - issuerId
+                  - data
+                  - iv
+                  - mac
+                  - publicKey
+                  - signature
+                  - createdAt
+        '401':
+          description: Unauthorized
+      operationId: get-keys-daily-encrypted-$-keyId
+      description:
+        "Returns the [daily key
+        pair](https://luca-app.de/securityconcept/properties/secrets.html#term-daily-keypair)
+        where the private key was previously encrypted for the current user's
+        health department."
+  '/keys/daily/encrypted/{keyId}/keyed':
+    parameters:
+      - schema:
+          type: integer
+        name: keyId
+        in: path
+        required: true
+    get:
+      summary: Health departments that have the private key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  healthDepartmentId:
+                    type: string
+                    minLength: 1
+                    format: uuid
+                  createdAt:
+                    type: integer
+                required:
+                  - healthDepartmentId
+                  - createdAt
+      operationId: get-keys-daily-encrypted-keyId-keyed
+      description:
+        List of IDs of health departments for which the daily private key with keyId was encrypted.
+  '/keys/daily/{keyId}':
+    parameters:
+      - schema:
+          type: integer
+          example: 0
+        name: keyId
+        in: path
+        required: true
+    get:
+      summary: Get a specific daily key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyPublicKey'
+              examples:
+                example:
+                  value:
+                    keyId: 0
+                    publicKey: BLJvWePX1eaiNxNrdsWfZQcU36QxijFs86vWgDKK4d8+wUF4JV2cSBpffCxHKhRIOSvlDVhgaucLdKKxwqJg09U=
+                    createdAt: 1616599396
+                    signature: MEUCIDWIHvWDwT5dGHAjvvrchWvHP8+mMqc8M3E93yeqPsz5AiEAvngi2IqcVyQbnrz5Pz2Cb0e4hCDeYll04H0QYBxDwr8=
+                    issuerId: b764123d-7f3e-44d4-a64f-630ab0f9391d
+        '404':
+          description: Not Found
+      operationId: get-keys-daily-$-keyId
+      description:
+        'Get a specific [daily key
+        pair](https://luca-app.de/securityconcept/properties/secrets.html#term-daily-keypair)
+        public data.'
+  /keys/daily/rotate:
+    post:
+      tags:
+        - Keys
+      summary: Rotate daily keys
+      operationId: post-keys-daily-rotate
+      responses:
+        '200':
+          description: OK
+        '409':
+          description: Conflict
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                publicKey:
+                  type: string
+                  minLength: 1
+                signature:
+                  type: string
+                  minLength: 1
+                createdAt:
+                  type: string
+                  minLength: 1
+                keyId:
+                  type: integer
+                encryptedDailyPrivateKeys:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    $ref: '#/components/schemas/EncryptedKeyPair'
+              required:
+                - dailyPublicKey
+                - signature
+                - createdAt
+                - keyId
+                - encryptedDailyPrivateKeys
+      description:
+        'Update the badge key pair, including the signed public key and the
+        private key (encrypted for each health department separately). Refer to
+        the [security
+        concept](https://luca-app.de/securityconcept/properties/secrets.html#term-daily-keypair)
+        for more information.'
+  /keys/daily/rekey:
+    post:
+      tags:
+        - Keys
+      summary: Re-issue daily keys
+      operationId: post-keys-daily-rekey
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                keyId:
+                  type: integer
+                createdAt:
+                  type: integer
+                encryptedDailyPrivateKeys:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/EncryptedKeyPair'
+              required:
+                - keyId
+                - createdAt
+                - encryptedDailyPrivateKeys
+      description: ''
+components:
+  schemas:
+    EncryptedKeyPair:
+      title: EncryptedKeyPair
+      type: object
+      required:
+        - healthDepartmentId
+        - data
+        - iv
+        - mac
+        - publicKey
+        - signature
+      properties:
+        healthDepartmentId:
+          type: string
+          minLength: 1
+        data:
+          type: string
+          minLength: 1
+        iv:
+          type: string
+          minLength: 1
+        mac:
+          type: string
+          minLength: 1
+        publicKey:
+          type: string
+          minLength: 1
+        signature:
+          type: string
+          minLength: 1
+      description: Public key and private key encrypted for a health department.
+    DailyPublicKey:
+      title: DailyPublicKey
+      type: object
+      properties:
+        keyId:
+          type: integer
+        publicKey:
+          type: string
+          minLength: 1
+        createdAt:
+          type: integer
+        signature:
+          type: string
+          minLength: 1
+        issuerId:
+          type: string
+          minLength: 1
+      required:
+        - keyId
+        - publicKey
+        - createdAt
+        - signature
+        - issuerId
+

@@ -1,0 +1,195 @@
+.ant-form-item {
+  display: block;
+}
+
+.ant-form label::before {
+  display: none !important;
+}
+
+.ant-input-password input,
+.ant-input-password input:focus {
+  background-color: transparent !important;
+}
+
+.ant-input:focus {
+  background-color: transparent !important;
+}
+
+.ant-menu-item {
+  border-bottom-color: transparent !important;
+}
+
+.ant-input {
+  background-color: transparent !important;
+}
+
+.ant-select-selector {
+  background-color: transparent !important;
+}
+
+.ant-picker {
+  background-color: transparent !important;
+}
+
+.ant-input-disabled {
+  background-color: #f2f2f2 !important;
+  color: black !important;
+}
+
+input:-webkit-autofill {
+  box-shadow: 0 0 0 50px #b8cad3 inset !important;
+}
+
+.ant-checkbox .ant-checkbox-inner {
+  border: 1px solid #696969;
+}
+
+.ant-switch {
+  background-color: rgb(232, 231, 229);
+}
+.ant-switch-checked {
+  background-color: rgb(211, 222, 195);
+}
+.ant-switch-handle::before {
+  background-color: #000;
+}
+
+.ant-modal-header {
+  border: none;
+  padding-left: 0;
+  padding-top: 0;
+  color: rgb(0, 0, 0);
+  font-family: Montserrat-SemiBold;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ant-modal-body {
+  padding: 0;
+}
+
+.ant-modal-content {
+  padding: 32px;
+}
+
+.ant-modal-title {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 38px;
+}
+
+.ant-steps-item-process
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background-color: #262626;
+}
+
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after {
+  background-color: #f0f0f0;
+}
+
+.ant-steps-item-finish
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background-color: #262626;
+}
+
+@media (max-width: 768px) {
+  .ant-form:last-child .ant-form-item .ant-form-item-label > label {
+    margin-bottom: 12px;
+  }
+  .ant-picker-datetime-panel {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* TABLE */
+.ant-table-thead > tr > th {
+  font-size: 16px;
+  font-weight: 600;
+  border-color: #979797;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 16px;
+  border-color: #979797;
+}
+
+.locationCard-open .ant-collapse-header {
+  border-bottom: 1px solid rgb(151, 151, 151);
+}
+.locationCard .ant-collapse-content-box {
+  padding: 0 !important;
+}
+.locationCard .ant-collapse-item {
+  border: none !important;
+}
+
+#noSteps .ant-steps {
+  display: none;
+}
+
+#emailDisabled {
+  background-color: transparent !important;
+}
+
+#isMobile .ant-col {
+  padding: 0;
+}
+
+#isMobile .ant-form-item-no-colon {
+  margin: 0;
+}
+
+.ant-collapse-content-box {
+  padding: 0 16px !important;
+}
+
+/* Popconfirm */
+
+.ant-popover-inner {
+  max-width: 400px;
+  border-radius: 4px;
+}
+
+.ant-popover-inner-content {
+  padding: 16px;
+}
+
+.ant-popover-message-title {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+  font-family: Montserrat-Medium, sans-serif;
+  font-weight: 500;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 0;
+}
+
+.ant-popover-buttons {
+  margin-top: 16px;
+}
+
+.ant-popover-buttons > .ant-btn {
+  padding: 0 16px;
+  border: 1px solid rgb(80, 102, 124);
+  border-radius: 12px;
+  color: black;
+}
+
+.ant-popover-buttons > .ant-btn-primary {
+  background: rgb(195, 206, 217);
+  border-radius: 12px;
+  border: none;
+  margin-left: 16px;
+}
+
+.ant-popover-message > .anticon {
+  display: none;
+}

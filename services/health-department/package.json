@@ -1,0 +1,88 @@
+{
+  "name": "@lucaapp/health-department",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
+  "engines": {
+    "node": ">=14.0.0 <15.0.0"
+  },
+  "scripts": {
+    "start": "EXTEND_ESLINT=true craco start",
+    "build": "GENERATE_SOURCEMAP=false craco build",
+    "lint": "yarn eslint && yarn stylelint",
+    "eslint": "eslint src",
+    "stylelint": "stylelint 'src/**/*.js'"
+  },
+  "dependencies": {
+    "@ant-design/icons": "4.5.0",
+    "@craco/craco": "6.1.1",
+    "@lucaapp/crypto": "1.0.3",
+    "antd": "4.12.3",
+    "argon2-browser": "1.15.3",
+    "base32-decode": "1.0.0",
+    "base64-loader": "1.0.0",
+    "connected-react-router": "6.9.1",
+    "craco-less": "1.17.1",
+    "file-saver": "2.0.5",
+    "generate-json-webpack-plugin": "1.0.0",
+    "history": "4.10.1",
+    "license-webpack-plugin": "2.3.16",
+    "mark.js": "8.11.1",
+    "moment": "2.29.1",
+    "uuid": "^8.3.2",
+    "react": "17.0.1",
+    "react-app-polyfill": "2.0.0",
+    "react-csv": "2.0.3",
+    "react-data-export": "0.6.0",
+    "react-dom": "17.0.1",
+    "react-helmet": "6.1.0",
+    "react-intl": "5.13.4",
+    "react-query": "3.12.2",
+    "react-redux": "7.2.2",
+    "react-router": "5.2.0",
+    "react-router-dom": "5.2.0",
+    "react-scripts": "4.0.3",
+    "redux": "4.0.5",
+    "redux-devtools-extension": "2.13.9",
+    "redux-thunk": "2.3.0",
+    "styled-components": "5.2.1",
+    "ua-parser-js": "0.7.24",
+    "xlsx": "0.16.9"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "18.2.1",
+    "eslint-config-prettier": "8.1.0",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-prettier": "3.3.1",
+    "eslint-plugin-promise": "4.3.1",
+    "eslint-plugin-react": "7.22.0",
+    "eslint-plugin-react-hooks": "4.2.0",
+    "eslint-plugin-sonarjs": "0.6.0",
+    "eslint-plugin-unicorn": "28.0.2",
+    "improved-yarn-audit": "2.3.2",
+    "prettier": "2.2.1",
+    "stylelint": "13.12.0",
+    "stylelint-config-prettier": "8.0.2",
+    "stylelint-config-recommended": "4.0.0",
+    "stylelint-config-styled-components": "0.1.1",
+    "stylelint-prettier": "1.2.0",
+    "stylelint-processor-styled-components": "1.10.0"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ]
+  }
+}

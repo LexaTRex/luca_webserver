@@ -1,0 +1,21 @@
+{
+  "name": "e2e",
+  "version": "0.1.0",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=11.0.0 <15.0.0."
+  },
+  "scripts": {
+    "start": "cypress run",
+    "open": "cypress open",
+    "staging": "CYPRESS_BASE_URL=https://staging.luca-app.de cypress run"
+  },
+  "dependencies": {
+    "cypress": "6.4.0"
+  },
+  "devDependencies": {
+    "eslint-plugin-sonarjs": "0.5.0",
+    "prettier": "2.2.1"
+  }
+}

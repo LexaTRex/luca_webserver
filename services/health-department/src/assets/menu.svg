@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="4px" height="16px" viewBox="0 0 4 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Submenu</title>
+    <g id="Ant" stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">
+        <g id="Ant_Location" transform="translate(-1092.000000, -78.000000)" fill="currentColor">
+            <g id="Submenu" transform="translate(1092.000000, 78.000000)">
+                <circle id="Oval" cx="2" cy="2" r="2"></circle>
+                <circle id="Oval-Copy-7" cx="2" cy="8" r="2"></circle>
+                <circle id="Oval-Copy-8" cx="2" cy="14" r="2"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

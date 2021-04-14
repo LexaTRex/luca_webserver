@@ -1,0 +1,351 @@
+openapi: 3.0.0
+info:
+  title: locationTransfers.openapi
+  version: '1.0'
+  contact: {}
+  description: Partial OpenAPI doc
+tags:
+  - name: LocationTransfers
+paths:
+  /locationTransfers:
+    post:
+      tags:
+        - LocationTransfers
+      summary: Create new
+      operationId: post-locationTransfers
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                locations:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    type: object
+                    properties:
+                      time:
+                        type: array
+                        minItems: 2
+                        maxItems: 2
+                        items:
+                          type: integer
+                      locationId:
+                        type: string
+                        minLength: 1
+                    required:
+                      - locationId
+                userTransferId:
+                  type: string
+                  minLength: 1
+                lang:
+                  type: string
+                  minLength: 1
+                  enum:
+                    - de
+                    - en
+              required:
+                - locations
+                - lang
+            examples:
+              Example:
+                value:
+                  locations:
+                    - time:
+                        - 100
+                        - 120
+                      locationId: string
+                  userTransferId: string
+                  lang: de
+    get:
+      tags:
+        - LocationTransfers
+      summary: ''
+      operationId: get-locationTransfers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      minLength: 1
+                    groupName:
+                      type: string
+                      minLength: 1
+                    locationName: {}
+                    name:
+                      type: string
+                      minLength: 1
+                    departmentName:
+                      type: string
+                      minLength: 1
+                    time:
+                      type: array
+                      minItems: 2
+                      maxItems: 2
+                      items:
+                        type: integer
+                    isCompleted:
+                      type: boolean
+                    createdAt:
+                      type: integer
+                  required:
+                    - uuid
+                    - groupName
+                    - name
+                    - departmentName
+                    - time
+                    - isCompleted
+                    - createdAt
+  '/locationTransfers/{transferId}':
+    parameters:
+      - schema:
+          type: string
+        name: transferId
+        in: path
+        required: true
+    get:
+      summary: Get a specific transfer
+      tags:
+        - LocationTransfers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  transferId:
+                    type: string
+                    minLength: 1
+                  department:
+                    type: object
+                    required:
+                      - uuid
+                      - name
+                      - publicHDEKP
+                    properties:
+                      uuid:
+                        type: string
+                        minLength: 1
+                      name:
+                        type: string
+                        minLength: 1
+                      publicHDEKP:
+                        type: string
+                        minLength: 1
+                  location:
+                    type: object
+                    required:
+                      - groupId
+                      - groupName
+                      - name
+                      - publicKey
+                    properties:
+                      groupId:
+                        type: string
+                        minLength: 1
+                      groupName:
+                        type: string
+                        minLength: 1
+                      locationName: {}
+                      name:
+                        type: string
+                        minLength: 1
+                      publicKey:
+                        type: string
+                        minLength: 1
+                  time:
+                    type: array
+                    items:
+                      type: integer
+                  traces:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        traceId:
+                          type: string
+                          minLength: 1
+                        time:
+                          type: array
+                          items:
+                            type: object
+                        data:
+                          type: string
+                          minLength: 1
+                        publicKey:
+                          type: string
+                          minLength: 1
+                        iv:
+                          type: string
+                          minLength: 1
+                        mac:
+                          type: string
+                          minLength: 1
+                        additionalData: {}
+                      required:
+                        - traceId
+                        - data
+                        - publicKey
+                        - iv
+                        - mac
+                required:
+                  - transferId
+                  - department
+                  - location
+                  - time
+                  - traces
+        '404':
+          description: Not Found
+        '410':
+          description: Gone
+      operationId: get-locationTransfers-transferId
+      description: Get a specific transfer. Contains more details.
+    post:
+      summary: Create a location transfer
+      operationId: post-locationTransfers-transferId
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traces:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      data:
+                        type: string
+                      traceId:
+                        type: string
+                      publicKey:
+                        type: string
+                      keyId:
+                        type: string
+                      version:
+                        type: integer
+                      verification:
+                        type: string
+                      deviceType:
+                        type: integer
+                      additionalData:
+                        type: object
+                    required:
+                      - data
+                      - traceId
+                      - publicKey
+                      - keyId
+                      - verification
+                      - deviceType
+              required:
+                - traces
+        description: ''
+  '/locationTransfers/{transferId}/traces':
+    parameters:
+      - schema:
+          type: string
+        name: transferId
+        in: path
+        required: true
+    get:
+      summary: Get traces of a location transfer
+      tags:
+        - LocationTransfers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  traces:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      required:
+                        - traceId
+                        - checkin
+                        - checkout
+                        - data
+                        - publicKey
+                        - keyId
+                        - version
+                        - verification
+                        - deviceType
+                      properties:
+                        traceId:
+                          type: string
+                          minLength: 1
+                        checkin:
+                          type: number
+                        checkout:
+                          type: number
+                        data:
+                          type: string
+                          minLength: 1
+                        publicKey:
+                          type: string
+                          minLength: 1
+                        keyId:
+                          type: number
+                        version:
+                          type: number
+                        verification:
+                          type: string
+                          minLength: 1
+                        deviceType:
+                          type: number
+                        additionalData: {}
+                required:
+                  - traces
+      operationId: get-locationTransfers-transferId-traces
+      description: Get traces of a location transfer. Only accessible by health deprtment employees.
+  '/locationTransfers/{transferId}/contact':
+    parameters:
+      - schema:
+          type: string
+        name: transferId
+        in: path
+        required: true
+    post:
+      summary: Notify location
+      operationId: post-locationTransfers-transferId-contact
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '410':
+          description: Gone
+      tags:
+        - LocationTransfers
+      parameters: []
+      description: Sends a locationTransfer notification.
+components:
+  schemas: {}

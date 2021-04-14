@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  title: API health
+  version: '1.0'
+  contact: {}
+  description: See main doc.
+tags:
+  - name: Health
+paths:
+  /health:
+    get:
+      summary: Basic health check
+      tags:
+        - Health
+      responses:
+        '200':
+          description: OK
+      operationId: get-health
+      description: Basic health check
+  /health/ready:
+    get:
+      summary: Readiness state
+      tags:
+        - Health
+      responses:
+        '200':
+          description: OK
+        '503':
+          description: 'Service Unavailable: Shutting down'
+      operationId: get-health-ready
+      description: Readiness state (OK or shutting down).

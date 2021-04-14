@@ -1,0 +1,91 @@
+openapi: 3.0.0
+info:
+  title: SMS
+  description: SMS
+  version: '1.0'
+  contact: {}
+paths:
+  /sms/request:
+    post:
+      summary: Request SMS challenge
+      tags:
+        - SMS
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  challengeId:
+                    type: string
+        '503':
+          description: Service Unavailable
+      operationId: post-sms-request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                challengeId:
+                  type: string
+      description: Get SMS challenge
+  /sms/verify:
+    post:
+      summary: Verify SMS challenge
+      tags:
+        - SMS
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+      operationId: post-sms-verify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                challengeId:
+                  type: string
+                tan:
+                  type: string
+      description: Verify SMS challenge
+  /sms/verify/bulk:
+    post:
+      summary: Bulk verify SMS challenge
+      tags:
+        - SMS
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  challengeId:
+                    type: string
+        '204':
+          description: No Content (debug only)
+        '403':
+          description: Forbidden
+      operationId: post-sms-verify-bulk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                challengeIds:
+                  type: array
+                  minItems: 1
+                  maxItems: 10
+                  items:
+                    type: string
+      description: Verify SMS challenge (bulk).
+tags:
+  - name: SMS

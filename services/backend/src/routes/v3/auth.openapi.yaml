@@ -1,0 +1,203 @@
+openapi: 3.0.0
+info:
+  title: Auth
+  version: '1.0'
+  contact: {}
+  description: See main doc.
+tags:
+  - name: Auth
+paths:
+  /auth/login:
+    post:
+      operationId: post-auth-login
+      tags:
+        - Auth
+      summary: Log in as a venue operator
+      description: 'Login as a [Venue Operator](https://luca-app.de/securityconcept/properties/actors.html#term-Venue-Owner).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  default: luca@nexenio.com
+                password:
+                  type: string
+                  default: testing
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+            text/plain:
+              schema:
+                type: object
+                properties: {}
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: connect.sid
+        '403':
+          description: Unauthorized
+        '423':
+          description: The account has not been activated.
+  /auth/healthDepartmentEmployee/login:
+    post:
+      tags:
+        - Auth
+      operationId: post-auth-healthDepartmentEmployee-login
+      summary: Log in as a health department employee
+      description: 'Log in as a [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) employee.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  default: luca@nexenio.com
+                password:
+                  type: string
+                  default: testing
+              required:
+                - username
+                - password
+        description: ''
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+    parameters: []
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: 'Log out, deleting the current session'
+      description: 'Log out, deleting the current session.'
+      operationId: post-auth-logout
+      responses:
+        '204':
+          description: No Content
+  /auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Get the current user
+      operationId: get-auth-me
+      description: Returns the current user (venue operator or health department employee).
+      parameters:
+        - schema:
+            type: string
+          in: cookie
+          name: connect.sid
+          description: The session ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  operatorId:
+                    type: string
+                    minLength: 1
+                  username:
+                    type: string
+                    minLength: 1
+                  firstName:
+                    type: string
+                    minLength: 1
+                  lastName:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  email:
+                    type: string
+                    minLength: 1
+                required:
+                  - operatorId
+                  - username
+                  - firstName
+                  - lastName
+                  - publicKey
+                  - email
+              examples:
+                Operator:
+                  value:
+                    operatorId: b92d1fee-d21b-4e56-bc0c-d5ef5517e17a
+                    username: luca@nexenio.com
+                    firstName: Marty
+                    lastName: Labadie
+                    publicKey: BIFmPvOhr2shd2FKFrmiZcFIF3W8aWRa3xRAV1xUpP5HrR1VvYG/SjFM1A6YZyyNlmlKEwVd+/mZwmUlk7RU+i4=
+                    email: luca@nexenio.com
+  /auth/healthDepartmentEmployee/me:
+    get:
+      summary: Get the current user (health department employee)
+      description: Returns the current user (health department employee).
+      tags:
+        - Auth
+      operationId: get-auth-healthDepartmentEmployee-me
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    minLength: 1
+                  username:
+                    type: string
+                    minLength: 1
+                  firstName:
+                    type: string
+                    minLength: 1
+                  lastName:
+                    type: string
+                    minLength: 1
+                  email:
+                    type: string
+                    minLength: 1
+                  departmentId:
+                    type: string
+                    minLength: 1
+                  isAdmin:
+                    type: boolean
+                required:
+                  - employeeId
+                  - username
+                  - firstName
+                  - lastName
+                  - email
+                  - departmentId
+                  - isAdmin
+              examples:
+                Health department employee:
+                  value:
+                    employeeId: f7ee6624-1b19-45c4-ad14-dd8382787a09
+                    username: luca@nexenio.com
+                    firstName: Felix
+                    lastName: McCullough
+                    email: luca@nexenio.com
+                    departmentId: b764123d-7f3e-44d4-a64f-630ab0f9391d
+                    isAdmin: true

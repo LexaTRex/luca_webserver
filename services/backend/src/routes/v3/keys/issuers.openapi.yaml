@@ -1,0 +1,75 @@
+openapi: 3.0.0
+tags:
+  - name: Keys
+    description: API to manage your keys.
+info:
+  title: issuers
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+paths:
+  /keys/issuers:
+    get:
+      summary: Health departments and their public keys
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HealthDepartment'
+      operationId: get-keys-issuers
+  '/keys/issuers/{issuerId}':
+    get:
+      summary: Single health department
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthDepartment'
+      operationId: get-keys-issuers-issuerId
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: issuerId
+        in: path
+        required: true
+components:
+  schemas:
+    HealthDepartment:
+      description: ''
+      type: object
+      properties:
+        issuerId:
+          type: string
+          minLength: 1
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        publicHDEKP:
+          type: string
+          minLength: 1
+        publicHDSKP:
+          type: string
+          minLength: 1
+      required:
+        - issuerId
+        - name
+        - publicHDEKP
+        - publicHDSKP
+      x-examples:
+        Example:
+          issuerId: b764123d-7f3e-44d4-a64f-630ab0f9391d
+          name: Bezirksamt Testkreis
+          publicHDEKP: BEwm4H6IuyKdjS5C6myrGFpgCG3WgIqFezfcoDsv4suxugbeuCuw1DKexHgKXafrduBjMoefUbm81OXp01qhWx0=
+          publicHDSKP: BNaRN3jArQgOKfTMoE7GnAbQ857UCbCspjgr3eeq/nGdS+JvbEyFxeyOuqhK/V7oHBdxAYAjqJ4OGl8nnYF5TmI=

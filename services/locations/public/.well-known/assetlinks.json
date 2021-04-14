@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "de.culture4life.luca",
+      "sha256_cert_fingerprints": [
+        "A8:C7:46:91:61:79:0A:17:17:F6:0C:F1:75:E3:2B:3D:1D:99:72:D8:C7:94:06:F5:E1:E1:FB:57:91:60:AD:74"
+      ]
+    }
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "baseUrl": "https://localhost",
+  "projectId": "9qr32w",
+  "testFiles": "**/*.spec.js",
+  "integrationFolder": "./specs",
+  "video": false,
+  "supportFile": "./support"
+}

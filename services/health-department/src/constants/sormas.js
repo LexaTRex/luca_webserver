@@ -1,0 +1,1 @@
+export const SUPPORTED_SORMAS_VERSION = '1.57.0';

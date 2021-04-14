@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: locations.openapi
+  version: '1.0'
+paths:
+  /operators/locations:
+    get:
+      summary: List locations
+      tags:
+        - Operators
+      responses:
+        '200':
+          description: OK
+      operationId: get-operators-locations
+    post:
+      summary: Add location
+      operationId: post-operators-locations
+      responses:
+        '201':
+          description: Created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                groupId:
+                  type: string
+                  minLength: 1
+                locationName:
+                  type: string
+                  minLength: 1
+                firstName:
+                  type: string
+                  minLength: 1
+                lastName:
+                  type: string
+                  minLength: 1
+                phone:
+                  type: string
+                  minLength: 1
+                streetName:
+                  type: string
+                  minLength: 1
+                streetNr:
+                  type: string
+                  minLength: 1
+                zipCode:
+                  type: string
+                  minLength: 1
+                city:
+                  type: string
+                  minLength: 1
+                state:
+                  type: string
+                  minLength: 1
+                lat:
+                  type: number
+                lng:
+                  type: number
+                radius:
+                  type: number
+                tableCount:
+                  type: number
+                additionalData:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        minLength: 1
+                      label:
+                        type: string
+                        minLength: 1
+                      isRequired:
+                        type: boolean
+                    required:
+                      - key
+                      - label
+                      - isRequired
+              required:
+                - groupId
+                - locationName
+                - phone
+                - streetName
+                - streetNr
+                - zipCode
+                - city
+      tags:
+        - Operators
+  '/operators/locations/{locationId}':
+    parameters:
+      - schema:
+          type: string
+        name: locationId
+        in: path
+        required: true
+    get:
+      summary: Get a specific location
+      tags:
+        - Operators
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      operationId: get-operators-locations-locationId
+    patch:
+      summary: Patch
+      operationId: patch-operators-locations-locationId
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                locationName:
+                  type: string
+                  minLength: 1
+                firstName:
+                  type: string
+                  minLength: 1
+                lastName:
+                  type: string
+                  minLength: 1
+                phone:
+                  type: string
+                  minLength: 1
+                tableCount:
+                  type: number
+                shouldProvideGeoLocation:
+                  type: boolean
+                radius:
+                  type: number
+      tags:
+        - Operators
+    delete:
+      summary: Delete
+      operationId: delete-operators-locations-locationId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      tags:
+        - Operators
+  '/operators/locations/{locationId}/check-out':
+    parameters:
+      - schema:
+          type: string
+        name: locationId
+        in: path
+        required: true
+    post:
+      summary: Check out all current traces
+      operationId: post-operators-locations-locationId-check-out
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Operators
+tags:
+  - name: Operators

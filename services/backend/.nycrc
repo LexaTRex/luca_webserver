@@ -1,0 +1,18 @@
+{
+  "all": true,
+  "include": "src/",
+  "exclude": [
+    "src/index.js",
+    "src/database/config.js",
+    "src/database/migrations/",
+    "src/database/seeds/",
+    "**/*.test.js"
+  ],
+  "reporter": ["text", "html"],
+  "check-coverage": true,
+  "statements": 30,
+  "branches": 30,
+  "functions": 30,
+  "lines": 30,
+  "skip-full": false
+}

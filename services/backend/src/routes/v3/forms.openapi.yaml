@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: Forms
+  version: '1.0'
+  contact: {}
+  description: See main doc.
+tags:
+  - name: Forms
+paths:
+  '/forms/{formId}':
+    get:
+      summary: Get form content
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  groupName:
+                    type: string
+                    minLength: 1
+                  locationName:
+                    type: string
+                  name:
+                    type: string
+                    minLength: 1
+                  scannerId:
+                    type: string
+                    minLength: 1
+                  locationId:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  endsAt:
+                    type: string
+                  tableCount:
+                    type: integer
+                required:
+                  - groupName
+                  - name
+                  - scannerId
+                  - locationId
+                  - publicKey
+      operationId: get-forms-formid
+      description: Get form content.
+      tags:
+        - Forms
+    parameters:
+      - schema:
+          type: string
+        name: formId
+        in: path
+        required: true

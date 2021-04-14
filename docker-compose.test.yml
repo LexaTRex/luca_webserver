@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  backend:
+    build:
+      dockerfile: "Dockerfile.test"
+  contact-form:
+    build:
+      dockerfile: "Dockerfile.test"
+  health-department:
+    build:
+      dockerfile: "Dockerfile.test"
+  locations:
+    build:
+      dockerfile: "Dockerfile.test"
+  scanner:
+    build:
+      dockerfile: "Dockerfile.test"
+  webapp:
+    build:
+      dockerfile: "Dockerfile.test"

@@ -1,0 +1,21 @@
+FROM node:14.16.0-alpine3.13
+WORKDIR /app
+
+ARG GIT_COMMIT
+ARG GIT_VERSION
+ARG NPM_CONFIG__AUTH
+ENV NODE_ENV=development
+ENV PORT=8080
+ENV CHOKIDAR_USEPOLLING=true
+ENV PUBLIC_URL=/contact-form
+
+COPY package.json yarn.lock ./
+RUN yarn install --check-files && yarn cache clean
+
+COPY jsconfig.json craco.config.js ant.theme.js ./
+COPY public/  ./public/
+COPY src/  ./src/
+
+
+EXPOSE 8080
+CMD ["yarn", "start"]

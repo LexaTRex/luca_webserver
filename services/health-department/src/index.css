@@ -1,0 +1,29 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  color: black;
+}
+
+#root {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background-color: #e8e7e5;
+  background-attachment: fixed;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+a {
+  color: grey;
+  text-decoration: underline;
+}
+
+mark {
+  padding: 0;
+  background-color: #d0e5ff;
+}

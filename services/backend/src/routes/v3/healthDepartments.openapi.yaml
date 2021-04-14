@@ -1,0 +1,106 @@
+openapi: 3.0.0
+info:
+  title: Health departments
+  version: '1.0'
+  contact: {}
+  description: See main doc.
+paths:
+  /healthDepartments/keys:
+    get:
+      summary: Retrieve keys
+      tags:
+        - HealthDepartments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publicHDEKP:
+                    type: string
+                  publicHDSKP:
+                    type: string
+        '404':
+          description: Department not found
+      operationId: get-healthDepartment-keys
+      description: 'Get the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)''s public keys.'
+    post:
+      tags:
+        - HealthDepartments
+      summary: Post key pair
+      operationId: post-healthDepartment-keys
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: 'Forbidden, e.g., when updating before expiration.'
+        '404':
+          description: Department Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicHDEKP:
+                  type: string
+                publicHDSKP:
+                  type: string
+  '/healthDepartments/{departmentId}':
+    get:
+      summary: Get department info by ID
+      tags:
+        - HealthDepartments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  departmentId:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  publicHDEKP:
+                    type: string
+                    minLength: 1
+                  publicHDSKP:
+                    type: string
+                    minLength: 1
+                required:
+                  - departmentId
+                  - name
+                  - publicHDEKP
+                  - publicHDSKP
+      operationId: 'get-healthDepartments-:departmentId'
+      description: 'Get [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) info by its UUID.'
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: departmentId
+        in: path
+        required: true
+  /healthDepartments/privateKeySecret:
+    get:
+      summary: Get privateKeySecret
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  privateKeySecret:
+                    type: string
+      operationId: get-healthDepartments-privateKeySecret
+      description: Get privateKeySecret for the current user's health department.

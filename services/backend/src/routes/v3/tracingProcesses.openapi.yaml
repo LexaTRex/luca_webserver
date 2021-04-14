@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: Tracing processes
+  description: Tracing processes
+  version: '1.0'
+  contact: {}
+paths:
+  /tracingProcesses:
+    get:
+      summary: Get tracing processes
+      tags:
+        - TracingProcesses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      minLength: 1
+                    userTransferId: {}
+                    didRequestLocations:
+                      type: boolean
+                    isCompleted:
+                      type: boolean
+                    createdAt:
+                      type: number
+                  required:
+                    - uuid
+                    - didRequestLocations
+                    - isCompleted
+                    - createdAt
+        '401':
+          description: Unauthorized
+      operationId: get-tracingProcesses
+      description:
+        Get tracing processes initiated by the user's health department.
+  '/tracingProcesses/{tracingProcessId}':
+    parameters:
+      - schema:
+          type: string
+        name: tracingProcessId
+        in: path
+        required: true
+    patch:
+      summary: Update tracing process information
+      operationId: patch-tracingProcesses-tracingProcessId
+      responses:
+        '204':
+          description: No Content
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                didRequestLocations:
+                  type: boolean
+                isCompleted:
+                  type: boolean
+      tags:
+        - TracingProcesses
+      description: Update tracing process information.
+  '/tracingProcesses/{tracingProcessId}/locationTransfers':
+    parameters:
+      - schema:
+          type: string
+        name: tracingProcessId
+        in: path
+        required: true
+    get:
+      summary: Get location transfers for a process
+      tags:
+        - TracingProcesses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    locationId:
+                      type: string
+                      minLength: 1
+                    time:
+                      type: array
+                      minItems: 2
+                      maxItems: 2
+                      items:
+                        type: integer
+                    isCompleted:
+                      type: boolean
+                    uuid:
+                      type: string
+                      minLength: 1
+                  required:
+                    - locationId
+                    - time
+                    - isCompleted
+                    - uuid
+      operationId: get-tracingProcesses-tracingProcessId-locationTransfers
+      description:
+        Get location transfers for a process managed by the current user's
+        health department.
+tags:
+  - name: TracingProcesses

@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: UserTransfers
+  description: API to manage UserTransfers.
+  version: '1.0'
+  contact: {}
+tags:
+  - name: UserTransfers
+paths:
+  /userTransfers:
+    parameters: []
+    post:
+      summary: Create user transfer
+      description: 'Create [guest transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object).'
+      operationId: post-userTransfers
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tan:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                iv:
+                  type: string
+                mac:
+                  type: string
+                publicKey:
+                  type: string
+                keyId:
+                  type: string
+      tags:
+        - UserTransfers
+  '/userTransfers/tan/{tan}':
+    parameters:
+      - schema:
+          type: string
+        name: tan
+        in: path
+        required: true
+    get:
+      summary: Get a user transfer by TAN
+      tags:
+        - UserTransfers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    minLength: 1
+                  data:
+                    type: string
+                    minLength: 1
+                  iv:
+                    type: string
+                    minLength: 1
+                  mac:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  keyId:
+                    type: integer
+                required:
+                  - uuid
+                  - data
+                  - iv
+                  - mac
+                  - publicKey
+                  - keyId
+      operationId: get-userTransfers-tan-tan
+      description: 'Get a [guest transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object) by TAN (any health department).'
+  '/userTransfers/{userTransferId}':
+    parameters:
+      - schema:
+          type: string
+        name: userTransferId
+        in: path
+        required: true
+    get:
+      summary: Get user transfer by ID
+      tags:
+        - UserTransfers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    minLength: 1
+                  data:
+                    type: string
+                    minLength: 1
+                  iv:
+                    type: string
+                    minLength: 1
+                  mac:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  keyId:
+                    type: integer
+                required:
+                  - uuid
+                  - data
+                  - iv
+                  - mac
+                  - publicKey
+                  - keyId
+        '404':
+          description: Not Found
+      operationId: get-userTransfers-userTransferId
+      description: 'Get a [guest transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object) by ID, if it''s managed by the current user''s health department.'

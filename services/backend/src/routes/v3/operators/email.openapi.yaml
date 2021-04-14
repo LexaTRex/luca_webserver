@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: email.openapi
+  version: '1.0'
+paths:
+  /operators/email:
+    parameters: []
+    patch:
+      tags:
+        - Operators
+      summary: Update email and language
+      operationId: patch-operators-email
+      responses:
+        '204':
+          description: No Content
+        '409':
+          description: Conflict because the email is already in use
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                lang:
+                  type: string
+      description: Changes need to be confirmed by email.
+  /operators/email/isChangeActive:
+    get:
+      summary: Get change status of email change
+      tags:
+        - Operators
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      operationId: get-operators-email-isChangeActive
+      description: Get status of email change.
+  '/operators/email/{email}':
+    parameters:
+      - schema:
+          type: string
+        name: email
+        in: path
+        required: true
+    get:
+      summary: Check if email is already registered
+      tags:
+        - Operators
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      operationId: get-operators-email-email
+      description: Check if email is already registered for a venue operator.
+  /operators/email/confirm:
+    post:
+      tags:
+        - Operators
+      summary: Activate an email
+      operationId: post-operators-email-confirm
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+        '410':
+          description: Gone
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                activationId:
+                  type: string
+tags:
+  - name: Operators

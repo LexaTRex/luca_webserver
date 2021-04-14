@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  title: Users
+  description: API to manage users.
+  version: '1.0'
+  contact: {}
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+        data:
+          type: string
+        iv:
+          type: string
+        mac:
+          type: string
+        signature:
+          type: string
+        publicKey:
+          type: string
+    UpdatableUser:
+      type: object
+      properties:
+        data:
+          type: string
+        iv:
+          type: string
+        mac:
+          type: string
+        signature:
+          type: string
+paths:
+  '/users/{userId}':
+    get:
+      tags:
+        - Users
+      summary: Get user details by ID
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: A user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    patch:
+      tags:
+        - Users
+      summary: update the user object by id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatableUser'
+  /users:
+    post:
+      summary: Create or update user
+      tags:
+        - Users
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+      operationId: get-users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                data:
+                  type: string
+                  minLength: 1
+                iv:
+                  type: string
+                  minLength: 1
+                mac:
+                  type: string
+                  minLength: 1
+                publicKey:
+                  type: string
+                  minLength: 1
+                signature:
+                  type: string
+                  minLength: 1
+              required:
+                - data
+                - iv
+                - mac
+                - publicKey
+                - signature
+      description: Create or update users (by publicKey).
+  /users/badge:
+    post:
+      summary: Create badge user
+      operationId: post-users-badge
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signature:
+                    type: string
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signature:
+                    type: string
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                publicKey:
+                  type: string

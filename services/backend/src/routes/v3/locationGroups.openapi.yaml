@@ -1,0 +1,356 @@
+openapi: 3.0.0
+tags:
+  - name: Keys
+info:
+  title: keys
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+paths:
+  /locationGroups/search:
+    get:
+      summary: Search
+      tags:
+        - LocationGroups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    groupId:
+                      type: string
+                      minLength: 1
+                    name:
+                      type: string
+                      minLength: 1
+                    operator:
+                      type: object
+                      required:
+                        - uuid
+                        - email
+                      properties:
+                        uuid:
+                          type: string
+                          minLength: 1
+                        email:
+                          type: string
+                          minLength: 1
+                    baseLocation:
+                      $ref: '#/components/schemas/BaseLocation'
+                    locations:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - groupId
+                    - name
+                    - operator
+                    - baseLocation
+                    - locations
+        '401':
+          description: Unauthorized
+      operationId: get-locationGroups-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: limit
+        - schema:
+            type: string
+          in: query
+          name: offset
+  /locationGroups:
+    post:
+      summary: Create a location group
+      operationId: post-locationGroups
+      tags:
+        - LocationGroups
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  groupId:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  location:
+                    type: object
+                    required:
+                      - scannerId
+                      - locationId
+                    properties:
+                      scannerId:
+                        type: string
+                        minLength: 1
+                        format: uuid
+                      tableCount:
+                        type: number
+                      locationId:
+                        type: string
+                        minLength: 1
+                        format: uuid
+                required:
+                  - groupId
+                  - name
+                  - location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                type:
+                  type: string
+                  minLength: 1
+                name:
+                  type: string
+                  minLength: 1
+                firstName:
+                  type: string
+                  minLength: 1
+                lastName:
+                  type: string
+                  minLength: 1
+                phone:
+                  type: string
+                  minLength: 1
+                streetName:
+                  type: string
+                  minLength: 1
+                streetNr:
+                  type: string
+                  minLength: 1
+                zipCode:
+                  type: string
+                  minLength: 1
+                city:
+                  type: string
+                  minLength: 1
+                state:
+                  type: string
+                  minLength: 1
+                lat:
+                  type: number
+                lng:
+                  type: number
+                radius:
+                  type: integer
+                  minimum: 0
+                tableCount:
+                  type: integer
+                additionalData:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        minLength: 1
+                      label:
+                        type: string
+                        minLength: 1
+                      isRequired:
+                        type: boolean
+                    required:
+                      - key
+                areas:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - type
+                - name
+                - phone
+                - streetName
+                - streetNr
+                - zipCode
+                - city
+    get:
+      tags:
+        - LocationGroups
+      summary: ''
+      operationId: get-locationGroups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationGroup'
+  '/locationGroups/{groupId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: groupId
+        in: path
+        required: true
+    get:
+      summary: Single location
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationGroup'
+        '404':
+          description: Not Found
+      operationId: get-locationGroups-groupId
+      tags:
+        - LocationGroups
+    patch:
+      summary: ''
+      operationId: patch-locationGroups-groupId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                phone:
+                  type: string
+                  minLength: 1
+      tags:
+        - LocationGroups
+    delete:
+      summary: ''
+      operationId: delete-locationGroups-groupId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      tags:
+        - LocationGroups
+components:
+  schemas:
+    BaseLocation:
+      description: ''
+      type: object
+      properties:
+        uuid:
+          type: string
+          minLength: 1
+        name: {}
+        streetName:
+          type: string
+          minLength: 1
+        streetNr:
+          type: string
+          minLength: 1
+        zipCode:
+          type: string
+          minLength: 1
+        city:
+          type: string
+          minLength: 1
+      required:
+        - uuid
+        - streetName
+        - streetNr
+        - zipCode
+        - city
+    LocationGroup:
+      description: ''
+      type: object
+      properties:
+        groupId:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        locations:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          items:
+            oneOf:
+              - type: object
+                properties:
+                  uuid:
+                    type: string
+                    minLength: 1
+                  name: {}
+                required:
+                  - uuid
+              - $ref: '#/components/schemas/Location'
+      required:
+        - groupId
+        - name
+        - locations
+    Location:
+      description: ''
+      type: object
+      properties:
+        uuid:
+          type: string
+          minLength: 1
+        name: {}
+        streetName:
+          type: string
+          minLength: 1
+        streetNr:
+          type: string
+          minLength: 1
+        city:
+          type: string
+          minLength: 1
+        zipCode:
+          type: string
+          minLength: 1
+        lat:
+          type: number
+        lng:
+          type: number
+        state:
+          type: string
+          minLength: 1
+        phone:
+          type: string
+          minLength: 1
+      required:
+        - uuid
+        - streetName
+        - streetNr
+        - city
+        - zipCode
+        - lat
+        - lng
+        - state
+        - phone

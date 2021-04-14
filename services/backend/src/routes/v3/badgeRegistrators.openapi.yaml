@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: Badge registrators
+  version: '1.0'
+  contact: {}
+  description: See main doc.
+paths:
+  '/badgeRegistrators/{registratorId}':
+    get:
+      tags: [BadgeRegistrators]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    minLength: 1
+                    format: uuid
+                  name:
+                    type: string
+                    minLength: 1
+                  createdAt:
+                    type: string
+                    minLength: 1
+                  updatedAt:
+                    type: string
+                    minLength: 1
+                required:
+                  - uuid
+                  - name
+                  - createdAt
+                  - updatedAt
+        '404':
+          description: Not Found
+      operationId: get-badgeRegistrators
+      description: Get a single badge registrator
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: registratorId
+        in: path
+        required: true

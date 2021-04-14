@@ -1,0 +1,308 @@
+openapi: 3.0.0
+tags:
+  - name: Keys
+    description: API to manage your keys.
+info:
+  title: badges
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+paths:
+  /keys/badge/verification/current:
+    get:
+      summary: Verify the current key
+      tags:
+        - Keys
+      operationId: get-keys-badge-verification-current
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  publicKey:
+                    type: string
+                    minLength: 1
+                required:
+                  - publicKey
+  /keys/badge/targetKeyId:
+    get:
+      summary: Target key ID
+      tags:
+        - Keys
+      operationId: get-keys-badge-targetKeyId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  targetKeyId:
+                    type: integer
+                required:
+                  - targetKeyId
+  /keys/badge/current:
+    get:
+      summary: The most current badge key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadgePublicKey'
+      operationId: get-keys-badge-current
+  '/keys/badge/encrypted/{keyId}':
+    parameters:
+      - schema:
+          type: integer
+        name: keyId
+        in: path
+        required: true
+    get:
+      summary: Encrypted badge private key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EncryptedBadgePrivateKey'
+        '404':
+          description: Not Found
+      operationId: get-keys-badge-encrypted-keyId
+      description: Encrypted for the current user's health department.
+  '/keys/badge/encrypted/{keyId}/keyed':
+    parameters:
+      - schema:
+          type: integer
+        name: keyId
+        in: path
+        required: true
+    get:
+      summary: Health departments that have the private key
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  healthDepartmentId:
+                    type: string
+                    minLength: 1
+                    format: uuid
+                  createdAt:
+                    type: integer
+                required:
+                  - healthDepartmentId
+                  - createdAt
+      operationId: get-keys-badge-encrypted-keyId-keyed
+      description:
+        IDs of health departments for which the badge private key with keyId was encrypted.
+      
+  '/keys/badge/{keyId}':
+    parameters:
+      - schema:
+          type: integer
+        name: keyId
+        in: path
+        required: true
+    get:
+      summary: Get key by ID
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadgePublicKey'
+        '404':
+          description: Not Found
+      operationId: get-keys-badge-keyId
+  /keys/badge/rekey:
+    post:
+      tags:
+        - Keys
+      summary: Re-issue badge keys
+      operationId: post-keys-badge-rekey
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                keyId:
+                  type: integer
+                createdAt:
+                  type: integer
+                encryptedBadgePrivateKeys:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/EncryptedKeyPair'
+              required:
+                - keyId
+                - createdAt
+                - encryptedBadgePrivateKeys
+      description:
+        This endpoint allows a health department to issue keys for a new health
+        department that doesn't yet have keys encrypted specifically for them.
+  /keys/badge/rotate:
+    post:
+      tags:
+        - Keys
+      summary: Rotate badge keys
+      operationId: post-keys-badge-rotate
+      responses:
+        '200':
+          description: OK
+        '409':
+          description: Conflict
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                publicKey:
+                  type: string
+                  minLength: 1
+                signature:
+                  type: string
+                  minLength: 1
+                createdAt:
+                  type: string
+                  minLength: 1
+                keyId:
+                  type: integer
+                encryptedBadgePrivateKeys:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    $ref: '#/components/schemas/EncryptedKeyPair'
+              required:
+                - dailyPublicKey
+                - signature
+                - createdAt
+                - keyId
+                - encryptedBadgePrivateKeys
+      description:
+        'Update the daily key pair, including the signed public key and the
+        private key (encrypted for each health department separately). Refer to
+        the [security
+        concept](https://luca-app.de/securityconcept/properties/secrets.html#term-daily-keypair)
+        for more information.'
+components:
+  schemas:
+    EncryptedKeyPair:
+      title: EncryptedKeyPair
+      type: object
+      required:
+        - healthDepartmentId
+        - data
+        - iv
+        - mac
+        - publicKey
+        - signature
+      properties:
+        healthDepartmentId:
+          type: string
+          minLength: 1
+        data:
+          type: string
+          minLength: 1
+        iv:
+          type: string
+          minLength: 1
+        mac:
+          type: string
+          minLength: 1
+        publicKey:
+          type: string
+          minLength: 1
+        signature:
+          type: string
+          minLength: 1
+      description: Public key and private key encrypted for a health department.
+    BadgePublicKey:
+      title: BadgePublicKey
+      type: object
+      properties:
+        keyId:
+          type: integer
+        publicKey:
+          type: string
+          minLength: 1
+        createdAt:
+          type: integer
+        signature:
+          type: string
+          minLength: 1
+        issuerId:
+          type: string
+          minLength: 1
+      required:
+        - keyId
+        - publicKey
+        - createdAt
+        - signature
+        - issuerId
+    EncryptedBadgePrivateKey:
+      description: ''
+      type: object
+      properties:
+        keyId:
+          type: integer
+        issuerId:
+          type: string
+          minLength: 1
+        data:
+          type: string
+          minLength: 1
+        iv:
+          type: string
+          minLength: 1
+        mac:
+          type: string
+          minLength: 1
+        publicKey:
+          type: string
+          minLength: 1
+        signature:
+          type: string
+          minLength: 1
+        createdAt:
+          type: integer
+      required:
+        - keyId
+        - issuerId
+        - data
+        - iv
+        - mac
+        - publicKey
+        - signature
+        - createdAt

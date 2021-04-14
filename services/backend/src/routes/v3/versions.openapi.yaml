@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: Versions
+  description: Required application version information.
+  version: '1.0'
+  contact: {}
+tags:
+  - name: Versions
+paths:
+  /versions/apps/android:
+    get:
+      summary: Android version
+      tags:
+        - Versions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  minimumVersion:
+                    type: integer
+      operationId: get-versions-apps-android
+      description: Android version.
+  /versions/apps/ios:
+    get:
+      summary: iOS version
+      tags:
+        - Versions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  minimumVersion:
+                    type: integer
+      operationId: get-versions-apps-ios
+      description: iOS version.

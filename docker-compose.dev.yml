@@ -1,0 +1,56 @@
+version: "3.3"
+
+services:
+  database:
+    volumes:
+      - ./local-data/postgres:/data/postgres
+  elb:
+    volumes:
+      - ./services/elb/nginx.conf:/etc/nginx/nginx.conf
+      - ./services/elb/shared:/etc/nginx/shared
+      - ./services/elb/ssl:/etc/nginx/ssl
+  backend:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/backend/config:/app/config
+      - ./services/backend/src:/app/src
+    ports:
+      - "8001:8080"
+  locations:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/locations/package.json:/app/package.json
+      - ./services/locations/src:/app/src
+    environment: 
+      - REACT_APP_GOOGLE_MAPS_API_KEY
+  health-department:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/health-department/package.json:/app/package.json
+      - ./services/health-department/src:/app/src
+  scanner:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/scanner/package.json:/app/package.json
+      - ./services/scanner/src:/app/src
+  contact-form:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/contact-form/package.json:/app/package.json
+      - ./services/contact-form/src:/app/src
+  webapp:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/webapp/package.json:/app/package.json
+      - ./services/webapp/src:/app/src
+  maintenance:
+    build:
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - ./services/maintenance/src:/usr/share/nginx/html

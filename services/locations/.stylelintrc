@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    "stylelint-prettier"
+  ],
+  "processors": [
+    "stylelint-processor-styled-components"
+  ],
+  "extends": [
+    "stylelint-config-recommended",
+    "stylelint-config-styled-components",
+    "stylelint-prettier/recommended"
+  ],
+  "rules": {
+      "color-hex-case": "lower",
+      "string-quotes": "single",
+      "unit-case": "lower",
+      "color-no-invalid-hex": true,
+      "unit-no-unknown": true,
+      "property-no-unknown": true,
+      "block-no-empty": null,
+  }
+}

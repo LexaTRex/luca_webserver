@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: operators.openapi
+  version: '1.0'
+paths:
+  /operators:
+    post:
+      tags:
+        - Operators
+      summary: Register a new operator
+      operationId: post-locationTransfers
+      responses:
+        '204':
+          description: No Content
+        '409':
+          description: Conflict
+      description: Register a new operator. Needs to be confirmed via email link.
+    patch:
+      summary: Patch operator
+      operationId: patch-operators
+      responses:
+        '204':
+          description: No Content
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      tags:
+        - Operators
+  /operators/activate:
+    post:
+      tags:
+        - Operators
+      summary: Activate account
+      operationId: post-operators-activate
+      responses:
+        '201':
+          description: Created
+        '404':
+          description: Not Found
+        '410':
+          description: Gone
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                activationId:
+                  type: string
+                lang:
+                  type: string
+        description: ''
+  /operators/publicKey:
+    post:
+      tags:
+        - Operators
+      summary: Update operator's public key
+      operationId: post-operators-publicKey
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicKey:
+                  type: string
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+  /operators/privateKeySecret:
+    get:
+      summary: Get private key secret
+      tags:
+        - Operators
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  privateKeySecret:
+                    type: string
+        '403':
+          description: Forbidden
+      operationId: get-operators-privateKeySecret
+tags:
+  - name: Operators

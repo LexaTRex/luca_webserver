@@ -1,0 +1,51 @@
+openapi: 3.0.0
+info:
+  title: additionalData
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+tags:
+  - name: Locations
+paths:
+  '/locations/additionalDataSchema/{id}':
+    get:
+      summary: Get additional data
+      tags: [Locations]
+      operationId: get-locations-additionalDataSchema-id
+      parameters: []
+      description: ''
+      responses:
+        '200':
+          description: OK
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: id
+        in: path
+        required: true
+        description:
+          'locationId (GET, POST) or additionalDataId (PATCH, DELETE)'
+    post:
+      summary: Set additional data
+      tags: [Locations]
+      operationId: post-locations-additionalDataSchema-id
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Change additional data
+      tags: [Locations]
+      operationId: patch-locations-additionalDataSchema-id
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete additional data
+      tags: [Locations]
+      operationId: delete-locations-additionalDataSchema-id
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found

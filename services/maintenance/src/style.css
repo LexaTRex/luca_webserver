@@ -1,0 +1,125 @@
+/*
+  Generated with Google Webfonts Helper
+  https://google-webfonts-helper.herokuapp.com/fonts/noto-sans-jp?subsets=latin
+*/
+/* noto-sans-jp-regular - latin */
+
+/* montserrat-regular - latin */
+@font-face {
+  font-family: 'Montserrat-Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/maintenance/assets/fonts/montserrat-v15-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Montserrat Regular'), local('Montserrat-Regular'),
+    url('/maintenance/assets/fonts/montserrat-v15-latin-regular.eot?#iefix')
+      format('embedded-opentype'),
+    /* IE6-IE8 */
+      url('/maintenance/assets/fonts/montserrat-v15-latin-regular.woff2')
+      format('woff2'),
+    /* Super Modern Browsers */
+      url('/maintenance/assets/fonts/montserrat-v15-latin-regular.woff')
+      format('woff'),
+    /* Modern Browsers */
+      url('/maintenance/assets/fonts/montserrat-v15-latin-regular.ttf')
+      format('truetype'),
+    /* Safari, Android, iOS */
+      url('/maintenance/assets/fonts/montserrat-v15-latin-regular.svg#Montserrat')
+      format('svg'); /* Legacy iOS */
+}
+
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #dae0e7;
+}
+
+html {
+  width: 100vw;
+  height: 100vh;
+}
+
+h1 {
+  text-align: center;
+}
+
+p {
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 20px;
+  text-align: center;
+  max-width: 492px;
+  margin: 0 auto;
+}
+
+.root {
+  width: 100%;
+  display: flex;
+  min-height: 90%;
+  padding: 20px 40px;
+  box-sizing: border-box;
+  flex-direction: column;
+  color: rgba(0, 0, 0, 0.87);
+  font-family: 'Montserrat-Regular', sans-serif;
+}
+
+@media (max-width: 750px) {
+  .root {
+    padding: 20px 10px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.link {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  text-decoration: none;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.mail {
+  text-decoration: none;
+}
+
+.logo-wrapper {
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 80px;
+  justify-content: flex-start;
+}
+
+.logo {
+  width: 48px;
+  object-fit: contain;
+}
+
+.locations-text {
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 1em;
+  display: flex;
+  align-self: flex-end;
+  margin-bottom: -4px;
+}
+
+.image {
+  max-width: 80%;
+  display: block;
+  margin: 40px 0;
+  max-height: 40%;
+  object-fit: contain;
+}

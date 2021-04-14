@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: Server Time
+  description: Server Time
+  version: '1.0'
+  contact: {}
+paths:
+  /timesync:
+    get:
+      summary: Get current server time
+      tags: [Server Time]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  unix:
+                    type: integer
+      operationId: get-current-server-time
+      description: Get current server time
+tags:
+  - name: Server Time

@@ -1,0 +1,1 @@
+export const MINIMAL_SUPPORT_VERION = 3;

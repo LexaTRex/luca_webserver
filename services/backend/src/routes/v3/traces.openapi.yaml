@@ -1,0 +1,212 @@
+openapi: 3.0.0
+info:
+  title: Traces
+  description: Traces
+  version: '1.0'
+  contact: {}
+paths:
+  /traces/checkin:
+    post:
+      summary: Check in
+      operationId: post-traces-checkin
+      responses:
+        '201':
+          description: Created
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      description: Check in
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceId:
+                  type: string
+                scannerId:
+                  type: string
+                timestamp:
+                  type: integer
+                data:
+                  type: string
+                iv:
+                  type: string
+                mac:
+                  type: string
+                publicKey:
+                  type: string
+                deviceType:
+                  type: integer
+      tags:
+        - Traces
+  /traces/additionalData:
+    post:
+      summary: Supply additional data
+      operationId: post-traces-additionalData
+      responses:
+        '201':
+          description: Created
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceId:
+                  type: string
+                data:
+                  type: string
+                iv:
+                  type: string
+                mac:
+                  type: string
+                publicKey:
+                  type: string
+      tags:
+        - Traces
+  /traces/bulk:
+    post:
+      summary: Get bulk information
+      operationId: post-traces-bulk
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trace'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceIds:
+                  type: array
+                  maxItems: 360
+                  items:
+                    type: string
+        description: ''
+      description: Get bulk trace information.
+      tags:
+        - Traces
+  '/traces/{traceId}':
+    parameters:
+      - schema:
+          type: string
+        name: traceId
+        in: path
+        required: true
+        description: Hexadecimal trace ID
+    get:
+      summary: Get information about a trace
+      tags:
+        - Traces
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trace'
+      operationId: get-traces-traceId
+  /traces/checkout:
+    post:
+      summary: Check out
+      operationId: post-traces-checkout
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '409':
+          description: 'Conflict, checkout time is not after checkin time'
+      description: Check out.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceId:
+                  type: string
+                timestamp:
+                  type: integer
+      tags:
+        - Traces
+  /traces/trace:
+    post:
+      summary: Get locations for user
+      operationId: post-traces-trace
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    locationId:
+                      type: string
+                    time:
+                      type: array
+                      items:
+                        type: integer
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                userTracingSecret:
+                  type: string
+                userTracingSecrets:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - userId
+      tags:
+        - Traces
+      description: Get locations and times for user.
+tags:
+  - name: Traces
+components:
+  schemas:
+    Trace:
+      description: ''
+      type: object
+      title: Trace
+      properties:
+        traceId:
+          type: string
+          minLength: 1
+        checkin:
+          type: integer
+        checkout:
+          type: integer
+        locationId:
+          type: string
+          minLength: 1
+        createdAt:
+          type: integer
+      required:
+        - traceId
+        - checkin
+        - checkout
+        - locationId
+        - createdAt
