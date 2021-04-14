@@ -4,7 +4,6 @@ const logger = require('./utils/logger');
 const { configureApp } = require('./app');
 
 const database = require('./database');
-const rateLimit = require('./middlewares/rateLimit');
 const { sigtermHandler } = require('./utils/lifecycle');
 
 const run = async () => {
@@ -18,15 +17,6 @@ const run = async () => {
     return;
   }
   logger.info('Connected to database');
-
-  try {
-    logger.info('Trying to connect to redis');
-    await rateLimit.initialize();
-  } catch (error) {
-    logger.error('Failed to connect to redis', error);
-    return;
-  }
-  logger.info('Connected to redis');
 
   const server = http.createServer(configureApp(database));
 

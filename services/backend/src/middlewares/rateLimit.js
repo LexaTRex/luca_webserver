@@ -21,26 +21,20 @@ const globalKeyGenerator = request => {
   return `global:${request.baseUrl}${request.route.path}`.toLowerCase();
 };
 
-let minuteStore;
-let hourStore;
-let dayStore;
+const minuteStore = new RedisStore({
+  redisURL,
+  expiry: minuteDuration.as('s'),
+});
 
-const initialize = () => {
-  minuteStore = new RedisStore({
-    redisURL,
-    expiry: minuteDuration.as('s'),
-  });
+const hourStore = new RedisStore({
+  redisURL,
+  expiry: hourDuration.as('s'),
+});
 
-  hourStore = new RedisStore({
-    redisURL,
-    expiry: hourDuration.as('s'),
-  });
-
-  dayStore = new RedisStore({
-    redisURL,
-    expiry: dayDuration.as('s'),
-  });
-};
+const dayStore = new RedisStore({
+  redisURL,
+  expiry: dayDuration.as('s'),
+});
 
 const limitRequestsPerMinute = (max, { skipSuccessfulRequests, global } = {}) =>
   new RateLimit({
@@ -76,5 +70,4 @@ module.exports = {
   limitRequestsPerMinute,
   limitRequestsPerHour,
   limitRequestsPerDay,
-  initialize,
 };
