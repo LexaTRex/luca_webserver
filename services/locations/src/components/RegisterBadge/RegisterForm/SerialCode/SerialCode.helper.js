@@ -1,5 +1,6 @@
 import argon2 from 'argon2-browser';
 import {
+  base32CrockfordToHex,
   base32ToHex,
   hexToBytes,
   hexToUuid4,
@@ -29,7 +30,7 @@ const isV4 = serialNumber => {
 };
 
 const calculateSecretsV3 = async serialNumber => {
-  const entropy = base32ToHex(serialNumber);
+  const entropy = base32CrockfordToHex(serialNumber);
 
   const cryptoSeed = KDF_SHA256(entropy, '01');
   const tracingSeed = KDF_SHA256(entropy, '02').slice(0, 32);
@@ -59,7 +60,7 @@ const calculateSecretsV4 = async serialNumber => {
     .toLowerCase()
     .replace(/h$/, 'g')
     .replace(/2$/, '0');
-  const entropy = base32ToHex(realSerialNumber);
+  const entropy = base32CrockfordToHex(realSerialNumber);
 
   const argon2hash = await argon2.hash({
     pass: bytesToUint8Array(hexToBytes(entropy)),
