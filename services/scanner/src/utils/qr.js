@@ -48,13 +48,20 @@ function parsePayloadV3(buffer, decodedBytes) {
     }
 
     // signature check
-    const isSignatureValid = VERIFY_EC_SHA256_DER_SIGNATURE(
+    const isV3SignatureValid = VERIFY_EC_SHA256_DER_SIGNATURE(
       base64ToHex(BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V3),
       base64ToHex(data),
       base64ToHex(signature)
     );
 
-    if (!isSignatureValid) {
+    const isV3BSignatureValid = VERIFY_EC_SHA256_DER_SIGNATURE(
+      base64ToHex(BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V4),
+      SHA256(base64ToHex(data) + base64ToHex(publicKey)),
+      base64ToHex(signature)
+    );
+
+    if (!(isV3SignatureValid || isV3BSignatureValid)) {
+      console.error('invalid signature');
       return null;
     }
 
