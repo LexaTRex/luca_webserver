@@ -20,6 +20,10 @@ paths:
                 properties:
                   challengeId:
                     type: string
+        '400':
+          description: Invalid Phone Number
+        '429':
+          description: Too Many Requests
         '503':
           description: Service Unavailable
       operationId: post-sms-request

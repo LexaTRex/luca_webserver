@@ -16,6 +16,7 @@ const { validateSchema } = require('../../middlewares/validateSchema');
 const {
   limitRequestsPerMinute,
   limitRequestsPerDay,
+  limitRequestsByPhoneNumberPerDay,
 } = require('../../middlewares/rateLimit');
 
 const {
@@ -47,9 +48,13 @@ router.post(
   limitRequestsPerDay(10),
   limitRequestsPerMinute(7200, { global: true }),
   validateSchema(requestSchema),
+  limitRequestsByPhoneNumberPerDay(5),
   requireNonBlockedIp,
   async (request, response) => {
-    const tan = faker.random.number(999999).toString().padStart(6, '0');
+    const tan = faker.random
+      .number(999999)
+      .toString()
+      .padStart(6, '0');
 
     const provider = config.get('debug') ? 'debug' : await getProvider();
     const phoneNumber = parsePhoneNumber(request.body.phone, 'DE');

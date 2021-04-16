@@ -2,6 +2,8 @@ const config = require('config');
 const moment = require('moment');
 const RateLimit = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis');
+const parsePhoneNumber = require('libphonenumber-js');
+const { SHA256 } = require('@lucaapp/crypto');
 
 const { isInternalIp } = require('../utils/ipChecks');
 
@@ -19,6 +21,12 @@ const ipKeyGenerator = request => {
 
 const globalKeyGenerator = request => {
   return `global:${request.baseUrl}${request.route.path}`.toLowerCase();
+};
+
+const phoneNumberKeyGenerator = request => {
+  const phone = parsePhoneNumber(request.body.phone, 'DE');
+  const hashedPhoneNumber = SHA256(phone.number);
+  return `phone:${hashedPhoneNumber}`;
 };
 
 const minuteStore = new RedisStore({
@@ -66,8 +74,18 @@ const limitRequestsPerDay = (max, { skipSuccessfulRequests, global } = {}) =>
     skipSuccessfulRequests,
   });
 
+const limitRequestsByPhoneNumberPerDay = max =>
+  new RateLimit({
+    store: dayStore,
+    windowMs: dayDuration.as('ms'),
+    skip: request => isInternalIp(request.ip),
+    keyGenerator: phoneNumberKeyGenerator,
+    max,
+  });
+
 module.exports = {
   limitRequestsPerMinute,
   limitRequestsPerHour,
   limitRequestsPerDay,
+  limitRequestsByPhoneNumberPerDay,
 };
