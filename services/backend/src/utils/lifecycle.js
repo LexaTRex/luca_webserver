@@ -1,17 +1,20 @@
+const moment = require('moment');
 const logger = require('./logger');
+const redis = require('./redis');
 
 const state = {
   isShuttingDown: false,
 };
 
-const SHUTDOWN_DELAY_MS = 15 * 1000;
+const SHUTDOWN_DELAY = moment.duration(15, 'seconds');
 
 const shutdown = httpServer => {
-  httpServer.close(error => {
+  httpServer.close(async error => {
     if (error) {
       logger.error(error);
       process.exit(1);
     }
+    await redis.quit();
     logger.info('shutdown complete');
     process.exit();
   });
@@ -19,9 +22,10 @@ const shutdown = httpServer => {
 
 const sigtermHandler = httpServer => {
   logger.info('SIGTERM received.');
-  logger.info('shutting down in 15s.');
+  if (state.isShuttingDown) return;
+  logger.info(`shutting down in ${SHUTDOWN_DELAY.seconds()}s.`);
   state.isShuttingDown = true;
-  setTimeout(() => shutdown(httpServer), SHUTDOWN_DELAY_MS);
+  setTimeout(() => shutdown(httpServer), SHUTDOWN_DELAY.asMilliseconds());
 };
 
 module.exports = {

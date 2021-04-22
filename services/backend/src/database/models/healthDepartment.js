@@ -33,6 +33,10 @@ module.exports = (Sequelize, DataTypes) => {
     HealthDepartment.hasMany(models.LocationTransfer, {
       foreignKey: 'departmentId',
     });
+
+    HealthDepartment.hasMany(models.DummyTrace, {
+      foreignKey: 'healthDepartmentId',
+    });
   };
 
   return HealthDepartment;

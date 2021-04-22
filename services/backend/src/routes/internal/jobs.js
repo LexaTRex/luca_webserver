@@ -2,7 +2,10 @@ const { performance } = require('perf_hooks');
 const config = require('config');
 const router = require('express').Router();
 const moment = require('moment');
+const crypto = require('crypto');
 const { Op, fn, col } = require('sequelize');
+
+const { GET_RANDOM_BYTES, hexToBase64 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
 
@@ -151,6 +154,51 @@ router.post('/cleanUpChallenges', async (request, response) => {
 
   response.send({
     affectedRows,
+    time: performance.now() - t0,
+  });
+});
+
+router.post('/addDummyTraces', async (request, response) => {
+  const t0 = performance.now();
+  const healthDepartments = await database.HealthDepartment.findAll({
+    where: {
+      publicHDSKP: {
+        [Op.not]: null,
+      },
+    },
+  });
+  const healthDepartment =
+    healthDepartments[crypto.randomInt(0, healthDepartments.length)];
+
+  for (
+    let tracingIndex = 0;
+    tracingIndex < crypto.randomInt(0, 5);
+    tracingIndex += 1
+  ) {
+    const traces = [];
+    const baseTime = moment().subtract(
+      crypto.randomInt(0, moment.duration(10, 'days').asSeconds()),
+      's'
+    );
+
+    for (
+      let traceIndex = 0;
+      traceIndex < crypto.randomInt(0, 10);
+      traceIndex += 1
+    ) {
+      traces.push({
+        healthDepartmentId: healthDepartment.uuid,
+        traceId: hexToBase64(GET_RANDOM_BYTES(16)),
+        createdAt: moment(baseTime).subtract(
+          crypto.randomInt(0, 720) - 360,
+          'minutes'
+        ),
+      });
+    }
+    await database.DummyTrace.bulkCreate(traces);
+  }
+
+  response.send({
     time: performance.now() - t0,
   });
 });
