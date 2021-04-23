@@ -10,3 +10,9 @@
 * **scanner:** fix: add v3b signature format support
 * **backend:** fix: fix redis initialization
 * **backend:** feat: add rate limit by phone number
+
+### 1.0.2 (2021-04-23)
+
+* **backend:** fix: pin netmask package to patched version
+* **backend:** fix: increase maximum requestable period for traces
+* **backend:** feat: add dummy traces for the notifications endpoint
