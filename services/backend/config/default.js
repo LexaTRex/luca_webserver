@@ -42,7 +42,7 @@ module.exports = {
   },
   luca: {
     traces: {
-      maximumRequestablePeriod: moment.duration(6, 'hours').as('hours'),
+      maximumRequestablePeriod: moment.duration(24, 'hours').as('hours'),
       maxAge: moment.duration(28, 'days').as('hours'),
       maxDuration: moment.duration(24, 'hours').as('hours'),
     },
