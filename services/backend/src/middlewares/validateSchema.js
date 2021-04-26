@@ -1,6 +1,6 @@
 const z = require('zod');
 const status = require('http-status');
-const parsePhoneNumber = require('libphonenumber-js/mobile');
+const parsePhoneNumber = require('libphonenumber-js/max');
 const logger = require('../utils/logger');
 const passwordCheck = require('../utils/passwordCheck');
 
