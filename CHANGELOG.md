@@ -20,3 +20,7 @@
 ### 1.0.3 (2021-04-27)
 
 * **backend:** chore: add separate rate limit for fixed line phone numbers
+
+### 1.0.4 (2021-04-27)
+
+* **backend:** fix: allow larger body size
