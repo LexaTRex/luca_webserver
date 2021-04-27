@@ -16,3 +16,7 @@
 * **backend:** fix: pin netmask package to patched version
 * **backend:** fix: increase maximum requestable period for traces
 * **backend:** feat: add dummy traces for the notifications endpoint
+
+### 1.0.3 (2021-04-27)
+
+* **backend:** chore: add separate rate limit for fixed line phone numbers
