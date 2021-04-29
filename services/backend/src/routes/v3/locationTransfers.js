@@ -422,42 +422,53 @@ router.post(
       },
     });
 
-    // check if all requested traces are in the request
+    const requestTracesById = new Map(
+      request.body.traces.map(trace => [trace.traceId, trace])
+    );
+    const locationTransferTraceIds = new Set(
+      transferTraces.map(trace => trace.traceId)
+    );
+    // reject request if invalid trace IDs are contained
     if (
-      transferTraces.some(
-        transferTrace =>
-          !request.body.traces.some(
-            trace => transferTrace.traceId === trace.traceId
-          )
+      !request.body.traces.every(trace =>
+        locationTransferTraceIds.has(trace.traceId)
       )
     ) {
-      return response.sendStatus(status.BAD_INPUT);
+      return response.sendStatus(status.BAD_REQUEST);
     }
 
-    const updatePromises = transferTraces.map(transferTrace => {
-      const traceData = request.body.traces.find(
-        trace => transferTrace.traceId === trace.traceId
-      );
+    const updatePromises = transferTraces
+      .map(transferTrace => {
+        const requestTraceData = requestTracesById.get(transferTrace.traceId);
 
-      const transferTracePayload = {
-        data: traceData.data,
-        publicKey: traceData.publicKey,
-        verification: traceData.verification,
-        keyId: traceData.keyId,
-        version: traceData.version,
-        deviceType: traceData.deviceType,
-      };
+        // skip traces that weren't contained in the request
+        if (!requestTraceData) {
+          return null;
+        }
 
-      if (traceData.additionalData) {
-        transferTracePayload.additionalData = traceData.additionalData.data;
-        transferTracePayload.additionalDataPublicKey =
-          traceData.additionalData.publicKey;
-        transferTracePayload.additionalDataIV = traceData.additionalData.iv;
-        transferTracePayload.additionalDataMAC = traceData.additionalData.mac;
-      }
+        const transferTracePayload = {
+          data: requestTraceData.data,
+          publicKey: requestTraceData.publicKey,
+          verification: requestTraceData.verification,
+          keyId: requestTraceData.keyId,
+          version: requestTraceData.version,
+          deviceType: requestTraceData.deviceType,
+        };
 
-      return transferTrace.update(transferTracePayload);
-    });
+        if (requestTraceData.additionalData) {
+          transferTracePayload.additionalData =
+            requestTraceData.additionalData.data;
+          transferTracePayload.additionalDataPublicKey =
+            requestTraceData.additionalData.publicKey;
+          transferTracePayload.additionalDataIV =
+            requestTraceData.additionalData.iv;
+          transferTracePayload.additionalDataMAC =
+            requestTraceData.additionalData.mac;
+        }
+
+        return transferTrace.update(transferTracePayload);
+      })
+      .filter(updateTransfer => updateTransfer !== null);
 
     await Promise.all(updatePromises);
     await transfer.update({

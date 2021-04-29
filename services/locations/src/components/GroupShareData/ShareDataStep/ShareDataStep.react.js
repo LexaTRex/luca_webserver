@@ -27,47 +27,59 @@ export const ShareDataStep = ({ privateKey, transfers, next }) => {
   const onFinish = async () => {
     await Promise.all(
       transfers.map(async transfer => {
-        const traces = transfer.traces.map(trace => {
-          const decData = DECRYPT_DLIES(
-            privateKey,
-            base64ToHex(trace.publicKey),
-            base64ToHex(trace.data),
-            base64ToHex(trace.iv),
-            base64ToHex(trace.mac)
-          );
-          let additionalData;
+        const traces = transfer.traces
+          .map(trace => {
+            try {
+              const decData = DECRYPT_DLIES(
+                privateKey,
+                base64ToHex(trace.publicKey),
+                base64ToHex(trace.data),
+                base64ToHex(trace.iv),
+                base64ToHex(trace.mac)
+              );
+              let additionalData;
 
-          if (trace.additionalData) {
-            const decryptedAdditionaldata = DECRYPT_DLIES(
-              privateKey,
-              base64ToHex(trace.additionalData.publicKey),
-              base64ToHex(trace.additionalData.data),
-              base64ToHex(trace.additionalData.iv),
-              base64ToHex(trace.additionalData.mac)
-            );
-            JSON.parse(hexToBytes(decryptedAdditionaldata));
-            const encAdditionalData = ENCRYPT_DLIES(
-              base64ToHex(transfer.department.publicHDEKP),
-              decryptedAdditionaldata
-            );
-            additionalData = {
-              data: hexToBase64(encAdditionalData.data),
-              publicKey: hexToBase64(encAdditionalData.publicKey),
-              mac: hexToBase64(encAdditionalData.mac),
-              iv: hexToBase64(encAdditionalData.iv),
-            };
-          }
-
-          return {
-            traceId: trace.traceId,
-            version: hexToInt8(decData.slice(0, 2)),
-            keyId: hexToInt8(decData.slice(2, 4)),
-            publicKey: hexToBase64(decData.slice(4, 70)),
-            verification: hexToBase64(decData.slice(70, 86)),
-            data: hexToBase64(decData.slice(86, decData.length)),
-            additionalData,
-          };
-        });
+              if (trace.additionalData) {
+                try {
+                  const decryptedAdditionaldata = DECRYPT_DLIES(
+                    privateKey,
+                    base64ToHex(trace.additionalData.publicKey),
+                    base64ToHex(trace.additionalData.data),
+                    base64ToHex(trace.additionalData.iv),
+                    base64ToHex(trace.additionalData.mac)
+                  );
+                  JSON.parse(hexToBytes(decryptedAdditionaldata));
+                  const encAdditionalData = ENCRYPT_DLIES(
+                    base64ToHex(transfer.department.publicHDEKP),
+                    decryptedAdditionaldata
+                  );
+                  additionalData = {
+                    data: hexToBase64(encAdditionalData.data),
+                    publicKey: hexToBase64(encAdditionalData.publicKey),
+                    mac: hexToBase64(encAdditionalData.mac),
+                    iv: hexToBase64(encAdditionalData.iv),
+                  };
+                } catch (error) {
+                  // eslint-disable-next-line no-console
+                  console.error('error decrypting additional data', error);
+                }
+              }
+              return {
+                traceId: trace.traceId,
+                version: hexToInt8(decData.slice(0, 2)),
+                keyId: hexToInt8(decData.slice(2, 4)),
+                publicKey: hexToBase64(decData.slice(4, 70)),
+                verification: hexToBase64(decData.slice(70, 86)),
+                data: hexToBase64(decData.slice(86, decData.length)),
+                additionalData,
+              };
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error('Trace decryption failed.', trace, error);
+              return null;
+            }
+          })
+          .filter(decryptedTrace => decryptedTrace !== null);
 
         try {
           await shareData({
