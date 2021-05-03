@@ -1,11 +1,11 @@
 import { login } from '../../helpers/functions';
+import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const RESTAURANT_NAME = 'Test Restaurant';
 const RESTAURANT_ADDRESS = 'Nexenio';
-const INVALID_ADDRESS = 'Funkturm';
 const RESTAURANT_PHONE = '0123456789';
 const RESTAURANT_TABLE_COUNT = '12';
-const RESTAURANT_RADIUS = '50';
+const RESTAURANT_RADIUS = '100';
 describe('Group creation', () => {
   describe('Create Restaurant', () => {
     beforeEach(() => login());
@@ -35,13 +35,15 @@ describe('Group creation', () => {
       cy.get('#streetNr').should('be.disabled');
       cy.get('#zipCode').should('be.disabled');
       cy.get('#city').should('be.disabled');
-      // Wait for expand
-      cy.wait(1000);
       // Proceed
       cy.getByCy('proceed').click();
       // Enter phone
       cy.get('#phone').type(RESTAURANT_PHONE);
       // Proceed
+      cy.get('button[type=submit]').click();
+      // Select indoor
+      cy.getByCy('indoorSelection').click();
+      cy.getByCy('selectIndoor').click();
       cy.get('button[type=submit]').click();
       // Select tables
       cy.getByCy('yes').click();
@@ -51,8 +53,9 @@ describe('Group creation', () => {
       cy.get('button[type=submit]').click();
       // Select automatic checkout
       cy.getByCy('yes').click();
-      // Enter tables
-      cy.get('#radius').type(RESTAURANT_RADIUS);
+      // Enter radius
+      checkRadiusInput()
+      cy.get('#radius').clear().type(RESTAURANT_RADIUS);
       // Proceed
       cy.get('button[type=submit]').click();
       // Create group

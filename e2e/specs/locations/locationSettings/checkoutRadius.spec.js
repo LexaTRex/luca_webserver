@@ -3,8 +3,11 @@ import {
   E2E_SECOND_LOCATION_NAME,
   E2E_DEFAULT_LOCATION_NAME,
 } from '../helpers/locations';
+import {
+  checkRadiusInput,
+  checkRadiusInputEdgeCase,
+} from '../helpers/inputValidation.helper';
 const SETTING_NAME = 'checkoutRadius';
-const TEST_RADIUS = '100';
 
 describe('Checkout radius configuration ', () => {
   beforeEach(() => {
@@ -36,26 +39,16 @@ describe('Checkout radius configuration ', () => {
     );
   });
 
-  it('cannot accept non-numberic input', () => {
-    // Test case: empty input
-    cy.get('#radius').clear();
-    cy.get('.ant-form-item-explain-error').should('exist');
-    // Test case: special characters
-    cy.get('#radius').type('####');
-    cy.get('.ant-form-item-explain-error').should('exist');
-    // Test case: text
-    cy.get('#radius').type('testing');
-    cy.get('.ant-form-item-explain-error').should('exist');
+  it('cannot accept invalid inputs', () => {
+    // Invalid radius input: empty, under 50 or over 5000
+    checkRadiusInput();
+    // Invalid radius input: letters and special characters
+    checkRadiusInputEdgeCase();
   });
 
-  it('sets the number to 50 if the input number is under 50', () => {
-    // Test cases: numbers under 50
-    cy.get('#radius').clear().type('45');
-    cy.get('.ant-form-item-explain-error').should('exist');
-    cy.get('#radius').clear().type('0');
-    cy.get('.ant-form-item-explain-error').should('exist');
+  it('sets the invalid number to the minimum or maximum', () => {
+    // Under 50
     cy.get('#radius').clear().type('-20').blur();
-    // Expect the table count value to be changed to 1
     cy.get('#radius').invoke('val').should('eq', '50');
     // Check if the radius number is persisted by re-opening the radius configuration
     cy.getByCy(`location-${E2E_SECOND_LOCATION_NAME}`).click();
@@ -67,15 +60,26 @@ describe('Checkout radius configuration ', () => {
       'aria-checked',
       'true'
     );
-    // Expect the radius value to be 50
     cy.get('#radius').invoke('val').should('eq', '50');
+    // Over 5000
+    cy.get('#radius').clear().type('6000').blur();
+    cy.get('#radius').invoke('val').should('eq', '5000');
+    // Check if the radius number is persisted by re-opening the radius configuration
+    cy.getByCy(`location-${E2E_SECOND_LOCATION_NAME}`).click();
+    cy.getByCy(`location-${E2E_DEFAULT_LOCATION_NAME}`).click();
+    cy.getByCy(`locationCard-${SETTING_NAME}`).click();
+    // Expect the status to be active after re-opening
+    cy.getByCy('activateCheckoutRadius').should(
+      'have.attr',
+      'aria-checked',
+      'true'
+    );
+    cy.get('#radius').invoke('val').should('eq', '5000');
   });
 
   it('can change the checkout radius', () => {
-    // Test case: number greater than 50
-    cy.get('#radius').clear().type(TEST_RADIUS);
-    // Expect the value to be changed to the test radius number
-    cy.get('#radius').invoke('val').should('eq', TEST_RADIUS);
+    cy.get('#radius').clear().type('100').blur();
+    cy.get('#radius').invoke('val').should('eq', '100');
     // Check if the radius number is persisted by re-opening the radius configuration
     cy.getByCy(`location-${E2E_SECOND_LOCATION_NAME}`).click();
     cy.getByCy(`location-${E2E_DEFAULT_LOCATION_NAME}`).click();
@@ -86,7 +90,6 @@ describe('Checkout radius configuration ', () => {
       'aria-checked',
       'true'
     );
-    // Expect the radius value to be the test radius number
-    cy.get('#radius').invoke('val').should('eq', TEST_RADIUS);
+    cy.get('#radius').invoke('val').should('eq', '100');
   });
 });

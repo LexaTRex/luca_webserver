@@ -7,6 +7,16 @@ const createSchema = z.object({
   phone: z.string().max(255),
 });
 
+const updateSchema = z.object({
+  isAdmin: z.boolean(),
+});
+
+const employeeIdParametersSchema = z.object({
+  employeeId: z.string().uuid(),
+});
+
 module.exports = {
   createSchema,
+  updateSchema,
+  employeeIdParametersSchema,
 };

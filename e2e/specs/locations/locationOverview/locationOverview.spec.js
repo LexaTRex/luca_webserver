@@ -37,9 +37,8 @@ describe('Location overview', () => {
     cy.getByCy('totalCheckinCount').should('exist').and('contain', 1);
     // Expect the both checkin and checkout time exist in the guest list modal
     cy.getByCy('showGuestList').click({ force: true });
-    cy.getByCy('trackingTime').should('exist');
     cy.getByCy('trackingTime').then(el => {
-      expect(checkTrackingTime(el.text())).to.equal(2);
+      setTimeout(() => expect(checkTrackingTime(el.text())).to.equal(2), 3000);
     });
   });
 });

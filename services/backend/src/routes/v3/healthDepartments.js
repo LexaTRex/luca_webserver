@@ -91,7 +91,6 @@ router.get(
     if (!department) {
       return response.send(status.NOT_FOUND);
     }
-
     return response.send({
       departmentId: department.uuid,
       name: department.name,

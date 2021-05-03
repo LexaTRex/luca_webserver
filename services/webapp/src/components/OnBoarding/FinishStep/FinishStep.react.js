@@ -20,7 +20,7 @@ export function FinishStep({ onSubmit = () => {} }) {
     <StyledContainer>
       <StyledContent>
         <StyledLucaLogo src={lucaLogo} />
-        <StyledHeadline>
+        <StyledHeadline data-cy="finishStep">
           {formatMessage({ id: 'OnBoarding.FinishStep.Headline' })}
         </StyledHeadline>
         <StyledInfoText>
@@ -34,7 +34,7 @@ export function FinishStep({ onSubmit = () => {} }) {
         </StyledInfoText>
       </StyledContent>
       <StyledFooter>
-        <StyledSecondaryButton onClick={onSubmit}>
+        <StyledSecondaryButton onClick={onSubmit} data-cy="finishStepSubmit">
           {formatMessage({ id: 'OnBoarding.FinishStep.Submit' })}
         </StyledSecondaryButton>
       </StyledFooter>

@@ -58,6 +58,7 @@ export const Authentication = () => {
       lastName: name.lastName,
       password,
       agreement: true,
+      avvAccepted: true,
       lang: intl.locale,
     };
 

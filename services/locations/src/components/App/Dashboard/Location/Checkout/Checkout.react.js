@@ -3,7 +3,10 @@ import { useQueryClient } from 'react-query';
 import { Form, InputNumber } from 'antd';
 import React, { useCallback, useState } from 'react';
 
-import { DEFAULT_CHECKOUT_RADIUS } from 'constants/checkout';
+import {
+  DEFAULT_CHECKOUT_RADIUS,
+  MAX_CHECKOUT_RADIUS,
+} from 'constants/checkout';
 
 import { updateLocation } from 'network/api';
 import {
@@ -91,13 +94,17 @@ export const Checkout = ({ location }) => {
                 {
                   type: 'number',
                   min: DEFAULT_CHECKOUT_RADIUS,
+                  max: MAX_CHECKOUT_RADIUS,
                   message: intl.formatMessage({
-                    id: 'settings.location.checkout.automatic.min',
+                    id: 'settings.location.checkout.automatic.range',
                   }),
                 },
               ]}
             >
-              <InputNumber min={DEFAULT_CHECKOUT_RADIUS} />
+              <InputNumber
+                min={DEFAULT_CHECKOUT_RADIUS}
+                max={MAX_CHECKOUT_RADIUS}
+              />
             </Form.Item>
           </Form>
         )}

@@ -14,6 +14,7 @@ export const COMPLETE_STEP = 'COMPLETE_STEP';
 export const QR_CODES_STEP = 'QR_CODES_STEP';
 export const PATIENT_STEP = 'PATIENT_STEP';
 export const AREA_SELECTION_STEP = 'AREA_SELECTION_STEP';
+export const IS_INDOOR_STEP = 'IS_INDOOR';
 
 export const getRestaurantGroupPayload = (
   groupName,
@@ -21,7 +22,8 @@ export const getRestaurantGroupPayload = (
   address,
   radius,
   tableCount,
-  groupType
+  groupType,
+  isIndoor
 ) => ({
   type: groupType,
   name: groupName,
@@ -35,6 +37,7 @@ export const getRestaurantGroupPayload = (
   lng: address.lng,
   radius: radius ? parseInt(radius, 10) : 0,
   tableCount: tableCount ? parseInt(tableCount, 10) : null,
+  isIndoor,
 });
 
 export const getNursingHomeGroupPayload = (
@@ -44,7 +47,8 @@ export const getNursingHomeGroupPayload = (
   address,
   radius,
   patientRequired,
-  groupType
+  groupType,
+  isIndoor
 ) => ({
   type: groupType,
   name: groupName,
@@ -66,6 +70,7 @@ export const getNursingHomeGroupPayload = (
         },
       ]
     : [],
+  isIndoor,
 });
 
 export const getBaseGroupPayload = (
@@ -74,7 +79,8 @@ export const getBaseGroupPayload = (
   address,
   radius,
   areas,
-  groupType
+  groupType,
+  isIndoor
 ) => ({
   type: groupType,
   name: groupName,
@@ -88,4 +94,5 @@ export const getBaseGroupPayload = (
   lng: address.lng,
   radius: radius ? parseInt(radius, 10) : 0,
   areas,
+  isIndoor,
 });

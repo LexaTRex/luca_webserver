@@ -6,6 +6,7 @@ import {
   RESTAURANT_TYPE,
   NEW_RESTAURANT_LOCATION,
 } from '../../helpers/locations';
+import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 describe('Create restaurant location', () => {
   beforeEach(() => login());
@@ -23,6 +24,10 @@ describe('Create restaurant location', () => {
       //Enter phone
       cy.get('#phone').type(E2E_PHONE_NUMBER);
       cy.getByCy('nextStep').click();
+      // Select indoor
+      cy.getByCy('indoorSelection').click();
+      cy.getByCy('selectIndoor').click();
+      cy.get('button[type=submit]').click();
       // Select tables
       cy.getByCy('no').click();
       // Select automatic checkout
@@ -43,6 +48,10 @@ describe('Create restaurant location', () => {
       cy.getByCy('yes').click();
       cy.get('#phone').type(E2E_PHONE_NUMBER);
       cy.getByCy('nextStep').click();
+      // Select indoor
+      cy.getByCy('indoorSelection').click();
+      cy.getByCy('selectIndoor').click();
+      cy.get('button[type=submit]').click();
       cy.getByCy('yes').click();
       cy.get('#tableCount').type('10');
       cy.getByCy('nextStep').click();
@@ -64,9 +73,16 @@ describe('Create restaurant location', () => {
       cy.getByCy('yes').click();
       cy.get('#phone').type(E2E_PHONE_NUMBER);
       cy.getByCy('nextStep').click();
+      // Select indoor
+      cy.getByCy('indoorSelection').click();
+      cy.getByCy('selectIndoor').click();
+      cy.get('button[type=submit]').click();
       cy.getByCy('no').click();
       cy.getByCy('yes').click();
-      cy.get('#radius').type(10);
+      // Invalid radius input: empty, under 50 or over 5000
+      checkRadiusInput();
+      // Valid radius input
+      cy.get('#radius').clear().type(100);
       cy.getByCy('nextStep').click();
       cy.getByCy('done').click();
       cy.getByCy('yes').click();

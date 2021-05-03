@@ -2,8 +2,7 @@ import React, { useRef } from 'react';
 import moment from 'moment';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
-import { Form, DatePicker, Button, notification, Popconfirm } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Form, DatePicker, Button, notification } from 'antd';
 
 import { createLocationTransfer } from 'network/api';
 
@@ -79,27 +78,9 @@ export const DataRequestModal = ({ group }) => {
         </Form.Item>
         <Form.Item>
           <ButtonRow>
-            <Popconfirm
-              placement="top"
-              onConfirm={onSubmit}
-              title={intl.formatMessage(
-                {
-                  id: 'modal.dataRequest.confirmation',
-                },
-                { venue: group.name }
-              )}
-              okText={intl.formatMessage({
-                id: 'modal.dataRequest.confirmButton',
-              })}
-              cancelText={intl.formatMessage({
-                id: 'modal.dataRequest.declineButton',
-              })}
-              icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-            >
-              <Button>
-                {intl.formatMessage({ id: 'modal.dataRequest.button' })}
-              </Button>
-            </Popconfirm>
+            <Button onClick={onSubmit}>
+              {intl.formatMessage({ id: 'modal.dataRequest.button' })}
+            </Button>
           </ButtonRow>
         </Form.Item>
       </Form>

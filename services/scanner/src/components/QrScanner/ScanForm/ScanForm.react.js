@@ -3,34 +3,11 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { Tick } from 'react-crude-animated-tick';
 
-import { hexToBase64 } from '@lucaapp/crypto';
+import { getCurrentCount, getTotalCount, getAdditionalData } from 'network/api';
 
-import {
-  getV3BadgeCheckinPayload,
-  getV4BadgeCheckinPayload,
-  getV3AppCheckinPayload,
-  getTraceId,
-  notifyScanError,
-  DECODE_FAILED,
-  TIMESTAMP_OUTDATED,
-  DOUPLICATE_CHECKIN,
-  VERSION_NOT_SUPPORTED,
-  WRONG_LOCAL_TIME,
-} from 'helpers';
+import { handleScanData } from 'helpers';
 
-import {
-  createCheckinV3,
-  getCurrentCount,
-  getTotalCount,
-  getAdditionalData,
-} from 'network/api';
-
-import { decode, STATIC_DEVICE_TYPE } from 'utils/qr';
-
-import { isLocalTimeCorrect } from 'helpers/time';
-import { SCAN_TIMEOUT } from 'constants/timeouts';
 import { useModal } from 'components/hooks/useModal';
-import { MINIMAL_SUPPORT_VERION } from 'constants/versionSupport';
 import { AdditionalDataModal } from 'components/modals/AdditionalDataModal';
 
 import {
@@ -110,83 +87,13 @@ export const ScanForm = ({ scanner }) => {
     if (event) event.preventDefault();
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
-    const qrData = await decode(inputValue);
-
-    const timeCorrect = await isLocalTimeCorrect();
-    if (!timeCorrect) {
-      notifyScanError(WRONG_LOCAL_TIME, intl);
-      return;
-    }
-
-    setInputValue('');
-    if (!qrData) {
-      notifyScanError(DECODE_FAILED, intl, triggerFocus);
-
-      inputReference.current.focus();
-      return;
-    }
-
-    if (qrData.v < MINIMAL_SUPPORT_VERION) {
-      notifyScanError(VERSION_NOT_SUPPORTED, intl, triggerFocus);
-      return;
-    }
-
-    if (qrData.v === 3) {
-      let v3payload;
-      let traceId;
-
-      if (qrData.deviceType === STATIC_DEVICE_TYPE) {
-        // static qr codes
-        traceId = hexToBase64(getTraceId(qrData.tracingSeed));
-        v3payload = getV3BadgeCheckinPayload(qrData, scanner);
-      } else {
-        // App with v3
-        // Check that qr code is not older than 5 minutes
-        const now = Date.now() / 1000;
-        if (Math.abs(now - qrData.timestamp) > 300) {
-          notifyScanError(TIMESTAMP_OUTDATED, intl, triggerFocus);
-          return;
-        }
-
-        traceId = qrData.traceId;
-        v3payload = getV3AppCheckinPayload(scanner, qrData);
-      }
-
-      createCheckinV3(v3payload)
-        .then(response => {
-          if (response.status === 409) {
-            notifyScanError(DOUPLICATE_CHECKIN, intl, triggerFocus);
-            return;
-          }
-          setIsSuccess(true);
-          setInputValue('');
-          setTimeout(() => {
-            setIsSuccess(false);
-          }, SCAN_TIMEOUT);
-          checkForAdditionalData(traceId);
-        })
-        .catch(error => notifyScanError(error, intl, triggerFocus));
-      return;
-    }
-    if (qrData.v === 4 && qrData.deviceType === STATIC_DEVICE_TYPE) {
-      const v4BadgePayload = await getV4BadgeCheckinPayload(qrData, scanner);
-      createCheckinV3(v4BadgePayload)
-        .then(response => {
-          if (response.status === 409) {
-            notifyScanError(DOUPLICATE_CHECKIN, intl, triggerFocus);
-            return;
-          }
-          setIsSuccess(true);
-          setInputValue('');
-          setTimeout(() => {
-            setIsSuccess(false);
-          }, SCAN_TIMEOUT);
-          checkForAdditionalData(v4BadgePayload.traceId);
-        })
-        .catch(error => notifyScanError(error, intl, triggerFocus));
-      return;
-    }
-    notifyScanError(VERSION_NOT_SUPPORTED, intl, triggerFocus);
+    handleScanData({
+      scanData: inputValue,
+      intl,
+      scanner,
+      setIsSuccess,
+      checkForAdditionalData,
+    });
   };
 
   const handleChange = event => {

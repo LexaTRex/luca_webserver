@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node src",
-    "dev": "nodemon src",
+    "dev": "nodemon --inspect=0.0.0.0 src",
     "lint": "eslint src",
     "test": "NODE_ENV=test mocha",
     "coverage": "NODE_ENV=test nyc mocha",

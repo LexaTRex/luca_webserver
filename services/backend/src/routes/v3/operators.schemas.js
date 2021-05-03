@@ -10,6 +10,7 @@ const createSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().refine(value => passwordMeetsCriteria(value)),
   agreement: z.boolean(),
+  avvAccepted: z.literal(true),
   lang: supportedLanguagesEnum,
 });
 

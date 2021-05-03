@@ -2,7 +2,7 @@
 const config = require('config');
 const router = require('express').Router();
 const status = require('http-status');
-const { Op } = require('sequelize');
+const { Op, UniqueConstraintError } = require('sequelize');
 const moment = require('moment');
 const { hexToBase64, base64ToHex } = require('@lucaapp/crypto');
 
@@ -67,16 +67,23 @@ router.post(
       return response.sendStatus(status.CONFLICT);
     }
 
-    await database.Trace.create({
-      traceId: request.body.traceId,
-      locationId: location.uuid,
-      time: [requestTime, location.endsAt],
-      data: request.body.data,
-      iv: request.body.iv,
-      mac: request.body.mac,
-      publicKey: request.body.publicKey,
-      deviceType: request.body.deviceType,
-    });
+    try {
+      await database.Trace.create({
+        traceId: request.body.traceId,
+        locationId: location.uuid,
+        time: [requestTime, location.endsAt],
+        data: request.body.data,
+        iv: request.body.iv,
+        mac: request.body.mac,
+        publicKey: request.body.publicKey,
+        deviceType: request.body.deviceType,
+      });
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        return response.sendStatus(status.CREATED);
+      }
+      throw error;
+    }
 
     return response.sendStatus(status.CREATED);
   }
@@ -93,7 +100,7 @@ router.post(
     );
 
     if (existingData) {
-      return response.sendStatus(status.CONFLICT);
+      return response.sendStatus(status.CREATED);
     }
 
     const existingTrace = await database.Trace.findByPk(request.body.traceId);
@@ -102,13 +109,20 @@ router.post(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    await database.TraceData.create({
-      traceId: request.body.traceId,
-      data: request.body.data,
-      iv: request.body.iv,
-      mac: request.body.mac,
-      publicKey: request.body.publicKey,
-    });
+    try {
+      await database.TraceData.create({
+        traceId: request.body.traceId,
+        data: request.body.data,
+        iv: request.body.iv,
+        mac: request.body.mac,
+        publicKey: request.body.publicKey,
+      });
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        return response.sendStatus(status.CREATED);
+      }
+      throw error;
+    }
 
     return response.sendStatus(status.CREATED);
   }

@@ -1,24 +1,26 @@
-version: "3.3"
+version: '3.3'
 services:
   elb:
     image: lucaapp/elb:${IMAGE_TAG}
     build:
-      context: "services/elb"
+      context: 'services/elb'
     ports:
       - 80:8080
       - 443:8443
   backend:
     image: lucaapp/backend:${IMAGE_TAG}
     build:
-      context: "services/backend"
+      context: 'services/backend'
       args:
         - NPM_CONFIG__AUTH
         - GIT_VERSION
         - GIT_COMMIT
+    environment:
+      - SKIP_SMS_VERIFICATION
   locations:
     image: lucaapp/locations:${IMAGE_TAG}
     build:
-      context: "services/locations"
+      context: 'services/locations'
       args:
         - NPM_CONFIG__AUTH
         - REACT_APP_GOOGLE_MAPS_API_KEY
@@ -27,7 +29,7 @@ services:
   health-department:
     image: lucaapp/health-department:${IMAGE_TAG}
     build:
-      context: "services/health-department"
+      context: 'services/health-department'
       args:
         - NPM_CONFIG__AUTH
         - GIT_VERSION
@@ -35,7 +37,7 @@ services:
   contact-form:
     image: lucaapp/contact-form:${IMAGE_TAG}
     build:
-      context: "services/contact-form"
+      context: 'services/contact-form'
       args:
         - NPM_CONFIG__AUTH
         - GIT_VERSION
@@ -43,7 +45,7 @@ services:
   webapp:
     image: lucaapp/webapp:${IMAGE_TAG}
     build:
-      context: "services/webapp"
+      context: 'services/webapp'
       args:
         - NPM_CONFIG__AUTH
         - GIT_VERSION
@@ -51,7 +53,7 @@ services:
   scanner:
     image: lucaapp/scanner:${IMAGE_TAG}
     build:
-      context: "services/scanner"
+      context: 'services/scanner'
       args:
         - NPM_CONFIG__AUTH
         - GIT_VERSION
@@ -59,12 +61,12 @@ services:
   maintenance:
     image: lucaapp/maintenance:latest
     build:
-      context: "services/maintenance"
+      context: 'services/maintenance'
   database:
     image: postgres:11.9-alpine
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       PGDATA: /data/postgres
       POSTGRES_DB: luca-backend
@@ -74,8 +76,8 @@ services:
       - ./local-data/postgres:/data/postgres
   redis:
     image: redis:6.0.9-alpine3.12
-    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    command: ['redis-server', '/usr/local/etc/redis/redis.conf']
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - ./services/redis/redis.conf:/usr/local/etc/redis/redis.conf

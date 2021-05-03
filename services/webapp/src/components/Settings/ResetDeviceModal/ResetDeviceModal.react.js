@@ -22,10 +22,10 @@ export function ResetDeviceModal({ onClose }) {
   return (
     <StyledModalContainer>
       <StyledContainer>
+        <StyledHeadline>
+          {formatMessage({ id: 'Data.DeleteAccount.Title' })}
+        </StyledHeadline>
         <StyledContent>
-          <StyledHeadline>
-            {formatMessage({ id: 'Data.DeleteAccount.Title' })}
-          </StyledHeadline>
           <StyledInfoText>
             {formatMessage({ id: 'Data.DeleteAccount.Description' })}
           </StyledInfoText>

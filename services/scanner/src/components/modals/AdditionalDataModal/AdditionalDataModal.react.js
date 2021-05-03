@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form, Input, InputNumber, notification, Select } from 'antd';
+import { Button, Form, Input, InputNumber, notification } from 'antd';
 
 import { addCheckinData } from 'network/api';
 import {
@@ -12,8 +12,6 @@ import {
 } from '@lucaapp/crypto';
 
 import { Wrapper, ButtonRow, Info } from './AdditionalDataModal.styled';
-
-const { Option } = Select;
 
 export const AdditionalDataModal = ({
   scanner,
@@ -67,14 +65,6 @@ export const AdditionalDataModal = ({
             label={intl.formatMessage({
               id: 'modal.additionalData.table',
             })}
-            rules={[
-              {
-                required: true,
-                message: intl.formatMessage({
-                  id: 'additionalData.isRequired',
-                }),
-              },
-            ]}
           >
             <InputNumber min={1} max={scanner.tableCount} autoFocus />
           </Form.Item>
@@ -82,30 +72,8 @@ export const AdditionalDataModal = ({
         {additionalData.map(
           (entry, index) =>
             entry.isRequired && (
-              <Form.Item
-                key={entry.uuid}
-                name={entry.key}
-                label={entry.key}
-                rules={[
-                  {
-                    required: true,
-                    message: intl.formatMessage({
-                      id: 'additionalData.isRequired',
-                    }),
-                  },
-                ]}
-              >
-                {entry.label ? (
-                  <Select>
-                    {entry.label.split(',').map(option => (
-                      <Option key={option} value={option}>
-                        {option}
-                      </Option>
-                    ))}
-                  </Select>
-                ) : (
-                  <Input autoFocus={index === 0 && !scanner.tableCount} />
-                )}
+              <Form.Item key={entry.uuid} name={entry.key} label={entry.key}>
+                <Input autoFocus={index === 0 && !scanner.tableCount} />
               </Form.Item>
             )
         )}

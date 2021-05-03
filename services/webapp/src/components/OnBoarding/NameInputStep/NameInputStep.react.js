@@ -15,7 +15,7 @@ export function NameInputStep({ onSubmit }) {
 
   return (
     <StyledForm onFinish={onSubmit}>
-      <StyledContent>
+      <StyledContent data-cy="nameInput">
         <StyledHeadline>
           {formatMessage({ id: 'OnBoarding.NameInputStep.Headline' })}
         </StyledHeadline>
@@ -43,7 +43,7 @@ export function NameInputStep({ onSubmit }) {
         />
       </StyledContent>
       <StyledFooter>
-        <StyledSecondaryButton htmlType="submit">
+        <StyledSecondaryButton htmlType="submit" data-cy="nameInputSubmit">
           {formatMessage({ id: 'Form.Next' })}
         </StyledSecondaryButton>
       </StyledFooter>

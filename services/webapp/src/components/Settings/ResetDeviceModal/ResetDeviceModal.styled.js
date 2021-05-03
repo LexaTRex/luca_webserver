@@ -19,9 +19,9 @@ export const StyledContainer = styled.div`
   right: 16px;
   height: 75vh;
   margin: auto;
+  padding: 16px;
   display: flex;
   z-index: 10000;
-  padding: 16px 32px;
   border-radius: 7px;
   position: absolute;
   flex-direction: column;
@@ -30,6 +30,8 @@ export const StyledContainer = styled.div`
 export const StyledContent = styled.div`
   flex: 1;
   display: flex;
+  overflow-x: hidden;
+  overflow-y: scroll;
   flex-direction: column;
 `;
 export const StyledHeadline = styled(Headline)`
@@ -37,7 +39,7 @@ export const StyledHeadline = styled(Headline)`
 `;
 export const StyledInfoText = styled(Text)`
   font-size: 18px;
-  white-space: pre;
+  white-space: break-spaces;
 `;
 export const StyledCancelButton = styled(SecondaryButton)`
   margin-top: 8px;

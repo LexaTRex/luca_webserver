@@ -40,6 +40,8 @@ versions).
 In order for the backend to run the backend also needs the redis and database to
 be up and running.
 
+When running in Docker, the debug port 9229 is exposed by default. You can attach any remote Node.js debugger by pointing it to `localhost:9229`.
+
 Note we recommend to start the whole luca web system (backend included) as
 stated in [general setup](../../README.md).
 

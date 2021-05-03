@@ -9,6 +9,7 @@ import { BASE_GROUP_ROUTE, BASE_LOCATION_ROUTE } from 'constants/routes';
 import { createGroup as createGroupRequest } from 'network/api';
 import { useModal } from 'components/hooks/useModal';
 
+import { AutomaticCheckout } from '../generalOnboarding/AutomaticCheckout';
 import { TableInput } from '../generalOnboarding/TableInput';
 import {
   RESTAURANT_TYPE,
@@ -29,6 +30,7 @@ import {
   getNursingHomeGroupPayload,
   getRestaurantGroupPayload,
   getBaseGroupPayload,
+  IS_INDOOR_STEP,
 } from './CreateGroupModal.helper';
 
 import { SelectGroupType } from './steps/SelectGroupType';
@@ -37,9 +39,9 @@ import { AddressInput } from './steps/AddressInput';
 import { PhoneInput } from './steps/PhoneInput';
 import { PatientInput } from './steps/PatientInput';
 import { AreaSelection } from './steps/AreaSelection';
-import { AutomaticCheckout } from './steps/AutomaticCheckout';
 import { Complete } from './steps/Complete';
 import { QRDownload } from './steps/QRDownload';
+import { IndoorInput } from '../generalOnboarding/IndoorInput';
 
 export const CreateGroupModal = () => {
   const intl = useIntl();
@@ -51,6 +53,7 @@ export const CreateGroupModal = () => {
   const [groupName, setGroupName] = useState(null);
   const [address, setAddress] = useState(null);
   const [phone, setPhone] = useState(null);
+  const [isIndoor, setIsIndoor] = useState(true);
   const [tableCount, setTableCount] = useState(null);
   const [patientRequired, setPatientRequired] = useState(null);
   const [areas, setAreas] = useState([]);
@@ -93,7 +96,8 @@ export const CreateGroupModal = () => {
       address,
       radius,
       areas,
-      groupType
+      groupType,
+      isIndoor
     );
 
     createGroupRequest(createBaseGroupPayload)
@@ -113,7 +117,8 @@ export const CreateGroupModal = () => {
       address,
       radius,
       patientRequired,
-      groupType
+      groupType,
+      isIndoor
     );
 
     createGroupRequest(createNursingHomeGroupPayload)
@@ -132,7 +137,8 @@ export const CreateGroupModal = () => {
       address,
       radius,
       tableCount,
-      groupType
+      groupType,
+      isIndoor
     );
     createGroupRequest(createRestaurantGroupPayload)
       .then(response => {
@@ -221,6 +227,17 @@ export const CreateGroupModal = () => {
   ];
 
   const restaurantSteps = [
+    {
+      id: IS_INDOOR_STEP,
+      content: (
+        <IndoorInput
+          isIndoor={isIndoor}
+          setIsIndoor={setIsIndoor}
+          next={nextStep}
+          back={previousStep}
+        />
+      ),
+    },
     {
       id: TABLE_INPUT_STEP,
       content: (

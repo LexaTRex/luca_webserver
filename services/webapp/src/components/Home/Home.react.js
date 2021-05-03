@@ -155,7 +155,7 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
         }
       >
         <AppContent>
-          <StyledQRCodeInfoContainer>
+          <StyledQRCodeInfoContainer data-cy="QRCodeInfo">
             <StyledQRCodeInfo>
               {intl.formatMessage({ id: 'Home.QRCodeInfo' })}
             </StyledQRCodeInfo>

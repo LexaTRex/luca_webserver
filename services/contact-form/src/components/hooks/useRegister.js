@@ -92,13 +92,7 @@ export const useRegister = (
           additionalData
         );
 
-        addCheckinData(additionalDataPayload).catch(() => {
-          notification.error({
-            message: intl.formatMessage({
-              id: 'notification.checkIn.error',
-            }),
-          });
-        });
+        addCheckinData(additionalDataPayload);
       }
     } catch {
       notification.error({

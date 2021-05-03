@@ -19,10 +19,14 @@ export const AddArea = styled.div`
   cursor: pointer;
   display: flex;
 `;
-export const InputContainer = styled.div`
+export const FormItemWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+`;
+export const InputContainer = styled.div`
+  width: ${({ width }) => width};
+  margin-right: ${({ marginRight }) => marginRight || ''};
 `;
 export const TrashIcon = styled.img`
   width: 20px;

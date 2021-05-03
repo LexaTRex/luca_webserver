@@ -21,7 +21,7 @@ module.exports = {
       fields: ['ipEnd'],
     });
   },
-  down: queryInterface => {
+  down: async queryInterface => {
     return queryInterface.dropTable('IPAddressDenyList');
   },
 };

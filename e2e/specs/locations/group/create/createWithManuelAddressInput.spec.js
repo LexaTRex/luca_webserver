@@ -25,8 +25,6 @@ describe('Group creation with manuell input', () => {
     cy.get('button[type=submit]').click();
     // Select manuell search
     cy.getByCy('manuellSearch').click();
-    // Wait for expand
-    cy.wait(1000);
     // Expect fields to be not disabled
     cy.get('#streetName').should('exist');
     cy.get('#streetNr').should('exist');
@@ -49,7 +47,9 @@ describe('Group creation with manuell input', () => {
     cy.get('button[type=submit]').click();
     // Select more areas
     cy.getByCy('yes').click();
-    cy.get('input').type(BASE_AREA);
+    cy.getByCy('areaNameInput').type(BASE_AREA);
+    cy.getByCy('indoorSelection').click();
+    cy.getByCy('selectIndoor').click();
     // Proceed
     cy.get('button[type=submit]').click();
     // Create group

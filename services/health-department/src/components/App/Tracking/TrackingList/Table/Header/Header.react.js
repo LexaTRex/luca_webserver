@@ -10,17 +10,20 @@ export const Header = () => {
 
   return (
     <TableHeader>
-      <Column flex="10%">
+      <Column flex="15%">
         {intl.formatMessage({ id: 'processTable.description' })}
       </Column>
-      <Column flex="20%">
+      <Column flex="25%">
         {intl.formatMessage({ id: 'processTable.name' })}
+      </Column>
+      <Column flex="15%">
+        {intl.formatMessage({ id: 'processTable.createdAt' })}
       </Column>
       <Column flex="10%">
         {intl.formatMessage({ id: 'processTable.status' })}
       </Column>
-      <Column flex="10%" />
-      <Column flex="10%" />
+      <Column flex="15%" />
+      <Column flex="20%" />
     </TableHeader>
   );
 };

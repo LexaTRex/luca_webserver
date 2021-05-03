@@ -18,6 +18,8 @@ export const de = {
   'contactDataForm.pleaseEnter': 'Bitte gib {fieldName} an!',
   'contactDataForm.isRequired':
     'Diese Daten musst du für deine Anmeldung angeben!',
+  'contactDataForm.additionalData.divider':
+    'Die nachfolgenden Felder wurden vom Betreiber angelegt',
   'error.agreement': 'Bitte akzeptiere die Datenschutzbestimmungen!',
   'contactDataForm.button': 'Speichern',
 

@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
+import { Spin } from 'antd';
 
 // Utils
 import { sortTraces } from 'utils/sort';
@@ -18,6 +19,7 @@ import {
   Date,
   Guest,
   Count,
+  Loading,
 } from './GuestListModal.styled';
 
 export const GuestListModal = ({ location }) => {
@@ -28,7 +30,13 @@ export const GuestListModal = ({ location }) => {
     () => getTraces(location.accessId).then(response => response.json())
   );
 
-  if (isLoading || error) return null;
+  if (isLoading)
+    return (
+      <Loading>
+        <Spin size="large" tip={intl.formatMessage({ id: 'loading' })} />
+      </Loading>
+    );
+  if (error) return null;
 
   return (
     <Wrapper>

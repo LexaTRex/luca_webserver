@@ -31,9 +31,12 @@ export const setNewPassword = (password, confirmPassword) => {
   cy.get('button[type=submit]').click();
 };
 
-export const setLegals = terms => {
+export const setLegals = (terms, avv) => {
   if (terms) {
     cy.get('#termsAndConditions').click();
+  }
+  if (avv) {
+    cy.get('#avv').click();
   }
   cy.get('button[type=submit]').click();
 };

@@ -11,12 +11,48 @@ import {
   int32ToHex,
   KDF_SHA256,
 } from '@lucaapp/crypto';
+import { pick } from 'lodash';
+
 import { getEncryptedUserContactData } from 'network/api';
 import {
   DECRYPT_DLIES_USING_HDEKP,
   getBadgePrivateKey,
   getDailyPrivateKey,
 } from './cryptoKeyOperations';
+import {
+  assertStringOrNumericValues,
+  escapeProblematicCharacters,
+} from './typeAssertions';
+
+const staticDeviceDataPropertyNames = [
+  'fn',
+  'ln',
+  'pn',
+  'e',
+  'st',
+  'hn',
+  'pc',
+  'c',
+  'vs',
+  'v',
+];
+const dynamicDevicePropertyNames = [
+  'fn',
+  'ln',
+  'pn',
+  'e',
+  'st',
+  'hn',
+  'pc',
+  'c',
+  'v',
+];
+
+function filterTraceData(userData, allowedProperties) {
+  const picked = escapeProblematicCharacters(pick(userData, allowedProperties));
+  assertStringOrNumericValues(picked);
+  return picked;
+}
 
 export async function decryptStaticDeviceTrace(encryptedTrace) {
   const privateKey = await getBadgePrivateKey(encryptedTrace.keyId);
@@ -50,7 +86,8 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
       )
     )
   );
-  const userData = JSON.parse(decryptedUser);
+  const parsed = JSON.parse(decryptedUser);
+  const userData = filterTraceData(parsed, staticDeviceDataPropertyNames);
 
   const expectedMac = HMAC_SHA256(
     int32ToHex(encryptedTrace.checkin) + base64ToHex(encryptedTrace.data),
@@ -121,7 +158,8 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
   }
 
   try {
-    userData = JSON.parse(decryptedUser);
+    const parsed = JSON.parse(decryptedUser);
+    userData = filterTraceData(parsed, dynamicDevicePropertyNames);
   } catch (error) {
     console.error(`invalid json (TraceId: ${encryptedTrace.traceId})`, error);
     userData = null;
@@ -153,7 +191,9 @@ export function decryptAdditionalData(encryptedTrace, isInvalid) {
   }
 
   try {
-    return JSON.parse(decryptedAdditionalData);
+    const parsed = JSON.parse(decryptedAdditionalData);
+    assertStringOrNumericValues(parsed);
+    return escapeProblematicCharacters(parsed);
   } catch (error) {
     console.error(
       `invalid json (additionalData) (TraceId: ${encryptedTrace.traceId})`,

@@ -18,7 +18,7 @@ export function PrivacyInformationStep({ onSubmit = () => {} }) {
 
   return (
     <StyledContainer>
-      <StyledContent>
+      <StyledContent data-cy="dataContent">
         <StyledLucaLogo src={lucaLogo} />
         <StyledHeadline>
           {formatMessage({ id: 'OnBoarding.DataInformationStep.Headline' })}
@@ -32,7 +32,7 @@ export function PrivacyInformationStep({ onSubmit = () => {} }) {
         </StyledInfoText>
       </StyledContent>
       <StyledFooter>
-        <StyledSecondaryButton onClick={onSubmit}>
+        <StyledSecondaryButton data-cy="dataSubmit" onClick={onSubmit}>
           {formatMessage({ id: 'OnBoarding.DataInformationStep.Submit' })}
         </StyledSecondaryButton>
       </StyledFooter>

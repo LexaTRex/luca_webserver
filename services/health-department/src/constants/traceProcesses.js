@@ -1,0 +1,7 @@
+export const TRACE_PROCESSES_STATUS_TYPES = {
+  NONE: 0,
+  PARTIAL: 1,
+  ALL: 2,
+  REQUESTED: 3,
+  REQUEST_PARTIAL: 4,
+};

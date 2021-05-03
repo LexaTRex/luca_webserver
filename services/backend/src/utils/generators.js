@@ -1,38 +1,14 @@
-const faker = require('faker');
+const crypto = require('crypto');
 
-const UNAMBIGIOUS_CHARSET = [
-  'A',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'P',
-  'Q',
-  'R',
-  'T',
-  'U',
-  'V',
-  'W',
-  'X',
-  'Y',
-  '3',
-  '4',
-  '6',
-  '7',
-  '9',
-];
+const UNAMBIGIOUS_CHARSET = 'ACDEFGHJKLMNPQRTUVWXY34679'.split('');
+const PASSWORD_CHARSET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}?><'.split(
+  ''
+);
 
 const generateTAN = () => {
   const tan = [];
   for (let count = 0; count < 11; count += 1) {
-    tan.push(faker.random.arrayElement(UNAMBIGIOUS_CHARSET));
+    tan.push(UNAMBIGIOUS_CHARSET[crypto.randomInt(UNAMBIGIOUS_CHARSET.length)]);
   }
   tan.push('1');
   return tan.join('');
@@ -41,12 +17,23 @@ const generateTAN = () => {
 const generateSupportCode = () => {
   const supportCode = [];
   for (let count = 0; count < 12; count += 1) {
-    supportCode.push(faker.random.arrayElement(UNAMBIGIOUS_CHARSET));
+    supportCode.push(
+      UNAMBIGIOUS_CHARSET[crypto.randomInt(UNAMBIGIOUS_CHARSET.length)]
+    );
   }
   return supportCode.join('');
+};
+
+const generatePassword = () => {
+  const password = [];
+  for (let count = 0; count < 12; count += 1) {
+    password.push(PASSWORD_CHARSET[crypto.randomInt(PASSWORD_CHARSET.length)]);
+  }
+  return password.join('');
 };
 
 module.exports = {
   generateTAN,
   generateSupportCode,
+  generatePassword,
 };

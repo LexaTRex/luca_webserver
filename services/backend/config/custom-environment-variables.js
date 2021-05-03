@@ -3,6 +3,7 @@ module.exports = {
   hostname: 'LUCA_HOSTNAME',
   loglevel: 'LOGLEVEL',
   debug: 'DEBUG',
+  skipSmsVerification: 'SKIP_SMS_VERIFICATION',
   cookies: {
     secret: 'COOKIES_SECRET',
   },

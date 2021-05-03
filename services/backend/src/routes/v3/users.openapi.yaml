@@ -64,6 +64,26 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdatableUser'
+    delete:
+      tags:
+        - Users
+      summary: mark the user object for deletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signature:
+                  type: string
+      responses:
+        '204':
+          description: Success
+        '403':
+          description: Invalid Signature
+        '404':
+          description: User not found
   /users:
     post:
       summary: Create or update user

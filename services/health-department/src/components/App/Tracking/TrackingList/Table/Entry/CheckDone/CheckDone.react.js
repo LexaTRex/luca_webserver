@@ -1,44 +1,14 @@
-import React, { useMemo } from 'react';
-import { useQuery } from 'react-query';
-import { useIntl } from 'react-intl';
+import React from 'react';
 import { Badge } from 'antd';
+import { useIntl } from 'react-intl';
 
-import { getLocationTransfers } from 'network/api';
+import { TRACE_PROCESSES_STATUS_TYPES } from 'constants/traceProcesses';
 
-const TYPES = {
-  NONE: 0,
-  PARTIAL: 1,
-  ALL: 2,
-};
-
-export const CheckDone = ({ processId }) => {
+export const CheckDone = ({ status }) => {
   const intl = useIntl();
-  const {
-    isLoading,
-    error,
-    data: locations,
-  } = useQuery(`locationTransfer${processId}`, () =>
-    getLocationTransfers(processId)
-  );
 
-  const completedLocations = useMemo(() => {
-    if (isLoading) return null;
-
-    const numberOfCompletedLocations = locations.filter(
-      location => location.isCompleted
-    ).length;
-
-    if (numberOfCompletedLocations === 0) return TYPES.NONE;
-
-    return numberOfCompletedLocations === locations.length
-      ? TYPES.ALL
-      : TYPES.PARTIAL;
-  }, [locations, isLoading]);
-
-  if (isLoading || error) return null;
-
-  switch (completedLocations) {
-    case TYPES.NONE: {
+  switch (status) {
+    case TRACE_PROCESSES_STATUS_TYPES.NONE: {
       return (
         <Badge
           color="red"
@@ -46,7 +16,7 @@ export const CheckDone = ({ processId }) => {
         />
       );
     }
-    case TYPES.PARTIAL: {
+    case TRACE_PROCESSES_STATUS_TYPES.PARTIAL: {
       return (
         <Badge
           color="#ff9739"
@@ -54,11 +24,27 @@ export const CheckDone = ({ processId }) => {
         />
       );
     }
-    case TYPES.ALL: {
+    case TRACE_PROCESSES_STATUS_TYPES.ALL: {
       return (
         <Badge
           color="#d3dec3"
           text={intl.formatMessage({ id: 'processTable.done' })}
+        />
+      );
+    }
+    case TRACE_PROCESSES_STATUS_TYPES.REQUESTED: {
+      return (
+        <Badge
+          color="#dec3d5"
+          text={intl.formatMessage({ id: 'processTable.requested' })}
+        />
+      );
+    }
+    case TRACE_PROCESSES_STATUS_TYPES.REQUEST_PARTIAL: {
+      return (
+        <Badge
+          color="#c4c3de"
+          text={intl.formatMessage({ id: 'processTable.partlyRequested' })}
         />
       );
     }

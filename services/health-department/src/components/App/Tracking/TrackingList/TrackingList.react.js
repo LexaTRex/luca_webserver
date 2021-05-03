@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 
-import { INCOMPLETED } from 'constants/filter';
+import {
+  ALL_PROCESS_TYPES,
+  ALL_PROCESS_STATUS,
+  INCOMPLETED_PROCESSES_STATE,
+} from 'constants/filter';
 
 // Components
-import { TrackingListWrapper } from './TrackingList.styled';
-import { Filter } from './Filter';
 import { Table } from './Table';
+import { ListFilters } from './ListFilters';
+import { TrackingListWrapper } from './TrackingList.styled';
 
 export const TrackingList = () => {
-  const [filtering, setFiltering] = useState(INCOMPLETED);
+  const [filters, setFilters] = useState({
+    type: ALL_PROCESS_TYPES,
+    status: [ALL_PROCESS_STATUS],
+    state: INCOMPLETED_PROCESSES_STATE,
+  });
 
   return (
     <TrackingListWrapper>
-      <Filter changeFilter={setFiltering} />
-      <Table filtering={filtering} />
+      <ListFilters filters={filters} onChange={setFilters} />
+      <Table filters={filters} />
     </TrackingListWrapper>
   );
 };

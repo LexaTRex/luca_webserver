@@ -18,7 +18,7 @@ export function LocationInputStep({ onSubmit }) {
 
   return (
     <StyledForm onFinish={onSubmit}>
-      <StyledContent>
+      <StyledContent data-cy="locationInput">
         <StyledHeadline>
           {formatMessage({ id: 'OnBoarding.LocationInputStep.Headline' })}
         </StyledHeadline>
@@ -52,7 +52,7 @@ export function LocationInputStep({ onSubmit }) {
         />
       </StyledContent>
       <StyledFooter>
-        <StyledSecondaryButton htmlType="submit">
+        <StyledSecondaryButton htmlType="submit" data-cy="locationInputSubmit">
           {formatMessage({ id: 'Form.Next' })}
         </StyledSecondaryButton>
       </StyledFooter>

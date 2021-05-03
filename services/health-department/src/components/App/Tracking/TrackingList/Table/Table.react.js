@@ -1,20 +1,21 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { getProcesses } from 'network/api';
 
-import { COMPLETED, INCOMPLETED } from 'constants/filter';
 import { TIME_DOWN } from 'constants/sorting';
 
-import { sort } from './Table.helper';
-// Components
-import { TableWrapper, RowWrapper } from './Table.styled';
-import { EmptyProcesses } from './EmptyProcesses';
-import { Header } from './Header';
-import { Entry } from './Entry';
+import { useFilters } from './useFilters';
 
-export const Table = ({ filtering }) => {
+// Components
+import { Entry } from './Entry';
+import { Header } from './Header';
+import { EmptyProcesses } from './EmptyProcesses';
+import { TableWrapper, RowWrapper } from './Table.styled';
+
+export const Table = ({ filters }) => {
   const [sorting] = useState(TIME_DOWN);
+  const filter = useFilters(filters, sorting);
   const { isLoading, error, data: processes, refetch } = useQuery(
     'processes',
     () => getProcesses().then(response => response.json()),
@@ -22,25 +23,6 @@ export const Table = ({ filtering }) => {
       cacheTime: 0,
     }
   );
-
-  const filter = useCallback(
-    processesToFilter => {
-      switch (filtering) {
-        case COMPLETED:
-          return sort(processesToFilter, sorting).filter(
-            process => process.isCompleted
-          );
-        case INCOMPLETED:
-          return sort(processesToFilter, sorting).filter(
-            process => !process.isCompleted
-          );
-        default:
-          return sort(processesToFilter, sorting);
-      }
-    },
-    [filtering, sorting]
-  );
-
   if (isLoading || error) return null;
 
   return (

@@ -154,11 +154,14 @@ export const contactLocation = transferId => {
 };
 
 // SEARCH
-export const findGroups = group => {
-  return fetch(`${API_PATH}/v3/locationGroups/search/?name=${group}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+export const findGroups = searchParameters => {
+  return fetch(
+    `${API_PATH}/v3/locationGroups/search/?name=${searchParameters.group}&&limit=${searchParameters.limit}`,
+    {
+      method: 'GET',
+      headers,
+    }
+  ).then(response => response.json());
 };
 
 export const createLocationTransfer = data => {
@@ -183,6 +186,17 @@ export const deleteEmployee = employeeId => {
     method: 'DELETE',
     headers,
   });
+};
+
+export const updateEmployee = parameters => {
+  return fetch(
+    `${API_PATH}/v3/healthDepartmentEmployees/${parameters.employeeId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(parameters.data),
+      headers,
+    }
+  );
 };
 
 export const createEmployee = data => {

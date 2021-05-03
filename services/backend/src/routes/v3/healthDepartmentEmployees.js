@@ -2,16 +2,23 @@ const router = require('express').Router();
 const status = require('http-status');
 const { Op } = require('sequelize');
 const crypto = require('crypto');
-const faker = require('faker');
+const { generatePassword } = require('../../utils/generators');
 
 const database = require('../../database');
-const { validateSchema } = require('../../middlewares/validateSchema');
+const {
+  validateSchema,
+  validateParametersSchema,
+} = require('../../middlewares/validateSchema');
 const {
   requireHealthDepartmentAdmin,
 } = require('../../middlewares/requireUser');
 const passwordRouter = require('./healthDepartmentEmployees/password');
 
-const { createSchema } = require('./healthDepartmentEmployees.schemas');
+const {
+  createSchema,
+  updateSchema,
+  employeeIdParametersSchema,
+} = require('./healthDepartmentEmployees.schemas');
 
 // HD get all employees
 router.get('/', requireHealthDepartmentAdmin, async (request, response) => {
@@ -33,6 +40,7 @@ router.get('/', requireHealthDepartmentAdmin, async (request, response) => {
       phone: employee.phone,
       firstName: employee.firstName,
       lastName: employee.lastName,
+      isAdmin: employee.isAdmin,
     }))
   );
 });
@@ -41,6 +49,7 @@ router.get('/', requireHealthDepartmentAdmin, async (request, response) => {
 router.delete(
   '/:employeeId',
   requireHealthDepartmentAdmin,
+  validateParametersSchema(employeeIdParametersSchema),
   async (request, response) => {
     const employee = await database.HealthDepartmentEmployee.findOne({
       where: {
@@ -54,6 +63,29 @@ router.delete(
     }
 
     await employee.destroy({ force: true });
+    return response.sendStatus(status.NO_CONTENT);
+  }
+);
+
+// update employees
+router.patch(
+  '/:employeeId',
+  requireHealthDepartmentAdmin,
+  validateSchema(updateSchema),
+  validateParametersSchema(employeeIdParametersSchema),
+  async (request, response) => {
+    const employee = await database.HealthDepartmentEmployee.findOne({
+      where: {
+        uuid: request.params.employeeId,
+        departmentId: request.user.departmentId,
+      },
+    });
+
+    if (!employee) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    await employee.update({ isAdmin: request.body.isAdmin });
     return response.sendStatus(status.NO_CONTENT);
   }
 );
@@ -74,7 +106,7 @@ router.post(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const initialPassword = faker.internet.password(8);
+    const initialPassword = generatePassword(8);
 
     await database.HealthDepartmentEmployee.create({
       email: request.body.email.toLowerCase(),

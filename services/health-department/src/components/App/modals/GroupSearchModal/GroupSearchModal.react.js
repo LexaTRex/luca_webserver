@@ -5,6 +5,9 @@ import { Button, Form, Input } from 'antd';
 // API
 import { findGroups } from 'network/api';
 
+// Constants
+import { DEFAULT_SEARCH_LIMIT } from 'constants/search';
+
 // Components
 import { DataRequestModal } from 'components/App/modals/GroupSearchModal/DataRequestModal';
 import { EmptySearch } from './EmptySearch';
@@ -23,9 +26,11 @@ export const GroupSearchModal = () => {
   const [requestData, setRequestData] = useState();
 
   const onFinish = values =>
-    findGroups(values.groupName).then(response => {
-      setResults(response);
-    });
+    findGroups({ group: values.groupName, limit: DEFAULT_SEARCH_LIMIT }).then(
+      response => {
+        setResults(response);
+      }
+    );
 
   return requestData ? (
     <DataRequestModal group={requestData} />

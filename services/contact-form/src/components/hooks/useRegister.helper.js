@@ -18,7 +18,7 @@ import {
 
 export const getUserIdPayload = (values, userDataSecret, userKeyPair) => {
   const creationData = {
-    v: '3',
+    v: 3,
     fn: values.firstName,
     ln: values.lastName,
     pn: values.phone,
@@ -111,7 +111,7 @@ export const getAdditionalDataPayload = (scanner, traceId, additionalData) => {
   const payload = bytesToHex(encodeUtf8(JSON.stringify(additionalData)));
 
   const { data, iv, mac, publicKey } = ENCRYPT_DLIES(
-    scanner.publicKey,
+    base64ToHex(scanner.publicKey),
     payload
   );
 

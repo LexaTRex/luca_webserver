@@ -20,6 +20,7 @@ import {
   AUTHENTICATION_ROUTE,
   SHARE_DATA_ROUTE,
   LICENSES_ROUTE,
+  SHARE_ALL_DATA_ROUTE,
   GROUP_SHARE_DATA_ROUTE,
 } from 'constants/routes';
 
@@ -94,6 +95,7 @@ export const Main = () => {
                     path={GROUP_SHARE_DATA_ROUTE}
                     component={GroupShareData}
                   />
+                  <Route path={SHARE_ALL_DATA_ROUTE} component={ShareData} />
                   <Route path={SHARE_DATA_ROUTE} component={ShareData} />
                   <Route path={ACTIVATION_ROUTE} component={Activation} />
                   <Route

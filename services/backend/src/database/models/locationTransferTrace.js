@@ -56,6 +56,11 @@ module.exports = (Sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     });
+
+    LocationTransferTrace.hasOne(models.Trace, {
+      sourceKey: 'traceId',
+      foreignKey: 'traceId',
+    });
   };
 
   return LocationTransferTrace;

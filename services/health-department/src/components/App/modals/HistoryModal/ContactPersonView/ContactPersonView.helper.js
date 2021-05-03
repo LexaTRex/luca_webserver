@@ -5,7 +5,41 @@ import { useIntl } from 'react-intl';
 import ReactExport from 'react-data-export';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 
+const {
+  ExcelFile,
+  ExcelFile: { ExcelSheet, ExcelColumn },
+} = ReactExport;
+
 const TABLE_KEY = 'table';
+const MINUTE_SECONDS = 60;
+
+export const filterForTimeOverlap = (
+  decryptedTraces,
+  minTimeOverlap,
+  indexPersonData
+) => {
+  if (minTimeOverlap < 0) return decryptedTraces;
+  const filteredDecryptedTraces = [];
+  const indexPerson = decryptedTraces.find(
+    trace => trace.userData.pn === indexPersonData.pn
+  );
+  if (!indexPerson) return decryptedTraces;
+  decryptedTraces.forEach(compareTrace => {
+    const stayTime = indexPerson.checkout - compareTrace.checkin;
+    const timeOverlapSeconds = minTimeOverlap * MINUTE_SECONDS;
+    if (
+      indexPerson.traceId !== compareTrace.traceId &&
+      indexPerson.checkin <= (compareTrace.checkout || indexPerson.checkout) &&
+      indexPerson.checkout >= compareTrace.checkin &&
+      stayTime >= timeOverlapSeconds
+    ) {
+      filteredDecryptedTraces.push(compareTrace);
+    }
+  });
+
+  filteredDecryptedTraces.push(indexPerson);
+  return filteredDecryptedTraces;
+};
 
 export const formatAdditionalDataKey = (key, intl) =>
   key === TABLE_KEY
@@ -32,8 +66,8 @@ const getExcelDownloadDataFromTraces = (traces, intl) =>
     postalCode: userData ? userData.pc : '',
     checkinDate: checkin ? getFormattedDate(checkin) : '',
     checkinTime: checkin ? getFormattedTime(checkin) : '',
-    checkoutTime: checkout ? getFormattedTime(checkout) : '',
     checkoutDate: checkout ? getFormattedDate(checkout) : '',
+    checkoutTime: checkout ? getFormattedTime(checkout) : '',
     additionalData,
   }));
 
@@ -41,7 +75,7 @@ export const ExcelDownload = ({ traces, location }) => {
   const intl = useIntl();
 
   return (
-    <ReactExport.ExcelFile
+    <ExcelFile
       filename={`${location.name}_luca`}
       element={
         <button
@@ -58,109 +92,125 @@ export const ExcelDownload = ({ traces, location }) => {
         </button>
       }
     >
-      <ReactExport.ExcelSheet
+      <ExcelSheet
         data={getExcelDownloadDataFromTraces(traces, intl)}
         name={`${location.groupName} - ${location.name}`}
       >
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.locationName' })}
           value={() => location.name}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
+          label={intl.formatMessage({ id: 'history.label.locationCategory' })}
+          value={() =>
+            intl.formatMessage({
+              id: `history.location.category.${location.type}`,
+            })
+          }
+        />
+        <ExcelColumn
+          label={intl.formatMessage({ id: 'history.label.areaDetails' })}
+          value={() =>
+            location.isIndoor
+              ? intl.formatMessage({ id: 'history.label.indoor' })
+              : intl.formatMessage({ id: 'history.label.outdoor' })
+          }
+        />
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.location.street',
           })}
           value={() => location.streetName}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.location.streetNumber',
           })}
           value={() => location.streetNr}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.location.postalCode',
           })}
           value={() => location.zipCode}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.location.city',
           })}
           value={() => location.city}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.locationOwner.firstName',
           })}
           value={() => location.firstName}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.locationOwner.lastName',
           })}
           value={() => location.lastName}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.locationOwner.phone',
           })}
           value={() => location.phone}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.firstName' })}
           value={col => col?.firstname}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.lastName' })}
           value={col => col?.lastname}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.phone' })}
           value={col => col?.phone}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.email' })}
           value={col => col?.email}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.street' })}
           value={col => col?.street}
         />
 
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.houseNumber' })}
           value={col => col?.houseNumber}
         />
 
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.city' })}
           value={col => col?.city}
         />
 
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.postalCode' })}
           value={col => col?.postalCode}
         />
 
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.checkinDate' })}
           value={col => col?.checkinDate}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.checkinTime' })}
           value={col => col?.checkinTime}
         />
-        <ReactExport.ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.checkoutTime' })}
-          value={col => col?.checkoutTime}
-        />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.checkoutDate' })}
           value={col => col?.checkoutDate}
         />
-        <ReactExport.ExcelColumn
+        <ExcelColumn
+          label={intl.formatMessage({ id: 'contactPersonTable.checkoutTime' })}
+          value={col => col?.checkoutTime}
+        />
+        <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.additionalData',
           })}
@@ -175,14 +225,16 @@ export const ExcelDownload = ({ traces, location }) => {
             return data.join();
           }}
         />
-      </ReactExport.ExcelSheet>
-    </ReactExport.ExcelFile>
+      </ExcelSheet>
+    </ExcelFile>
   );
 };
 
 const getCSVDownloadDataFromTraces = (traces, location, intl) => [
   [
     intl.formatMessage({ id: 'contactPersonTable.locationName' }),
+    intl.formatMessage({ id: 'history.label.locationCategory' }),
+    intl.formatMessage({ id: 'history.label.areaDetails' }),
     intl.formatMessage({ id: 'contactPersonTable.location.street' }),
     intl.formatMessage({ id: 'contactPersonTable.location.streetNumber' }),
     intl.formatMessage({ id: 'contactPersonTable.location.postalCode' }),
@@ -207,6 +259,14 @@ const getCSVDownloadDataFromTraces = (traces, location, intl) => [
   // eslint-disable-next-line complexity
   ...traces.map(({ userData, additionalData, checkin, checkout }) => [
     location.name ? location.name : '',
+    location.type
+      ? intl.formatMessage({
+          id: `history.location.category.${location.type}`,
+        })
+      : '',
+    location.isIndoor
+      ? intl.formatMessage({ id: 'history.label.indoor' })
+      : intl.formatMessage({ id: 'history.label.outdoor' }),
     location.streetName ? location.streetName : '',
     location.streetNr ? location.streetNr : '',
     location.zipCode ? location.zipCode : '',

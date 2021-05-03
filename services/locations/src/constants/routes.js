@@ -19,6 +19,7 @@ export const LOCATION_SETTINGS_ROUTE = `${BASE_GROUP_ROUTE}:groupId${BASE_LOCATI
 export const REGISTER_BADGE_WITH_ID_ROUTE = '/registerBadge/:registratorId';
 export const REGISTER_BADGE_ROUTE = '/registerBadge';
 export const BASE_SHARE_DATA_ROUTE = `/shareData/`;
+export const SHARE_ALL_DATA_ROUTE = `${BASE_SHARE_DATA_ROUTE}all`;
 export const GROUP_SHARE_DATA_ROUTE = `${BASE_SHARE_DATA_ROUTE}group/:transferGroupId`;
 export const SHARE_DATA_ROUTE = `${BASE_SHARE_DATA_ROUTE}:transferId`;
 export const PROFILE_ROUTE = `${APP_ROUTE}/profile`;

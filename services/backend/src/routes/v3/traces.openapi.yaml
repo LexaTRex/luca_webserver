@@ -39,6 +39,17 @@ paths:
                   type: string
                 deviceType:
                   type: integer
+            examples:
+              example-1:
+                value:
+                  traceId: 18910B5F-81CD-4DC8-80DC-78EB
+                  scannerId: F0554A39-5437-442A-AB2B-5974EAC15D67
+                  timestamp: 0
+                  data: example
+                  iv: F0553F39354373442EXAMPLE
+                  mac: F0553F39354373442EXAMPLE0553F393354373442A3A
+                  publicKey: BLMsCG/sWLvwQseEWMR4WBFQqqId6mgGLYuFLGWObMT5IsJTGJGl8n1BT+KgALdA+dCb7MYQEBAbY9e9PxP2qI8=
+                  deviceType: 0
       tags:
         - Traces
   /traces/additionalData:

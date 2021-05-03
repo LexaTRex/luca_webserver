@@ -57,6 +57,7 @@ router.post(
           salt: crypto.randomBytes(16).toString('base64'),
           privateKeySecret: crypto.randomBytes(32).toString('base64'),
           supportCode: generateSupportCode(),
+          avvAccepted: request.body.avvAccepted,
         },
         { transaction }
       );

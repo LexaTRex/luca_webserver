@@ -81,6 +81,8 @@ paths:
                       - key
                       - label
                       - isRequired
+                type:
+                  type: string
               required:
                 - groupId
                 - locationName
@@ -139,6 +141,8 @@ paths:
                   type: boolean
                 radius:
                   type: number
+                isIndoor:
+                  type: boolean
       tags:
         - Operators
     delete:

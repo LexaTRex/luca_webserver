@@ -34,6 +34,18 @@ export const EmailStep = ({
           });
           return;
         }
+        if (response.status >= 500) {
+          // Server erros
+          notification.error({
+            message: intl.formatMessage({
+              id: 'registration.server.error.msg',
+            }),
+            description: intl.formatMessage({
+              id: 'registration.server.error.desc',
+            }),
+          });
+          return;
+        }
         if (response.status === 200) {
           // Email exists
           setEmail(email.toLowerCase());

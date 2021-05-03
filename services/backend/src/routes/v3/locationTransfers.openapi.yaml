@@ -325,7 +325,9 @@ paths:
                 required:
                   - traces
       operationId: get-locationTransfers-transferId-traces
-      description: Get traces of a location transfer. Only accessible by health deprtment employees.
+      description:
+        Get traces of a location transfer. Only accessible by health department
+        employees.
   '/locationTransfers/{transferId}/contact':
     parameters:
       - schema:
@@ -347,5 +349,14 @@ paths:
         - LocationTransfers
       parameters: []
       description: Sends a locationTransfer notification.
+  '/locationTransfers/uncompleted':
+    get:
+      summary: Get non-completed transfers for this operator's locations
+      description:
+        Get non-completed transfers for this operator's locations
+      tags: [LocationTransfers]
+      responses:
+        '200':
+          description: OK
 components:
   schemas: {}

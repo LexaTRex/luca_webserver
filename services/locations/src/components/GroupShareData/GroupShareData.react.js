@@ -12,7 +12,7 @@ import { BASE_GROUP_ROUTE } from 'constants/routes';
 import { Header } from 'components/Header';
 import { RequestWrapper, RequestTitle, Main } from './GroupShareData.styled';
 import { PrivateKeyStep } from './PrivateKeyStep';
-import { ShareDataStep } from './ShareDataStep';
+import { ShareDataStep } from '../ShareData/ShareDataStep';
 import { FinishStep } from './FinishStep';
 
 export const GroupShareData = () => {

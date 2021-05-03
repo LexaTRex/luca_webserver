@@ -15,6 +15,7 @@ export const createGroupPayload = {
   lng: 0,
   radius: 0,
   tableCount: null,
+  isIndoor: true
 };
 
 export const getCreateLocationPayload = (groupId, locationName) => ({
@@ -31,6 +32,7 @@ export const getCreateLocationPayload = (groupId, locationName) => ({
   lat: 0,
   lng: 0,
   tableCount: 10,
+  type: 'base'
 });
 
 // Fake trace data

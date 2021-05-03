@@ -1,5 +1,7 @@
 const database = require('../database');
 
+class SessionError extends Error {}
+
 const serializeUser = (user, done) => {
   done(null, { type: user.type, uuid: user.uuid });
 };
@@ -11,16 +13,17 @@ const deserializeUser = async (info, done) => {
     switch (info.type) {
       case 'Operator':
         user = await database.Operator.findByPk(info.uuid);
-        if (!user) throw new Error('Operator does not exist');
+        if (!user) throw new SessionError('Operator does not exist');
         user.type = 'Operator';
         break;
       case 'HealthDepartmentEmployee':
         user = await database.HealthDepartmentEmployee.findByPk(info.uuid);
-        if (!user) throw new Error('HealthDepartmentEmployee does not exist');
+        if (!user)
+          throw new SessionError('HealthDepartmentEmployee does not exist');
         user.type = 'HealthDepartmentEmployee';
         break;
       default:
-        throw new Error(`Invalid Session Type ${info}`);
+        throw new SessionError(`Invalid Session Type ${info}`);
     }
     done(null, user);
   } catch (error) {
@@ -31,4 +34,5 @@ const deserializeUser = async (info, done) => {
 module.exports = {
   serializeUser,
   deserializeUser,
+  SessionError,
 };

@@ -92,6 +92,16 @@ module.exports = (Sequelize, DataTypes) => {
       publicKey: {
         type: DataTypes.STRING(88),
       },
+      isIndoor: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      type: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'other',
+      },
     },
     {
       paranoid: true,

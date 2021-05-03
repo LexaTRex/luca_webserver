@@ -1,29 +1,24 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
-import moment from 'moment';
 import { useQuery, useQueryClient } from 'react-query';
-import { Button, notification } from 'antd';
+import { notification } from 'antd';
 
-import { getLocationTransfers, contactLocation } from 'network/api';
+import { contactLocation, getLocationTransfers } from 'network/api';
 import { decryptUserTransfer } from 'utils/cryptoOperations';
 
 // Components
 import {
-  ModalWrapper,
-  HistoryTitle,
-  Title,
-  HistoryOverviewHeadline,
-  InfoWrapper,
-  Location,
-  Time,
   HistoryList,
+  HistoryOverviewHeadline,
+  HistoryTitle,
   LocationWrapper,
-  contactStyle,
-  contactedStyle,
-  completedStyle,
+  ModalWrapper,
+  Title,
 } from './HistoryModal.styled';
 
 import { ContactPersonView } from './ContactPersonView';
+import { HistoryModalHeader } from './HistoryModalHeader';
+import { InfoRow } from './InfoRow';
 
 export const HistoryModal = ({ process }) => {
   const intl = useIntl();
@@ -62,6 +57,7 @@ export const HistoryModal = ({ process }) => {
             }),
           });
           queryClient.invalidateQueries('locationTransfer');
+          queryClient.invalidateQueries('processes');
         })
         .catch(() =>
           notification.error({
@@ -69,16 +65,6 @@ export const HistoryModal = ({ process }) => {
           })
         );
     }
-  };
-
-  const getRequestStatus = location => {
-    if (location.isCompleted) {
-      return intl.formatMessage({ id: 'history.confirmed' });
-    }
-    if (!location.contactedAt) {
-      return intl.formatMessage({ id: 'history.contact' });
-    }
-    return intl.formatMessage({ id: 'history.contacted' });
   };
 
   if (isLoading || error || isUserLoading || userError) return null;
@@ -91,22 +77,14 @@ export const HistoryModal = ({ process }) => {
     ? `${userName.fn} ${userName.ln}`
     : locations[0].name;
 
-  const getButtonStyle = location => {
-    if (!location.isCompleted && !!location.contactedAt) {
-      return contactedStyle;
-    }
-    if (location.isCompleted) {
-      return completedStyle;
-    }
-    return contactStyle;
-  };
-
   return (
     <ModalWrapper>
       {openLocation ? (
         <ContactPersonView
           location={openLocation}
           onClose={closeContactWindow}
+          contactFromIndexPerson={!!process.userTransferId}
+          indexPersonData={userName}
         />
       ) : (
         <>
@@ -119,39 +97,17 @@ export const HistoryModal = ({ process }) => {
             <div>{`${locations.length} ${intl.formatMessage({
               id: 'history.locations',
             })}`}</div>
-            <div>{`${completedLocations.length}/${
-              locations.length
-            } ${intl.formatMessage({
-              id: 'history.confirmed',
-            })}`}</div>
           </HistoryOverviewHeadline>
+          <HistoryModalHeader
+            completed={completedLocations.length}
+            total={locations.length}
+          />
           <HistoryList>
             {sortedLocations.map(location => (
               <LocationWrapper
                 key={`${process.uuid}-${location.locationId}-${location.time[0]}-${location.time[1]}`}
               >
-                <InfoWrapper>
-                  <Location>{location.name}</Location>
-                  <div>{`${intl.formatMessage({
-                    id: 'history.contactInformation',
-                  })}: ${location.firstName} ${location.lastName} - ${
-                    location.phone
-                  }`}</div>
-                  <Time>
-                    {`${moment
-                      .unix(location.time[0])
-                      .format('DD.MM.YYYY HH:mm')} - ${moment
-                      .unix(location.time[1])
-                      .format('DD.MM.YYYY HH:mm')}`}
-                  </Time>
-                </InfoWrapper>
-                <Button
-                  disabled={!location.isCompleted && !!location.contactedAt}
-                  onClick={() => handleAction(location)}
-                  style={getButtonStyle(location)}
-                >
-                  {getRequestStatus(location)}
-                </Button>
+                <InfoRow location={location} callback={handleAction} />
               </LocationWrapper>
             ))}
           </HistoryList>

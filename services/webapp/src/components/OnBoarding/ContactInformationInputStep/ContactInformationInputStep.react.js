@@ -28,6 +28,7 @@ export function ContactInformationInputStep({ onSubmit }) {
 
   return (
     <StyledForm
+      data-cy="contactInfo"
       defaultValues={{ email, phoneNumber: phone }}
       onFinish={({ phoneNumber, email: formEmail, tan }) => {
         if (challengeId) {
@@ -153,7 +154,7 @@ export function ContactInformationInputStep({ onSubmit }) {
         )}
       </StyledContent>
       <StyledFooter showCancel={challengeId}>
-        <StyledSecondaryButton htmlType="submit">
+        <StyledSecondaryButton htmlType="submit" data-cy="contactInfoSubmit">
           {formatMessage({ id: 'Form.Submit' })}
         </StyledSecondaryButton>
         {challengeId && (

@@ -2,14 +2,17 @@ const router = require('express').Router();
 const status = require('http-status');
 const config = require('config');
 const passport = require('passport');
+const { Op } = require('sequelize');
 
 const {
   uuidToHex,
+  bytesToHex,
   base64ToHex,
   hexToBase64,
   SIGN_EC_SHA256_IEEE,
   VERIFY_EC_SHA256_DER_SIGNATURE,
 } = require('@lucaapp/crypto');
+
 const database = require('../../database');
 const {
   validateSchema,
@@ -22,7 +25,10 @@ const {
   badgeCreateSchema,
   userIdParametersSchema,
   patchSchema,
+  deleteSchema,
 } = require('./users.schemas');
+
+const STATIC_USER_TYPE = 'static';
 
 // create user
 router.post(
@@ -103,7 +109,7 @@ router.post(
       uuid: request.body.userId,
       data: '',
       publicKey: request.body.publicKey,
-      deviceType: 'static',
+      deviceType: STATIC_USER_TYPE,
     });
 
     const signature = SIGN_EC_SHA256_IEEE(
@@ -123,11 +129,14 @@ router.get(
   limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
   validateParametersSchema(userIdParametersSchema),
   async (request, response) => {
-    const user = await database.User.findOne({
-      where: {
-        uuid: request.params.userId,
+    const user = await database.User.findOne(
+      {
+        where: {
+          uuid: request.params.userId,
+        },
       },
-    });
+      { paranoid: false }
+    );
 
     if (!user) {
       return response.sendStatus(status.NOT_FOUND);
@@ -149,7 +158,11 @@ router.get(
       return response.send(userDTO);
     }
 
-    if (user.deviceType === 'static') {
+    if (user.deletedAt) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (user.deviceType === STATIC_USER_TYPE) {
       userDTO.data = !!user.data;
       userDTO.iv = null;
       userDTO.mac = null;
@@ -181,7 +194,7 @@ router.patch(
     }
 
     // Reject updates of users with static qr codes
-    if (user.data && user.deviceType === 'static') {
+    if (user.data && user.deviceType === STATIC_USER_TYPE) {
       return response.sendStatus(status.FORBIDDEN);
     }
 
@@ -203,6 +216,40 @@ router.patch(
       mac: request.body.mac,
       signature: request.body.signature,
     });
+
+    return response.sendStatus(status.NO_CONTENT);
+  }
+);
+
+// delete user
+router.delete(
+  '/:userId',
+  limitRequestsPerHour(100, { skipSuccessfulRequests: true }),
+  validateParametersSchema(userIdParametersSchema),
+  validateSchema(deleteSchema),
+  async (request, response) => {
+    const user = await database.User.findOne({
+      where: {
+        uuid: request.params.userId,
+        deviceType: { [Op.ne]: STATIC_USER_TYPE },
+      },
+    });
+
+    if (!user) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
+      base64ToHex(user.publicKey),
+      bytesToHex('DELETE_USER') + uuidToHex(user.uuid),
+      base64ToHex(request.body.signature)
+    );
+
+    if (!isValidSignature) {
+      return response.sendStatus(status.FORBIDDEN);
+    }
+
+    await user.destroy();
 
     return response.sendStatus(status.NO_CONTENT);
   }

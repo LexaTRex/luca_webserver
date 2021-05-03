@@ -17,40 +17,63 @@ services:
       - ./services/backend/src:/app/src
     ports:
       - "8001:8080"
+      - "9229:9229"
+    depends_on:
+      - elb
+      - database
+      - redis
   locations:
     build:
       dockerfile: "Dockerfile.dev"
     volumes:
       - ./services/locations/package.json:/app/package.json
       - ./services/locations/src:/app/src
-    environment: 
+    environment:
       - REACT_APP_GOOGLE_MAPS_API_KEY
+    depends_on:
+      - backend
+      - elb
   health-department:
     build:
       dockerfile: "Dockerfile.dev"
     volumes:
       - ./services/health-department/package.json:/app/package.json
       - ./services/health-department/src:/app/src
+    depends_on:
+      - backend
+      - elb
   scanner:
     build:
       dockerfile: "Dockerfile.dev"
     volumes:
       - ./services/scanner/package.json:/app/package.json
       - ./services/scanner/src:/app/src
+    depends_on:
+      - backend
+      - elb
   contact-form:
     build:
       dockerfile: "Dockerfile.dev"
     volumes:
       - ./services/contact-form/package.json:/app/package.json
       - ./services/contact-form/src:/app/src
+    depends_on:
+      - backend
+      - elb
   webapp:
     build:
       dockerfile: "Dockerfile.dev"
     volumes:
       - ./services/webapp/package.json:/app/package.json
       - ./services/webapp/src:/app/src
+    depends_on:
+      - backend
+      - elb
   maintenance:
     build:
       dockerfile: "Dockerfile.dev"
     volumes:
       - ./services/maintenance/src:/usr/share/nginx/html
+    depends_on:
+      - backend
+      - elb

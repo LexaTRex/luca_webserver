@@ -24,7 +24,15 @@ const createSchema = z.object({
       })
     )
     .optional(),
-  areas: z.array(z.string()).optional(),
+  areas: z
+    .array(
+      z.object({
+        name: z.string(),
+        isIndoor: z.boolean(),
+      })
+    )
+    .optional(),
+  isIndoor: z.boolean(),
 });
 
 const searchSchema = z.object({

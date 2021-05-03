@@ -33,6 +33,7 @@ import {
   decryptDynamicDeviceTrace,
   decryptStaticDeviceTrace,
 } from './decryption';
+import { assertStringOrNumericValues } from './typeAssertions';
 
 const STATIC_DEVICE_TYPE = 2;
 
@@ -83,7 +84,9 @@ export const decryptUserTransfer = async userTransferId => {
     )
   );
 
-  return JSON.parse(userContactData);
+  const parsed = JSON.parse(userContactData);
+  assertStringOrNumericValues(parsed);
+  return parsed;
 };
 
 export const decryptTrace = async encryptedTrace => {

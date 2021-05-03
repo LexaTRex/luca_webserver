@@ -145,7 +145,35 @@ describe('Autentication', () => {
             // Set password
             setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
             // Set legal
-            setLegals(false);
+            setLegals(false, true);
+            cy.getByCy('finishRegister').should('not.exist');
+          });
+        });
+        describe('AVV not accepted', () => {
+          it('does not set the legals', () => {
+            enterEmail(NEW_E2E_EMAIL);
+            // Confirm
+            cy.get('button[type=submit]').click();
+            // Enter name
+            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
+            // Set password
+            setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
+            // Set legal
+            setLegals(true, false);
+            cy.getByCy('finishRegister').should('not.exist');
+          });
+        });
+        describe('Both not accepted', () => {
+          it('does not set the legals', () => {
+            enterEmail(NEW_E2E_EMAIL);
+            // Confirm
+            cy.get('button[type=submit]').click();
+            // Enter name
+            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
+            // Set password
+            setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
+            // Set legal
+            setLegals(false, false);
             cy.getByCy('finishRegister').should('not.exist');
           });
         });
@@ -160,7 +188,7 @@ describe('Autentication', () => {
           // Set password
           setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
           // Set legal
-          setLegals(true);
+          setLegals(true, true);
           cy.getByCy('finishRegister').should('exist');
           cy.get('button').click();
           cy.get('#email').should('exist');

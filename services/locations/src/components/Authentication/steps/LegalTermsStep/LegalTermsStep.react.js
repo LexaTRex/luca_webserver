@@ -12,6 +12,7 @@ import {
   Description,
 } from 'components/Authentication/Authentication.styled';
 import { TERMS_CONDITIONS_LINK } from 'constants/links';
+import AVV_FILE from 'assets/documents/luca_AVV.pdf';
 
 export const LegalTermsStep = ({ next, back, navigation }) => {
   const intl = useIntl();
@@ -58,6 +59,42 @@ export const LegalTermsStep = ({ next, back, navigation }) => {
                 a: (...chunks) => (
                   <a
                     href={TERMS_CONDITIONS_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              }
+            )}
+          </Checkbox>
+        </Form.Item>
+
+        <Form.Item
+          name="avv"
+          valuePropName="checked"
+          rules={[
+            {
+              validator: (_, value) =>
+                value
+                  ? Promise.resolve()
+                  : Promise.reject(
+                      intl.formatMessage({
+                        id: 'error.avv',
+                      })
+                    ),
+            },
+          ]}
+        >
+          <Checkbox>
+            {intl.formatMessage(
+              { id: 'authentication.registration.acceptAvv' },
+              {
+                // eslint-disable-next-line react/display-name
+                a: (...chunks) => (
+                  <a
+                    href={AVV_FILE}
+                    download
                     target="_blank"
                     rel="noopener noreferrer"
                   >

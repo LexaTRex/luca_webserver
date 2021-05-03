@@ -6,6 +6,7 @@ const status = require('http-status');
 const { Op } = require('sequelize');
 
 const database = require('../../database');
+const { z } = require('../../middlewares/validateSchema');
 const { sendShareDataRequestNotification } = require('../../utils/mailjet');
 const {
   validateSchema,
@@ -19,11 +20,7 @@ const {
 const logger = require('../../utils/logger');
 const { formatLocationName } = require('../../utils/format');
 
-const {
-  createSchema,
-  sendSchema,
-  transferIdParametersSchema,
-} = require('./locationTransfers.schemas');
+const { createSchema, sendSchema } = require('./locationTransfers.schemas');
 
 // HD create transfer
 router.post(
@@ -162,6 +159,11 @@ router.get('/', requireOperator, async (request, response) => {
   const operatorId = request.user.uuid;
 
   const transfers = await database.LocationTransfer.findAll({
+    where: {
+      contactedAt: {
+        [Op.ne]: null,
+      },
+    },
     include: [
       {
         required: true,
@@ -204,6 +206,101 @@ router.get('/', requireOperator, async (request, response) => {
       createdAt: moment(transfer.createdAt).unix(),
     }))
   );
+});
+
+router.get('/uncompleted', requireOperator, async (request, response) => {
+  const operatorId = request.user.uuid;
+  const transfers = await database.LocationTransfer.findAll({
+    where: {
+      isCompleted: false,
+      contactedAt: {
+        [Op.ne]: null,
+      },
+    },
+    include: [
+      {
+        model: database.LocationTransferTrace,
+        attributes: ['traceId'],
+        required: false,
+        include: {
+          required: true,
+          model: database.Trace,
+          include: {
+            model: database.TraceData,
+          },
+        },
+      },
+      {
+        required: true,
+        model: database.Location,
+        attributes: ['name', 'groupId', 'operator', 'publicKey'],
+        include: {
+          attributes: ['uuid', 'name'],
+          model: database.LocationGroup,
+          paranoid: false,
+        },
+        where: {
+          operator: operatorId,
+        },
+        paranoid: false,
+      },
+      {
+        required: true,
+        model: database.HealthDepartment,
+        attributes: ['uuid', 'name', 'publicHDEKP'],
+      },
+    ],
+  });
+
+  response.send(
+    transfers.map(transfer => ({
+      transferId: transfer.uuid,
+      department: {
+        uuid: transfer.HealthDepartment.uuid,
+        name: transfer.HealthDepartment.name,
+        publicHDEKP: transfer.HealthDepartment.publicHDEKP,
+      },
+      location: {
+        groupId: transfer.Location.LocationGroup.uuid,
+        groupName: transfer.Location.LocationGroup.name,
+        locationName: transfer.Location.name,
+        name: formatLocationName(
+          transfer.Location,
+          transfer.Location.LocationGroup
+        ),
+        publicKey: transfer.Location.publicKey,
+      },
+      time: [
+        moment(transfer.time[0].value).unix(),
+        moment(transfer.time[1].value).unix(),
+      ],
+      traces: transfer.LocationTransferTraces.filter(
+        ({ Trace: trace }) => trace !== null
+      ).map(({ Trace: trace }) => ({
+        traceId: trace.traceId,
+        time: [
+          moment(trace.time[0].value).unix(),
+          moment(trace.time[1].value).unix(),
+        ],
+        data: trace.data,
+        publicKey: trace.publicKey,
+        iv: trace.iv,
+        mac: trace.mac,
+        additionalData: trace.TraceDatum
+          ? {
+              data: trace.TraceDatum.data,
+              publicKey: trace.TraceDatum.publicKey,
+              mac: trace.TraceDatum.mac,
+              iv: trace.TraceDatum.iv,
+            }
+          : null,
+      })),
+    }))
+  );
+});
+
+const transferIdParametersSchema = z.object({
+  transferId: z.string().uuid(),
 });
 
 // get a single transfer
@@ -272,6 +369,7 @@ router.get(
         moment(transfer.time[0].value).unix(),
         moment(transfer.time[1].value).unix(),
       ],
+      // eslint-disable-next-line sonarjs/no-identical-functions
       traces: traces.map(trace => ({
         traceId: trace.traceId,
         time: [

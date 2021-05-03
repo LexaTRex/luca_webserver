@@ -24,7 +24,7 @@ parserOptions:
 rules:
   max-lines:
     - 2
-    - 250
+    - {"max": 250, "skipBlankLines": true, "skipComments": true}
   complexity: 2
   no-await-in-loop: 0
   no-process-exit: 0

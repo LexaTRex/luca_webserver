@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const status = require('http-status');
-const faker = require('faker');
+const crypto = require('crypto');
 const config = require('config');
 const parsePhoneNumber = require('libphonenumber-js');
 
@@ -53,9 +53,10 @@ router.post(
   limitRequestsByPhoneNumberPerDay(5),
   requireNonBlockedIp,
   async (request, response) => {
-    const tan = faker.random.number(999999).toString().padStart(6, '0');
-
-    const provider = config.get('debug') ? 'debug' : await getProvider();
+    const tan = crypto.randomInt(1000000).toString().padStart(6, '0');
+    const provider = config.get('skipSmsVerification')
+      ? 'debug'
+      : await getProvider();
     const phoneNumber = parsePhoneNumber(request.body.phone, 'DE');
 
     const challenge = await database.SMSChallenge.create({
@@ -98,7 +99,7 @@ router.post(
   limitRequestsPerDay(50),
   validateSchema(verifySchema),
   async (request, response) => {
-    if (config.get('debug')) {
+    if (config.get('skipSmsVerification')) {
       await database.SMSChallenge.update(
         { verified: true },
         {
@@ -133,14 +134,14 @@ router.post(
   limitRequestsPerDay(50),
   validateSchema(bulkVerifySchema),
   async (request, response) => {
-    if (config.get('debug')) {
+    if (config.get('skipSmsVerification')) {
       await database.SMSChallenge.update(
         { verified: true },
         {
           where: { uuid: request.body.challengeIds },
         }
       );
-      return response.sendStatus(status.NO_CONTENT);
+      return response.sendStatus({ challengeId: request.body.challengeIds[0] });
     }
 
     const challenge = await database.SMSChallenge.findOne({

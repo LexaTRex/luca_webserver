@@ -44,3 +44,11 @@ export const SuccessWrapper = styled.div`
 export const SubTitle = styled.div`
   margin-bottom: 32px;
 `;
+
+export const Divider = styled.div`
+  margin: 4px 12px 0 12px;
+`;
+
+export const ItemWrapper = styled.div`
+  display: flex;
+`;

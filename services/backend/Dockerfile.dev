@@ -19,4 +19,5 @@ COPY config/  ./config/
 COPY src/  ./src/
 
 EXPOSE 8080
+EXPOSE 9229
 CMD ["yarn", "migrate-dev"]

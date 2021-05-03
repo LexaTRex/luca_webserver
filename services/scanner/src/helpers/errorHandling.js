@@ -3,7 +3,7 @@ import { notification } from 'antd';
 export const DECODE_FAILED = 'DECODE_FAILED';
 export const TIMESTAMP_OUTDATED = 'TIMESTAMP_OUTDATED';
 export const VERSION_NOT_SUPPORTED = 'VERSION_NOT_SUPPORTED';
-export const DOUPLICATE_CHECKIN = 'DOUPLICATE_CHECKIN';
+export const DUPLICATE_CHECKIN = 'DUPLICATE_CHECKIN';
 export const WRONG_LOCAL_TIME = 'WRONG_LOCAL_TIME';
 
 export const notifyScanError = (error, intl, onClose = () => {}) => {
@@ -32,7 +32,7 @@ export const notifyScanError = (error, intl, onClose = () => {}) => {
         onClose: () => onClose(),
       });
       break;
-    case DOUPLICATE_CHECKIN:
+    case DUPLICATE_CHECKIN:
       notification.error({
         message: intl.formatMessage({
           id: 'error.duplicateCheckin',

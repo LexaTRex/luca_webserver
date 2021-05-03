@@ -36,7 +36,7 @@ export const ModalArea = () => {
       title={modalContent?.title}
       onCancel={onCancel}
       centered
-      width={900}
+      width={modalContent.wide ? '90%' : 900}
       footer={null}
       afterClose={() => setModalContent(null)}
     >

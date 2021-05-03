@@ -11,6 +11,7 @@ export const TABLE_INPUT_STEP = 'TABLE_INPUT_STEP';
 export const AUTOMATIC_CHECKOUT_STEP = 'AUTOMATIC_CHECKOUT_STEP';
 export const COMPLETE_STEP = 'COMPLETE_STEP';
 export const QR_CODES_STEP = 'QR_CODES_STEP';
+export const IS_INDOOR_STEP = 'IS_INDOOR_STEP';
 
 export const BASE_ADDRESS_INDICATOR = 'BASE_ADDRESS_INDICATOR';
 
@@ -21,7 +22,9 @@ export const getRestaurantLocationPayload = (
   address,
   baseLocation,
   radius,
-  tableCount
+  tableCount,
+  locationType,
+  isIndoor
 ) => {
   const isSameAddress = address === BASE_ADDRESS_INDICATOR;
 
@@ -38,6 +41,8 @@ export const getRestaurantLocationPayload = (
     lng: isSameAddress ? baseLocation.lng : address.lng,
     radius: radius ? parseInt(radius, 10) : 0,
     tableCount: tableCount ? parseInt(tableCount, 10) : null,
+    type: locationType,
+    isIndoor,
   };
 };
 
@@ -47,7 +52,9 @@ export const getBaseLocationPayload = (
   phone,
   address,
   baseLocation,
-  radius
+  radius,
+  locationType,
+  isIndoor
 ) => {
   const isSameAddress = address === BASE_ADDRESS_INDICATOR;
 
@@ -64,5 +71,7 @@ export const getBaseLocationPayload = (
     lng: isSameAddress ? baseLocation.lng : address.lng,
     radius: radius ? parseInt(radius, 10) : 0,
     tableCount: null,
+    type: locationType,
+    isIndoor,
   };
 };

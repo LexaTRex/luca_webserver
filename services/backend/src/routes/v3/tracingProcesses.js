@@ -18,17 +18,53 @@ const {
   patchSchema,
 } = require('./tracingProcesses.schemas');
 
+const TRACE_PROCESS_STATUS_TYPES = {
+  NONE: 0,
+  PARTIAL: 1,
+  ALL: 2,
+  REQUESTED: 3,
+  REQUEST_PARTIAL: 4,
+};
+
+function getTraceProcessStatus(tracingProcess) {
+  const locations = tracingProcess.LocationTransfers;
+  const numberOfCompletedLocations = locations.filter(
+    location => location.isCompleted
+  ).length;
+
+  const numberOfRequestedLocations = locations.filter(
+    location => !!location.contactedAt
+  ).length;
+
+  const requestedStatus = locations.some(location => !location.contactedAt)
+    ? TRACE_PROCESS_STATUS_TYPES.REQUEST_PARTIAL
+    : TRACE_PROCESS_STATUS_TYPES.REQUESTED;
+
+  if (numberOfRequestedLocations === 0) return TRACE_PROCESS_STATUS_TYPES.NONE;
+
+  if (numberOfCompletedLocations === 0) return requestedStatus;
+
+  return numberOfCompletedLocations === locations.length
+    ? TRACE_PROCESS_STATUS_TYPES.ALL
+    : TRACE_PROCESS_STATUS_TYPES.PARTIAL;
+}
+
 // get all processes
 router.get('/', requireHealthDepartmentEmployee, async (request, response) => {
   const processes = await database.TracingProcess.findAll({
     where: {
       departmentId: request.user.departmentId,
     },
+    include: {
+      model: database.LocationTransfer,
+      attributes: ['tracingProcessId', 'isCompleted', 'contactedAt'],
+    },
   });
 
   return response.send(
     processes.map(tracingProcess => ({
       uuid: tracingProcess.uuid,
+      status: getTraceProcessStatus(tracingProcess),
       userTransferId: tracingProcess.userTransferId,
       didRequestLocations: tracingProcess.didRequestLocations,
       isCompleted: tracingProcess.isCompleted,

@@ -29,7 +29,7 @@ export const Headline = styled.h1`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding-bottom: 40px;
+  padding-bottom: 24px;
   border-bottom: 1px solid black;
 `;
 

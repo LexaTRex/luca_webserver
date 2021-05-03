@@ -36,8 +36,12 @@
   color: black !important;
 }
 
-input:-webkit-autofill {
-  box-shadow: 0 0 0 50px #b8cad3 inset !important;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition-delay: 99999s;
+  background-color: transparent;
 }
 
 .ant-checkbox .ant-checkbox-inner {

@@ -1,10 +1,11 @@
 import { login } from '../../helpers/functions';
+import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const HOTEL_NAME = 'Test Hotel';
 const HOTEL_ADDRESS = 'Nexenio';
 const HOTEL_PHONE = '0123456789';
 const HOTEL_AREA = 'Restaurant';
-const HOTEL_RADIUS = '50';
+const HOTEL_RADIUS = '100';
 
 const BASE_NAME = 'Test Group';
 const BASE_AREA = 'Some area';
@@ -38,8 +39,6 @@ describe('Group creation', () => {
       cy.get('#streetNr').should('be.disabled');
       cy.get('#zipCode').should('be.disabled');
       cy.get('#city').should('be.disabled');
-      // Wait for expand
-      cy.wait(1000);
       // Proceed
       cy.getByCy('proceed').click();
       // Enter phone
@@ -48,13 +47,16 @@ describe('Group creation', () => {
       cy.get('button[type=submit]').click();
       // Select more areas
       cy.getByCy('yes').click();
-      cy.get('input').type(HOTEL_AREA);
+      cy.getByCy('areaNameInput').type(HOTEL_AREA);
+      cy.getByCy('indoorSelection').click();
+      cy.getByCy('selectIndoor').click();
       // Proceed
       cy.get('button[type=submit]').click();
       // Select automatic checkout
       cy.getByCy('yes').click();
       // Enter radius
-      cy.get('#radius').type(HOTEL_RADIUS);
+      checkRadiusInput();
+      cy.get('#radius').clear().type(HOTEL_RADIUS);
       // Proceed
       cy.get('button[type=submit]').click();
       // Create group
@@ -91,8 +93,6 @@ describe('Group creation', () => {
       cy.get('#streetNr').should('be.disabled');
       cy.get('#zipCode').should('be.disabled');
       cy.get('#city').should('be.disabled');
-      // Wait for expand
-      cy.wait(1000);
       // Proceed
       cy.getByCy('proceed').click();
       // Enter phone
@@ -101,13 +101,16 @@ describe('Group creation', () => {
       cy.get('button[type=submit]').click();
       // Select more areas
       cy.getByCy('yes').click();
-      cy.get('input').type(BASE_AREA);
+      cy.getByCy('areaNameInput').type(BASE_AREA);
+      cy.getByCy('indoorSelection').click();
+      cy.getByCy('selectIndoor').click();
       // Proceed
       cy.get('button[type=submit]').click();
       // Select automatic checkout
       cy.getByCy('yes').click();
       // Enter radius
-      cy.get('#radius').type(HOTEL_RADIUS);
+      checkRadiusInput();
+      cy.get('#radius').clear().type(HOTEL_RADIUS);
       // Proceed
       cy.get('button[type=submit]').click();
       // Create group

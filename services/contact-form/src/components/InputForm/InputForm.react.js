@@ -7,9 +7,9 @@ import {
   Row,
   Input,
   Button,
-  Select,
   Checkbox,
   InputNumber,
+  Divider,
 } from 'antd';
 import { useQuery } from 'react-query';
 
@@ -21,8 +21,6 @@ import { useContactDataRules } from 'components/hooks/useContactDataRules';
 
 // Components
 import { ButtonWrapper } from './InputForm.styled';
-
-const { Option } = Select;
 
 export const InputForm = ({
   scanner,
@@ -92,6 +90,7 @@ export const InputForm = ({
         ref={formReference}
         autoComplete="off"
         initialValues={initialValues}
+        style={{ width: '60vw' }}
       >
         <Form.Item
           name={formFieldNames.firstName}
@@ -116,7 +115,7 @@ export const InputForm = ({
         </Form.Item>
         <Input.Group>
           <Row gutter={16}>
-            <Col>
+            <Col span={20}>
               <Form.Item
                 name={formFieldNames.street}
                 rules={getRules('street')}
@@ -130,7 +129,7 @@ export const InputForm = ({
                 />
               </Form.Item>
             </Col>
-            <Col>
+            <Col span={4}>
               <Form.Item
                 name={formFieldNames.number}
                 rules={getRules('number')}
@@ -152,24 +151,24 @@ export const InputForm = ({
           })}
         >
           <Row gutter={16}>
-            <Col>
-              <Form.Item name={formFieldNames.city} rules={getRules('city')}>
-                <Input
-                  data-cy="city"
-                  autoComplete="new-password"
-                  placeholder={intl.formatMessage({
-                    id: 'contactDataForm.city',
-                  })}
-                />
-              </Form.Item>
-            </Col>
-            <Col>
+            <Col span={4}>
               <Form.Item name={formFieldNames.zip} rules={getRules('zip')}>
                 <Input
                   data-cy="zip"
                   autoComplete="new-password"
                   placeholder={intl.formatMessage({
                     id: 'contactDataForm.zip',
+                  })}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={20}>
+              <Form.Item name={formFieldNames.city} rules={getRules('city')}>
+                <Input
+                  data-cy="city"
+                  autoComplete="new-password"
+                  placeholder={intl.formatMessage({
+                    id: 'contactDataForm.city',
                   })}
                 />
               </Form.Item>
@@ -194,8 +193,15 @@ export const InputForm = ({
             })}
           />
         </Form.Item>
+        {(scanner?.tableCount || checkinData?.additionalData) && (
+          <Divider>
+            {intl.formatMessage({
+              id: 'contactDataForm.additionalData.divider',
+            })}
+          </Divider>
+        )}
         {scanner?.tableCount && (
-          <Form.Item name={formFieldNames.table} rules={getRules('table')}>
+          <Form.Item name="additionalData-table">
             <InputNumber
               min={1}
               max={scanner.tableCount}
@@ -207,29 +213,13 @@ export const InputForm = ({
             />
           </Form.Item>
         )}
+
         {checkinData?.additionalData &&
-          checkinData.additionalData.map(
-            entry =>
-              entry.isRequired && (
-                <Form.Item
-                  key={entry.uuid}
-                  name={`additionalData-${entry.key}`}
-                  rules={getRules()}
-                >
-                  {entry.label ? (
-                    <Select placeholder={entry.key}>
-                      {entry.label.split(',').map(option => (
-                        <Option key={option} value={option}>
-                          {option}
-                        </Option>
-                      ))}
-                    </Select>
-                  ) : (
-                    <Input placeholder={entry.key} />
-                  )}
-                </Form.Item>
-              )
-          )}
+          checkinData.additionalData.map(entry => (
+            <Form.Item key={entry.uuid} name={`additionalData-${entry.key}`}>
+              <Input placeholder={entry.key} />
+            </Form.Item>
+          ))}
         <Form.Item
           name="acceptAGB"
           initialValue={false}

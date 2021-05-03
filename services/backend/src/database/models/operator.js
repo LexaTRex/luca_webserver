@@ -73,6 +73,11 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: null,
         type: DataTypes.STRING(12),
       },
+      avvAccepted: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
       paranoid: true,

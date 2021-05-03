@@ -15,13 +15,15 @@ export const ManualSearchNameDisplay = ({ processId }) => {
   return (
     <div>
       {data.length && (
-        <div>
-          {`${data[0].name} (${moment
-            .unix(data[0].time[0])
-            .format('DD.MM.YYYY HH:mm')} - ${moment
-            .unix(data[0].time[1])
-            .format('DD.MM.YYYY HH:mm')})`}
-        </div>
+        <>
+          <div>{data[0].name}</div>
+          <div>
+            {`(${moment.unix(data[0].time[0]).format('DD.MM.YYYY HH:mm')} -`}
+          </div>
+          <div>
+            {`${moment.unix(data[0].time[1]).format('DD.MM.YYYY HH:mm')})`}
+          </div>
+        </>
       )}
     </div>
   );

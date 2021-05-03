@@ -17,6 +17,8 @@ export const en = {
   'contactDataForm.table': 'Table number',
   'contactDataForm.pleaseEnter': 'Please enter {fieldName}!',
   'contactDataForm.isRequired': 'This field is required for your checkin!',
+  'contactDataForm.additionalData.divider':
+    'The following fields are set up by the location owner',
   'error.agreement': 'Please accept data privacy agreement.',
   'contactDataForm.button': 'Save',
 

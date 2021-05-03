@@ -45,3 +45,9 @@ export const Guest = styled.div`
   ${({ headline }) => getMargin(headline)};
   flex-basis: 60%;
 `;
+
+export const Loading = styled.div`
+  font-size: 24px;
+  text-align: center;
+  margin-top: 24px;
+`;

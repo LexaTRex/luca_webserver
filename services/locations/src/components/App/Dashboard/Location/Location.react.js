@@ -7,22 +7,23 @@ import { useQuery } from 'react-query';
 import { getLocation } from 'network/api';
 
 import {
-  BASE_LOCATION_SETTINGS_ROUTE,
   BASE_GROUP_ROUTE,
+  BASE_LOCATION_SETTINGS_ROUTE,
 } from 'constants/routes';
 
 import { Checkout } from './Checkout';
 import { CheckInQuery } from './CheckInQuery';
 import { StartScanner } from './StartScanner';
+import { IndoorSelection } from './IndoorSelection';
 import { GenerateQRCodes } from './GenerateQRCodes';
 import { TableSubdivision } from './TableSubdivision';
 import { LocationOverview } from './LocationOverview';
 import {
-  Wrapper,
-  HeaderWrapper,
   Header,
-  Settings,
+  HeaderWrapper,
   NameWrapper,
+  Settings,
+  Wrapper,
 } from './Location.styled';
 
 export const Location = () => {
@@ -63,6 +64,7 @@ export const Location = () => {
       <StartScanner location={location} />
       <LocationOverview location={location} />
       <CheckInQuery location={location} />
+      <IndoorSelection location={location} />
       <TableSubdivision location={location} />
       <GenerateQRCodes location={location} />
       {location.lat && location.lng && <Checkout location={location} />}

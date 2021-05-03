@@ -35,7 +35,10 @@ Then build containers with `yarn dev build`. You need to do this again when depe
 
 ### Running
 
-Afterwards you can start the dev environment with `yarn dev up`. This will start all containers and mount the local sourcecode into them, allowing for changes to take effect without restarting the containers. The services will be available on:
+Afterwards you can start the dev environment with `yarn dev up`. This will start all containers and mount the local sourcecode into them, allowing for changes to take effect without restarting the containers.
+You can run just a specific service with `yarn dev up SERVICE` (note that in most cases, you will need to have most services running because many components depend on each other).
+
+The services will be available on:
 
 1. luca Backend - https://localhost/api/v3/`route`
 2. luca Contact Form - https://localhost/contact-form/`:locationScannerId`

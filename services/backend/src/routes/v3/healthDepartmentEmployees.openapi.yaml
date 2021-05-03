@@ -130,6 +130,27 @@ paths:
         name: employeeId
         in: path
         required: true
+    patch:
+      summary: ''
+      operationId: patch-healthDepartmentEmployees-employeeId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                isAdmin:
+                  type: boolean
+              required:
+                - isAdmin
+      tags:
+        - HealthDepartmentEmployees
     delete:
       tags:
         - HealthDepartmentEmployees

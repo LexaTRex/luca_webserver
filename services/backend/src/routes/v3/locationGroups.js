@@ -119,6 +119,8 @@ router.post(
           radius: request.body.radius || 0,
           shouldProvideGeoLocation: request.body.radius > 0,
           tableCount: request.body.tableCount,
+          type: request.body.type,
+          isIndoor: request.body.isIndoor,
         },
         { transaction }
       );
@@ -145,7 +147,7 @@ router.post(
                 operator: request.user.uuid,
                 groupId: group.uuid,
                 publicKey: operator.publicKey,
-                name: area,
+                name: area.name,
                 firstName: request.body.firstName || request.user.firstName,
                 lastName: request.body.lastName || request.user.lastName,
                 phone: request.body.phone,
@@ -158,6 +160,8 @@ router.post(
                 lng: request.body.lng,
                 radius: request.body.radius || 0,
                 shouldProvideGeoLocation: request.body.radius > 0,
+                isIndoor: area.isIndoor,
+                type: request.body.type,
               },
               { transaction }
             )

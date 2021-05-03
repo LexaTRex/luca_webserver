@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 router.get('/apps/android', async (request, response) => {
   return response.send({
-    minimumVersion: 48,
+    minimumVersion: 57,
   });
 });
 

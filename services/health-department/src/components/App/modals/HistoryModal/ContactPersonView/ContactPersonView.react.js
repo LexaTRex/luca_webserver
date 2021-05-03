@@ -7,23 +7,29 @@ import { getContactPersons } from 'network/api';
 
 import { decryptTrace } from 'utils/cryptoOperations';
 
+import { INITIAL_OVERLAP_VALUE } from 'constants/timeOverlap';
+
 import { Header } from './Header';
 import { Table } from './Table';
-import { ContactViewWrapper } from './ContactPersonView.styled';
+import { OverlapTimeSelector } from './Selectors';
+import { filterForTimeOverlap } from './ContactPersonView.helper';
+import {
+  ContactViewWrapper,
+  CloseButtonStyles,
+  FilterSettingsContainer,
+} from './ContactPersonView.styled';
 
-const CloseButtonStyles = {
-  position: 'absolute',
-  top: 12,
-  right: 12,
-
-  fontSize: 16,
-  cursor: 'pointer',
-  color: 'black',
-};
-
-const ContactPersonViewRaw = ({ location, onClose }) => {
+const ContactPersonViewRaw = ({
+  location,
+  onClose,
+  contactFromIndexPerson,
+  indexPersonData,
+}) => {
   const intl = useIntl();
   const [traces, setTraces] = useState(null);
+  const [filteredTraces, setFilteredTraces] = useState(null);
+  const [selectedTraces, setSelectedTraces] = useState(null);
+  const [minTimeOverlap, setMinTimeOverlap] = useState(INITIAL_OVERLAP_VALUE);
 
   const {
     isLoading,
@@ -52,14 +58,29 @@ const ContactPersonViewRaw = ({ location, onClose }) => {
         )
       );
 
-      setTraces(decryptedTraces.filter(user => !user.isInvalid));
+      const validDecrypedTraces = decryptedTraces.filter(
+        user => !user.isInvalid
+      );
+
+      setTraces(validDecrypedTraces);
       hideMessage();
     }
 
     decryptTraces();
   }, [isLoading, contactPersons, intl]);
 
-  if (error || !traces) return null;
+  useEffect(() => {
+    if (!traces) return;
+    if (!contactFromIndexPerson) {
+      setFilteredTraces(traces);
+      return;
+    }
+    setFilteredTraces(
+      filterForTimeOverlap(traces, minTimeOverlap, indexPersonData)
+    );
+  }, [minTimeOverlap, contactFromIndexPerson, indexPersonData, traces]);
+
+  if (error || !filteredTraces) return null;
 
   return (
     <ContactViewWrapper>
@@ -68,8 +89,16 @@ const ContactPersonViewRaw = ({ location, onClose }) => {
         <Spin />
       ) : (
         <>
-          <Header traces={traces} location={location} />
-          <Table traces={traces} />
+          <Header traces={selectedTraces} location={location} />
+          {contactFromIndexPerson ? (
+            <FilterSettingsContainer>
+              <OverlapTimeSelector setMinTimeOverlap={setMinTimeOverlap} />
+            </FilterSettingsContainer>
+          ) : null}
+          <Table
+            traces={filteredTraces}
+            setSelectedTraces={setSelectedTraces}
+          />
         </>
       )}
     </ContactViewWrapper>

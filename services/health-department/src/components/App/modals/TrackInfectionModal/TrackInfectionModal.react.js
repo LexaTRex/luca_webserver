@@ -32,6 +32,18 @@ export const TrackInfectionModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [, closeModal] = useModal();
 
+  const inputReference0 = useRef(null);
+  const inputReference1 = useRef(null);
+  const inputReference2 = useRef(null);
+  const inputReferences = { inputReference0, inputReference1, inputReference2 };
+
+  const handleMoveToNextInput = event => {
+    const index = Number.parseInt(event.currentTarget.dataset.index, 10);
+    if (event.target.value.length >= TAN_SECTION_LENGTH && index + 1 <= 2) {
+      inputReferences[`inputReference${index + 1}`].current.focus();
+    }
+  };
+
   const refetchProcesses = () => {
     queryClient.invalidateQueries('processes');
     setIsLoading(false);
@@ -125,28 +137,47 @@ export const TrackInfectionModal = () => {
           <Form.Item
             name="tanChunk0"
             style={{ width: '30%', margin: 0 }}
-            rules={getTanRules(intl)}
+            rules={getTanRules(intl, inputReference0)}
+            validateTrigger={['onBlur', 'onFocus']}
             normalize={value => value.toUpperCase()}
           >
-            <Input maxLength={TAN_SECTION_LENGTH} autoFocus />
+            <Input
+              maxLength={TAN_SECTION_LENGTH}
+              onChange={handleMoveToNextInput}
+              data-index={0}
+              ref={inputReference0}
+              autoFocus
+            />
           </Form.Item>
           <Divider> - </Divider>
           <Form.Item
             name="tanChunk1"
             style={{ width: '30%', margin: 0 }}
-            rules={getTanRules(intl)}
+            rules={getTanRules(intl, inputReference1)}
+            validateTrigger={['onBlur', 'onFocus']}
             normalize={value => value.toUpperCase()}
           >
-            <Input maxLength={TAN_SECTION_LENGTH} />
+            <Input
+              maxLength={TAN_SECTION_LENGTH}
+              onChange={handleMoveToNextInput}
+              data-index={1}
+              ref={inputReference1}
+            />
           </Form.Item>
           <Divider> - </Divider>
           <Form.Item
             name="tanChunk2"
             style={{ width: '30%', margin: 0 }}
-            rules={getTanRules(intl)}
+            rules={getTanRules(intl, inputReference2)}
+            validateTrigger={['onBlur', 'onFocus']}
             normalize={value => value.toUpperCase()}
           >
-            <Input maxLength={TAN_SECTION_LENGTH} />
+            <Input
+              maxLength={TAN_SECTION_LENGTH}
+              onChange={handleMoveToNextInput}
+              data-index={2}
+              ref={inputReference2}
+            />
           </Form.Item>
         </ItemWrapper>
 

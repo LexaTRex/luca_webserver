@@ -225,6 +225,13 @@ export const getAllTransfers = () => {
   }).then(response => response.json());
 };
 
+export const getAllUncompletedTransfers = () => {
+  return fetch(`${API_PATH}/v3/locationTransfers/uncompleted`, {
+    method: 'GET',
+    headers,
+  });
+};
+
 export const getLocationTransfer = transferId => {
   return fetch(`${API_PATH}/v3/locationTransfers/${transferId}`, {
     method: 'GET',

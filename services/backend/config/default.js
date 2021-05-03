@@ -4,6 +4,7 @@ module.exports = {
   debug: true,
   loglevel: 'debug',
   hostname: 'localhost',
+  skipSmsVerification: true,
   port: 8080,
   cookies: {
     // DEV ONLY TOKEN
@@ -56,6 +57,9 @@ module.exports = {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
     locations: {
+      maxAge: moment.duration(28, 'days').as('hours'),
+    },
+    users: {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
   },

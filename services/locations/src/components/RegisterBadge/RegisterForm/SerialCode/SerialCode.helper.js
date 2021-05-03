@@ -1,7 +1,6 @@
 import argon2 from 'argon2-browser';
 import {
   base32CrockfordToHex,
-  base32ToHex,
   hexToBytes,
   hexToUuid4,
   bytesToHex,
@@ -9,6 +8,29 @@ import {
   HKDF_SHA256,
   KDF_SHA256,
 } from '@lucaapp/crypto';
+
+export const SERIAL_NUMBER_SECTION_LENGTH = 4;
+
+export const getSerialNumberRules = (intl, reference) => [
+  () => ({
+    validator: async (rule, value) => {
+      if (reference.current.state.focused) {
+        return Promise.resolve();
+      }
+      if (
+        !reference.current.state.focused &&
+        (!value || value.length < SERIAL_NUMBER_SECTION_LENGTH)
+      ) {
+        return Promise.reject(
+          intl.formatMessage({
+            id: 'registerBadge.serialNumber.error.min',
+          })
+        );
+      }
+      return null;
+    },
+  }),
+];
 
 const ARGON_SALT = 'da3ae5ecd280924e';
 

@@ -10,6 +10,7 @@ export const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  height: 263px;
 `;
 
 export const Item = styled.div`
@@ -17,11 +18,11 @@ export const Item = styled.div`
   align-items: center;
   text-align: center;
   flex-wrap: wrap;
-  flex: 0 32%;
+  flex: 32%;
   display: flex;
   flex-direction: column;
   padding: 16px 0px;
-  border: 1px dashed black;
+  border: 0.5px solid rgb(225, 225, 225);
 
   & > canvas {
     width: 132px !important;
@@ -32,11 +33,13 @@ export const Item = styled.div`
 export const Text = styled.p`
   margin: 0;
 
-  text-align: left;
+  text-align: center;
 
-  font-size: 20px;
+  font-size: 9px;
   font-family: Montserrat-Bold, sans-serif;
   font-weight: bold;
+
+  width: 120px;
 `;
 
 export const messageStyle = {

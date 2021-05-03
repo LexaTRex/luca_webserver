@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 import { useIntl } from 'react-intl';
@@ -24,10 +24,14 @@ import {
   RemoveButton,
   InputContainer,
   AddAreaWrapper,
+  FormItemWrapper,
 } from './AreaSelection.styled';
+import { IndoorToggle } from '../../../../Dashboard/IndoorToggle';
 
 export const AreaSelection = ({ groupType, setAreas, next, back }) => {
   const intl = useIntl();
+  const formReference = useRef(null);
+
   const [isAreaSelection, setIsAreaSelection] = useState(false);
   const [temporaryAreas, setTemporaryAreas] = useState([]);
 
@@ -37,10 +41,19 @@ export const AreaSelection = ({ groupType, setAreas, next, back }) => {
   };
 
   const onFinish = values => {
-    const areas = temporaryAreas.map(area => values[`area${area.id}`]);
-    const areasWithName = areas.filter(area => area !== undefined);
+    const areas = temporaryAreas.map(area => ({
+      name: values[`area${area.id}`],
+      isIndoor: values[`area${area.id}-type`],
+    }));
+    const areasWithName = areas.filter(area => area.name !== undefined);
     setAreas(areasWithName);
     next();
+  };
+
+  const indoorToggleHandler = (target, value) => {
+    formReference.current.setFieldsValue({
+      [target]: value,
+    });
   };
 
   return (
@@ -61,30 +74,66 @@ export const AreaSelection = ({ groupType, setAreas, next, back }) => {
         </>
       ) : (
         <>
-          <Form onFinish={onFinish}>
+          <Form onFinish={onFinish} ref={formReference}>
             {temporaryAreas.map((temporaryArea, index) => (
-              <Form.Item
-                key={temporaryArea.id}
-                label={intl.formatMessage({ id: 'area' }, { key: index + 1 })}
-                name={`area${temporaryArea.id}`}
-              >
-                <InputContainer>
-                  <Input autoFocus />
-                  <RemoveButton
-                    onClick={() => {
-                      setTemporaryAreas([
-                        ...temporaryAreas.slice(0, index),
-                        ...temporaryAreas.slice(
-                          index + 1,
-                          temporaryAreas.length
-                        ),
-                      ]);
-                    }}
+              <FormItemWrapper key={temporaryArea.id}>
+                <InputContainer width="63%" marginRight="16px">
+                  <Form.Item
+                    label={intl.formatMessage(
+                      { id: 'area' },
+                      { key: index + 1 }
+                    )}
+                    name={`area${temporaryArea.id}`}
+                    rules={[
+                      {
+                        required: true,
+                        message: intl.formatMessage({
+                          id: 'error.locationName',
+                        }),
+                      },
+                    ]}
                   >
-                    <TrashIcon src={bin} />
-                  </RemoveButton>
+                    <Input autoFocus data-cy="areaNameInput" />
+                  </Form.Item>
                 </InputContainer>
-              </Form.Item>
+
+                <InputContainer width="37%">
+                  <Form.Item
+                    label={intl.formatMessage({
+                      id: 'settings.location.indoorToggle.description.label',
+                    })}
+                    name={`area${temporaryArea.id}-type`}
+                    rules={[
+                      {
+                        required: true,
+                        message: intl.formatMessage({
+                          id: 'error.isIndoor',
+                        }),
+                      },
+                    ]}
+                  >
+                    <IndoorToggle
+                      callback={value =>
+                        indoorToggleHandler(
+                          `area${temporaryArea.id}-type`,
+                          value
+                        )
+                      }
+                    />
+                  </Form.Item>
+                </InputContainer>
+                <RemoveButton
+                  style={{ marginTop: 6 }}
+                  onClick={() => {
+                    setTemporaryAreas([
+                      ...temporaryAreas.slice(0, index),
+                      ...temporaryAreas.slice(index + 1, temporaryAreas.length),
+                    ]);
+                  }}
+                >
+                  <TrashIcon src={bin} />
+                </RemoveButton>
+              </FormItemWrapper>
             ))}
             <AddAreaWrapper>
               <AddArea

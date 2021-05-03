@@ -1,12 +1,20 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 const router = require('express').Router();
 const status = require('http-status');
 const { Op } = require('sequelize');
 const moment = require('moment');
 
-const { createSchema, updateSchema } = require('./locations.schemas');
+const {
+  createSchema,
+  updateSchema,
+  locationIdParametersSchema,
+} = require('./locations.schemas');
 
 const database = require('../../../database');
-const { validateSchema } = require('../../../middlewares/validateSchema');
+const {
+  validateSchema,
+  validateParametersSchema,
+} = require('../../../middlewares/validateSchema');
 const { requireOperator } = require('../../../middlewares/requireUser');
 
 // get own locations
@@ -19,21 +27,25 @@ router.get('/', requireOperator, async (request, response) => {
   response.send(locations);
 });
 
-// eslint-disable-next-line sonarjs/no-duplicate-string
-router.get('/:locationId', requireOperator, async (request, response) => {
-  const location = await database.Location.findOne({
-    where: {
-      uuid: request.params.locationId,
-      operator: request.user.uuid,
-    },
-  });
+router.get(
+  '/:locationId',
+  validateParametersSchema(locationIdParametersSchema),
+  requireOperator,
+  async (request, response) => {
+    const location = await database.Location.findOne({
+      where: {
+        uuid: request.params.locationId,
+        operator: request.user.uuid,
+      },
+    });
 
-  if (!location) {
-    return response.sendStatus(status.NOT_FOUND);
+    if (!location) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    return response.send(location);
   }
-
-  return response.send(location);
-});
+);
 
 // create location
 router.post(
@@ -74,6 +86,8 @@ router.post(
           radius: request.body.radius || 0,
           shouldProvideGeoLocation: request.body.radius > 0,
           tableCount: request.body.tableCount,
+          isIndoor: request.body.isIndoor,
+          type: request.body.type,
         },
         { transaction }
       );
@@ -105,6 +119,7 @@ router.patch(
   '/:locationId',
   requireOperator,
   validateSchema(updateSchema),
+  validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -125,6 +140,7 @@ router.patch(
       tableCount: request.body.tableCount,
       radius: request.body.radius || 0,
       shouldProvideGeoLocation: request.body.radius > 0,
+      isIndoor: request.body.isIndoor,
     });
 
     return response.send(location);
@@ -132,25 +148,31 @@ router.patch(
 );
 
 // delete location
-router.delete('/:locationId', requireOperator, async (request, response) => {
-  const location = await database.Location.findOne({
-    where: {
-      operator: request.user.uuid,
-      uuid: request.params.locationId,
-    },
-  });
+router.delete(
+  '/:locationId',
+  validateParametersSchema(locationIdParametersSchema),
+  requireOperator,
+  async (request, response) => {
+    const location = await database.Location.findOne({
+      where: {
+        operator: request.user.uuid,
+        uuid: request.params.locationId,
+      },
+    });
 
-  if (!location) {
-    return response.sendStatus(status.NOT_FOUND);
+    if (!location) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    await location.destroy();
+    return response.sendStatus(status.NO_CONTENT);
   }
-
-  await location.destroy();
-  return response.sendStatus(status.NO_CONTENT);
-});
+);
 
 // checkout all guest in a location
 router.post(
   '/:locationId/check-out',
+  validateParametersSchema(locationIdParametersSchema),
   requireOperator,
   async (request, response) => {
     const location = await database.Location.findOne({

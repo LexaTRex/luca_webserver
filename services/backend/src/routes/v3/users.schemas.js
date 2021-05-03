@@ -26,9 +26,14 @@ const patchSchema = z.object({
   signature: z.string().max(96),
 });
 
+const deleteSchema = z.object({
+  signature: z.string().max(96),
+});
+
 module.exports = {
   createSchema,
   badgeCreateSchema,
   userIdParametersSchema,
   patchSchema,
+  deleteSchema,
 };

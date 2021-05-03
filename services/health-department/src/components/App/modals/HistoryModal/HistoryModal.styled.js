@@ -9,19 +9,19 @@ export const ModalWrapper = styled.div`
 export const HistoryTitle = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: 8px;
 `;
 
 export const Title = styled.div`
   font-size: 24px;
-  font-weight: 600;
+  font-weight: bold;
 `;
 
 export const HistoryOverviewHeadline = styled.div`
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid white;
-  padding-bottom: 16px;
+  font-family: Montserrat-Medium, sans-serif;
+  font-weight: 500;
 `;
 
 export const LocationWrapper = styled.div`
@@ -31,27 +31,41 @@ export const LocationWrapper = styled.div`
 `;
 
 export const HistoryList = styled.div`
-  max-height: 450px;
+  max-height: 746px;
   overflow: auto;
 `;
 
-export const Location = styled.div`
+export const Label = styled.div`
   font-weight: 600;
 `;
 
-export const Time = styled.div``;
+export const Time = styled.div`
+  width: 100%;
+  flex-grow: 1;
+  margin: auto 0;
+`;
+
+export const Contact = styled.div`
+  width: 100%;
+  flex-grow: 1;
+  margin: auto 0;
+`;
 
 export const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 `;
 
-export const contactStyle = {
-  padding: '0 40px',
-  color: 'black',
-  backgroundColor: 'white',
-};
+export const Row = styled.div`
+  display: flex;
+  border-bottom: 1px solid rgb(151, 151, 151);
+  padding: 24px 0;
+`;
 
-export const contactedStyle = { ...contactStyle, backgroundColor: '#b4b4b4' };
-
-export const completedStyle = { ...contactStyle, backgroundColor: '#d3dec3' };
+export const Column = styled.div`
+  display: flex;
+  flex: ${({ flex }) => flex};
+  justify-content: ${({ align }) => align || ''};
+  flex-wrap: ${({ wrap }) => wrap || 'nowrap'};
+`;

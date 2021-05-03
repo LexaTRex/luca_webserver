@@ -1,1 +1,2 @@
 export const DEFAULT_CHECKOUT_RADIUS = 50;
+export const MAX_CHECKOUT_RADIUS = 5000;

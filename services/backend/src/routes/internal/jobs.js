@@ -158,6 +158,24 @@ router.post('/cleanUpChallenges', async (request, response) => {
   });
 });
 
+router.post('/cleanUpUsers', async (request, response) => {
+  const t0 = performance.now();
+  const maxAge = config.get('luca.users.maxAge');
+  const affectedRows = await database.User.destroy({
+    where: {
+      deletedAt: {
+        [Op.lt]: moment().subtract(maxAge, 'hours'),
+      },
+    },
+    force: true,
+  });
+
+  response.send({
+    affectedRows,
+    time: performance.now() - t0,
+  });
+});
+
 router.post('/addDummyTraces', async (request, response) => {
   const t0 = performance.now();
   const healthDepartments = await database.HealthDepartment.findAll({

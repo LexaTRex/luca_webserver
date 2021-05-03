@@ -6,7 +6,7 @@ const storeKeysSchema = z.object({
 });
 
 const departmentIdParametersSchema = z.object({
-  issuerId: z.string().uuid(),
+  departmentId: z.string().uuid(),
 });
 
 module.exports = {

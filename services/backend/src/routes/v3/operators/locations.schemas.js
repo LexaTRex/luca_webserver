@@ -13,7 +13,7 @@ const createSchema = z.object({
   state: z.string().max(255).optional().nullable(),
   lat: z.number().optional().nullable(),
   lng: z.number().optional().nullable(),
-  radius: z.number().int().nonnegative().optional().nullable(),
+  radius: z.number().int().nonnegative().max(5000).optional().nullable(),
   tableCount: z.number().int().positive().optional().nullable(),
   additionalData: z
     .array(
@@ -24,6 +24,8 @@ const createSchema = z.object({
       })
     )
     .optional(),
+  isIndoor: z.boolean().optional(),
+  type: z.string().max(128),
 });
 
 const updateSchema = z.object({
@@ -33,10 +35,16 @@ const updateSchema = z.object({
   phone: z.string().max(255).optional(),
   tableCount: z.number().int().positive().optional().nullable(),
   shouldProvideGeoLocation: z.boolean().optional(),
-  radius: z.number().optional(),
+  radius: z.number().int().nonnegative().max(5000).optional().nullable(),
+  isIndoor: z.boolean().optional(),
+});
+
+const locationIdParametersSchema = z.object({
+  locationId: z.string().uuid(),
 });
 
 module.exports = {
   createSchema,
   updateSchema,
+  locationIdParametersSchema,
 };

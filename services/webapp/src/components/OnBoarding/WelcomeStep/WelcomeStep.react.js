@@ -28,7 +28,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
 
   return (
     <StyledContainer>
-      <StyledContent>
+      <StyledContent data-cy="welcomeStep">
         <StyledLucaLogo src={lucaLogo} />
         <StyledHeadline>
           {formatMessage({ id: 'OnBoarding.WelcomeStep.Headline' })}
@@ -42,6 +42,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
           </StyledWarning>
         ) : null}
         <CheckBoxWithText
+          testId="termsConsCheckbox"
           checked={isTermsAndConditionsChecked}
           onChange={() =>
             setIsTermsAndConditionsChecked(!isTermsAndConditionsChecked)
@@ -65,6 +66,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
           )}
         />
         <CheckBoxWithText
+          testId="privacyCheckbox"
           checked={isPrivacyChecked}
           onChange={() => setIsPrivacyChecked(!isPrivacyChecked)}
           description={formatMessage(
@@ -88,6 +90,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
       </StyledContent>
       <StyledFooter>
         <StyledPrimaryButton
+          data-cy="welcomeSubmit"
           disabled={!(isPrivacyChecked && isTermsAndConditionsChecked)}
           onClick={() => {
             if (isPrivacyChecked && isTermsAndConditionsChecked) {

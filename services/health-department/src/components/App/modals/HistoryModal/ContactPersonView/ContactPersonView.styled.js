@@ -1,11 +1,24 @@
 import styled from 'styled-components';
 
+export const CloseButtonStyles = {
+  position: 'absolute',
+  top: 12,
+  right: 12,
+  fontSize: 16,
+  cursor: 'pointer',
+  color: 'black',
+};
+
+export const FilterSettingsContainer = styled.div`
+  height: 50px;
+`;
+
 export const ContactViewWrapper = styled.div`
   position: absolute;
 
-  left: -280px;
+  left: -100px;
   top: -180px;
-  right: -280px;
+  right: -100px;
 
   background-color: white;
 
@@ -19,7 +32,7 @@ export const HeaderArea = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  padding: 24px 32px 24px;
+  padding: 24px 24px 24px;
 `;
 
 export const DateDisplay = styled.p`
@@ -45,12 +58,17 @@ export const TableHeader = styled.div`
 export const Row = styled.div`
   display: flex;
   border-bottom: 1px solid rgb(151, 151, 151);
-  padding: 24px 0;
-  margin: 0 24px;
+  padding: 24px 24px;
 `;
 
 export const Column = styled.div`
   display: flex;
   flex: ${({ flex }) => flex};
   justify-content: ${({ align }) => align || ''};
+`;
+
+export const CheckboxWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 `;

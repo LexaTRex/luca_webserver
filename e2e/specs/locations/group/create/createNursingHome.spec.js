@@ -1,9 +1,10 @@
 import { login } from '../../helpers/functions';
+import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const NURSING_HOME_NAME = 'Test Nursing Home';
 const NURSING_HOME_ADDRESS = 'Nexenio';
 const NURSING_HOME_PHONE = '0123456789';
-const NURSING_HOME_RADIUS = '50';
+const NURSING_HOME_RADIUS = '100';
 describe('Group creation', () => {
   beforeEach(() => login());
   describe('Create Nursing Home', () => {
@@ -31,8 +32,6 @@ describe('Group creation', () => {
       cy.get('#streetNr').should('be.disabled');
       cy.get('#zipCode').should('be.disabled');
       cy.get('#city').should('be.disabled');
-      // Wait for expand
-      cy.wait(1000);
       // Proceed
       cy.getByCy('proceed').click();
       // Enter phone
@@ -44,7 +43,8 @@ describe('Group creation', () => {
       // Select automatic checkout
       cy.getByCy('yes').click();
       // Enter radius
-      cy.get('#radius').type(NURSING_HOME_RADIUS);
+      checkRadiusInput();
+      cy.get('#radius').clear().type(NURSING_HOME_RADIUS);
       // Proceed
       cy.get('button[type=submit]').click();
       // Create group

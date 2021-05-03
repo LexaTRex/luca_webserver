@@ -146,6 +146,8 @@ router.get(
     }
 
     const locationDTO = {
+      isIndoor: location.isIndoor,
+      type: location.type,
       locationId: location.uuid,
       groupName: location.LocationGroup?.name,
       locationName: location.name,

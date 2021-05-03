@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useQueryClient, useQuery } from 'react-query';
+import React, { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import { useIntl } from 'react-intl';
-import { Steps, notification } from 'antd';
+import { notification, Steps } from 'antd';
 import { useHistory } from 'react-router';
 
 import { BASE_GROUP_ROUTE, BASE_LOCATION_ROUTE } from 'constants/routes';
@@ -11,32 +11,34 @@ import { getBaseLocationFromGroup } from 'utils/group';
 
 import { createLocation as createLocationRequest, getGroup } from 'network/api';
 
+import { AutomaticCheckout } from '../generalOnboarding/AutomaticCheckout';
 import { TableInput } from '../generalOnboarding/TableInput';
 import {
+  ADDRESS_INPUT_STEP,
+  AUTOMATIC_CHECKOUT_STEP,
+  BASE_ADDRESS_INDICATOR,
+  BASE_TYPE,
+  BUILDING_TYPE,
+  COMPLETE_STEP,
+  getBaseLocationPayload,
+  getRestaurantLocationPayload,
+  IS_INDOOR_STEP,
+  NAME_INPUT_STEP,
+  PHONE_INPUT_STEP,
+  QR_CODES_STEP,
   RESTAURANT_TYPE,
   ROOM_TYPE,
-  BUILDING_TYPE,
-  BASE_TYPE,
   SELECT_LOCATION_STEP,
-  NAME_INPUT_STEP,
-  ADDRESS_INPUT_STEP,
-  PHONE_INPUT_STEP,
   TABLE_INPUT_STEP,
-  AUTOMATIC_CHECKOUT_STEP,
-  COMPLETE_STEP,
-  QR_CODES_STEP,
-  getRestaurantLocationPayload,
-  getBaseLocationPayload,
-  BASE_ADDRESS_INDICATOR,
 } from './CreateLocationModal.helper';
 
 import { SelectLocationType } from './steps/SelectLocationType';
 import { NameInput } from './steps/NameInput';
 import { AddressInput } from './steps/AddressInput';
 import { PhoneInput } from './steps/PhoneInput';
-import { AutomaticCheckout } from './steps/AutomaticCheckout';
 import { Complete } from './steps/Complete';
 import { QRDownload } from './steps/QRDownload';
+import { IndoorInput } from '../generalOnboarding/IndoorInput';
 
 export const CreateLocationModal = ({ groupId }) => {
   const intl = useIntl();
@@ -48,6 +50,7 @@ export const CreateLocationModal = ({ groupId }) => {
   const [locationName, setLocationName] = useState(null);
   const [address, setAddress] = useState(null);
   const [phone, setPhone] = useState(null);
+  const [isIndoor, setIsIndoor] = useState(true);
   const [tableCount, setTableCount] = useState(null);
   const [radius, setRadius] = useState(null);
   const [location, setLocation] = useState(null);
@@ -93,7 +96,9 @@ export const CreateLocationModal = ({ groupId }) => {
       phone,
       address,
       baseLocation,
-      radius
+      radius,
+      locationType,
+      isIndoor
     );
     createLocationRequest(createBaseLocationPayload)
       .then(response => {
@@ -112,7 +117,9 @@ export const CreateLocationModal = ({ groupId }) => {
       address,
       baseLocation,
       radius,
-      tableCount
+      tableCount,
+      locationType,
+      isIndoor
     );
 
     createLocationRequest(createRestaurantLocationPayload)
@@ -227,6 +234,17 @@ export const CreateLocationModal = ({ groupId }) => {
         <PhoneInput
           phone={phone}
           setPhone={setPhone}
+          next={nextStep}
+          back={previousStep}
+        />
+      ),
+    },
+    {
+      id: IS_INDOOR_STEP,
+      content: (
+        <IndoorInput
+          isIndoor={isIndoor}
+          setIsIndoor={setIsIndoor}
           next={nextStep}
           back={previousStep}
         />

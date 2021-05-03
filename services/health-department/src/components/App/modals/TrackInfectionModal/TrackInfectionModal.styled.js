@@ -18,6 +18,7 @@ export const Divider = styled.div`
 
 export const ItemWrapper = styled.div`
   display: flex;
+  width: 100%;
 `;
 
 export const SubmitWrapper = styled.div`

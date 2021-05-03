@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
-import { Steps, Alert } from 'antd';
-import { useHistory } from 'react-router';
-import { useIntl } from 'react-intl';
-import { useParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
 
-import { getLocationTransfer } from 'network/api';
+import { Steps, Alert } from 'antd';
+import { useIntl } from 'react-intl';
+import { Helmet } from 'react-helmet';
+import { useQuery } from 'react-query';
+import { useHistory } from 'react-router';
+import { useParams } from 'react-router-dom';
+
 import { BASE_GROUP_ROUTE } from 'constants/routes';
+import { getAllUncompletedTransfers, getLocationTransfer } from 'network/api';
+
 // Components
 import { Header } from 'components/Header';
 import { RequestWrapper, RequestTitle, Main } from './ShareData.styled';
@@ -18,23 +20,33 @@ import { FinishStep } from './FinishStep';
 export const ShareData = () => {
   const intl = useIntl();
   const history = useHistory();
+  const { transferId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [privateKey, setPrivateKey] = useState('');
-
-  const { transferId } = useParams();
 
   const title = intl.formatMessage({ id: 'shareData.site.title' });
   const meta = intl.formatMessage({ id: 'shareData.site.meta' });
 
-  const { isLoading, error, data: locationTransfer } = useQuery(
-    `locationTransfer/${transferId}`,
-    () =>
-      getLocationTransfer(transferId).then(response => {
+  const { isLoading, error, data: transfers } = useQuery(
+    `uncompletedTransfers/${transferId}`,
+    async () => {
+      if (transferId) {
+        return getLocationTransfer(transferId).then(async response => {
+          if (response.status > 400) {
+            return { status: response.status };
+          }
+          return [await response.json()];
+        });
+      }
+
+      return getAllUncompletedTransfers().then(response => {
         if (response.status > 400) {
           return { status: response.status };
         }
+
         return response.json();
-      })
+      });
+    }
   );
 
   const progressStep = () => {
@@ -59,7 +71,7 @@ export const ShareData = () => {
           next={progressStep}
           title={intl.formatMessage({ id: 'shareData.privateKeyStep.title' })}
           setPrivateKey={setKey}
-          publicKey={locationTransfer?.location?.publicKey}
+          publicKey={transfers[0]?.location?.publicKey}
         />
       ),
     },
@@ -68,8 +80,8 @@ export const ShareData = () => {
       content: (
         <ShareDataStep
           next={progressStep}
+          transfers={transfers}
           privateKey={privateKey}
-          locationTransfer={locationTransfer}
           title={intl.formatMessage({ id: 'shareData.shareDataStep.title' })}
         />
       ),
@@ -88,26 +100,26 @@ export const ShareData = () => {
       </Helmet>
       <Main style={{ backgroundColor: 'black' }}>
         <Header title={intl.formatMessage({ id: 'shareData.header.title' })} />
-        {locationTransfer?.status === 410 && (
+        {transfers[0]?.status === 410 && (
           <Alert
             style={{ textAlign: 'center', marginTop: 48 }}
             type="success"
             message={intl.formatMessage({ id: 'shareData.completed' })}
           />
         )}
-        {locationTransfer?.status > 400 && locationTransfer?.status !== 410 && (
+        {transfers[0]?.status > 400 && transfers[0]?.status !== 410 && (
           <Alert
             style={{ textAlign: 'center', marginTop: 48 }}
             type="error"
             message={intl.formatMessage({ id: 'shareData.noData' })}
           />
         )}
-        {locationTransfer && !locationTransfer.status && (
+        {transfers && transfers[0] && !transfers[0].status && (
           <RequestWrapper>
             <RequestTitle>
               {intl.formatMessage(
                 { id: 'shareData.mainTitle' },
-                { healthDepartment: locationTransfer.department.name }
+                { healthDepartment: transfers[0].department.name }
               )}
             </RequestTitle>
             <Steps
