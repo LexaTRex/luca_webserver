@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.1 (2021-05-03)
+
+* **backend:** fix: ignore expired traces in notifications route
+
 ### 1.1.0 (2021-05-03)
 
 * **locations:** feat: improved serial code input for badge registration
