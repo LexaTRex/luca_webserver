@@ -1,5 +1,12 @@
 # Changelog
 
+### 1.1.2 (2021-05-07)
+
+* **backend:** perf: add multiple indizes to improve query performance
+* **backend:** fix: pin redis version to 3.1.2
+* **frontend:** fix: return promises in validation handler
+* **frontend:** fix: pin hosted-git-info to 4.0.2
+
 ### 1.1.1 (2021-05-03)
 
 * **backend:** fix: ignore expired traces in notifications route
