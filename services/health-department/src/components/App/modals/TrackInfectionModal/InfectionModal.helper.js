@@ -16,7 +16,8 @@ export const getTanRules = (intl, reference) => [
           })
         );
       }
-      return null;
+
+      return Promise.resolve();
     },
   }),
 ];

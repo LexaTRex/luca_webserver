@@ -38,11 +38,11 @@ router.get('/traces', async (request, response) => {
             attributes: ['traceId'],
             model: database.LocationTransferTrace,
             where: {
-              createdAt: { [Op.gt]: twoWeeksAgo },
               traceId: { [Op.not]: null },
             },
           },
         ],
+        where: { createdAt: { [Op.gt]: twoWeeksAgo } },
       },
       {
         required: false,

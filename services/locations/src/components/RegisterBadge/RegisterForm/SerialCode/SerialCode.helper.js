@@ -27,7 +27,8 @@ export const getSerialNumberRules = (intl, reference) => [
           })
         );
       }
-      return null;
+
+      return Promise.resolve();
     },
   }),
 ];

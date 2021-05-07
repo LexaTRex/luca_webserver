@@ -82,5 +82,8 @@
       "not dead",
       "not op_mini all"
     ]
+  },
+  "resolutions": {
+    "hosted-git-info": "4.0.2"
   }
 }
