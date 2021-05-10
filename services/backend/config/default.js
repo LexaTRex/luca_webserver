@@ -2,7 +2,7 @@ const moment = require('moment');
 
 module.exports = {
   debug: true,
-  loglevel: 'debug',
+  loglevel: 'info',
   hostname: 'localhost',
   skipSmsVerification: true,
   port: 8080,
@@ -61,6 +61,9 @@ module.exports = {
     },
     users: {
       maxAge: moment.duration(28, 'days').as('hours'),
+    },
+    testRedeems: {
+      maxAge: moment.duration(72, 'hours').as('hours'),
     },
   },
   emails: {

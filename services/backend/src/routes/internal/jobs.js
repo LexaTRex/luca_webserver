@@ -8,6 +8,7 @@ const { Op, fn, col } = require('sequelize');
 const { GET_RANDOM_BYTES, hexToBase64 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
+const featureFlag = require('../../utils/featureFlag');
 
 router.post('/deleteOldTraces', async (request, response) => {
   const t0 = performance.now();
@@ -190,7 +191,8 @@ router.post('/addDummyTraces', async (request, response) => {
 
   for (
     let tracingIndex = 0;
-    tracingIndex < crypto.randomInt(0, 5);
+    tracingIndex <
+    crypto.randomInt(0, await featureFlag.get('dummy_max_tracings'));
     tracingIndex += 1
   ) {
     const traces = [];
@@ -201,7 +203,8 @@ router.post('/addDummyTraces', async (request, response) => {
 
     for (
       let traceIndex = 0;
-      traceIndex < crypto.randomInt(0, 10);
+      traceIndex <
+      crypto.randomInt(0, await featureFlag.get('dummy_max_traces'));
       traceIndex += 1
     ) {
       traces.push({
@@ -219,6 +222,19 @@ router.post('/addDummyTraces', async (request, response) => {
   response.send({
     time: performance.now() - t0,
   });
+});
+
+router.post('/deleteOldTestRedeems', async (request, response) => {
+  const t0 = performance.now();
+  const maxAge = config.get('luca.testRedeems.maxAge');
+  const affectedRows = await database.TestRedeem.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: moment().subtract(maxAge, 'hours'),
+      },
+    },
+  });
+  response.send({ affectedRows, time: performance.now() - t0 });
 });
 
 module.exports = router;

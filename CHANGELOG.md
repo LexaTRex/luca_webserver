@@ -1,5 +1,12 @@
 # Changelog
 
+### 1.1.3 (2021-05-10)
+
+* **backend:** feat: add route to redeem tests
+* **backend:** feat: allow to dynamically set dummy rates
+* **backend:** perf: further improvement of the notifications endpoint
+* **backend:** fix: pin json-bigint version to 1.0.0
+
 ### 1.1.2 (2021-05-07)
 
 * **backend:** perf: add multiple indizes to improve query performance

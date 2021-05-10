@@ -141,7 +141,7 @@ router.post(
           where: { uuid: request.body.challengeIds },
         }
       );
-      return response.sendStatus({ challengeId: request.body.challengeIds[0] });
+      return response.send({ challengeId: request.body.challengeIds[0] });
     }
 
     const challenge = await database.SMSChallenge.findOne({

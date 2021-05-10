@@ -28,30 +28,48 @@ router.get('/traces', async (request, response) => {
 
   const healthDepartments = await database.HealthDepartment.findAll({
     attributes: ['uuid', 'name', 'publicHDEKP', 'publicHDSKP'],
+  });
+
+  const healthDepartmentToTracesMap = new Map(
+    healthDepartments.map(healthDepartment => [
+      healthDepartment.uuid,
+      { dummyTraces: [], locationTransferTraces: [] },
+    ])
+  );
+
+  const locationTransfers = await database.LocationTransfer.findAll({
+    attributes: ['departmentId'],
     include: [
-      {
-        model: database.LocationTransfer,
-        attributes: ['departmentId'],
-        include: [
-          {
-            required: false,
-            attributes: ['traceId'],
-            model: database.LocationTransferTrace,
-            where: {
-              traceId: { [Op.not]: null },
-            },
-          },
-        ],
-        where: { createdAt: { [Op.gt]: twoWeeksAgo } },
-      },
       {
         required: false,
         attributes: ['traceId'],
-        model: database.DummyTrace,
-        where: { createdAt: { [Op.gt]: twoWeeksAgo } },
+        model: database.LocationTransferTrace,
+        where: {
+          traceId: { [Op.not]: null },
+        },
       },
     ],
+    where: { createdAt: { [Op.gt]: twoWeeksAgo } },
   });
+
+  const dummyTraces = await database.DummyTrace.findAll({
+    attributes: ['healthDepartmentId', 'traceId'],
+    where: { createdAt: { [Op.gt]: twoWeeksAgo } },
+  });
+
+  locationTransfers.forEach(locationTransfer =>
+    locationTransfer.LocationTransferTraces.forEach(locationTransferTrace =>
+      healthDepartmentToTracesMap
+        .get(locationTransfer.departmentId)
+        .locationTransferTraces.push(locationTransferTrace.traceId)
+    )
+  );
+
+  dummyTraces.forEach(dummyTrace =>
+    healthDepartmentToTracesMap
+      .get(dummyTrace.healthDepartmentId)
+      .dummyTraces.push(dummyTrace.traceId)
+  );
 
   const responseValue = healthDepartments
     .map(healthDepartment => ({
@@ -63,10 +81,9 @@ router.get('/traces', async (request, response) => {
       },
       hashedTraceIds: shuffle(
         uniq([
-          ...healthDepartment.LocationTransfers.flatMap(transfer =>
-            transfer.LocationTransferTraces.map(trace => trace.traceId)
-          ),
-          ...healthDepartment.DummyTraces.map(trace => trace.traceId),
+          ...healthDepartmentToTracesMap.get(healthDepartment.uuid)
+            .locationTransferTraces,
+          ...healthDepartmentToTracesMap.get(healthDepartment.uuid).dummyTraces,
         ])
       ).map(traceId =>
         hexToBase64(

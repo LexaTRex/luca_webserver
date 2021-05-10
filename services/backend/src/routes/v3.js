@@ -11,6 +11,7 @@ const locationsRouter = require('./v3/locations');
 const locationGroupsRouter = require('./v3/locationGroups');
 const scannersRouter = require('./v3/scanners');
 const formsRouter = require('./v3/forms');
+const testsRouter = require('./v3/tests');
 const tracesRouter = require('./v3/traces');
 const notificationsRouter = require('./v3/notifications');
 const healthDepartmentsRouter = require('./v3/healthDepartments');
@@ -101,6 +102,13 @@ router.use('/scanners', scannersRouter);
  *   description: Manage [contact-form](https://luca-app.de/securityconcept/properties/actors.html#term-Web-Check-In-Frontend).
  */
 router.use('/forms', formsRouter);
+/**
+ * @openapi
+ * tags:
+ *   name: Tests
+ *   description: Manage tests.
+ */
+router.use('/tests', testsRouter);
 /**
  * @openapi
  * tags:
