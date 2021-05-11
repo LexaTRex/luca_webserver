@@ -11,7 +11,7 @@ import {
 } from 'network/api';
 
 import {
-  base32ToHex,
+  base32CrockfordToHex,
   base64ToHex,
   bytesToHex,
   bytesToUint8Array,
@@ -188,7 +188,7 @@ export const initiateStaticUserTracingProcess = async (serialNumber, lang) => {
 
   if (isStaticV3(serialNumber)) {
     qrVersion = QR_V3;
-    const entropy = base32ToHex(serialNumber);
+    const entropy = base32CrockfordToHex(serialNumber);
 
     userDataSecret = KDF_SHA256(entropy, '01');
     const tracingSeed = KDF_SHA256(entropy, '02').slice(0, 32);
@@ -204,7 +204,7 @@ export const initiateStaticUserTracingProcess = async (serialNumber, lang) => {
       .toLowerCase()
       .replace(/h$/, 'g')
       .replace(/2$/, '0');
-    const entropy = base32ToHex(realSerialNumber);
+    const entropy = base32CrockfordToHex(realSerialNumber);
 
     const argon2hash = await argon2.hash({
       pass: bytesToUint8Array(hexToBytes(entropy)),

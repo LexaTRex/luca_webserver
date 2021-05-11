@@ -70,7 +70,7 @@ export const PrivateKeyStep = ({ next, title, setPrivateKey, publicKey }) => {
 
   useEffect(() => {
     try {
-      if (textInput.length !== 64) return;
+      if (textInput.length === 0) return;
 
       const result = EC_KEYPAIR_FROM_PRIVATE_KEY(textInput);
       const isKeyCorrect = result?.publicKey === base64ToHex(publicKey);

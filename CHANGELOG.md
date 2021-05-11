@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.4 (2021-05-11)
+
+* **health-department:** fix: use correct base32 decoding
+
 ### 1.1.3 (2021-05-10)
 
 * **backend:** feat: add route to redeem tests
