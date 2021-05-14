@@ -54,6 +54,10 @@ router.post(
       },
     });
 
+    if (existingUser && existingUser.deviceType === STATIC_USER_TYPE) {
+      return response.sendStatus(status.FORBIDDEN);
+    }
+
     if (existingUser) {
       await existingUser.update({
         data: request.body.data,

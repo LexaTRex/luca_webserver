@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.5 (2021-05-14)
+
+* **backend:** fix: deny updating data on static badges via create route
+
 ### 1.1.4 (2021-05-11)
 
 * **health-department:** fix: use correct base32 decoding
