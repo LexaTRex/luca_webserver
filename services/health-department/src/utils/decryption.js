@@ -11,7 +11,6 @@ import {
   int32ToHex,
   KDF_SHA256,
 } from '@lucaapp/crypto';
-import { pick } from 'lodash';
 
 import { getEncryptedUserContactData } from 'network/api';
 import {
@@ -23,36 +22,6 @@ import {
   assertStringOrNumericValues,
   escapeProblematicCharacters,
 } from './typeAssertions';
-
-const staticDeviceDataPropertyNames = [
-  'fn',
-  'ln',
-  'pn',
-  'e',
-  'st',
-  'hn',
-  'pc',
-  'c',
-  'vs',
-  'v',
-];
-const dynamicDevicePropertyNames = [
-  'fn',
-  'ln',
-  'pn',
-  'e',
-  'st',
-  'hn',
-  'pc',
-  'c',
-  'v',
-];
-
-function filterTraceData(userData, allowedProperties) {
-  const picked = escapeProblematicCharacters(pick(userData, allowedProperties));
-  assertStringOrNumericValues(picked);
-  return picked;
-}
 
 export async function decryptStaticDeviceTrace(encryptedTrace) {
   const privateKey = await getBadgePrivateKey(encryptedTrace.keyId);
@@ -86,8 +55,7 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
       )
     )
   );
-  const parsed = JSON.parse(decryptedUser);
-  const userData = filterTraceData(parsed, staticDeviceDataPropertyNames);
+  const userData = JSON.parse(decryptedUser);
 
   const expectedMac = HMAC_SHA256(
     int32ToHex(encryptedTrace.checkin) + base64ToHex(encryptedTrace.data),
@@ -96,10 +64,10 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
 
   if (hexToBase64(expectedMac) !== encryptedTrace.verification) {
     console.error(`invalid verification (TraceId: ${encryptedTrace.traceId})`);
-    return { userData, isInvalid: true };
+    return { userData, isInvalid: true, isDynamicDevice: false };
   }
 
-  return { userData, isInvalid: false };
+  return { userData, isInvalid: false, isDynamicDevice: false };
 }
 
 export async function decryptDynamicDeviceTrace(encryptedTrace) {
@@ -118,6 +86,7 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
       checkout: encryptedTrace.checkout,
       userData: null,
       isInvalid: true,
+      isDynamicDevice: true,
     };
   }
   const traceData = DECRYPT_DLIES_WITHOUT_MAC(
@@ -158,14 +127,13 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
   }
 
   try {
-    const parsed = JSON.parse(decryptedUser);
-    userData = filterTraceData(parsed, dynamicDevicePropertyNames);
+    userData = JSON.parse(decryptedUser);
   } catch (error) {
     console.error(`invalid json (TraceId: ${encryptedTrace.traceId})`, error);
     userData = null;
     isInvalid = true;
   }
-  return { userData, isInvalid };
+  return { userData, isInvalid, isDynamicDevice: true };
 }
 
 export function decryptAdditionalData(encryptedTrace, isInvalid) {

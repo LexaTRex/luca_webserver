@@ -1,5 +1,12 @@
 # Changelog
 
+### 1.1.6 (2021-05-18)
+
+* **health-department:** fix: filter contact persons by overlapping time
+* **health-department:** fix: sorting of locations in history view by name
+* **scanner:** fix: scan field not cleared after scan
+* **locations:** feat: download qr code content as csv file
+
 ### 1.1.5 (2021-05-14)
 
 * **backend:** fix: deny updating data on static badges via create route

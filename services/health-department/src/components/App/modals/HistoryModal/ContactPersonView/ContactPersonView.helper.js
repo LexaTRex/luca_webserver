@@ -3,6 +3,7 @@ import moment from 'moment';
 import { CSVLink } from 'react-csv';
 import { useIntl } from 'react-intl';
 import ReactExport from 'react-data-export';
+import { filterTraceData } from 'utils/sanitizer';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 
 const {
@@ -25,7 +26,11 @@ export const filterForTimeOverlap = (
   );
   if (!indexPerson) return decryptedTraces;
   decryptedTraces.forEach(compareTrace => {
-    const stayTime = indexPerson.checkout - compareTrace.checkin;
+    const firstCheckout =
+      indexPerson.checkout < compareTrace.checkout
+        ? indexPerson.checkout
+        : compareTrace.checkout;
+    const stayTime = firstCheckout - compareTrace.checkin;
     const timeOverlapSeconds = minTimeOverlap * MINUTE_SECONDS;
     if (
       indexPerson.traceId !== compareTrace.traceId &&
@@ -54,22 +59,27 @@ const setUnregistredBadgeUser = intl =>
   });
 
 const getExcelDownloadDataFromTraces = (traces, intl) =>
-  // eslint-disable-next-line complexity
-  traces.map(({ userData, additionalData, checkin, checkout }) => ({
-    firstname: userData ? userData.fn : '',
-    lastname: userData ? userData.ln : setUnregistredBadgeUser(intl),
-    phone: userData ? userData.pn : '',
-    email: userData ? userData.e : '',
-    street: userData ? userData.st : '',
-    houseNumber: userData ? userData.hn : '',
-    city: userData ? userData.c : '',
-    postalCode: userData ? userData.pc : '',
-    checkinDate: checkin ? getFormattedDate(checkin) : '',
-    checkinTime: checkin ? getFormattedTime(checkin) : '',
-    checkoutDate: checkout ? getFormattedDate(checkout) : '',
-    checkoutTime: checkout ? getFormattedTime(checkout) : '',
-    additionalData,
-  }));
+  traces
+    .map(({ userData, isDynamicDevice, ...other }) => ({
+      ...other,
+      userData: filterTraceData(userData, isDynamicDevice),
+    }))
+    // eslint-disable-next-line complexity
+    .map(({ userData, additionalData, checkin, checkout }) => ({
+      firstname: userData ? userData.fn : '',
+      lastname: userData ? userData.ln : setUnregistredBadgeUser(intl),
+      phone: userData ? userData.pn : '',
+      email: userData ? userData.e : '',
+      street: userData ? userData.st : '',
+      houseNumber: userData ? userData.hn : '',
+      city: userData ? userData.c : '',
+      postalCode: userData ? userData.pc : '',
+      checkinDate: checkin ? getFormattedDate(checkin) : '',
+      checkinTime: checkin ? getFormattedTime(checkin) : '',
+      checkoutDate: checkout ? getFormattedDate(checkout) : '',
+      checkoutTime: checkout ? getFormattedTime(checkout) : '',
+      additionalData,
+    }));
 
 export const ExcelDownload = ({ traces, location }) => {
   const intl = useIntl();
@@ -256,42 +266,48 @@ const getCSVDownloadDataFromTraces = (traces, location, intl) => [
     intl.formatMessage({ id: 'contactPersonTable.checkoutTime' }),
     intl.formatMessage({ id: 'contactPersonTable.additionalData' }),
   ],
-  // eslint-disable-next-line complexity
-  ...traces.map(({ userData, additionalData, checkin, checkout }) => [
-    location.name ? location.name : '',
-    location.type
-      ? intl.formatMessage({
-          id: `history.location.category.${location.type}`,
-        })
-      : '',
-    location.isIndoor
-      ? intl.formatMessage({ id: 'history.label.indoor' })
-      : intl.formatMessage({ id: 'history.label.outdoor' }),
-    location.streetName ? location.streetName : '',
-    location.streetNr ? location.streetNr : '',
-    location.zipCode ? location.zipCode : '',
-    location.city ? location.city : '',
-    location.firstName ? location.firstName : '',
-    location.lastName ? location.lastName : '',
-    location.phone ? location.phone : '',
-    userData ? userData.fn : '',
-    userData ? userData.ln : setUnregistredBadgeUser(intl),
-    userData ? userData.pn : '',
-    userData ? userData.e : '',
-    userData ? userData.st : '',
-    userData ? userData.hn : '',
-    userData ? userData.c : '',
-    userData ? userData.pc : '',
-    checkin ? getFormattedDate(checkin) : '',
-    checkin ? getFormattedTime(checkin) : '',
-    checkout ? getFormattedDate(checkout) : '',
-    checkout ? getFormattedTime(checkout) : '',
-    additionalData
-      ? Object.keys(additionalData).map(
-          key => `${formatAdditionalDataKey(key, intl)}: ${additionalData[key]}`
-        )
-      : null,
-  ]),
+  ...traces
+    .map(({ userData, isDynamicDevice, ...other }) => ({
+      ...other,
+      userData: filterTraceData(userData, isDynamicDevice),
+    }))
+    // eslint-disable-next-line complexity
+    .map(({ userData, additionalData, checkin, checkout }) => [
+      location.name ? location.name : '',
+      location.type
+        ? intl.formatMessage({
+            id: `history.location.category.${location.type}`,
+          })
+        : '',
+      location.isIndoor
+        ? intl.formatMessage({ id: 'history.label.indoor' })
+        : intl.formatMessage({ id: 'history.label.outdoor' }),
+      location.streetName ? location.streetName : '',
+      location.streetNr ? location.streetNr : '',
+      location.zipCode ? location.zipCode : '',
+      location.city ? location.city : '',
+      location.firstName ? location.firstName : '',
+      location.lastName ? location.lastName : '',
+      location.phone ? location.phone : '',
+      userData ? userData.fn : '',
+      userData ? userData.ln : setUnregistredBadgeUser(intl),
+      userData ? userData.pn : '',
+      userData ? userData.e : '',
+      userData ? userData.st : '',
+      userData ? userData.hn : '',
+      userData ? userData.c : '',
+      userData ? userData.pc : '',
+      checkin ? getFormattedDate(checkin) : '',
+      checkin ? getFormattedTime(checkin) : '',
+      checkout ? getFormattedDate(checkout) : '',
+      checkout ? getFormattedTime(checkout) : '',
+      additionalData
+        ? Object.keys(additionalData).map(
+            key =>
+              `${formatAdditionalDataKey(key, intl)}: ${additionalData[key]}`
+          )
+        : null,
+    ]),
 ];
 
 export const CSVDownload = ({ traces, location }) => {
@@ -452,36 +468,41 @@ const getSormasDownloadDataFromTraces = (traces, location, intl) => [
     'ownershipHandedOver',
     'returningTraveler',
   ],
-  ...traces.map(({ userData, checkin, additionalData }) => {
-    const entry = new Array(134);
-    entry[2] = 'CORONAVIRUS';
-    entry[3] = 'COVID-19';
-    entry[4] = moment().format('DD.MM.YYYY');
-    entry[11] = moment.unix(checkin).format('DD.MM.YYYY');
-    entry[12] = 'TRACING_APP';
-    entry[14] = 'OTHER';
-    entry[15] = 'luca';
-    entry[19] = 'UNCONFIRMED';
-    entry[20] = 'ACTIVE';
-    entry[21] = 'FOLLOW_UP';
-    entry[25] = `${location.name} / ${location.streetName} ${
-      location.streetNr
-    } / ${location.zipCode} ${location.state} / ${formatAdditionalData(
-      additionalData,
-      intl
-    )}`;
-    entry[37] = userData ? userData.fn : '';
-    entry[38] = userData ? userData.ln : setUnregistredBadgeUser(intl);
-    entry[43] = 'UNKNOWN';
-    entry[68] = userData ? userData.pn : '';
-    entry[74] = userData ? userData.c : '';
-    entry[79] = userData ? userData.pc : '';
-    entry[80] = userData ? userData.st : '';
-    entry[81] = userData ? userData.hn : '';
-    entry[83] = 'HOME';
-    entry[88] = userData ? userData.e : '';
-    return entry.map(field => field?.trim() || '');
-  }),
+  ...traces
+    .map(({ userData, isDynamicDevice, ...other }) => ({
+      ...other,
+      userData: filterTraceData(userData, isDynamicDevice),
+    }))
+    .map(({ userData, checkin, additionalData }) => {
+      const entry = new Array(134);
+      entry[2] = 'CORONAVIRUS';
+      entry[3] = 'COVID-19';
+      entry[4] = moment().format('DD.MM.YYYY');
+      entry[11] = moment.unix(checkin).format('DD.MM.YYYY');
+      entry[12] = 'TRACING_APP';
+      entry[14] = 'OTHER';
+      entry[15] = 'luca';
+      entry[19] = 'UNCONFIRMED';
+      entry[20] = 'ACTIVE';
+      entry[21] = 'FOLLOW_UP';
+      entry[25] = `${location.name} / ${location.streetName} ${
+        location.streetNr
+      } / ${location.zipCode} ${location.state} / ${formatAdditionalData(
+        additionalData,
+        intl
+      )}`;
+      entry[37] = userData ? userData.fn : '';
+      entry[38] = userData ? userData.ln : setUnregistredBadgeUser(intl);
+      entry[43] = 'UNKNOWN';
+      entry[68] = userData ? userData.pn : '';
+      entry[74] = userData ? userData.c : '';
+      entry[79] = userData ? userData.pc : '';
+      entry[80] = userData ? userData.st : '';
+      entry[81] = userData ? userData.hn : '';
+      entry[83] = 'HOME';
+      entry[88] = userData ? userData.e : '';
+      return entry.map(field => field?.trim() || '');
+    }),
 ];
 
 export const SormasDownload = ({ traces, location }) => {

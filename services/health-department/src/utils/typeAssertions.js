@@ -10,7 +10,8 @@ export function escapeProblematicCharacters(object) {
   const target = {};
   Object.entries(object).forEach(([key, value]) => {
     if (typeof value === 'string') {
-      target[key] = value.replace(/^([=+-@\t\r])/, "'$1");
+      const valueWithReplacedPlus = value.replace('+', '00');
+      target[key] = valueWithReplacedPlus.replace(/^([=-@\t\r])/, "'$1");
     } else {
       target[key] = value;
     }

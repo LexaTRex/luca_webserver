@@ -37,6 +37,12 @@ router.get(
         uuid: request.params.locationId,
         operator: request.user.uuid,
       },
+      include: [
+        {
+          model: database.LocationGroup,
+          attributes: ['name'],
+        },
+      ],
     });
 
     if (!location) {

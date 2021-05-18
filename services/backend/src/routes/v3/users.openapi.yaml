@@ -58,6 +58,13 @@ paths:
       tags:
         - Users
       summary: update the user object by id
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
       requestBody:
         required: true
         content:
@@ -68,6 +75,13 @@ paths:
       tags:
         - Users
       summary: mark the user object for deletion
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
       requestBody:
         required: true
         content:

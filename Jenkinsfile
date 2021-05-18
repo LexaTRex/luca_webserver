@@ -33,24 +33,19 @@ node {
     }
 
     if (env.BRANCH_NAME == "dev") {
-      stage('Publish') {
-        def steps = [:]
-        for (service in services) {
-          steps[service] = buildAndPushContainer(service, GIT_VERSION)
-        }
-        parallel steps
-      }
+      triggerDeploy('dev', GIT_VERSION)
+    }
 
-      stage('Deploy') {
-        echo GIT_VERSION
-        build(
-          job: "luca/luca-web-deploy",
-          parameters: [
-            text(name: "environment", value: "development"),
-            text(name: "IMAGE_TAG", value: GIT_VERSION)
-          ]
-        )
-      }
+    if (env.BRANCH_NAME.startsWith("release/")) {
+      triggerDeploy('release', GIT_VERSION)
+    }
+
+    if (env.BRANCH_NAME.startsWith("hotfix/")) {
+      triggerDeploy('hotfix', GIT_VERSION)
+    }
+
+    if (env.BRANCH_NAME == "master") {
+      triggerDeploy('preprod', GIT_VERSION)
     }
 
     currentBuild.result = 'SUCCESS'
@@ -98,18 +93,42 @@ void abortPreviousRunningBuilds() {
   }
 }
 
+void triggerDeploy(String env, String image_tag) {
+  stage('Publish') {
+    def steps = [:]
+    for (service in services) {
+      steps[service] = buildAndPushContainer(service, GIT_VERSION)
+    }
+    parallel steps
+  }
+
+  stage('Deploy') {
+    echo("deploying ${image_tag} to ${env}")
+    build(
+      job: "luca/luca-web-deploy",
+      parameters: [
+        text(name: "ENV", value: env),
+        text(name: "IMAGE_TAG", value: image_tag)
+      ]
+    )
+  }
+}
+
 Closure buildAndPushContainer(String service, String tag) {
   return {
     node("docker") {
       try {
         updateSourceCode()
+        GIT_VERSION = sh(script: 'git describe --long --tags', returnStdout: true).trim()
+        GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+
         withCredentials([
           usernamePassword(credentialsId: 'luca-docker-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD'),
           string(credentialsId: 'luca-docker-registry', variable: 'DOCKER_REGISTRY'),
           string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH')
         ]) {
           sh('docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD $DOCKER_REGISTRY')
-          sh("IMAGE_TAG=${tag} docker-compose -f docker-compose.yml build ${service}")
+          sh("IMAGE_TAG=${tag} GIT_VERSION=${GIT_VERSION} GIT_COMMIT=${GIT_COMMIT} docker-compose -f docker-compose.yml build ${service}")
           sh("IMAGE_TAG=${tag} docker-compose -f docker-compose.yml push ${service}")
           sh("docker logout")
         }

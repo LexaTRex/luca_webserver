@@ -72,7 +72,10 @@ export const HistoryModal = ({ process }) => {
   const locations = data || [];
 
   const completedLocations = locations.filter(location => location.isCompleted);
-  const sortedLocations = locations.sort((a, b) => b.time[0] - a.time[0]);
+  const sortedLocations = locations.sort((a, b) =>
+    a.locationName < b.locationName ? -1 : 1
+  );
+
   const historyName = process.userTransferId
     ? `${userName.fn} ${userName.ln}`
     : locations[0].name;

@@ -1,13 +1,23 @@
-import { Button } from 'antd';
 import { useIntl } from 'react-intl';
 import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Tooltip } from 'antd';
+
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import { QrCodeDocument } from 'components/QrCodeDocument';
 import { Switch } from '../../Switch';
 
 import { LocationCard, CardSection, CardSectionTitle } from '../LocationCard';
 
-import { StyledSwitchContainer, buttonStyle } from './GenerateQRCodes.styled';
+import { QRCodeCSVDownload } from './GenerateQRCodes.helper';
+import { QrPrint } from './QrPrint';
+import {
+  StyledSwitchContainer,
+  buttonStyle,
+  ButtonWrapper,
+  linkInfoButton,
+  StyledCSVWrapper,
+} from './GenerateQRCodes.styled';
 
 const TABLE_QR_CODE = 'TABLE_QR_CODE';
 const LOCATION_QR_CODE = 'LOCATION_QR_CODE';
@@ -89,15 +99,32 @@ export function GenerateQRCodes({ location }) {
         </CardSection>
       )}
       <CardSection direction="end" isLast>
-        <Button
-          onClick={() => setIsDownload(true)}
-          loading={isDownload}
-          disabled={!isLocationQRCodeEnabled && !isTableQRCodeEnabled}
-          style={buttonStyle}
-        >
-          {intl.formatMessage({ id: 'settings.location.qrcode.generate' })}
-        </Button>
+        <ButtonWrapper>
+          <Button
+            onClick={() => setIsDownload(true)}
+            loading={isDownload}
+            disabled={!isLocationQRCodeEnabled && !isTableQRCodeEnabled}
+            style={buttonStyle}
+          >
+            {intl.formatMessage({ id: 'settings.location.qrcode.generate' })}
+          </Button>
+          <StyledCSVWrapper>
+            <QRCodeCSVDownload
+              location={location}
+              downloadTableQRCodes={isTableQRCodeEnabled}
+            />
+            <Tooltip
+              placement="top"
+              title={intl.formatMessage({
+                id: 'settings.location.qrcode.infoText',
+              })}
+            >
+              <QuestionCircleOutlined style={linkInfoButton} />
+            </Tooltip>
+          </StyledCSVWrapper>
+        </ButtonWrapper>
       </CardSection>
+      <QrPrint />
       <QrCodeDocument
         isDownload={isDownload}
         setIsDownload={setIsDownload}

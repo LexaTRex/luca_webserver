@@ -9,6 +9,15 @@ export const StyledSwitchContainer = styled.div`
   justify-content: flex-end;
 `;
 
+export const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`;
+export const StyledCSVWrapper = styled.div`
+  text-align: center;
+`;
+
 export const buttonStyle = {
   fontFamily: font,
   fontSize: 14,
@@ -18,4 +27,18 @@ export const buttonStyle = {
   border: '1px solid black',
   color: fontColor,
   marginBottom: 16,
+};
+
+export const linkButtonStyle = {
+  ...buttonStyle,
+  padding: 0,
+  textTransform: 'uppercase',
+  alignSelf: 'center',
+  border: 'none',
+  boxShadow: 'none',
+};
+
+export const linkInfoButton = {
+  fontSize: 16,
+  marginLeft: '8px',
 };

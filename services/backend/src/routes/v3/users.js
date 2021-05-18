@@ -235,7 +235,7 @@ router.delete(
     const user = await database.User.findOne({
       where: {
         uuid: request.params.userId,
-        deviceType: { [Op.ne]: STATIC_USER_TYPE },
+        deviceType: { [Op.or]: { [Op.ne]: STATIC_USER_TYPE, [Op.eq]: null } },
       },
     });
 

@@ -94,6 +94,8 @@ export const ScanForm = ({ scanner }) => {
       setIsSuccess,
       checkForAdditionalData,
     });
+
+    setInputValue('');
   };
 
   const handleChange = event => {
