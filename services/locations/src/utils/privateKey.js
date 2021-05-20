@@ -47,6 +47,7 @@ export function usePrivateKey(privateKeySecret) {
     if (!sessionStorage.getItem(ENCRYPTED_PRIVATE_KEY_SESSION_KEY)) {
       return null;
     }
+
     try {
       const { data: encryptedPrivateKey, tag, iv } = JSON.parse(
         sessionStorage.getItem(ENCRYPTED_PRIVATE_KEY_SESSION_KEY)
@@ -87,7 +88,7 @@ export function usePrivateKey(privateKeySecret) {
       } catch {
         const iv = GET_RANDOM_BYTES(32);
         const { encrypted, tag } = ENCRYPT_AES_GCM(
-          privateKey,
+          fileData,
           privateKeySecret,
           iv
         );
@@ -101,7 +102,7 @@ export function usePrivateKey(privateKeySecret) {
         );
       }
     },
-    [privateKey, privateKeySecret]
+    [privateKeySecret]
   );
 
   return [privateKey, setEncryptedPrivateKey];

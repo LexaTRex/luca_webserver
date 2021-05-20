@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.1.9 (2021-05-21)
+* **backend** chore: add rate limit
+* **backend** chore: add additional status code to delete user route
+* **locations:** chore: add support for legacy private operator keys
+
 ### 1.1.8 (2021-05-20)
 
 * **locations:** feat: show current table allocation

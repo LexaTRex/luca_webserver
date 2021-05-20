@@ -31,6 +31,7 @@ const STATIC_DEVICE_TYPE = 2;
 // checkin
 router.post(
   '/checkin',
+  limitRequestsPerHour(1000),
   validateSchema(checkinSchema),
   async (request, response) => {
     const location = await database.Location.findOne({

@@ -163,7 +163,7 @@ router.get(
     }
 
     if (user.deletedAt) {
-      return response.sendStatus(status.NOT_FOUND);
+      return response.sendStatus(status.GONE);
     }
 
     if (user.deviceType === STATIC_USER_TYPE) {
@@ -232,15 +232,22 @@ router.delete(
   validateParametersSchema(userIdParametersSchema),
   validateSchema(deleteSchema),
   async (request, response) => {
-    const user = await database.User.findOne({
-      where: {
-        uuid: request.params.userId,
-        deviceType: { [Op.or]: { [Op.ne]: STATIC_USER_TYPE, [Op.eq]: null } },
+    const user = await database.User.findOne(
+      {
+        where: {
+          uuid: request.params.userId,
+          deviceType: { [Op.or]: { [Op.ne]: STATIC_USER_TYPE, [Op.eq]: null } },
+        },
       },
-    });
+      { paranoid: false }
+    );
 
     if (!user) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (user.deletedAt) {
+      return response.sendStatus(status.GONE);
     }
 
     try {
