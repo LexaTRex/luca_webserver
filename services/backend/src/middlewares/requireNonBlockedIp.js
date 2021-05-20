@@ -1,12 +1,20 @@
 const status = require('http-status');
 
-const { isBlockedIp } = require('../utils/ipChecks');
+const { isBlockedIp, isAllowedIp } = require('../utils/ipChecks');
 
 const requireNonBlockedIp = async (request, response, next) => {
-  if (await isBlockedIp(request.ip)) {
-    return response.sendStatus(status.FORBIDDEN);
+  const isBlocked = await isBlockedIp(request.ip);
+  if (!isBlocked) {
+    return next();
   }
-  return next();
+  if (await isAllowedIp(request.ip)) {
+    return next();
+  }
+  return response
+    .status(status.FORBIDDEN)
+    .send(
+      'Your IP address is blocked. Please contact hello@luca-app.de if you believe this is a mistake.'
+    );
 };
 
 module.exports = {

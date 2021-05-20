@@ -1,6 +1,7 @@
 const { Address4 } = require('ip-address');
 const IPCIDR = require('ip-cidr');
-const { Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
+const { isIP } = require('net');
 const database = require('../database');
 
 const CLASS_A_CIDR = new IPCIDR('10.0.0.0/8');
@@ -37,4 +38,26 @@ const isBlockedIp = async ipAddress => {
   return !!match;
 };
 
-module.exports = { isInternalIp, isBlockedIp };
+const isAllowedIp = async ipAddress => {
+  if (!isIP(ipAddress)) return false;
+  const count = await database.IPAddressAllowList.count({
+    where: Sequelize.literal(`ip >>= ${database.escape(ipAddress)}`),
+  });
+  return count !== 0;
+};
+
+const isRateLimitExemptIp = async ipAddress => {
+  if (!isIP(ipAddress)) return false;
+  const entries = await database.IPAddressAllowList.findAll({
+    where: Sequelize.literal(`ip >>= ${database.escape(ipAddress)}`),
+    attributes: ['rateLimitFactor'],
+  });
+  return entries.some(entry => entry.rateLimitFactor !== null);
+};
+
+module.exports = {
+  isInternalIp,
+  isBlockedIp,
+  isAllowedIp,
+  isRateLimitExemptIp,
+};

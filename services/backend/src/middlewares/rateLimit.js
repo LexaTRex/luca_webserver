@@ -5,7 +5,7 @@ const RedisStore = require('rate-limit-redis');
 const parsePhoneNumber = require('libphonenumber-js/max');
 const { SHA256 } = require('@lucaapp/crypto');
 
-const { isInternalIp } = require('../utils/ipChecks');
+const { isInternalIp, isRateLimitExemptIp } = require('../utils/ipChecks');
 
 const redisURL = `redis://${config.get('redis.hostname')}?password=${config.get(
   'redis.password'
@@ -53,7 +53,8 @@ const limitRequestsPerMinute = (max, { skipSuccessfulRequests, global } = {}) =>
   new RateLimit({
     store: minuteStore,
     windowMs: minuteDuration.as('ms'),
-    skip: request => isInternalIp(request.ip),
+    skip: request =>
+      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
     keyGenerator: global ? globalKeyGenerator : ipKeyGenerator,
     max,
     skipSuccessfulRequests,
@@ -63,7 +64,8 @@ const limitRequestsPerHour = (max, { skipSuccessfulRequests, global } = {}) =>
   new RateLimit({
     store: hourStore,
     windowMs: hourDuration.as('ms'),
-    skip: request => isInternalIp(request.ip),
+    skip: request =>
+      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
     keyGenerator: global ? globalKeyGenerator : ipKeyGenerator,
     max,
     skipSuccessfulRequests,
@@ -73,7 +75,8 @@ const limitRequestsPerDay = (max, { skipSuccessfulRequests, global } = {}) =>
   new RateLimit({
     store: dayStore,
     windowMs: dayDuration.as('ms'),
-    skip: request => isInternalIp(request.ip),
+    skip: request =>
+      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
     keyGenerator: global ? globalKeyGenerator : ipKeyGenerator,
     max,
     skipSuccessfulRequests,
@@ -83,7 +86,8 @@ const limitRequestsByPhoneNumberPerDay = max =>
   new RateLimit({
     store: dayStore,
     windowMs: dayDuration.as('ms'),
-    skip: request => isInternalIp(request.ip),
+    skip: request =>
+      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
     keyGenerator: phoneNumberKeyGenerator,
     max,
   });
@@ -93,7 +97,9 @@ const limitRequestsByFixedLinePhoneNumberPerDay = max =>
     store: dayStore,
     windowMs: dayDuration.as('ms'),
     skip: request =>
-      isInternalIp(request.ip) || !isFixedLinePhoneNumber(request),
+      isInternalIp(request.ip) ||
+      !isFixedLinePhoneNumber(request) ||
+      isRateLimitExemptIp(request.ip),
     keyGenerator: phoneNumberKeyGenerator,
     max,
   });

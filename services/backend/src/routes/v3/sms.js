@@ -15,6 +15,7 @@ const {
 const { validateSchema } = require('../../middlewares/validateSchema');
 const {
   limitRequestsPerMinute,
+  limitRequestsPerHour,
   limitRequestsPerDay,
   limitRequestsByPhoneNumberPerDay,
   limitRequestsByFixedLinePhoneNumberPerDay,
@@ -46,7 +47,7 @@ const getProvider = async () => {
 
 router.post(
   '/request',
-  limitRequestsPerDay(10),
+  limitRequestsPerHour(10),
   limitRequestsPerMinute(7200, { global: true }),
   validateSchema(requestSchema),
   limitRequestsByFixedLinePhoneNumberPerDay(1),

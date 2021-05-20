@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.1.7 (2021-05-20)
+
+* **backend:** feat: implement allow list for IP addresses
+* **backend:** chore: increase rate limit for SMS tan requests
+
 ### 1.1.6 (2021-05-18)
 
 * **health-department:** fix: filter contact persons by overlapping time
