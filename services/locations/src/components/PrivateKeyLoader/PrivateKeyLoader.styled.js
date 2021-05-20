@@ -19,37 +19,6 @@ export const Content = styled.div`
   justify-content: center;
   align-items: center;
 `;
-export const RequestWrapper = styled.div`
-  position: relative;
-  color: rgba(0, 0, 0, 0.87);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 40px auto 0;
-  width: 656px;
-
-  padding: 40px 48px 80px;
-
-  background: #f3f5f7;
-  border-radius: 2px;
-`;
-
-export const StepLabel = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 24px;
-  margin-bottom: 8px;
-`;
-
-export const SubHeader = styled.h5`
-  font-family: Montserrat-Bold, sans-serif;
-  color: inherit;
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 22px;
-`;
 
 export const InfoBlock = styled.p`
   font-family: Montserrat-Medium, sans-serif;
@@ -93,9 +62,9 @@ export const UploadButton = styled.button`
 
   cursor: pointer;
 
-  background-color: rgb(155, 173, 191);
+  background-color: rgb(195, 206, 217);
   &:hover {
-    background-color: rgb(195, 206, 217);
+    background-color: #9badbf;
   }
 
   color: rgba(0, 0, 0, 0.87);
@@ -113,11 +82,5 @@ export const UploadProgress = styled.div`
 export const CustomButton = styled(Button)`
   height: 40px;
   width: ${({ width }) => (IS_MOBILE ? '100%' : width)};
-  background-color: ${({ bgColor }) => bgColor};
-`;
-
-export const FinishButton = styled(Button)`
-  height: 40px;
-  background-color: #c3ced9;
-  width: ${() => (IS_MOBILE ? '100%' : '200px')};
+  background-color: ${({ $bgColor }) => $bgColor};
 `;

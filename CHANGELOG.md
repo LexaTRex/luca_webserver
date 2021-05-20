@@ -1,5 +1,13 @@
 # Changelog
 
+### 1.1.8 (2021-05-20)
+
+* **locations:** feat: show current table allocation
+* **locations:** feat: updated DPA and privacy policies files for download
+* **locations:** feat: added TOMs file for download in profile
+* **locations:** feat: added explaination for external printing service for qr codes
+* **webapp:** feat: delete user account data
+
 ### 1.1.7 (2021-05-20)
 
 * **backend:** feat: implement allow list for IP addresses

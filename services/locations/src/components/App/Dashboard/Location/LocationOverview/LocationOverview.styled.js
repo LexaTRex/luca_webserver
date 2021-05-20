@@ -6,6 +6,11 @@ export const GuestWrapper = styled.div`
   padding: 0 32px 0;
 `;
 
+export const LinkWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const GuestHeader = styled.div`
   color: rgba(0, 0, 0, 0.87);
   font-family: Montserrat-Medium, sans-serif;

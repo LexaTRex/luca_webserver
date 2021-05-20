@@ -7,21 +7,26 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 // Api
 import { login } from 'network/api';
 
+// Utils
+import { usePrivateKey } from 'utils/privateKey';
+import { clearHasSeenPrivateKeyModal } from 'utils/storage';
+
 // Constants
 import { BASE_GROUP_ROUTE } from 'constants/routes';
 
 // Components
 import {
+  CardTitle,
+  ButtonWrapper,
   backButtonStyles,
   nextButtonStyles,
-  ButtonWrapper,
-  CardTitle,
 } from 'components/Authentication/Authentication.styled';
 import { ForgotPasswordLink } from './ForgotPasswordLink';
 import { ErrorMessage } from './PasswordStep.styled';
 
 export const PasswordStep = ({ email, back }) => {
   const intl = useIntl();
+  const [, clearPrivateKey] = usePrivateKey(null);
   const [error, setError] = useState(null);
   const history = useHistory();
 
@@ -75,6 +80,8 @@ export const PasswordStep = ({ email, back }) => {
           return;
         }
         setError(null);
+        clearPrivateKey(null);
+        clearHasSeenPrivateKeyModal();
         history.push(BASE_GROUP_ROUTE);
       })
       .catch(() => {

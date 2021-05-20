@@ -243,18 +243,21 @@ router.delete(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
-      base64ToHex(user.publicKey),
-      bytesToHex('DELETE_USER') + uuidToHex(user.uuid),
-      base64ToHex(request.body.signature)
-    );
+    try {
+      const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
+        base64ToHex(user.publicKey),
+        bytesToHex('DELETE_USER') + uuidToHex(user.uuid),
+        base64ToHex(request.body.signature)
+      );
 
-    if (!isValidSignature) {
+      if (!isValidSignature) {
+        return response.sendStatus(status.FORBIDDEN);
+      }
+    } catch {
       return response.sendStatus(status.FORBIDDEN);
     }
 
     await user.destroy();
-
     return response.sendStatus(status.NO_CONTENT);
   }
 );

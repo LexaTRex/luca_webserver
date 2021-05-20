@@ -1,29 +1,42 @@
 import React, { useEffect } from 'react';
-import { Route, Switch, Redirect, useHistory } from 'react-router';
-import { useIntl } from 'react-intl';
-import { Layout } from 'antd';
 
-import { useModal } from 'components/hooks/useModal';
+import { Layout } from 'antd';
+import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
+import { Redirect, Route, Switch, useHistory } from 'react-router';
 
 import {
+  AUTHENTICATION_ROUTE,
+  BASE_GROUP_ROUTE,
   GROUP_ROUTE,
   LOCATION_ROUTE,
-  BASE_GROUP_ROUTE,
-  AUTHENTICATION_ROUTE,
 } from 'constants/routes';
+import { getPrivateKeySecret } from 'network/api';
+import {
+  hasSeenPrivateKeyModal,
+  setHasSeenPrivateKeyModal,
+} from 'utils/storage';
+import { usePrivateKey } from 'utils/privateKey';
 
+import { useModal } from 'components/hooks/useModal';
+import { PrivateKeyLoader } from 'components/PrivateKeyLoader';
 import { RegisterOperatorModal } from 'components/App/modals/RegisterOperatorModal';
-import { Location } from './Location';
-import { LocationList } from './LocationList';
-import { EmptyGroup } from './EmptyGroup';
-import { contentStyles, sliderStyles } from './Dashboard.styled';
 
-const { Content, Sider } = Layout;
+import { Location } from './Location';
+import { EmptyGroup } from './EmptyGroup';
+import { LocationList } from './LocationList';
+import { LinkButton, LocationSider, MainContent } from './Dashboard.styled';
 
 export const Dashboard = ({ operator }) => {
   const intl = useIntl();
   const history = useHistory();
   const [openModal, closeModal] = useModal();
+  const { data: privateKeySecret, isLoading: isPrivateKeyLoading } = useQuery(
+    'privateKeySecret',
+    getPrivateKeySecret
+  );
+
+  const [privateKey] = usePrivateKey(privateKeySecret);
 
   useEffect(() => {
     if (!operator) {
@@ -39,17 +52,44 @@ export const Dashboard = ({ operator }) => {
         ),
         closable: false,
       });
+    } else if (
+      !privateKey &&
+      !isPrivateKeyLoading &&
+      !hasSeenPrivateKeyModal()
+    ) {
+      setHasSeenPrivateKeyModal(true);
+      openModal({
+        title: intl.formatMessage({
+          id: 'privateKey.modal.title',
+        }),
+        content: (
+          <PrivateKeyLoader
+            publicKey={operator.publicKey}
+            onSuccess={() => setTimeout(closeModal, 750)}
+            footerItem={
+              <LinkButton
+                type="link"
+                onClick={closeModal}
+                data-cy="skipPrivateKeyUpload"
+              >
+                {intl.formatMessage({ id: 'privateKey.modal.skip' })}
+              </LinkButton>
+            }
+          />
+        ),
+        closable: true,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isPrivateKeyLoading]);
 
   return (
     <Layout>
-      <Sider style={sliderStyles} width={300}>
+      <LocationSider width={300}>
         <LocationList />
-      </Sider>
+      </LocationSider>
       <Layout>
-        <Content style={contentStyles}>
+        <MainContent>
           <Switch>
             <Route path={LOCATION_ROUTE}>
               <Location />
@@ -62,7 +102,7 @@ export const Dashboard = ({ operator }) => {
             </Route>
             <Redirect to={BASE_GROUP_ROUTE} />
           </Switch>
-        </Content>
+        </MainContent>
       </Layout>
     </Layout>
   );

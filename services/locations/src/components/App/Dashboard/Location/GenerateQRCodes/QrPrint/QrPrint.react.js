@@ -11,14 +11,30 @@ import {
   QrPrintLogo,
   QrPrintText,
   PrintLink,
+  QrPrintStep,
 } from './QrPrint.styled';
 
 export const QrPrint = () => {
   const intl = useIntl();
+
   return (
     <QrPrintWrapper>
       <QrPrintLogo src={QR_PRINT_LOGO} />
       <QrPrintText>{intl.formatMessage({ id: 'qrPrint.info' })}</QrPrintText>
+      <QrPrintStep>{intl.formatMessage({ id: 'qrPrint.step1' })}</QrPrintStep>
+      <QrPrintStep>
+        {intl.formatMessage(
+          { id: 'qrPrint.step2' },
+          {
+            link: (
+              <PrintLink>
+                {intl.formatMessage({ id: 'qrPrint.link' })}
+              </PrintLink>
+            ),
+          }
+        )}
+      </QrPrintStep>
+      <QrPrintStep>{intl.formatMessage({ id: 'qrPrint.step3' })}</QrPrintStep>
       <LinkWrapper
         href={QR_PRINT_LINK}
         target="_blank"

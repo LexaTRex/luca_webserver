@@ -39,6 +39,18 @@ export function createUser(iv, mac, encryptedData, signature, publicKey) {
   }).then(response => response.json());
 }
 
+export function deleteUser(userId, signature) {
+  return fetch(`${API_PATH}/v3/users/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      [CONTENT_TYPE]: APPLICATION_JSON,
+    },
+    body: JSON.stringify({ signature }),
+  }).then(({ status }) => {
+    if (status !== 204) throw Error;
+  });
+}
+
 export function checkinTrace(
   scannerId,
   traceId,

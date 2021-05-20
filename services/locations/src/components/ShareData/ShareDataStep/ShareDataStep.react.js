@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+
 import moment from 'moment';
+import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import { Button, notification } from 'antd';
 
 import { shareData } from 'network/api';
 import {
@@ -13,15 +14,20 @@ import {
   DECRYPT_DLIES,
 } from '@lucaapp/crypto';
 
-import { IS_MOBILE } from 'constants/environment';
-
 import {
   SubHeader,
+  StepLabel,
+  FinishButton,
   RequestContent,
   FinishButtonWrapper,
 } from '../ShareData.styled';
 
-export const ShareDataStep = ({ privateKey, transfers, next }) => {
+export const ShareDataStep = ({
+  privateKey,
+  transfers,
+  next,
+  showStepLabel,
+}) => {
   const intl = useIntl();
 
   const onFinish = async () => {
@@ -99,46 +105,66 @@ export const ShareDataStep = ({ privateKey, transfers, next }) => {
     );
   };
 
+  const timestampFormat = 'DD.MM.YYYY hh:mm';
+  const healthDepartments = useMemo(() => {
+    const departments = {};
+
+    if (!transfers) return [];
+
+    for (const transfer of transfers) {
+      departments[transfer.department.name] = transfer.department;
+    }
+
+    return Object.values(departments);
+  }, [transfers]);
+
   return (
     <>
+      {showStepLabel && <StepLabel>2/2</StepLabel>}
       <RequestContent>
         <SubHeader>
           {intl.formatMessage({ id: 'shareData.shareData' })}
         </SubHeader>
 
-        <h4>{intl.formatMessage({ id: 'shareData.timePeriod' })}</h4>
+        <h4>{intl.formatMessage({ id: 'shareData.transfersLabel' })}</h4>
 
         {transfers.map(transfer => (
           <h3 key={transfer.transferId}>
-            {transfer.location.name ||
-              intl.formatMessage({ id: 'location.defaultName' })}
-            :
+            {transfer.location.name}
+            <br />
             {` ${moment
               .unix(transfer.time[0])
-              .format('DD.MM.YYYY')} - ${moment
+              .format(timestampFormat)} ${intl.formatMessage({
+              id: 'dataTransfers.transfer.timeLabel',
+            })} - ${moment
               .unix(transfer.time[1])
-              .format('DD.MM.YYYY')}`}
+              .format(timestampFormat)} ${intl.formatMessage({
+              id: 'dataTransfers.transfer.timeLabel',
+            })}`}
           </h3>
         ))}
       </RequestContent>
 
       <RequestContent>
-        <SubHeader>
-          {intl.formatMessage({ id: 'shareData.activeCheckIns' })}
-        </SubHeader>
+        <h4>{intl.formatMessage({ id: 'shareData.activeCheckIns' })}</h4>
 
         <h3>
           {transfers.reduce((sum, transfer) => sum + transfer.traces.length, 0)}
         </h3>
       </RequestContent>
 
-      <FinishButtonWrapper>
-        <Button
-          onClick={onFinish}
-          style={{ height: 40, width: IS_MOBILE ? '100%' : 200 }}
-        >
+      <RequestContent>
+        <h4>{intl.formatMessage({ id: 'shareData.inquiringHD' })}</h4>
+
+        {healthDepartments.map(healthDepartment => (
+          <h3 key={healthDepartment.name}>{healthDepartment.name}</h3>
+        ))}
+      </RequestContent>
+
+      <FinishButtonWrapper align="flex-end">
+        <FinishButton onClick={onFinish}>
           {intl.formatMessage({ id: 'shareData.finish' })}
-        </Button>
+        </FinishButton>
       </FinishButtonWrapper>
     </>
   );

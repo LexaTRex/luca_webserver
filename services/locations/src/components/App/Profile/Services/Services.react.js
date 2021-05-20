@@ -4,7 +4,8 @@ import { Tooltip } from 'antd';
 
 import { TERMS_CONDITIONS_LINK } from 'constants/links';
 import { LICENSES_ROUTE } from 'constants/routes';
-import AVV from 'assets/documents/luca_AVV.pdf';
+import AVV from 'assets/documents/AVV_Luca.pdf';
+import TOMS from 'assets/documents/TOMS_Luca.pdf';
 import PRIVACY_MANDATORY from 'assets/documents/DSE_Luca_mandatory.pdf';
 import PRIVACY_OPTIONAL from 'assets/documents/DSE_Luca_optional.pdf';
 
@@ -47,6 +48,13 @@ export const Services = ({ supportCode }) => {
           data-cy="dpaLink"
         >
           {intl.formatMessage({ id: 'profile.services.download.avv' })}
+        </Link>
+        <Link
+          download={intl.formatMessage({ id: 'downloadFile.profile.toms' })}
+          href={TOMS}
+          data-cy="tomsLink"
+        >
+          {intl.formatMessage({ id: 'profile.services.download.toms' })}
         </Link>
         <Link
           data-cy="termsLink"

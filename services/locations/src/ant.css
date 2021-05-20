@@ -63,7 +63,7 @@ input:-webkit-autofill:active {
   padding-left: 0;
   padding-top: 0;
   color: rgb(0, 0, 0);
-  font-family: Montserrat-SemiBold;
+  font-family: Montserrat-SemiBold, sans-serif;
   font-size: 16px;
   font-weight: 600;
 }
@@ -196,4 +196,32 @@ input:-webkit-autofill:active {
 
 .ant-popover-message > .anticon {
   display: none;
+}
+
+.ant-progress-bg {
+  background-color: #303d4b;
+}
+
+.ant-progress-status-success .ant-progress-text {
+  color: #809d57;
+}
+.ant-progress-status-success .ant-progress-bg {
+  background-color: #809d57;
+}
+
+.ant-progress-status-exception .ant-progress-text {
+  color: #f06704;
+}
+.ant-progress-status-exception .ant-progress-bg {
+  background-color: #f06704;
+}
+.ant-upload {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 172px;
+  border: 1px solid rgb(151, 151, 151);
+  border-radius: 0;
 }

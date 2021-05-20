@@ -33,7 +33,7 @@ export const GuestListModal = ({ location }) => {
   if (isLoading)
     return (
       <Loading>
-        <Spin size="large" tip={intl.formatMessage({ id: 'loading' })} />
+        <Spin size="large" />
       </Loading>
     );
   if (error) return null;

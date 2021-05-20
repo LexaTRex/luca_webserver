@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Steps, Alert } from 'antd';
+import { Alert } from 'antd';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router';
 import { useParams } from 'react-router-dom';
 
+import { usePrivateKey } from 'utils/privateKey';
 import { BASE_GROUP_ROUTE } from 'constants/routes';
-import { getAllUncompletedTransfers, getLocationTransfer } from 'network/api';
+import {
+  getAllUncompletedTransfers,
+  getLocationTransfer,
+  getPrivateKeySecret,
+} from 'network/api';
 
 // Components
 import { Header } from 'components/Header';
-import { RequestWrapper, RequestTitle, Main } from './ShareData.styled';
+
+import { Content, Main, RequestWrapper } from './ShareData.styled';
 import { PrivateKeyStep } from './PrivateKeyStep';
 import { ShareDataStep } from './ShareDataStep';
 import { FinishStep } from './FinishStep';
@@ -21,8 +27,28 @@ export const ShareData = () => {
   const intl = useIntl();
   const history = useHistory();
   const { transferId } = useParams();
+  const [privateKey, setPrivateKey] = useState();
+  const [isPrivateKeyPreloaded, setIsPrivateKeyPreloaded] = useState(false);
+  const { data: privateKeySecret } = useQuery(
+    'privateKeySecret',
+    getPrivateKeySecret,
+    {
+      retry: false,
+    }
+  );
+  const [existingPrivateKey] = usePrivateKey(privateKeySecret);
   const [currentStep, setCurrentStep] = useState(0);
-  const [privateKey, setPrivateKey] = useState('');
+
+  useEffect(() => {
+    if (existingPrivateKey) {
+      if (!privateKey) {
+        setCurrentStep(1);
+        setIsPrivateKeyPreloaded(true);
+      }
+      setPrivateKey(existingPrivateKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingPrivateKey]);
 
   const title = intl.formatMessage({ id: 'shareData.site.title' });
   const meta = intl.formatMessage({ id: 'shareData.site.meta' });
@@ -82,6 +108,7 @@ export const ShareData = () => {
           next={progressStep}
           transfers={transfers}
           privateKey={privateKey}
+          showStepLabel={!isPrivateKeyPreloaded}
           title={intl.formatMessage({ id: 'shareData.shareDataStep.title' })}
         />
       ),
@@ -114,29 +141,13 @@ export const ShareData = () => {
             message={intl.formatMessage({ id: 'shareData.noData' })}
           />
         )}
-        {transfers && transfers[0] && !transfers[0].status && (
-          <RequestWrapper>
-            <RequestTitle>
-              {intl.formatMessage(
-                { id: 'shareData.mainTitle' },
-                { healthDepartment: transfers[0].department.name }
-              )}
-            </RequestTitle>
-            <Steps
-              progressDot
-              current={currentStep}
-              style={{
-                marginTop: 16,
-                marginBottom: 48,
-              }}
-            >
-              {steps.map(step => (
-                <Steps.Step key={step.id} />
-              ))}
-            </Steps>
-            {steps[currentStep].content}
-          </RequestWrapper>
-        )}
+        <Content>
+          {transfers && transfers[0] && !transfers[0].status && (
+            <RequestWrapper>
+              <>{steps[currentStep].content}</>
+            </RequestWrapper>
+          )}
+        </Content>
       </Main>
     </>
   );

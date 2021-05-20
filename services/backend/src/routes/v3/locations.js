@@ -165,6 +165,7 @@ router.get(
       lng: location.lng || 0,
       radius: location.shouldProvideGeoLocation ? location.radius : 0,
       createdAt: moment(location.createdAt).unix(),
+      isPrivate: location.isPrivate,
     };
 
     const userIsHealthDepartment =

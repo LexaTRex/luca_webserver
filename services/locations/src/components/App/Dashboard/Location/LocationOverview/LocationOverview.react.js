@@ -7,6 +7,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { forceCheckoutUsers } from 'network/api';
 
 import { GuestList } from './GuestList';
+import { TableAllocation } from './TableAllocation';
 import { Count } from './Count';
 
 import {
@@ -15,6 +16,7 @@ import {
   InfoWrapper,
   buttonStyles,
   GuestWrapper,
+  LinkWrapper,
 } from './LocationOverview.styled';
 import { LocationCard } from '../LocationCard';
 
@@ -54,7 +56,10 @@ export const LocationOverview = ({ location }) => {
         <InfoWrapper>
           <Info>
             <Count location={location} />
-            <GuestList location={location} />
+            <LinkWrapper>
+              <GuestList location={location} />
+              <TableAllocation location={location} />
+            </LinkWrapper>
           </Info>
           <div>
             <Popconfirm

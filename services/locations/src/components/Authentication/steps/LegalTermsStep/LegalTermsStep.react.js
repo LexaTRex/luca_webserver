@@ -12,7 +12,7 @@ import {
   Description,
 } from 'components/Authentication/Authentication.styled';
 import { TERMS_CONDITIONS_LINK } from 'constants/links';
-import AVV_FILE from 'assets/documents/luca_AVV.pdf';
+import AVV from 'assets/documents/AVV_Luca.pdf';
 
 export const LegalTermsStep = ({ next, back, navigation }) => {
   const intl = useIntl();
@@ -93,7 +93,7 @@ export const LegalTermsStep = ({ next, back, navigation }) => {
                 // eslint-disable-next-line react/display-name
                 a: (...chunks) => (
                   <a
-                    href={AVV_FILE}
+                    href={AVV}
                     download
                     target="_blank"
                     rel="noopener noreferrer"

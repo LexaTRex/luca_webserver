@@ -32,9 +32,14 @@ export const QrPrintText = styled.div`
   font-weight: 500;
 `;
 
+export const QrPrintStep = styled(QrPrintText)`
+  margin: 8px 0 8px 32px;
+  display: flex;
+`;
+
 export const PrintLink = styled.div`
   font-family: Montserrat-Bold, sans-serif;
   font-size: 14px;
   font-weight: bold;
-  text-transform: uppercase;
+  margin-left: 4px;
 `;

@@ -23,6 +23,9 @@ export const login = route => {
     },
   });
   cy.visit(route ? route : APP_ROUTE);
+  cy.window().then(window => {
+    window.sessionStorage.setItem('PRIVATE_KEY_MODAL_SEEN', 'true');
+  });
 };
 
 export const logout = () => {

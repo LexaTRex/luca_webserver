@@ -8,6 +8,10 @@ import { notification } from 'antd';
 // API
 import { logout } from 'network/api';
 
+// UTILS
+import { usePrivateKey } from 'utils/privateKey';
+import { clearHasSeenPrivateKeyModal } from 'utils/storage';
+
 // CONSTANTS
 import { AUTHENTICATION_ROUTE } from 'constants/routes';
 
@@ -16,6 +20,7 @@ export const Logout = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
+  const [, clearPrivateKey] = usePrivateKey(null);
   const handleClick = () => {
     logout()
       .then(response => {
@@ -30,6 +35,8 @@ export const Logout = () => {
 
         dispatch(push(AUTHENTICATION_ROUTE));
         queryClient.clear();
+        clearPrivateKey(null);
+        clearHasSeenPrivateKeyModal();
         notification.success({
           message: intl.formatMessage({
             id: 'notification.logout.success',

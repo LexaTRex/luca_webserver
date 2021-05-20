@@ -28,7 +28,7 @@ export const PrivateKeyStep = ({ onFinish, publicKey, title }) => {
 
   const { data: privateKeySecret, isLoading, isError } = useQuery(
     'privateKeySecret',
-    () => getPrivateKeySecret(),
+    getPrivateKeySecret,
     {
       retry: false,
     }
