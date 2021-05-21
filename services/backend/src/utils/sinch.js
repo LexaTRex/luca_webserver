@@ -1,7 +1,7 @@
 const config = require('config');
 const axios = require('axios');
 const HttpsProxyAgent = require('https-proxy-agent');
-const parsePhoneNumber = require('libphonenumber-js');
+const parsePhoneNumber = require('libphonenumber-js/max');
 const xmlParseString = require('xml2js').parseString;
 
 const httpsProxy = config.get('proxy.https');
@@ -13,6 +13,13 @@ const getInternationalPhoneNumberFormat = phone => {
   }
   return phoneNumber.formatInternational().replace('+', '00').replace(/ /g, '');
 };
+
+const isFixedLinePhoneNumber = phoneNumber => {
+  const phone = parsePhoneNumber(phoneNumber, 'DE');
+  return phone.getType() === 'FIXED_LINE';
+};
+
+const addSpaces = number => number.split('').join(' ');
 
 const createClient = baseURL => {
   return axios.create({
@@ -40,7 +47,16 @@ const sendSMSTan = async (phone, tan) => {
   payload.append('version', '4.0');
   payload.append('cid', config.get('sinch.cid'));
   payload.append('password', config.get('sinch.password'));
-  payload.append('content', `Deine Luca-TAN ist: ${tan}`);
+  if (isFixedLinePhoneNumber(phone)) {
+    payload.append(
+      'content',
+      `Hallo! Das ist deine TAN für die Verifizierung im luca System: ${addSpaces(
+        tan
+      )}`
+    );
+  } else {
+    payload.append('content', `Deine Luca-TAN ist: ${tan}`);
+  }
   payload.append('from', 'luca');
   payload.append('to', getInternationalPhoneNumberFormat(phone));
 

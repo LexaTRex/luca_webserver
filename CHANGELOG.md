@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.1.10 (2021-05-21)
+* **backend** chore: improve text for fixed line voice message
+
 ### 1.1.9 (2021-05-21)
 * **backend** chore: add rate limit
 * **backend** chore: add additional status code to delete user route
