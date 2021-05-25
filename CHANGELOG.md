@@ -1,5 +1,12 @@
 # Changelog
 
+### 1.1.11 (2021-05-25)
+* **locations:** feat: checkout users from tables
+* **locations:** feat: checkout single users from locations
+* **locations:** feat: generate qr codes compatible with CWA
+* **locations:** perf: improve fetching of current guest count
+* **scanner:** perf: improve fetching of current and total guest count
+
 ### 1.1.10 (2021-05-21)
 * **backend** chore: improve text for fixed line voice message
 

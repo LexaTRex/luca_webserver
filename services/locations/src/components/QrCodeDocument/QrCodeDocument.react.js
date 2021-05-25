@@ -69,6 +69,7 @@ export const QrCodeDocument = ({
   location,
   downloadTableQRCodes,
   isDownload,
+  isCWAEventEnabled,
   setIsDownload,
 }) => {
   const intl = useIntl();
@@ -195,6 +196,7 @@ export const QrCodeDocument = ({
             group={group}
             location={processedLocation}
             downloadTableQRCodes={downloadTableQRCodes}
+            isCWAEventEnabled={isCWAEventEnabled}
           />
         </div>
       </Wrapper>

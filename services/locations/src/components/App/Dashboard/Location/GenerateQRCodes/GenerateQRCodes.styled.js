@@ -15,7 +15,7 @@ export const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `;
 export const StyledCSVWrapper = styled.div`
-  text-align: center;
+  text-align: right;
 `;
 
 export const buttonStyle = {
@@ -42,3 +42,20 @@ export const linkInfoButton = {
   fontSize: 16,
   marginLeft: '8px',
 };
+
+export const CWASwitchWrapper = styled.div`
+  display: flex;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: flex-end;
+`;
+export const CWASwitchLabel = styled.div`
+  display: flex;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: right;
+  padding-right: 16px;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.87);
+  font-family: Montserrat-Medium, sans-serif;
+`;

@@ -15,8 +15,10 @@ import {
   StyledSwitchContainer,
   buttonStyle,
   ButtonWrapper,
+  CWASwitchLabel,
   linkInfoButton,
   StyledCSVWrapper,
+  CWASwitchWrapper,
 } from './GenerateQRCodes.styled';
 
 const TABLE_QR_CODE = 'TABLE_QR_CODE';
@@ -25,6 +27,7 @@ const LOCATION_QR_CODE = 'LOCATION_QR_CODE';
 export function GenerateQRCodes({ location }) {
   const intl = useIntl();
   const [isDownload, setIsDownload] = useState(false);
+  const [isCWAEventEnabled, setIsCWAEventEnabled] = useState(true);
   const [isLocationQRCodeEnabled, setIsLocationQRCodeEnabled] = useState(
     !location.tableCount
   );
@@ -100,17 +103,35 @@ export function GenerateQRCodes({ location }) {
       )}
       <CardSection direction="end" isLast>
         <ButtonWrapper>
+          <CWASwitchWrapper>
+            <CWASwitchLabel>
+              {intl.formatMessage({ id: 'location.setting.qr.compatibility' })}
+              <Tooltip
+                placement="top"
+                title={intl.formatMessage({
+                  id: 'settings.location.qrcode.cwaInfoText',
+                })}
+              >
+                <QuestionCircleOutlined style={linkInfoButton} />
+              </Tooltip>
+            </CWASwitchLabel>
+            <Switch
+              checked={isCWAEventEnabled}
+              onChange={() => setIsCWAEventEnabled(!isCWAEventEnabled)}
+            />
+          </CWASwitchWrapper>
           <Button
-            onClick={() => setIsDownload(true)}
-            loading={isDownload}
-            disabled={!isLocationQRCodeEnabled && !isTableQRCodeEnabled}
             style={buttonStyle}
+            loading={isDownload}
+            onClick={() => setIsDownload(true)}
+            disabled={!isLocationQRCodeEnabled && !isTableQRCodeEnabled}
           >
             {intl.formatMessage({ id: 'settings.location.qrcode.generate' })}
           </Button>
           <StyledCSVWrapper>
             <QRCodeCSVDownload
               location={location}
+              isCWAEventEnabled={isCWAEventEnabled}
               downloadTableQRCodes={isTableQRCodeEnabled}
             />
             <Tooltip
@@ -126,9 +147,10 @@ export function GenerateQRCodes({ location }) {
       </CardSection>
       <QrPrint />
       <QrCodeDocument
+        location={location}
         isDownload={isDownload}
         setIsDownload={setIsDownload}
-        location={location}
+        isCWAEventEnabled={isCWAEventEnabled}
         downloadTableQRCodes={isTableQRCodeEnabled}
       />
     </LocationCard>

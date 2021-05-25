@@ -1,4 +1,5 @@
 import { base64ToHex } from '@lucaapp/crypto';
+import moment from 'moment';
 
 const API_PATH = '/api';
 
@@ -210,6 +211,17 @@ export const forceCheckoutUsers = locationId => {
   });
 };
 
+export const forceCheckoutSingleTrace = traceId => {
+  return fetch(`${API_PATH}/v3/traces/checkout`, {
+    method: 'POST',
+    body: JSON.stringify({
+      traceId,
+      timestamp: moment().seconds(0).unix(),
+    }),
+    headers,
+  });
+};
+
 // COUNTER
 export const getCurrentCount = scannerId => {
   return fetch(`${API_PATH}/v3/scanners/${scannerId}/traces/count/current`, {
@@ -290,11 +302,16 @@ export const deleteAdditionalData = additionalDataId => {
 };
 
 // TRACES
-export const getTraces = accessId => {
-  return fetch(`${API_PATH}/v3/locations/traces/${accessId}`, {
-    method: 'GET',
-    headers,
-  });
+export const getTraces = (accessId, duration) => {
+  return fetch(
+    `${API_PATH}/v3/locations/traces/${accessId}/${
+      duration ? `?duration=${duration}` : ''
+    }`,
+    {
+      method: 'GET',
+      headers,
+    }
+  );
 };
 
 // BADGE

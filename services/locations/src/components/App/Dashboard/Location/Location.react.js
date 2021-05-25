@@ -10,6 +10,7 @@ import {
   BASE_GROUP_ROUTE,
   BASE_LOCATION_SETTINGS_ROUTE,
 } from 'constants/routes';
+import LucaLogo from 'assets/luca_logo_padding.svg';
 
 import { Checkout } from './Checkout';
 import { CheckInQuery } from './CheckInQuery';
@@ -20,10 +21,11 @@ import { TableSubdivision } from './TableSubdivision';
 import { LocationOverview } from './LocationOverview';
 import {
   Header,
-  HeaderWrapper,
-  NameWrapper,
-  Settings,
   Wrapper,
+  Settings,
+  HiddenImage,
+  NameWrapper,
+  HeaderWrapper,
 } from './Location.styled';
 
 export const Location = () => {
@@ -68,6 +70,8 @@ export const Location = () => {
       <TableSubdivision location={location} />
       <GenerateQRCodes location={location} />
       {location.lat && location.lng && <Checkout location={location} />}
+      {/* We need to pre load the Luca logo for QR-Code generation */}
+      <HiddenImage src={LucaLogo} />
     </Wrapper>
   );
 };

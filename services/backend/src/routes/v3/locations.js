@@ -23,6 +23,7 @@ const additionalDataSchemaRouter = require('./locations/additionalDataSchema');
 const {
   searchSchema,
   privateEventCreateSchema,
+  locationTracesQuerySchema,
   locationIdParametersSchema,
   accessIdParametersSchema,
 } = require('./locations.schemas');
@@ -184,6 +185,7 @@ router.get(
 // get guest list
 router.get(
   '/traces/:accessId',
+  validateQuerySchema(locationTracesQuerySchema),
   validateParametersSchema(accessIdParametersSchema),
   limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
   async (request, response) => {
@@ -197,10 +199,26 @@ router.get(
       return response.sendStatus(status.NOT_FOUND);
     }
 
+    const traceQuery = {
+      locationId: location.uuid,
+    };
+
+    switch (request.query.duration) {
+      case 'today':
+        traceQuery.time = {
+          [Op.strictRight]: [null, moment().startOf('day')],
+        };
+        break;
+      case 'week':
+        traceQuery.time = {
+          [Op.strictRight]: [null, moment().subtract(7, 'days')],
+        };
+        break;
+      default:
+    }
+
     const traces = await database.Trace.findAll({
-      where: {
-        locationId: location.uuid,
-      },
+      where: traceQuery,
       include: {
         model: database.TraceData,
       },
@@ -210,6 +228,7 @@ router.get(
     return response.send(
       traces.map(trace => ({
         traceId: trace.traceId,
+        deviceType: trace.deviceType,
         checkin: moment(trace.time[0].value).unix(),
         checkout: moment(trace.time[1].value).unix(),
         data: trace.TraceDatum

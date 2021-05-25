@@ -52,4 +52,9 @@ export const en = {
   'license.version': 'Version',
   'license.license': 'License',
   'license.license.full': 'View all licenses',
+  // Countdown
+  'countdown.info':
+    'The check in count can differ to the real counts if guests check in via different methods and devices. After a scan the counter updates automatically. Otherwise the counter is updates every five minutes.',
+  'countdown.text': 'Latest update:',
+  'countdown.button': 'UPDATE',
 };

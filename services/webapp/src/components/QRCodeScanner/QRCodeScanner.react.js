@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { decodeUtf8 } from '@lucaapp/crypto';
 
 import { checkin } from 'helpers/crypto';
+import { CWA_URL_SPLIT } from 'constants/cwa';
 import { getCheckOutPath } from 'helpers/routes';
 import { base64UrlToBytes } from 'utils/encodings';
 import { hasMobileCamAccess } from 'utils/environment';
@@ -33,15 +34,18 @@ export function QRCodeScanner() {
     (qrData, isActivated = false) => {
       if (!qrData) return;
 
-      if (qrData.includes(BASE_PRIVATE_MEETING_PATH)) {
+      const filteredQRData = qrData.split(CWA_URL_SPLIT)[0];
+      if (filteredQRData.includes(BASE_PRIVATE_MEETING_PATH)) {
         if (isActivated) {
           setPrivateMeetingQRCodeData(null);
         } else {
-          setPrivateMeetingQRCodeData(qrData);
+          setPrivateMeetingQRCodeData(filteredQRData);
           return;
         }
 
-        const [url, data] = (privateMeetingQRCodeData || qrData).split('#');
+        const [url, data] = (privateMeetingQRCodeData || filteredQRData).split(
+          '#'
+        );
         const urlChunks = url.split('/');
 
         checkinToPrivateMeeting(urlChunks[urlChunks.length - 1], data)
@@ -59,7 +63,7 @@ export function QRCodeScanner() {
       }
 
       let decodedData;
-      const urlChunks = qrData.split('/');
+      const urlChunks = filteredQRData.split('/');
       const [scannerId, data] = urlChunks[urlChunks.length - 1].split('#');
 
       try {
@@ -106,8 +110,8 @@ export function QRCodeScanner() {
         <StyledContent>
           <StyledQRReader
             delay={700}
-            onScan={privateMeetingQRCodeData ? () => {} : handleQRCode}
             onError={handleError}
+            onScan={privateMeetingQRCodeData ? () => {} : handleQRCode}
           />
         </StyledContent>
         <StyledFooter>

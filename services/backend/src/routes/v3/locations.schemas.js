@@ -20,6 +20,10 @@ const privateEventCreateSchema = z.object({
   publicKey: z.string().length(88),
 });
 
+const locationTracesQuerySchema = z.object({
+  duration: z.enum(['today', 'week']).optional(),
+});
+
 const accessIdParametersSchema = z.object({
   accessId: z.string().uuid(),
 });
@@ -27,6 +31,7 @@ const accessIdParametersSchema = z.object({
 module.exports = {
   searchSchema,
   privateEventCreateSchema,
+  locationTracesQuerySchema,
   locationIdParametersSchema,
   accessIdParametersSchema,
 };

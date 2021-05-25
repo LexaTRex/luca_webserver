@@ -1,14 +1,17 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import moment from 'moment';
+import { useQueryClient, useQuery } from 'react-query';
 import { Tick } from 'react-crude-animated-tick';
 
 import { getCurrentCount, getTotalCount, getAdditionalData } from 'network/api';
+import { REFETCH_INTERVAL_MS } from 'constants/timeouts';
 
 import { handleScanData } from 'helpers';
 
 import { useModal } from 'components/hooks/useModal';
 import { AdditionalDataModal } from 'components/modals/AdditionalDataModal';
+import { Update } from 'components/Update';
 
 import {
   FormWrapper,
@@ -21,9 +24,11 @@ import {
 
 export const ScanForm = ({ scanner }) => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
   const [openModal, closeModal] = useModal();
   const [isSuccess, setIsSuccess] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [latestUpdate, setLatestUpdate] = useState(moment().unix());
   const inputReference = useRef(null);
   const debounceTimeout = useRef(null);
 
@@ -35,11 +40,12 @@ export const ScanForm = ({ scanner }) => {
   const { data: currentCount } = useQuery(
     'current',
     () =>
-      getCurrentCount(scanner.scannerAccessId).then(response =>
-        response.json()
-      ),
+      getCurrentCount(scanner.scannerAccessId).then(response => {
+        setLatestUpdate(moment().unix());
+        return response.json();
+      }),
     {
-      refetchInterval: 500,
+      refetchInterval: REFETCH_INTERVAL_MS,
     }
   );
 
@@ -48,9 +54,15 @@ export const ScanForm = ({ scanner }) => {
     () =>
       getTotalCount(scanner.scannerAccessId).then(response => response.json()),
     {
-      refetchInterval: 500,
+      refetchInterval: REFETCH_INTERVAL_MS,
     }
   );
+
+  const refetch = () => {
+    queryClient.invalidateQueries('total');
+    queryClient.invalidateQueries('current');
+    triggerFocus();
+  };
 
   const { data: additionalData } = useQuery('additionalData', () =>
     getAdditionalData(scanner.locationId).then(response => response.json())
@@ -93,6 +105,7 @@ export const ScanForm = ({ scanner }) => {
       scanner,
       setIsSuccess,
       checkForAdditionalData,
+      refetch,
     });
 
     setInputValue('');
@@ -126,37 +139,40 @@ export const ScanForm = ({ scanner }) => {
   }, [triggerFocus]);
 
   return (
-    <Wrapper onClick={triggerFocus}>
-      <FormWrapper>
-        <Content>
-          {intl.formatMessage({
-            id: 'form.checkins',
-          })}
-          <b>{scanner.name}</b>
-          {intl.formatMessage({
-            id: 'form.checkinsSuffix',
-          })}
-          <Count>
-            {currentCount}/{totalCount}
-          </Count>
-        </Content>
-        {isSuccess ? (
-          <SuccessOverlay />
-        ) : (
-          <form onSubmit={onSubmit}>
-            <HiddenInput
-              type="text"
-              ref={inputReference}
-              autoFocus
-              autoComplete="off"
-              value={inputValue}
-              onChange={handleChange}
-            />
-          </form>
-        )}
+    <>
+      <Update latestUpdate={latestUpdate} callback={refetch} cam={false} />
+      <Wrapper onClick={triggerFocus}>
+        <FormWrapper>
+          <Content>
+            {intl.formatMessage({
+              id: 'form.checkins',
+            })}
+            <b>{scanner.name}</b>
+            {intl.formatMessage({
+              id: 'form.checkinsSuffix',
+            })}
+            <Count>
+              {currentCount}/{totalCount}
+            </Count>
+          </Content>
+          {isSuccess ? (
+            <SuccessOverlay />
+          ) : (
+            <form onSubmit={onSubmit}>
+              <HiddenInput
+                type="text"
+                ref={inputReference}
+                autoFocus
+                autoComplete="off"
+                value={inputValue}
+                onChange={handleChange}
+              />
+            </form>
+          )}
 
-        {isSuccess && <Tick size={200} />}
-      </FormWrapper>
-    </Wrapper>
+          {isSuccess && <Tick size={200} />}
+        </FormWrapper>
+      </Wrapper>
+    </>
   );
 };

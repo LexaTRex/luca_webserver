@@ -56,4 +56,9 @@ export const de = {
   'license.version': 'Version',
   'license.license': 'Lizenz',
   'license.license.full': 'Alle Lizenzen ansehen',
+  // Countdown
+  'countdown.info':
+    'Die Anzahl der Check-ins kann von der tatsächlichen Anzahl der Gäste abweichen, wenn Gäste über unterschiedliche Geräte eingecheckt werden. Nach einem Scan wird die Anzahl automatisch aktualisiert. Ohne Scan aktualisiert sich die Anzahl nach fünf Minuten.',
+  'countdown.text': 'Zuletzt aktualisiert:',
+  'countdown.button': 'AKTUALISIEREN',
 };

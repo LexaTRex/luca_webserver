@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import { QrCodeComponent } from '../QrCodeComponent';
 import { Row, Item, Text } from '../../QrCodeDocument.styled';
 
-export const LocationQrCode = ({ group, location }) => {
+export const LocationQrCode = ({ group, location, isCWAEventEnabled }) => {
   const intl = useIntl();
 
   return (
@@ -13,7 +13,10 @@ export const LocationQrCode = ({ group, location }) => {
         <Text style={{ marginBottom: 20 }}>
           {group ? group.name : location.name}
         </Text>
-        <QrCodeComponent scannerId={location.scannerId} />
+        <QrCodeComponent
+          location={location}
+          isCWAEventEnabled={isCWAEventEnabled}
+        />
         <Text style={{ marginTop: 15 }}>
           {intl.formatMessage({
             id: 'modal.qrCodeDocument.message',

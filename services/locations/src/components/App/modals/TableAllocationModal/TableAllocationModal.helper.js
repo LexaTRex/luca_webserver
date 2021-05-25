@@ -6,8 +6,8 @@ import {
 } from '@lucaapp/crypto';
 
 export function extractTableNumbers(traces, privateKey) {
-  const activeTraces = (traces || []).filter(trace => !trace.checkout);
   const tables = {};
+  const activeTraces = (traces || []).filter(trace => !trace.checkout);
   for (const trace of activeTraces) {
     try {
       const { data, iv, mac, publicKey } = trace.data;
@@ -24,10 +24,10 @@ export function extractTableNumbers(traces, privateKey) {
       );
       const { table } = JSON.parse(decryptedAdditionalData);
       if (typeof table === 'number') {
-        if (!tables[table]) {
-          tables[table] = 1;
+        if (tables[table]) {
+          tables[table].push(trace.traceId);
         } else {
-          tables[table] += 1;
+          tables[table] = [trace.traceId];
         }
       }
       // eslint-disable-next-line no-empty

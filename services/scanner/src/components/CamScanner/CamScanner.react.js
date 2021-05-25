@@ -2,13 +2,15 @@ import React, { useState, useRef, useLayoutEffect } from 'react';
 import { Tick } from 'react-crude-animated-tick';
 
 import { useIntl } from 'react-intl';
+import moment from 'moment';
 import { Helmet } from 'react-helmet';
-import { useQuery } from 'react-query';
+import { useQueryClient, useQuery } from 'react-query';
 import QrReader from 'react-qr-reader';
 import * as UAParser from 'ua-parser-js';
+import { RedoOutlined } from '@ant-design/icons';
 
 // Constants
-import { SCAN_TIMEOUT } from 'constants/timeouts';
+import { SCAN_TIMEOUT, REFETCH_INTERVAL_MS } from 'constants/timeouts';
 
 // Hooks
 import { useModal } from 'components/hooks/useModal';
@@ -22,7 +24,7 @@ import { isMobile } from 'utils/environment';
 import { notifyScanError, handleScanData } from 'helpers';
 
 import { AdditionalDataModal } from 'components/modals/AdditionalDataModal';
-
+import { Update } from 'components/Update';
 import {
   CamScannerWrapper,
   CheckinBox,
@@ -34,8 +36,10 @@ import {
 
 export const CamScanner = ({ scanner }) => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
   const [openModal, closeModal] = useModal();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [latestUpdate, setLatestUpdate] = useState(moment().unix());
   const [canScanCode, setCanScanCode] = useState(true);
 
   const agent = useRef(new UAParser().getResult());
@@ -43,14 +47,20 @@ export const CamScanner = ({ scanner }) => {
   const title = intl.formatMessage({ id: 'camScanner.site.title' });
   const meta = intl.formatMessage({ id: 'camScanner.site.meta' });
 
+  const refetch = () => {
+    queryClient.invalidateQueries('total');
+    queryClient.invalidateQueries('current');
+  };
+
   const { data: currentCount } = useQuery(
     'current',
     () =>
-      getCurrentCount(scanner.scannerAccessId).then(response =>
-        response.json()
-      ),
+      getCurrentCount(scanner.scannerAccessId).then(response => {
+        setLatestUpdate(moment().unix());
+        return response.json();
+      }),
     {
-      refetchInterval: 500,
+      refetchInterval: REFETCH_INTERVAL_MS,
     }
   );
 
@@ -59,7 +69,7 @@ export const CamScanner = ({ scanner }) => {
     () =>
       getTotalCount(scanner.scannerAccessId).then(response => response.json()),
     {
-      refetchInterval: 500,
+      refetchInterval: REFETCH_INTERVAL_MS,
     }
   );
 
@@ -102,6 +112,7 @@ export const CamScanner = ({ scanner }) => {
       scanner,
       setIsSuccess,
       checkForAdditionalData,
+      refetch,
     });
   };
 
@@ -147,6 +158,10 @@ export const CamScanner = ({ scanner }) => {
                 })}
                 <Count>
                   {currentCount}/{totalCount}
+                  <RedoOutlined
+                    style={{ marginLeft: 16, transform: 'rotate(-90deg)' }}
+                    onClick={refetch}
+                  />
                 </Count>
               </Content>
             </CheckinBox>
@@ -156,6 +171,7 @@ export const CamScanner = ({ scanner }) => {
             {intl.formatMessage({ id: 'error.browserNotSupported' })}
           </h3>
         )}
+        <Update latestUpdate={latestUpdate} />
       </CamScannerWrapper>
     </>
   );

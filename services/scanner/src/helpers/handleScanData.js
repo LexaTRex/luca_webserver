@@ -56,6 +56,7 @@ const handleV3AppData = parameters => {
     setIsSuccess,
     checkForAdditionalData,
     qrData,
+    refetch,
   } = parameters;
 
   // Check that qr code is not older than 5 minutes
@@ -78,6 +79,7 @@ const handleV3AppData = parameters => {
         setIsSuccess(false);
       }, SCAN_TIMEOUT);
       checkForAdditionalData(qrData.traceId);
+      refetch();
     })
     .catch(error => notifyScanError(error, intl));
 };
@@ -99,6 +101,7 @@ const handleV4StaticData = async parameters => {
     setIsSuccess,
     checkForAdditionalData,
     qrData,
+    refetch,
   } = parameters;
 
   const v4BadgePayload = await getV4BadgeCheckinPayload(qrData, scanner);
@@ -113,6 +116,7 @@ const handleV4StaticData = async parameters => {
         setIsSuccess(false);
       }, SCAN_TIMEOUT);
       checkForAdditionalData(v4BadgePayload.traceId);
+      refetch();
     })
     .catch(error => notifyScanError(error, intl));
 };

@@ -1,30 +1,29 @@
 import React, { useMemo, useState } from 'react';
 import moment from 'moment';
-import { Button, Spin } from 'antd';
+import { Button, Spin, Popconfirm, notification } from 'antd';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 // Api
-import { getTraces } from 'network/api';
+import { getTraces, forceCheckoutSingleTrace } from 'network/api';
 
 // Components
+import { TableHeader } from './TableHeader';
+import { Headline } from './Headline';
 import {
-  ActiveTableCount,
-  buttonStyles,
-  ContentValues,
   Entry,
-  HeaderRow,
-  HeaderValues,
   Loading,
-  RefreshTime,
-  TableContent,
-  TableHeader,
   Wrapper,
+  checkoutButtonStyle,
+  GuestTable,
+  TableRow,
 } from './TableAllocationModal.styled';
 import { extractTableNumbers } from './TableAllocationModal.helper';
 
 export const TableAllocationModal = ({ privateKey, location }) => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
   const [lastRefresh, setLastRefresh] = useState(moment());
 
   const {
@@ -36,6 +35,7 @@ export const TableAllocationModal = ({ privateKey, location }) => {
     getTraces(location.accessId).then(response => response.json())
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeTables = useMemo(() => extractTableNumbers(traces, privateKey), [
     traces,
     privateKey,
@@ -44,6 +44,32 @@ export const TableAllocationModal = ({ privateKey, location }) => {
   const refresh = () => {
     setLastRefresh(moment());
     refetch();
+  };
+
+  const onCheckoutTable = traceIds => {
+    Promise.all(traceIds.map(traceId => forceCheckoutSingleTrace(traceId)))
+      .then(responses => {
+        if (responses.some(response => response.status !== 204)) {
+          throw new Error('checkout failed');
+        }
+
+        queryClient.invalidateQueries(`traces/${location.uuid}`);
+        queryClient.invalidateQueries(`current/${location.scannerId}`);
+        refresh();
+        notification.success({
+          message: intl.formatMessage({
+            id: 'notification.checkOut.success',
+          }),
+          className: 'successCheckout',
+        });
+      })
+      .catch(() => {
+        notification.error({
+          message: intl.formatMessage({
+            id: 'notification.checkOut.error',
+          }),
+        });
+      });
   };
 
   if (isLoading)
@@ -56,43 +82,48 @@ export const TableAllocationModal = ({ privateKey, location }) => {
 
   return (
     <Wrapper>
-      <HeaderRow>
-        <ActiveTableCount>{`${intl.formatMessage({
-          id: 'modal.tableAllocation.activeTableCount',
-        })}: ${Object.keys(activeTables).length}`}</ActiveTableCount>
-        <Button style={buttonStyles} onClick={refresh}>
-          {intl.formatMessage({
-            id: 'refresh',
-          })}
-        </Button>
-      </HeaderRow>
-      <TableHeader>
-        <HeaderValues>
-          <Entry>
-            {intl.formatMessage({
-              id: 'table',
-            })}
-          </Entry>
-          <Entry>
-            {intl.formatMessage({
-              id: 'modal.tableAllocation.checkedInGuests',
-            })}
-          </Entry>
-        </HeaderValues>
-        <RefreshTime>
-          {`${intl.formatMessage({
-            id: 'modal.tableAllocation.lastRefresh',
-          })}: ${moment(lastRefresh).format('DD.MM.YYYY - HH:mm:ss')}`}
-        </RefreshTime>
-      </TableHeader>
-      <TableContent>
-        {Object.keys(activeTables).map(table => (
-          <ContentValues key={`table_${table}`}>
-            <Entry>Tisch {table}</Entry>
-            <Entry>{activeTables[table]}</Entry>
-          </ContentValues>
-        ))}
-      </TableContent>
+      <Headline
+        activeTables={activeTables}
+        callback={refresh}
+        lastRefresh={lastRefresh}
+      />
+      <GuestTable>
+        <TableHeader activeTables={activeTables} />
+        <tbody>
+          {Object.keys(activeTables).map(table => (
+            <TableRow headline="true" key={`table_${table}`}>
+              <Entry>
+                {intl.formatMessage({ id: 'table' })} {table}
+              </Entry>
+              <Entry>{activeTables[table]?.length}</Entry>
+              <Entry>
+                {activeTables[table]?.length > 0 && (
+                  <Popconfirm
+                    placement="topLeft"
+                    onConfirm={() => onCheckoutTable(activeTables[table])}
+                    title={intl.formatMessage({
+                      id: 'location.checkout.confirmText',
+                    })}
+                    okText={intl.formatMessage({
+                      id: 'location.checkout.confirmButton',
+                    })}
+                    cancelText={intl.formatMessage({
+                      id: 'location.checkout.declineButton',
+                    })}
+                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                  >
+                    <Button style={checkoutButtonStyle}>
+                      {intl.formatMessage({
+                        id: 'group.view.overview.tableAllocationCheckout',
+                      })}
+                    </Button>
+                  </Popconfirm>
+                )}
+              </Entry>
+            </TableRow>
+          ))}
+        </tbody>
+      </GuestTable>
     </Wrapper>
   );
 };

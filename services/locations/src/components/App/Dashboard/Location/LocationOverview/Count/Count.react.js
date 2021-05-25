@@ -2,9 +2,11 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 
+import { COUNTER_REFETCH_INTERVAL_MS } from 'constants/timings';
+
 import { getCurrentCount } from 'network/api';
 
-import { Counter } from './Count.styled';
+import { Counter, Wrapper, Refresh } from './Count.styled';
 
 export const Count = ({ location }) => {
   const intl = useIntl();
@@ -13,6 +15,7 @@ export const Count = ({ location }) => {
     data: currentCount,
     isLoading: isCurrentLoading,
     isError: isCurrentError,
+    refetch,
   } = useQuery(
     `current/${location.scannerId}`,
     () =>
@@ -20,7 +23,7 @@ export const Count = ({ location }) => {
         response.json()
       ),
     {
-      refetchInterval: 5000,
+      refetchInterval: COUNTER_REFETCH_INTERVAL_MS,
     }
   );
 
@@ -34,5 +37,12 @@ export const Count = ({ location }) => {
     return currentCount;
   };
 
-  return <Counter data-cy="guestCount">{getCount()}</Counter>;
+  return (
+    <Wrapper>
+      <Counter data-cy="guestCount">{getCount()}</Counter>
+      <Refresh onClick={refetch}>
+        {intl.formatMessage({ id: 'location.count.refresh' })}
+      </Refresh>
+    </Wrapper>
+  );
 };

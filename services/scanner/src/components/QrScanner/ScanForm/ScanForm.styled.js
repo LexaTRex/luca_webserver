@@ -27,6 +27,7 @@ export const Content = styled.div`
 
 export const Count = styled.div`
   font-size: 68px;
+  display: flex;
 `;
 
 export const HiddenInput = styled.input`

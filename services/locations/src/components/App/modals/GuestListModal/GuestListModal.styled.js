@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import styled from 'styled-components';
 
 const getFontFamily = isHeadline =>
@@ -5,21 +6,25 @@ const getFontFamily = isHeadline =>
 
 const getMargin = isHeadline => (isHeadline ? 'margin-bottom: 16px' : '');
 
-const getBorder = isHeadline =>
-  isHeadline ? 'border-bottom: 1px solid rgb(151, 151, 151)' : '';
+const getBorder = hasBorder =>
+  hasBorder ? 'border-bottom: 1px solid rgb(151, 151, 151)' : '';
+
+const getTableHeader = isTableHeader =>
+  isTableHeader ? 'font-weight: bold' : '';
 
 export const Wrapper = styled.div`
   display: flex;
-  width: 700px;
+  min-width: 375px;
   flex-direction: column;
 `;
 
-export const Row = styled.div`
+export const Header = styled.div`
   display: flex;
-  ${({ headline }) => getBorder(headline)};
+  justify-content: space-between;
 `;
 
 export const Count = styled.div`
+  flex: 1;
   display: flex;
   margin-bottom: 24px;
   color: rgba(0, 0, 0, 0.87);
@@ -28,26 +33,37 @@ export const Count = styled.div`
   font-weight: 500;
 `;
 
-export const Time = styled.div`
-  ${({ headline }) => getFontFamily(headline)};
-  ${({ headline }) => getMargin(headline)};
-  flex-basis: 25%;
+export const GuestTable = styled.table`
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
 `;
 
-export const Date = styled.div`
-  ${({ headline }) => getFontFamily(headline)};
-  ${({ headline }) => getMargin(headline)};
-  flex-basis: 15%;
+export const TableRow = styled.tr`
+  padding: 5px 0px;
+  text-align: center;
+  ${({ borderBottom }) => getBorder(borderBottom)};
 `;
 
-export const Guest = styled.div`
+export const Entry = styled.td`
   ${({ headline }) => getFontFamily(headline)};
   ${({ headline }) => getMargin(headline)};
-  flex-basis: 60%;
+  ${({ tableHeader }) => getTableHeader(tableHeader)};
+  padding: 10px 10px;
+  text-align: center;
 `;
 
 export const Loading = styled.div`
   font-size: 24px;
   text-align: center;
   margin-top: 24px;
+`;
+
+export const CheckoutButton = styled(Button)`
+  font-size: 14px;
+  padding: 0 40px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: rgb(195, 206, 217);
+  font-family: Montserrat-Bold, sans-serif;
 `;

@@ -33,3 +33,7 @@ export const Settings = styled.div`
   min-width: 175px;
   align-self: flex-end;
 `;
+
+export const HiddenImage = styled.img`
+  display: none;
+`;

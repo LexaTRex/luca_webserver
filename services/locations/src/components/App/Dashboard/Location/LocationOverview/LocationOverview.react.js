@@ -29,6 +29,7 @@ export const LocationOverview = ({ location }) => {
       .then(response => {
         if (response.status === 204) {
           queryClient.invalidateQueries('groups');
+          queryClient.invalidateQueries(`current/${location.scannerId}`);
 
           notification.success({
             message: intl.formatMessage({
