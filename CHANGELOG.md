@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.1.13 (2021-05-26)
+* **health-department:** fix: whitlisted special characters for csv 
+
 ### 1.1.12 (2021-05-26)
 * **health-department:** fix: csv sanitization
 

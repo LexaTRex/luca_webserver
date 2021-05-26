@@ -9,24 +9,21 @@ export const sanitizeForCSV = value => {
   )
     return value;
   if (typeof value === 'object') return mapValues(value, sanitizeForCSV);
-  const sanitizedString = value
+
+  // sanitze general
+  const sanitizedStringGeneral = value
+    // limit to standard characters
     .replaceAll(
-      /[^0-9A-Za-zçæœŒßäëïöüÿãñõâêîôûáéíóúýàèìòùÄËÏÖÜŸÃÑÕÂÊÎÔÛÁÉÍÓÚÝÀÈÌÒÙÇÆŒŒ]+/gi,
+      /[^0-9A-Za-zçæœŒßäëïöüÿãñõâêîôûáéíóúýàèìòùÄËÏÖÜŸÃÑÕÂÊÎÔÛÁÉÍÓÚÝÀÈÌÒÙÇÆŒŒ.\-@+:]+/gi,
       ' '
     )
-    .replaceAll(
-      /DROP|DELETE|SELECT|INSERT|UPDATE|TRUNCATE|FROM|JOIN|CREATE/gi,
-      ' '
-    )
+    // remove new lines
     .replaceAll(/[\n\r]/g, ' ')
-    .replaceAll('"', '""')
-    .replace(/^\+/, "'+");
+    // replace leading + with 00 for phone numbers
+    .replace(/^\+/, '00');
 
-  const forbiddenLeadingSigns = ['=', '-', '@', '\t'];
-
-  return forbiddenLeadingSigns.includes(sanitizedString?.charAt(0))
-    ? sanitizeForCSV(sanitizedString.slice(1))
-    : sanitizedString;
+  // remove leading special characters to avoid formulars
+  return sanitizedStringGeneral.replaceAll(/^[\t\r"'+=@`-\s]+/g, '_');
 };
 
 export const sanitizeObject = object => mapValues(object, sanitizeForCSV);

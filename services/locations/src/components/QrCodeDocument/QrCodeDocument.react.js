@@ -9,6 +9,7 @@ import React, {
 import { useIntl } from 'react-intl';
 import { jsPDF } from 'jspdf';
 import { message } from 'antd';
+import sanitize from 'sanitize-filename';
 
 import {
   MAX_QR_CODES_FILE,
@@ -38,7 +39,9 @@ async function generateOneFile({
       processedLocation?.name ||
       intl.formatMessage({ id: 'location.defaultName' });
 
-    locationName = fileNumber ? `${locationName}_${fileNumber}` : locationName;
+    locationName = sanitize(
+      fileNumber ? `${locationName}_${fileNumber}` : locationName
+    );
 
     qrPDF.html(printReference.current, {
       callback: pdf => {

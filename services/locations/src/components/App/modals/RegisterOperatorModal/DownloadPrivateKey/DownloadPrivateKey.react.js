@@ -1,5 +1,6 @@
 import React from 'react';
 import FileSaver from 'file-saver';
+import sanitize from 'sanitize-filename';
 import { useIntl } from 'react-intl';
 import { FileProtectOutlined } from '@ant-design/icons';
 import { generatePrivateKeyFile } from 'utils/privateKey';
@@ -28,9 +29,11 @@ export const DownloadPrivateKey = ({
     );
     FileSaver.saveAs(
       fileData,
-      intl.formatMessage(
-        { id: 'downloadFile.groups.publicKey' },
-        { name: `${operator.firstName}_${operator.lastName}` }
+      sanitize(
+        intl.formatMessage(
+          { id: 'downloadFile.groups.publicKey' },
+          { name: `${operator.firstName}_${operator.lastName}` }
+        )
       )
     );
     setHasDownloadedKey(true);
