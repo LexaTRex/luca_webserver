@@ -1,43 +1,32 @@
-import { pick } from 'lodash';
-import {
-  assertStringOrNumericValues,
-  escapeProblematicCharacters,
-} from './typeAssertions';
+import { mapValues } from 'lodash';
 
-const staticDeviceDataPropertyNames = [
-  'fn',
-  'ln',
-  'pn',
-  'e',
-  'st',
-  'hn',
-  'pc',
-  'c',
-  'vs',
-  'v',
-];
-
-const dynamicDevicePropertyNames = [
-  'fn',
-  'ln',
-  'pn',
-  'e',
-  'st',
-  'hn',
-  'pc',
-  'c',
-  'v',
-];
-
-export function filterTraceData(userData, isDynamicDevice) {
-  const picked = escapeProblematicCharacters(
-    pick(
-      userData,
-      isDynamicDevice
-        ? dynamicDevicePropertyNames
-        : staticDeviceDataPropertyNames
+export const sanitizeForCSV = value => {
+  if (
+    typeof value === 'number' ||
+    typeof value === 'undefined' ||
+    typeof value === 'boolean' ||
+    value === null
+  )
+    return value;
+  if (typeof value === 'object') return mapValues(value, sanitizeForCSV);
+  const sanitizedString = value
+    .replaceAll(
+      /[^0-9A-Za-zçæœŒßäëïöüÿãñõâêîôûáéíóúýàèìòùÄËÏÖÜŸÃÑÕÂÊÎÔÛÁÉÍÓÚÝÀÈÌÒÙÇÆŒŒ]+/gi,
+      ' '
     )
-  );
-  assertStringOrNumericValues(picked);
-  return picked;
-}
+    .replaceAll(
+      /DROP|DELETE|SELECT|INSERT|UPDATE|TRUNCATE|FROM|JOIN|CREATE/gi,
+      ' '
+    )
+    .replaceAll(/[\n\r]/g, ' ')
+    .replaceAll('"', '""')
+    .replace(/^\+/, "'+");
+
+  const forbiddenLeadingSigns = ['=', '-', '@', '\t'];
+
+  return forbiddenLeadingSigns.includes(sanitizedString?.charAt(0))
+    ? sanitizeForCSV(sanitizedString.slice(1))
+    : sanitizedString;
+};
+
+export const sanitizeObject = object => mapValues(object, sanitizeForCSV);

@@ -3,8 +3,9 @@ import moment from 'moment';
 import { CSVLink } from 'react-csv';
 import { useIntl } from 'react-intl';
 import ReactExport from 'react-data-export';
-import { filterTraceData } from 'utils/sanitizer';
+import sanitize from 'sanitize-filename';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
+import { sanitizeForCSV } from 'utils/sanitizer';
 
 const {
   ExcelFile,
@@ -59,34 +60,56 @@ const setUnregistredBadgeUser = intl =>
   });
 
 const getExcelDownloadDataFromTraces = (traces, intl) =>
-  traces
-    .map(({ userData, isDynamicDevice, ...other }) => ({
-      ...other,
-      userData: filterTraceData(userData, isDynamicDevice),
-    }))
-    // eslint-disable-next-line complexity
-    .map(({ userData, additionalData, checkin, checkout }) => ({
-      firstname: userData ? userData.fn : '',
-      lastname: userData ? userData.ln : setUnregistredBadgeUser(intl),
-      phone: userData ? userData.pn : '',
-      email: userData ? userData.e : '',
-      street: userData ? userData.st : '',
-      houseNumber: userData ? userData.hn : '',
-      city: userData ? userData.c : '',
-      postalCode: userData ? userData.pc : '',
-      checkinDate: checkin ? getFormattedDate(checkin) : '',
-      checkinTime: checkin ? getFormattedTime(checkin) : '',
-      checkoutDate: checkout ? getFormattedDate(checkout) : '',
-      checkoutTime: checkout ? getFormattedTime(checkout) : '',
-      additionalData,
-    }));
+  // eslint-disable-next-line complexity
+  traces.map(({ userData, additionalData, checkin, checkout }) => ({
+    firstName: userData ? sanitizeForCSV(userData.fn) : '',
+    lastName: userData
+      ? sanitizeForCSV(userData.ln)
+      : setUnregistredBadgeUser(intl),
+    phone: userData ? sanitizeForCSV(userData.pn) : '',
+    email: userData ? sanitizeForCSV(userData.e) : '',
+    street: userData ? sanitizeForCSV(userData.st) : '',
+    houseNumber: userData ? sanitizeForCSV(userData.hn) : '',
+    city: userData ? sanitizeForCSV(userData.c) : '',
+    postalCode: userData ? sanitizeForCSV(userData.pc) : '',
+    checkinDate: checkin ? getFormattedDate(checkin) : '',
+    checkinTime: checkin ? getFormattedTime(checkin) : '',
+    checkoutDate: checkout ? getFormattedDate(checkout) : '',
+    checkoutTime: checkout ? getFormattedTime(checkout) : '',
+    additionalData,
+  }));
+
+const columnKeys = [
+  'firstName',
+  'lastName',
+  'phone',
+  'email',
+  'street',
+  'houseNumber',
+  'city',
+  'postalCode',
+  'checkinDate',
+  'checkinTime',
+  'checkoutDate',
+  'checkoutTime',
+];
+
+const locationKeys = {
+  streetName: 'location.street',
+  streetNr: 'location.streetNumber',
+  zipCode: 'location.postalCode',
+  city: 'location.city',
+  firstName: 'locationOwner.firstName',
+  lastName: 'locationOwner.lastName',
+  phone: 'locationOwner.phone',
+};
 
 export const ExcelDownload = ({ traces, location }) => {
   const intl = useIntl();
 
   return (
     <ExcelFile
-      filename={`${location.name}_luca`}
+      filename={sanitize(`${location.name}_luca`)}
       element={
         <button
           type="button"
@@ -104,11 +127,11 @@ export const ExcelDownload = ({ traces, location }) => {
     >
       <ExcelSheet
         data={getExcelDownloadDataFromTraces(traces, intl)}
-        name={`${location.groupName} - ${location.name}`}
+        name={sanitizeForCSV(`${location.groupName} - ${location.name}`)}
       >
         <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.locationName' })}
-          value={() => location.name}
+          value={() => sanitizeForCSV(location.name)}
         />
         <ExcelColumn
           label={intl.formatMessage({ id: 'history.label.locationCategory' })}
@@ -126,100 +149,22 @@ export const ExcelDownload = ({ traces, location }) => {
               : intl.formatMessage({ id: 'history.label.outdoor' })
           }
         />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.location.street',
-          })}
-          value={() => location.streetName}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.location.streetNumber',
-          })}
-          value={() => location.streetNr}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.location.postalCode',
-          })}
-          value={() => location.zipCode}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.location.city',
-          })}
-          value={() => location.city}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.locationOwner.firstName',
-          })}
-          value={() => location.firstName}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.locationOwner.lastName',
-          })}
-          value={() => location.lastName}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({
-            id: 'contactPersonTable.locationOwner.phone',
-          })}
-          value={() => location.phone}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.firstName' })}
-          value={col => col?.firstname}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.lastName' })}
-          value={col => col?.lastname}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.phone' })}
-          value={col => col?.phone}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.email' })}
-          value={col => col?.email}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.street' })}
-          value={col => col?.street}
-        />
-
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.houseNumber' })}
-          value={col => col?.houseNumber}
-        />
-
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.city' })}
-          value={col => col?.city}
-        />
-
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.postalCode' })}
-          value={col => col?.postalCode}
-        />
-
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.checkinDate' })}
-          value={col => col?.checkinDate}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.checkinTime' })}
-          value={col => col?.checkinTime}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.checkoutDate' })}
-          value={col => col?.checkoutDate}
-        />
-        <ExcelColumn
-          label={intl.formatMessage({ id: 'contactPersonTable.checkoutTime' })}
-          value={col => col?.checkoutTime}
-        />
+        {Object.entries(locationKeys).map(([key, value]) => (
+          <ExcelColumn
+            label={intl.formatMessage({
+              id: `contactPersonTable.${value}`,
+            })}
+            value={() => sanitizeForCSV(location[key])}
+            key={key}
+          />
+        ))}
+        {columnKeys.map(name => (
+          <ExcelColumn
+            label={intl.formatMessage({ id: `contactPersonTable.${name}` })}
+            value={col => sanitizeForCSV(col[name])}
+            key={name}
+          />
+        ))}
         <ExcelColumn
           label={intl.formatMessage({
             id: 'contactPersonTable.additionalData',
@@ -228,9 +173,9 @@ export const ExcelDownload = ({ traces, location }) => {
             if (!col.additionalData) return '';
             const data = Object.keys(col.additionalData).map(
               key =>
-                `${formatAdditionalDataKey(key, intl)}: ${
-                  col.additionalData[key]
-                }`
+                `${sanitizeForCSV(
+                  formatAdditionalDataKey(key, intl)
+                )}: ${sanitizeForCSV(col.additionalData[key])}`
             );
             return data.join();
           }}
@@ -266,48 +211,44 @@ const getCSVDownloadDataFromTraces = (traces, location, intl) => [
     intl.formatMessage({ id: 'contactPersonTable.checkoutTime' }),
     intl.formatMessage({ id: 'contactPersonTable.additionalData' }),
   ],
-  ...traces
-    .map(({ userData, isDynamicDevice, ...other }) => ({
-      ...other,
-      userData: filterTraceData(userData, isDynamicDevice),
-    }))
-    // eslint-disable-next-line complexity
-    .map(({ userData, additionalData, checkin, checkout }) => [
-      location.name ? location.name : '',
-      location.type
-        ? intl.formatMessage({
-            id: `history.location.category.${location.type}`,
-          })
-        : '',
-      location.isIndoor
-        ? intl.formatMessage({ id: 'history.label.indoor' })
-        : intl.formatMessage({ id: 'history.label.outdoor' }),
-      location.streetName ? location.streetName : '',
-      location.streetNr ? location.streetNr : '',
-      location.zipCode ? location.zipCode : '',
-      location.city ? location.city : '',
-      location.firstName ? location.firstName : '',
-      location.lastName ? location.lastName : '',
-      location.phone ? location.phone : '',
-      userData ? userData.fn : '',
-      userData ? userData.ln : setUnregistredBadgeUser(intl),
-      userData ? userData.pn : '',
-      userData ? userData.e : '',
-      userData ? userData.st : '',
-      userData ? userData.hn : '',
-      userData ? userData.c : '',
-      userData ? userData.pc : '',
-      checkin ? getFormattedDate(checkin) : '',
-      checkin ? getFormattedTime(checkin) : '',
-      checkout ? getFormattedDate(checkout) : '',
-      checkout ? getFormattedTime(checkout) : '',
-      additionalData
-        ? Object.keys(additionalData).map(
-            key =>
-              `${formatAdditionalDataKey(key, intl)}: ${additionalData[key]}`
+  // eslint-disable-next-line complexity
+  ...traces.map(({ userData, additionalData, checkin, checkout }) => [
+    location.name ? sanitizeForCSV(location.name) : '',
+    location.type
+      ? intl.formatMessage({
+          id: `history.location.category.${location.type}`,
+        })
+      : '',
+    location.isIndoor
+      ? intl.formatMessage({ id: 'history.label.indoor' })
+      : intl.formatMessage({ id: 'history.label.outdoor' }),
+    location.streetName ? sanitizeForCSV(location.streetName) : '',
+    location.streetNr ? sanitizeForCSV(location.streetNr) : '',
+    location.zipCode ? sanitizeForCSV(location.zipCode) : '',
+    location.city ? sanitizeForCSV(location.city) : '',
+    location.firstName ? sanitizeForCSV(location.firstName) : '',
+    location.lastName ? sanitizeForCSV(location.lastName) : '',
+    location.phone ? sanitizeForCSV(location.phone) : '',
+    userData ? sanitizeForCSV(userData.fn) : '',
+    userData ? sanitizeForCSV(userData.ln) : setUnregistredBadgeUser(intl),
+    userData ? sanitizeForCSV(userData.pn) : '',
+    userData ? sanitizeForCSV(userData.e) : '',
+    userData ? sanitizeForCSV(userData.st) : '',
+    userData ? sanitizeForCSV(userData.hn) : '',
+    userData ? sanitizeForCSV(userData.c) : '',
+    userData ? sanitizeForCSV(userData.pc) : '',
+    checkin ? getFormattedDate(checkin) : '',
+    checkin ? getFormattedTime(checkin) : '',
+    checkout ? getFormattedDate(checkout) : '',
+    checkout ? getFormattedTime(checkout) : '',
+    additionalData
+      ? Object.keys(additionalData).map(key =>
+          sanitizeForCSV(
+            `${formatAdditionalDataKey(key, intl)}: ${additionalData[key]}`
           )
-        : null,
-    ]),
+        )
+      : null,
+  ]),
 ];
 
 export const CSVDownload = ({ traces, location }) => {
@@ -315,7 +256,7 @@ export const CSVDownload = ({ traces, location }) => {
   return (
     <CSVLink
       data={getCSVDownloadDataFromTraces(traces, location, intl)}
-      filename={`${location.name}_luca.csv`}
+      filename={sanitize(`${location.name}_luca.csv`)}
     >
       Download CSV
     </CSVLink>
@@ -468,41 +409,39 @@ const getSormasDownloadDataFromTraces = (traces, location, intl) => [
     'ownershipHandedOver',
     'returningTraveler',
   ],
-  ...traces
-    .map(({ userData, isDynamicDevice, ...other }) => ({
-      ...other,
-      userData: filterTraceData(userData, isDynamicDevice),
-    }))
-    .map(({ userData, checkin, additionalData }) => {
-      const entry = new Array(134);
-      entry[2] = 'CORONAVIRUS';
-      entry[3] = 'COVID-19';
-      entry[4] = moment().format('DD.MM.YYYY');
-      entry[11] = moment.unix(checkin).format('DD.MM.YYYY');
-      entry[12] = 'TRACING_APP';
-      entry[14] = 'OTHER';
-      entry[15] = 'luca';
-      entry[19] = 'UNCONFIRMED';
-      entry[20] = 'ACTIVE';
-      entry[21] = 'FOLLOW_UP';
-      entry[25] = `${location.name} / ${location.streetName} ${
-        location.streetNr
-      } / ${location.zipCode} ${location.state} / ${formatAdditionalData(
-        additionalData,
-        intl
-      )}`;
-      entry[37] = userData ? userData.fn : '';
-      entry[38] = userData ? userData.ln : setUnregistredBadgeUser(intl);
-      entry[43] = 'UNKNOWN';
-      entry[68] = userData ? userData.pn : '';
-      entry[74] = userData ? userData.c : '';
-      entry[79] = userData ? userData.pc : '';
-      entry[80] = userData ? userData.st : '';
-      entry[81] = userData ? userData.hn : '';
-      entry[83] = 'HOME';
-      entry[88] = userData ? userData.e : '';
-      return entry.map(field => field?.trim() || '');
-    }),
+  ...traces.map(({ userData, checkin, additionalData }) => {
+    const entry = new Array(134);
+    entry[2] = 'CORONAVIRUS';
+    entry[3] = 'COVID-19';
+    entry[4] = moment().format('DD.MM.YYYY');
+    entry[11] = moment.unix(checkin).format('DD.MM.YYYY');
+    entry[12] = 'TRACING_APP';
+    entry[14] = 'OTHER';
+    entry[15] = 'luca';
+    entry[19] = 'UNCONFIRMED';
+    entry[20] = 'ACTIVE';
+    entry[21] = 'FOLLOW_UP';
+    entry[25] = `${sanitizeForCSV(location.name)} / ${sanitizeForCSV(
+      location.streetName
+    )} ${sanitizeForCSV(location.streetNr)} / ${sanitizeForCSV(
+      location.zipCode
+    )} ${sanitizeForCSV(location.state)} / ${sanitizeForCSV(
+      formatAdditionalData(additionalData, intl)
+    )}`;
+    entry[37] = userData ? sanitizeForCSV(userData.fn) : '';
+    entry[38] = userData
+      ? sanitizeForCSV(userData.ln)
+      : setUnregistredBadgeUser(intl);
+    entry[43] = 'UNKNOWN';
+    entry[68] = userData ? sanitizeForCSV(userData.pn) : '';
+    entry[74] = userData ? sanitizeForCSV(userData.c) : '';
+    entry[79] = userData ? sanitizeForCSV(userData.pc) : '';
+    entry[80] = userData ? sanitizeForCSV(userData.st) : '';
+    entry[81] = userData ? sanitizeForCSV(userData.hn) : '';
+    entry[83] = 'HOME';
+    entry[88] = userData ? sanitizeForCSV(userData.e) : '';
+    return entry.map(field => field?.trim() || '');
+  }),
 ];
 
 export const SormasDownload = ({ traces, location }) => {
@@ -511,7 +450,7 @@ export const SormasDownload = ({ traces, location }) => {
     <CSVLink
       data={getSormasDownloadDataFromTraces(traces, location, intl)}
       separator=";"
-      filename={`${location.groupName} - ${location.name}_sormas.csv`}
+      filename={sanitize(`${location.groupName} - ${location.name}_sormas.csv`)}
     >
       {intl.formatMessage({ id: 'download.sormas' })}
     </CSVLink>

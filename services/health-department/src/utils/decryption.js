@@ -18,10 +18,7 @@ import {
   getBadgePrivateKey,
   getDailyPrivateKey,
 } from './cryptoKeyOperations';
-import {
-  assertStringOrNumericValues,
-  escapeProblematicCharacters,
-} from './typeAssertions';
+import { assertStringOrNumericValues } from './typeAssertions';
 
 export async function decryptStaticDeviceTrace(encryptedTrace) {
   const privateKey = await getBadgePrivateKey(encryptedTrace.keyId);
@@ -161,7 +158,7 @@ export function decryptAdditionalData(encryptedTrace, isInvalid) {
   try {
     const parsed = JSON.parse(decryptedAdditionalData);
     assertStringOrNumericValues(parsed);
-    return escapeProblematicCharacters(parsed);
+    return parsed;
   } catch (error) {
     console.error(
       `invalid json (additionalData) (TraceId: ${encryptedTrace.traceId})`,

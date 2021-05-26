@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.1.12 (2021-05-26)
+* **health-department:** fix: csv sanitization
+
 ### 1.1.11 (2021-05-25)
 * **locations:** feat: checkout users from tables
 * **locations:** feat: checkout single users from locations
