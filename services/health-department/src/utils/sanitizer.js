@@ -1,14 +1,12 @@
 import { mapValues } from 'lodash';
 
 export const sanitizeForCSV = value => {
-  if (
-    typeof value === 'number' ||
-    typeof value === 'undefined' ||
-    typeof value === 'boolean' ||
-    value === null
-  )
+  if (typeof value === 'object' && value !== null)
+    return mapValues(value, sanitizeForCSV);
+
+  if (typeof value !== 'string') {
     return value;
-  if (typeof value === 'object') return mapValues(value, sanitizeForCSV);
+  }
 
   // sanitze general
   const sanitizedStringGeneral = value

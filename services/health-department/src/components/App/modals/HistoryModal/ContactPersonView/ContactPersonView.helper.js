@@ -1,11 +1,13 @@
+/* eslint-disable max-lines, complexity */
 import React from 'react';
 import moment from 'moment';
+import { notification } from 'antd';
 import { CSVLink } from 'react-csv';
 import { useIntl } from 'react-intl';
-import ReactExport from 'react-data-export';
 import sanitize from 'sanitize-filename';
-import { getFormattedDate, getFormattedTime } from 'utils/time';
+import ReactExport from 'react-data-export';
 import { sanitizeForCSV } from 'utils/sanitizer';
+import { getFormattedDate, getFormattedTime } from 'utils/time';
 
 const {
   ExcelFile,
@@ -14,6 +16,14 @@ const {
 
 const TABLE_KEY = 'table';
 const MINUTE_SECONDS = 60;
+
+function showErrorNotification(intl) {
+  notification.error({
+    message: intl.formatMessage({
+      id: 'modal.contactPersonView.download.error',
+    }),
+  });
+}
 
 export const filterForTimeOverlap = (
   decryptedTraces,
@@ -60,24 +70,33 @@ const setUnregistredBadgeUser = intl =>
   });
 
 const getExcelDownloadDataFromTraces = (traces, intl) =>
-  // eslint-disable-next-line complexity
-  traces.map(({ userData, additionalData, checkin, checkout }) => ({
-    firstName: userData ? sanitizeForCSV(userData.fn) : '',
-    lastName: userData
-      ? sanitizeForCSV(userData.ln)
-      : setUnregistredBadgeUser(intl),
-    phone: userData ? sanitizeForCSV(userData.pn) : '',
-    email: userData ? sanitizeForCSV(userData.e) : '',
-    street: userData ? sanitizeForCSV(userData.st) : '',
-    houseNumber: userData ? sanitizeForCSV(userData.hn) : '',
-    city: userData ? sanitizeForCSV(userData.c) : '',
-    postalCode: userData ? sanitizeForCSV(userData.pc) : '',
-    checkinDate: checkin ? getFormattedDate(checkin) : '',
-    checkinTime: checkin ? getFormattedTime(checkin) : '',
-    checkoutDate: checkout ? getFormattedDate(checkout) : '',
-    checkoutTime: checkout ? getFormattedTime(checkout) : '',
-    additionalData,
-  }));
+  traces
+    // eslint-disable-next-line complexity
+    .map(({ userData, additionalData, checkin, checkout }) => {
+      try {
+        return {
+          firstName: userData ? sanitizeForCSV(userData.fn) : '',
+          lastName: userData
+            ? sanitizeForCSV(userData.ln)
+            : setUnregistredBadgeUser(intl),
+          phone: userData ? sanitizeForCSV(userData.pn) : '',
+          email: userData ? sanitizeForCSV(userData.e) : '',
+          street: userData ? sanitizeForCSV(userData.st) : '',
+          houseNumber: userData ? sanitizeForCSV(userData.hn) : '',
+          city: userData ? sanitizeForCSV(userData.c) : '',
+          postalCode: userData ? sanitizeForCSV(userData.pc) : '',
+          checkinDate: checkin ? getFormattedDate(checkin) : '',
+          checkinTime: checkin ? getFormattedTime(checkin) : '',
+          checkoutDate: checkout ? getFormattedDate(checkout) : '',
+          checkoutTime: checkout ? getFormattedTime(checkout) : '',
+          additionalData,
+        };
+      } catch {
+        showErrorNotification(intl);
+        return null;
+      }
+    })
+    .filter(entry => entry !== null);
 
 const columnKeys = [
   'firstName',
@@ -211,44 +230,57 @@ const getCSVDownloadDataFromTraces = (traces, location, intl) => [
     intl.formatMessage({ id: 'contactPersonTable.checkoutTime' }),
     intl.formatMessage({ id: 'contactPersonTable.additionalData' }),
   ],
-  // eslint-disable-next-line complexity
-  ...traces.map(({ userData, additionalData, checkin, checkout }) => [
-    location.name ? sanitizeForCSV(location.name) : '',
-    location.type
-      ? intl.formatMessage({
-          id: `history.location.category.${location.type}`,
-        })
-      : '',
-    location.isIndoor
-      ? intl.formatMessage({ id: 'history.label.indoor' })
-      : intl.formatMessage({ id: 'history.label.outdoor' }),
-    location.streetName ? sanitizeForCSV(location.streetName) : '',
-    location.streetNr ? sanitizeForCSV(location.streetNr) : '',
-    location.zipCode ? sanitizeForCSV(location.zipCode) : '',
-    location.city ? sanitizeForCSV(location.city) : '',
-    location.firstName ? sanitizeForCSV(location.firstName) : '',
-    location.lastName ? sanitizeForCSV(location.lastName) : '',
-    location.phone ? sanitizeForCSV(location.phone) : '',
-    userData ? sanitizeForCSV(userData.fn) : '',
-    userData ? sanitizeForCSV(userData.ln) : setUnregistredBadgeUser(intl),
-    userData ? sanitizeForCSV(userData.pn) : '',
-    userData ? sanitizeForCSV(userData.e) : '',
-    userData ? sanitizeForCSV(userData.st) : '',
-    userData ? sanitizeForCSV(userData.hn) : '',
-    userData ? sanitizeForCSV(userData.c) : '',
-    userData ? sanitizeForCSV(userData.pc) : '',
-    checkin ? getFormattedDate(checkin) : '',
-    checkin ? getFormattedTime(checkin) : '',
-    checkout ? getFormattedDate(checkout) : '',
-    checkout ? getFormattedTime(checkout) : '',
-    additionalData
-      ? Object.keys(additionalData).map(key =>
-          sanitizeForCSV(
-            `${formatAdditionalDataKey(key, intl)}: ${additionalData[key]}`
-          )
-        )
-      : null,
-  ]),
+  ...traces
+    // eslint-disable-next-line complexity
+    .map(({ userData, additionalData, checkin, checkout }) => {
+      try {
+        return [
+          location.name ? sanitizeForCSV(location.name) : '',
+          location.type
+            ? intl.formatMessage({
+                id: `history.location.category.${location.type}`,
+              })
+            : '',
+          location.isIndoor
+            ? intl.formatMessage({ id: 'history.label.indoor' })
+            : intl.formatMessage({ id: 'history.label.outdoor' }),
+          location.streetName ? sanitizeForCSV(location.streetName) : '',
+          location.streetNr ? sanitizeForCSV(location.streetNr) : '',
+          location.zipCode ? sanitizeForCSV(location.zipCode) : '',
+          location.city ? sanitizeForCSV(location.city) : '',
+          location.firstName ? sanitizeForCSV(location.firstName) : '',
+          location.lastName ? sanitizeForCSV(location.lastName) : '',
+          location.phone ? sanitizeForCSV(location.phone) : '',
+          userData ? sanitizeForCSV(userData.fn) : '',
+          userData
+            ? sanitizeForCSV(userData.ln)
+            : setUnregistredBadgeUser(intl),
+          userData ? sanitizeForCSV(userData.pn) : '',
+          userData ? sanitizeForCSV(userData.e) : '',
+          userData ? sanitizeForCSV(userData.st) : '',
+          userData ? sanitizeForCSV(userData.hn) : '',
+          userData ? sanitizeForCSV(userData.c) : '',
+          userData ? sanitizeForCSV(userData.pc) : '',
+          checkin ? getFormattedDate(checkin) : '',
+          checkin ? getFormattedTime(checkin) : '',
+          checkout ? getFormattedDate(checkout) : '',
+          checkout ? getFormattedTime(checkout) : '',
+          additionalData
+            ? Object.keys(additionalData).map(key =>
+                sanitizeForCSV(
+                  `${formatAdditionalDataKey(key, intl)}: ${
+                    additionalData[key]
+                  }`
+                )
+              )
+            : null,
+        ];
+      } catch {
+        showErrorNotification(intl);
+        return null;
+      }
+    })
+    .filter(entry => entry !== null),
 ];
 
 export const CSVDownload = ({ traces, location }) => {
@@ -409,39 +441,46 @@ const getSormasDownloadDataFromTraces = (traces, location, intl) => [
     'ownershipHandedOver',
     'returningTraveler',
   ],
-  ...traces.map(({ userData, checkin, additionalData }) => {
-    const entry = new Array(134);
-    entry[2] = 'CORONAVIRUS';
-    entry[3] = 'COVID-19';
-    entry[4] = moment().format('DD.MM.YYYY');
-    entry[11] = moment.unix(checkin).format('DD.MM.YYYY');
-    entry[12] = 'TRACING_APP';
-    entry[14] = 'OTHER';
-    entry[15] = 'luca';
-    entry[19] = 'UNCONFIRMED';
-    entry[20] = 'ACTIVE';
-    entry[21] = 'FOLLOW_UP';
-    entry[25] = `${sanitizeForCSV(location.name)} / ${sanitizeForCSV(
-      location.streetName
-    )} ${sanitizeForCSV(location.streetNr)} / ${sanitizeForCSV(
-      location.zipCode
-    )} ${sanitizeForCSV(location.state)} / ${sanitizeForCSV(
-      formatAdditionalData(additionalData, intl)
-    )}`;
-    entry[37] = userData ? sanitizeForCSV(userData.fn) : '';
-    entry[38] = userData
-      ? sanitizeForCSV(userData.ln)
-      : setUnregistredBadgeUser(intl);
-    entry[43] = 'UNKNOWN';
-    entry[68] = userData ? sanitizeForCSV(userData.pn) : '';
-    entry[74] = userData ? sanitizeForCSV(userData.c) : '';
-    entry[79] = userData ? sanitizeForCSV(userData.pc) : '';
-    entry[80] = userData ? sanitizeForCSV(userData.st) : '';
-    entry[81] = userData ? sanitizeForCSV(userData.hn) : '';
-    entry[83] = 'HOME';
-    entry[88] = userData ? sanitizeForCSV(userData.e) : '';
-    return entry.map(field => field?.trim() || '');
-  }),
+  ...traces
+    .map(({ userData, checkin, additionalData }) => {
+      try {
+        const entry = new Array(134);
+        entry[2] = 'CORONAVIRUS';
+        entry[3] = 'COVID-19';
+        entry[4] = moment().format('DD.MM.YYYY');
+        entry[11] = moment.unix(checkin).format('DD.MM.YYYY');
+        entry[12] = 'TRACING_APP';
+        entry[14] = 'OTHER';
+        entry[15] = 'luca';
+        entry[19] = 'UNCONFIRMED';
+        entry[20] = 'ACTIVE';
+        entry[21] = 'FOLLOW_UP';
+        entry[25] = `${sanitizeForCSV(location.name)} / ${sanitizeForCSV(
+          location.streetName
+        )} ${sanitizeForCSV(location.streetNr)} / ${sanitizeForCSV(
+          location.zipCode
+        )} ${sanitizeForCSV(location.state)} / ${sanitizeForCSV(
+          formatAdditionalData(additionalData, intl)
+        )}`;
+        entry[37] = userData ? sanitizeForCSV(userData.fn) : '';
+        entry[38] = userData
+          ? sanitizeForCSV(userData.ln)
+          : setUnregistredBadgeUser(intl);
+        entry[43] = 'UNKNOWN';
+        entry[68] = userData ? sanitizeForCSV(userData.pn) : '';
+        entry[74] = userData ? sanitizeForCSV(userData.c) : '';
+        entry[79] = userData ? sanitizeForCSV(userData.pc) : '';
+        entry[80] = userData ? sanitizeForCSV(userData.st) : '';
+        entry[81] = userData ? sanitizeForCSV(userData.hn) : '';
+        entry[83] = 'HOME';
+        entry[88] = userData ? sanitizeForCSV(userData.e) : '';
+        return entry;
+      } catch {
+        showErrorNotification(intl);
+        return null;
+      }
+    })
+    .filter(entry => entry !== null),
 ];
 
 export const SormasDownload = ({ traces, location }) => {

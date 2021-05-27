@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.14
+* **health-department:** chore: improved health department locales
+* **health-department:** fix: Add more error handling in csv generation
+
 ### 1.1.13 (2021-05-26)
 * **health-department:** fix: whitlisted special characters for csv 
 
