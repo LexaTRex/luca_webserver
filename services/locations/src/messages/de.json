@@ -3,8 +3,8 @@
     "locations.site.meta": "luca Locations hilft dir dabei, die Kontaktinformationen deiner Gäste einfach zu erfassen und sie gleichzeitig sicher zu speichern.",
     "shareData.site.title": "luca Datenfreigabe",
     "shareData.site.meta": "Bitte bestätige hier, dass das Gesundheitsamt Daten entschlüsseln darf, die deine Location betreffen.",
-    "forgotPassowrd.site.title": "luca Passwort vergessen",
-    "forgotPassowrd.site.meta": "Hier kannst du das Passwort zu deinem luca Locations Account zurückzusetzen.",
+    "forgotPassword.site.title": "luca Passwort vergessen",
+    "forgotPassword.site.meta": "Hier kannst du das Passwort zu deinem luca Locations Account zurückzusetzen.",
     "resetPassowrd.site.title": "luca Passwort zurücksetzen",
     "resetPassowrd.site.meta": "Hier kannst du das Passwort für luca Locations zurücksetzen.",
     "registerBadge.site.title": "luca Schlüsselanhänger registrieren",
@@ -562,7 +562,7 @@
     "whatsNew.avv.content": "Gerne möchte wir dich darüber informieren, dass du in deinem luca Locations-Profil deinen Auftragsverarbeitungsvertrag (kurz auch AVV) abrufen kannst. Den aktuellen AVV findest du hier auch noch mal als {download}.",
     "whatsNew.avv.download": "Download",
     "whatsNew.accept": "ALLES KLAR",
-    "shareData.privateKey.uploadMessage": "Laden deinen Schlüssel per Drag & Drop hoch.",
+    "shareData.privateKey.uploadMessage": "Öffne deinen Schlüssel per Drag & Drop.",
     "shareData.privateKey.btnLabel": "Datei Auswählen",
     "shareData.privateKey.uploadAction": "Laden ...",
     "shareData.inquiringHD": "Anfragendes Gesundheitsamt",
@@ -612,5 +612,6 @@
     "modal.guestlist.deviceType.badge": "Schlüsselanhänger",
     "modal.guestlist.deviceType.contactForm": "Kontaktformular",
     "modal.guestlist.deviceType.app": "Smartphone",
-    "settings.location.qrcode.cwaInfoText": "QR-Codes, die mit der Corona Warn-App kompatibel sind, können mit der Corona Warn-App erfasst werden, sobald diese die Unterstützung für luca-Events freigegeben hat."
+    "settings.location.qrcode.cwaInfoText": "QR-Codes, die mit der Corona Warn-App kompatibel sind, können mit der Corona Warn-App erfasst werden, sobald diese die Unterstützung für luca-Events freigegeben hat.",
+    "message.generatingPDF": "PDF wird erstellt. Bitte verlassen nicht die Seite."
 }

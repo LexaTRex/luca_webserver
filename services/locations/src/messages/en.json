@@ -3,8 +3,8 @@
     "locations.site.meta": "luca Locations helps you easily gather and securely store the contact information of your guests.",
     "shareData.site.title": "luca Share Data",
     "shareData.site.meta": "Please allow the health department to decrypt data concerning your location.",
-    "forgotPassowrd.site.title": "luca Forgot Password",
-    "forgotPassowrd.site.meta": "Change the password of your luca locations account here.",
+    "forgotPassword.site.title": "luca Forgot Password",
+    "forgotPassword.site.meta": "Change the password of your luca locations account here.",
     "resetPassowrd.site.title": "luca Reset Password",
     "resetPassowrd.site.meta": "Reset the password of your luca Locations account here.",
     "registerBadge.site.title": "luca Register key chain",
@@ -535,7 +535,7 @@
     "license.license": "License",
     "license.license.full": "View all licenses",
     "activation": "Activation",
-    "registerBadge.serialNumber.error.min": "This part of the serial number can't be unter 4 character",
+    "registerBadge.serialNumber.error.min": "This part of the serial number can't be under 4 character",
     "modal.createLocation.IndoorInput.title": "Is your area indoor or outdoor?",
     "modal.createLocation.IndoorInput.description": "Please indicate whether your area is indoor or outdoor.",
     "error.avv": "Please accept the data processing agreement (DPA)",
@@ -562,7 +562,7 @@
     "whatsNew.avv.content": "We would like to inform you that you can find your data processing agreement (DPA) in your locations profile. You can also {download} the current version here.",
     "whatsNew.avv.download": "download",
     "whatsNew.accept": "OKAY",
-    "shareData.privateKey.uploadMessage": "Drag and drop to upload your key.",
+    "shareData.privateKey.uploadMessage": "Drag and drop to open your key.",
     "shareData.privateKey.btnLabel": "Choose a file",
     "shareData.privateKey.uploadAction": "Loading...",
     "shareData.inquiringHD": "Inquiring health department",
@@ -612,5 +612,6 @@
     "modal.guestlist.deviceType.badge": "Badge",
     "modal.guestlist.deviceType.contactForm": "Contact form",
     "modal.guestlist.deviceType.app": "Mobile phone",
-    "settings.location.qrcode.cwaInfoText": "QR codes compatible with the Corona Warn app can be scanned with the Corona Warn app once it has approved support for luca events."
+    "settings.location.qrcode.cwaInfoText": "QR codes compatible with the Corona Warn app can be scanned with the Corona Warn app once it has approved support for luca events.",
+    "message.generatingPDF": "Generating PDF. Please don't leave the page."
 }

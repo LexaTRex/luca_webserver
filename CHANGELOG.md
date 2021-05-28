@@ -1,8 +1,12 @@
 # Changelog
 
-### 1.1.14
+### 1.1.15 (2021-05-28)
+* **locations:** chore: improved location locales
+* **health-department:** chore: update tests for sanitization
+
+### 1.1.14 (2021-05-27)
 * **health-department:** chore: improved health department locales
-* **health-department:** fix: Add more error handling in csv generation
+* **health-department:** fix: add more error handling in csv generation
 
 ### 1.1.13 (2021-05-26)
 * **health-department:** fix: whitlisted special characters for csv 

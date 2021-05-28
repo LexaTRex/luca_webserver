@@ -27,8 +27,8 @@ import {
 export const ForgotPassword = ({ location }) => {
   const intl = useIntl();
 
-  const title = intl.formatMessage({ id: 'forgotPassowrd.site.title' });
-  const meta = intl.formatMessage({ id: 'forgotPassowrd.site.meta' });
+  const title = intl.formatMessage({ id: 'forgotPassword.site.title' });
+  const meta = intl.formatMessage({ id: 'forgotPassword.site.meta' });
   const history = useHistory();
   const { email } = location;
 
