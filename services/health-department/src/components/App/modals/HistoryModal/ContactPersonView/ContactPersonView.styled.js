@@ -58,17 +58,27 @@ export const TableHeader = styled.div`
 export const Row = styled.div`
   display: flex;
   border-bottom: 1px solid rgb(151, 151, 151);
-  padding: 24px 24px;
+  padding: 12px 24px;
 `;
 
 export const Column = styled.div`
   display: flex;
   flex: ${({ flex }) => flex};
   justify-content: ${({ align }) => align || ''};
+  flex-direction: column;
 `;
 
 export const CheckboxWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+`;
+
+export const DataName = styled.div`
+  font-weight: bold;
+`;
+
+export const AdditionalDataWrapper = styled.h4`
+  width: inherit;
+  overflow: scroll;
 `;

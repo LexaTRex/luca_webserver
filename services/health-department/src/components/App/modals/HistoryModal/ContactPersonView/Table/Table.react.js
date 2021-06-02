@@ -73,23 +73,29 @@ const TableRaw = ({ traces, setSelectedTraces }) => {
   return (
     <TableWrapper>
       <TableHeader>
-        <Column flex="20%">
+        <Column flex="10%">
           {intl.formatMessage({ id: 'contactPersonTable.name' })}
         </Column>
-        <Column flex="20%">
+        <Column flex="15%">
+          {intl.formatMessage({ id: 'contactPersonTable.address' })}
+        </Column>
+        <Column flex="10%">
           {intl.formatMessage({ id: 'contactPersonTable.phone' })}
         </Column>
-        <Column flex="14%">
+        <Column flex="10%">
           {intl.formatMessage({ id: 'contactPersonTable.checkinDate' })}
         </Column>
-        <Column flex="14%">
+        <Column flex="10%">
           {intl.formatMessage({ id: 'contactPersonTable.checkinTime' })}
         </Column>
-        <Column flex="12%">
+        <Column flex="10%">
           {intl.formatMessage({ id: 'contactPersonTable.checkoutDate' })}
         </Column>
-        <Column flex="12%">
+        <Column flex="10%">
           {intl.formatMessage({ id: 'contactPersonTable.checkoutTime' })}
+        </Column>
+        <Column flex="16%">
+          {intl.formatMessage({ id: 'contactPersonTable.additionalData' })}
         </Column>
         <Column flex="8%" style={{ display: 'block' }}>
           <CheckboxWrapper>

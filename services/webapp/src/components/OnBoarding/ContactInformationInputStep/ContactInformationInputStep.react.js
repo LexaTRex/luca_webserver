@@ -1,8 +1,9 @@
-import phoneValidator from 'phone';
 import { notification, Spin } from 'antd';
 import { useIntl } from 'react-intl';
 import React, { useState } from 'react';
-import parsePhoneNumber from 'libphonenumber-js';
+import parsePhoneNumber from 'libphonenumber-js/max';
+
+import { checkPhoneNumber } from 'utils/parsePhoneNumber';
 
 import { sendSMSTAN, verifySMSTAN } from 'network/api';
 
@@ -139,7 +140,7 @@ export function ContactInformationInputStep({ onSubmit }) {
               rules={[
                 {
                   validator: (_, value) => {
-                    return phoneValidator(value, 'DE').length > 0
+                    return checkPhoneNumber(value)
                       ? Promise.resolve()
                       : Promise.reject(
                           formatMessage({

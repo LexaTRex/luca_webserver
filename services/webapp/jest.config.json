@@ -1,0 +1,8 @@
+{
+  "coveragePathIgnorePatterns": [],
+  "testPathIgnorePatterns": ["/node_modules/"],
+  "transform": {
+    "^.+\\.(js|jsx)?$": "babel-jest"
+  },
+  "testEnvironment": "jsdom"
+}

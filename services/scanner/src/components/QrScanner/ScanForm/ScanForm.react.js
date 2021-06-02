@@ -22,7 +22,7 @@ import {
   SuccessOverlay,
 } from './ScanForm.styled';
 
-export const ScanForm = ({ scanner }) => {
+export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const [openModal, closeModal] = useModal();
@@ -135,8 +135,9 @@ export const ScanForm = ({ scanner }) => {
   }, []);
 
   useEffect(() => {
+    if (outerFocus) setOuterFocus(false);
     triggerFocus();
-  }, [triggerFocus]);
+  }, [outerFocus, triggerFocus, setOuterFocus]);
 
   return (
     <>

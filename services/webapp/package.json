@@ -1,18 +1,19 @@
 {
   "name": "@lucaapp/webapp",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
   "engines": {
-    "node": ">=14.0.0 <15.0.0"
+    "node": ">=14.13.1 <15.0.0"
   },
   "scripts": {
     "start": "EXTEND_ESLINT=true craco start",
     "build": "GENERATE_SOURCEMAP=false craco build",
     "lint": "yarn eslint && yarn stylelint",
     "eslint": "eslint src",
-    "stylelint": "stylelint 'src/**/*.js'"
+    "stylelint": "stylelint 'src/**/*.js'",
+    "test": "jest"
   },
   "dependencies": {
     "@craco/craco": "6.1.1",
@@ -87,6 +88,7 @@
   "resolutions": {
     "hosted-git-info": "4.0.2",
     "browserslist": "4.16.6",
-    "multicast-dns": "7.2.3"
+    "multicast-dns": "7.2.3",
+    "ws": "7.4.6"
   }
 }

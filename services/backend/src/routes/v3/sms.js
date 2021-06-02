@@ -2,7 +2,9 @@ const router = require('express').Router();
 const status = require('http-status');
 const crypto = require('crypto');
 const config = require('config');
+const moment = require('moment');
 const parsePhoneNumber = require('libphonenumber-js');
+const { Op } = require('sequelize');
 
 const database = require('../../database');
 const logger = require('../../utils/logger');
@@ -111,7 +113,11 @@ router.post(
     }
 
     const challenge = await database.SMSChallenge.findOne({
-      where: { uuid: request.body.challengeId, tan: request.body.tan },
+      where: {
+        uuid: request.body.challengeId,
+        tan: request.body.tan,
+        createdAt: { [Op.gt]: moment().subtract(1, 'hour') },
+      },
     });
 
     if (!challenge) {
@@ -146,7 +152,11 @@ router.post(
     }
 
     const challenge = await database.SMSChallenge.findOne({
-      where: { uuid: request.body.challengeIds, tan: request.body.tan },
+      where: {
+        uuid: request.body.challengeIds,
+        tan: request.body.tan,
+        createdAt: { [Op.gt]: moment().subtract(1, 'hour') },
+      },
     });
 
     if (!challenge) {

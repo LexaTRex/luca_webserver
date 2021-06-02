@@ -12,6 +12,8 @@ import {
   HOME_PATH,
   CHECK_OUT_PATH,
   ON_BOARDING_PATH,
+  COVID_TEST_PATH,
+  APPOINTMENT_PATH,
   BASE_PRIVATE_MEETING_PATH,
 } from 'constants/routes';
 import {
@@ -33,7 +35,11 @@ export function AuthenticationWrapper({ children }) {
     appLocation => {
       (async () => {
         if ((await indexDB.users.count()) === 0) {
-          if (!appLocation.pathname.includes(ON_BOARDING_PATH)) {
+          if (
+            !appLocation.pathname.includes(ON_BOARDING_PATH) &&
+            !appLocation.pathname.includes(APPOINTMENT_PATH) &&
+            !appLocation.pathname.includes(COVID_TEST_PATH)
+          ) {
             if (appLocation.pathname.includes(HOME_PATH)) {
               const splits = appLocation.pathname.split('/');
 

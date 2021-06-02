@@ -15,6 +15,7 @@ const licenseTypeOverrides = {
   // part of libphonenumber-js which is licensed under MIT
   'libphonenumber-js-core': 'MIT',
   'libphonenumber-js-min': 'MIT',
+  'libphonenumber-js-max': 'MIT',
 };
 
 module.exports = {

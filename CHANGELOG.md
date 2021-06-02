@@ -1,5 +1,15 @@
 # Changelog
 
+### 1.1.16 (2021-06-02)
+* **backend:** feat: expire sms challenges
+* **health-department:** feat: include additional check in data directly in contact person view and not only in the download files
+* **health-department:** feat: include address information directly in contact person view and not only in the download files
+* **health-department:** fix: dependency tree
+* **scanner:** fix: update check ins counter after scanning badges
+* **scanner:** fix: refocus after outbounds clicks in hardware scanner   
+* **webapp:** feat: support international phone numbers
+* **webapp:** feat: handle unsupported deeplinks
+
 ### 1.1.15 (2021-05-28)
 * **locations:** chore: improved location locales
 * **health-department:** chore: update tests for sanitization

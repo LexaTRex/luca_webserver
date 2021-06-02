@@ -16,34 +16,37 @@ import {
   HOME_PATH,
   HISTORY_PATH,
   SETTINGS_PATH,
+  LICENSES_ROUTE,
   CHECK_OUT_PATH,
+  APPOINTMENT_PATH,
+  COVID_TEST_PATH,
   ON_BOARDING_PATH,
   SELF_CHECKIN_PATH,
   BASE_PRIVATE_MEETING_PATH,
   EDIT_CONTACT_INFORMATION_SETTING,
-  LICENSES_ROUTE,
 } from 'constants/routes';
 
 import { getLanguage } from 'utils/language';
 
 import { ErrorWrapper } from 'components/ErrorWrapper';
-import { messages } from './messages';
-
-import { AppWrapper } from './App.styled';
 
 // Misc
-import { Home } from './components/Home';
-import { History } from './components/History';
-import { Settings } from './components/Settings';
-import { CheckOut } from './components/Checkout';
-import { OnBoarding } from './components/OnBoarding';
-import { ContactInformation } from './components/ContactInformation';
-import { Licenses } from './components/Licenses';
+import { Home } from 'components/Home';
+import { History } from 'components/History';
+import { Licenses } from 'components/Licenses';
+import { Settings } from 'components/Settings';
+import { CheckOut } from 'components/Checkout';
+import { OnBoarding } from 'components/OnBoarding';
+import { ContactInformation } from 'components/ContactInformation';
+import { FeatureNotImplemented } from 'components/FeatureNotImplemented';
+
+import { QRCodeScanner } from 'components/QRCodeScanner/QRCodeScanner.react';
+import { AuthenticationWrapper } from 'components/AuthenticationWrapper.react';
+import { PrivateMeeting } from 'components/PrivateMeeting/PrivateMeeting.react';
 
 import { configureStore } from './configureStore';
-import { AuthenticationWrapper } from './components/AuthenticationWrapper.react';
-import { QRCodeScanner } from './components/QRCodeScanner/QRCodeScanner.react';
-import { PrivateMeeting } from './components/PrivateMeeting/PrivateMeeting.react';
+import { AppWrapper } from './App.styled';
+import { messages } from './messages';
 
 const history = createBrowserHistory();
 const store = configureStore(undefined, history);
@@ -88,6 +91,10 @@ export const Main = () => {
                       />
                       <Route path={HISTORY_PATH} component={History} />
                       <Route path={SETTINGS_PATH} component={Settings} />
+                      <Route
+                        path={[APPOINTMENT_PATH, COVID_TEST_PATH]}
+                        component={FeatureNotImplemented}
+                      />
                       <Route
                         component={PrivateMeeting}
                         path={`${BASE_PRIVATE_MEETING_PATH}/:scannerId`}

@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { notification } from 'antd';
-import phoneValidator from 'phone';
-import parsePhoneNumber from 'libphonenumber-js';
+import parsePhoneNumber from 'libphonenumber-js/max';
 
 import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';
 import { SETTINGS_PATH } from 'constants/routes';
+import { checkPhoneNumber } from 'utils/parsePhoneNumber';
 import { sendSMSTAN, verifySMSTAN } from 'network/api';
 import { changeUserInformation } from 'helpers/crypto';
 import { requiredFieldValidation } from 'form/validations';
@@ -140,7 +140,7 @@ function UserInformationFormContent(user) {
           rules={[
             {
               validator: (_, value) => {
-                return phoneValidator(value, 'DE').length > 0
+                return checkPhoneNumber(value)
                   ? Promise.resolve()
                   : Promise.reject(
                       formatMessage({

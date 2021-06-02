@@ -30,6 +30,7 @@ const handleV3StaticData = parameters => {
     setIsSuccess,
     checkForAdditionalData,
     qrData,
+    refetch,
   } = parameters;
 
   const v3BagdePayload = getV3BadgeCheckinPayload(qrData, scanner);
@@ -45,6 +46,7 @@ const handleV3StaticData = parameters => {
         setIsSuccess(false);
       }, SCAN_TIMEOUT);
       checkForAdditionalData(v3BagdePayload.traceId);
+      refetch();
     })
     .catch(error => notifyScanError(error, intl));
 };

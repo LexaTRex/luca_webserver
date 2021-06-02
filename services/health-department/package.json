@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/health-department",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -58,7 +58,6 @@
     "@babel/preset-env": "7.14.2",
     "@babel/preset-react": "7.13.13",
     "@testing-library/jest-dom": "5.12.0",
-    "babel-jest": "27.0.1",
     "eslint-config-airbnb": "18.2.1",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-import": "2.22.1",
@@ -70,7 +69,6 @@
     "eslint-plugin-sonarjs": "0.6.0",
     "eslint-plugin-unicorn": "28.0.2",
     "improved-yarn-audit": "2.3.2",
-    "jest": "27.0.1",
     "jest-environment-jsdom": "27.0.1",
     "jest-environment-jsdom-global": "2.0.4",
     "jest-runner": "27.0.1",
@@ -102,6 +100,7 @@
   "resolutions": {
     "hosted-git-info": "4.0.2",
     "browserslist": "4.16.6",
-    "multicast-dns": "7.2.3"
+    "multicast-dns": "7.2.3",
+    "ws": "7.4.6"
   }
 }
