@@ -11,6 +11,7 @@ const createSchema = z.object({
   password: z.string().refine(value => passwordMeetsCriteria(value)),
   agreement: z.boolean(),
   avvAccepted: z.literal(true),
+  lastVersionSeen: z.string().max(32).optional(),
   lang: supportedLanguagesEnum,
 });
 
@@ -26,6 +27,8 @@ const storePublicKeySchema = z.object({
 const updateOperatorSchema = z.object({
   firstName: z.string().max(255).optional(),
   lastName: z.string().max(255).optional(),
+  avvAccepted: z.boolean().optional(),
+  lastVersionSeen: z.string().max(32).optional(),
 });
 module.exports = {
   createSchema,

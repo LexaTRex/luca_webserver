@@ -30,30 +30,29 @@ export const filterForTimeOverlap = (
   minTimeOverlap,
   indexPersonData
 ) => {
+  const minTimeOverlapSeconds = minTimeOverlap * MINUTE_SECONDS;
   if (minTimeOverlap < 0) return decryptedTraces;
-  const filteredDecryptedTraces = [];
-  const indexPerson = decryptedTraces.find(
-    trace => trace.userData.pn === indexPersonData.pn
+  if (!indexPersonData) return decryptedTraces;
+  const indexCaseTrace = decryptedTraces.find(
+    trace => trace.userData?.pn === indexPersonData.pn
   );
-  if (!indexPerson) return decryptedTraces;
+  if (!indexCaseTrace || !indexCaseTrace.checkout) return decryptedTraces;
+  const filteredDecryptedTraces = [{ ...indexCaseTrace, isIndexCase: true }];
   decryptedTraces.forEach(compareTrace => {
-    const firstCheckout =
-      indexPerson.checkout < compareTrace.checkout
-        ? indexPerson.checkout
-        : compareTrace.checkout;
-    const stayTime = firstCheckout - compareTrace.checkin;
-    const timeOverlapSeconds = minTimeOverlap * MINUTE_SECONDS;
-    if (
-      indexPerson.traceId !== compareTrace.traceId &&
-      indexPerson.checkin <= (compareTrace.checkout || indexPerson.checkout) &&
-      indexPerson.checkout >= compareTrace.checkin &&
-      stayTime >= timeOverlapSeconds
-    ) {
+    if (indexCaseTrace.traceId === compareTrace.traceId) return;
+    if (!compareTrace.checkout) {
+      filteredDecryptedTraces.push(compareTrace);
+      return;
+    }
+    const overlapStart = Math.max(indexCaseTrace.checkin, compareTrace.checkin);
+    const overlapEnd = Math.min(indexCaseTrace.checkout, compareTrace.checkout);
+
+    const overlapTime = overlapEnd - overlapStart;
+    if (overlapTime >= minTimeOverlapSeconds) {
       filteredDecryptedTraces.push(compareTrace);
     }
   });
 
-  filteredDecryptedTraces.push(indexPerson);
   return filteredDecryptedTraces;
 };
 
@@ -489,9 +488,10 @@ export const SormasDownload = ({ traces, location }) => {
     <CSVLink
       data={getSormasDownloadDataFromTraces(traces, location, intl)}
       separator=";"
+      uFEFF={false}
       filename={sanitize(`${location.groupName} - ${location.name}_sormas.csv`)}
     >
-      {intl.formatMessage({ id: 'download.sormas' })}
+      Download CSV
     </CSVLink>
   );
 };

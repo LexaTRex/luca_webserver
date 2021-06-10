@@ -11,6 +11,15 @@ export const Headline = styled.h1`
   font-family: Montserrat-SemiBold, sans-serif;
 `;
 
+export const LucaStyledHeadline = styled.h2`
+  font-size: 24px;
+  line-height: 34px;
+  user-select: none;
+  font-weight: normal;
+  letter-spacing: 0.18px;
+  color: rgb(255, 255, 255);
+`;
+
 export const SmallHeadline = styled.h3`
   margin: 0;
   padding: 0;
@@ -20,13 +29,4 @@ export const SmallHeadline = styled.h3`
   user-select: none;
   color: rgb(255, 255, 255);
   font-family: Montserrat-SemiBold, sans-serif;
-`;
-
-export const LucaStyledHeadline = styled.h3`
-  font-size: 24px;
-  line-height: 34px;
-  user-select: none;
-  font-weight: normal;
-  letter-spacing: 0.18px;
-  color: rgb(255, 255, 255);
 `;

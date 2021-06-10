@@ -1,13 +1,13 @@
+import React, { useState, useCallback } from 'react';
 import { notification, Spin } from 'antd';
 import { useIntl } from 'react-intl';
-import React, { useState } from 'react';
 import parsePhoneNumber from 'libphonenumber-js/max';
 
 import { checkPhoneNumber } from 'utils/parsePhoneNumber';
 
 import { sendSMSTAN, verifySMSTAN } from 'network/api';
 
-import { TextInput } from '../../TextInput';
+import { TextInput } from 'components/TextInput';
 import {
   StyledForm,
   StyledLink,
@@ -26,10 +26,17 @@ export function ContactInformationInputStep({ onSubmit }) {
   const [email, setEmail] = useState(null);
   const [challengeId, setChallengeId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  const onValuesChange = useCallback(
+    (_, { phoneNumber, tan }) => setIsReady(challengeId ? tan : phoneNumber),
+    [challengeId, setIsReady]
+  );
 
   return (
     <StyledForm
       data-cy="contactInfo"
+      onValuesChange={onValuesChange}
       defaultValues={{ email, phoneNumber: phone }}
       onFinish={({ phoneNumber, email: formEmail, tan }) => {
         if (challengeId) {
@@ -55,7 +62,10 @@ export function ContactInformationInputStep({ onSubmit }) {
           setEmail(formEmail);
           setPhone(formattedPhoneNumber);
           sendSMSTAN(formattedPhoneNumber)
-            .then(id => setChallengeId(id))
+            .then(id => {
+              setChallengeId(id);
+              setIsReady(false);
+            })
             .catch(() => setChallengeId(null));
         }
       }}
@@ -68,6 +78,9 @@ export function ContactInformationInputStep({ onSubmit }) {
               : 'OnBoarding.PhoneNumberInputStep.Headline',
           })}
         </StyledHeadline>
+        <StyledInfoText>
+          {formatMessage({ id: 'Form.RequiredField.Explanation' })}
+        </StyledInfoText>
         {!challengeId && (
           <StyledInfoText>
             {formatMessage({
@@ -89,10 +102,13 @@ export function ContactInformationInputStep({ onSubmit }) {
                   })}
                 </StyledDescription>
                 <TextInput
+                  autoFocus
                   type="tel"
                   name="tan"
+                  tabIndex="1"
                   auto-complete="one-time-code"
-                  placeholder={formatMessage({ id: 'Form.Tan' })}
+                  label={formatMessage({ id: 'Form.Tan.Label' })}
+                  placeholder={formatMessage({ id: 'Form.Tan.Placeholder' })}
                   rules={[
                     {
                       required: true,
@@ -103,6 +119,8 @@ export function ContactInformationInputStep({ onSubmit }) {
                   ]}
                 />
                 <StyledLink
+                  tabIndex="2"
+                  id="resendTAN"
                   onClick={() => {
                     sendSMSTAN(phone)
                       .then(id => setChallengeId(id))
@@ -117,11 +135,14 @@ export function ContactInformationInputStep({ onSubmit }) {
         ) : (
           <>
             <TextInput
-              type="text"
+              autoFocus
+              type="email"
               name="email"
+              tabIndex="1"
               defaultValue={email}
               autocomplete="email"
-              placeholder={formatMessage({ id: 'Form.Email' })}
+              label={formatMessage({ id: 'Form.Email.Label' })}
+              placeholder={formatMessage({ id: 'Form.Email.Placeholder' })}
               rules={[
                 {
                   type: 'email',
@@ -133,10 +154,12 @@ export function ContactInformationInputStep({ onSubmit }) {
             />
             <TextInput
               type="tel"
+              tabIndex="2"
               autocomplete="tel"
               name="phoneNumber"
               defaultValue={phone}
-              placeholder={formatMessage({ id: 'Form.Phone' })}
+              label={formatMessage({ id: 'Form.Phone.Label' })}
+              placeholder={formatMessage({ id: 'Form.Phone.Placeholder' })}
               rules={[
                 {
                   validator: (_, value) => {
@@ -155,12 +178,20 @@ export function ContactInformationInputStep({ onSubmit }) {
         )}
       </StyledContent>
       <StyledFooter showCancel={challengeId}>
-        <StyledSecondaryButton htmlType="submit" data-cy="contactInfoSubmit">
+        <StyledSecondaryButton
+          id="next"
+          tabIndex="3"
+          htmlType="submit"
+          disabled={!isReady}
+          data-cy="contactInfoSubmit"
+        >
           {formatMessage({ id: 'Form.Submit' })}
         </StyledSecondaryButton>
         {challengeId && (
           <StyledLink
             isCentered
+            tabIndex="3"
+            id="cancelTAN"
             onClick={() => {
               setChallengeId(null);
             }}

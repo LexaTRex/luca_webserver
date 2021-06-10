@@ -45,8 +45,12 @@ export const Login = () => {
 
     login(values)
       .then(response => {
+        if (response.status === 502) {
+          setError('login.error.server.down');
+          return;
+        }
         if (response.status !== 200) {
-          setError(true);
+          setError('login.error');
           return;
         }
         setError(false);
@@ -112,7 +116,7 @@ export const Login = () => {
               {error && (
                 <ErrorMessage>
                   {intl.formatMessage({
-                    id: 'login.error',
+                    id: error,
                   })}
                 </ErrorMessage>
               )}

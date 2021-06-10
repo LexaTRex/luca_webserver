@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const status = require('http-status');
 const passport = require('passport');
+const moment = require('moment');
 
 const { validateSchema } = require('../../middlewares/validateSchema');
 const { restrictOrigin } = require('../../middlewares/restrictOrigin');
@@ -76,7 +77,7 @@ router.post('/logout', restrictOrigin, (request, response) => {
 });
 
 router.get('/me', requireOperator, (request, response) => {
-  return response.send({
+  const payload = {
     operatorId: request.user.uuid,
     username: request.user.username,
     firstName: request.user.firstName,
@@ -84,7 +85,11 @@ router.get('/me', requireOperator, (request, response) => {
     publicKey: request.user.publicKey,
     supportCode: request.user.supportCode,
     email: request.user.email,
-  });
+    avvAccepted: request.user.avvAccepted,
+    lastVersionSeen: request.user.lastVersionSeen,
+    deletedAt: request.user.deletedAt && moment(request.user.deletedAt).unix(),
+  };
+  return response.send(payload);
 });
 
 module.exports = router;

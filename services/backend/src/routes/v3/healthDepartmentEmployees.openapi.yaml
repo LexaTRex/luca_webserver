@@ -42,7 +42,10 @@ paths:
                   required:
                     - uuid
       operationId: get-healthDepartmentEmployees
-      description: 'Returns all employees of the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department), except the current user.'
+      description:
+        "Returns all employees of the current user's [health
+        department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department),
+        including the current user."
     post:
       tags:
         - HealthDepartmentEmployees
@@ -147,8 +150,12 @@ paths:
               properties:
                 isAdmin:
                   type: boolean
-              required:
-                - isAdmin
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                phone:
+                  type: string
       tags:
         - HealthDepartmentEmployees
     delete:
@@ -161,4 +168,7 @@ paths:
           description: No Content
         '404':
           description: Not Found
-      description: 'Delete a [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) employee from the HealthDepartmentEmployee database table.'
+      description:
+        'Delete a [health
+        department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)
+        employee from the HealthDepartmentEmployee database table.'

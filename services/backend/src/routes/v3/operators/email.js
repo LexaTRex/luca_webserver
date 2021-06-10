@@ -11,7 +11,10 @@ const {
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
 const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
-const { requireOperator } = require('../../../middlewares/requireUser');
+const {
+  requireOperator,
+  requireNonDeletedUser,
+} = require('../../../middlewares/requireUser');
 
 const {
   updateMailSchema,
@@ -23,6 +26,7 @@ const {
 router.patch(
   '/',
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(updateMailSchema),
   async (request, response) => {
     const operator = request.user;
@@ -55,26 +59,31 @@ router.patch(
 );
 
 // check if email change is in progress
-router.get('/isChangeActive', requireOperator, async (request, response) => {
-  const operator = request.user;
+router.get(
+  '/isChangeActive',
+  requireOperator,
+  requireNonDeletedUser,
+  async (request, response) => {
+    const operator = request.user;
 
-  const activationMail = await database.EmailActivation.findOne({
-    where: {
-      operatorId: operator.uuid,
-      closed: false,
-      createdAt: {
-        [Op.gt]: moment().subtract(config.get('emails.expiry'), 'hours'),
+    const activationMail = await database.EmailActivation.findOne({
+      where: {
+        operatorId: operator.uuid,
+        closed: false,
+        createdAt: {
+          [Op.gt]: moment().subtract(config.get('emails.expiry'), 'hours'),
+        },
+        type: 'EmailChange',
       },
-      type: 'EmailChange',
-    },
-  });
+    });
 
-  if (!activationMail) {
-    return response.sendStatus(status.NOT_FOUND);
+    if (!activationMail) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    return response.sendStatus(status.OK);
   }
-
-  return response.sendStatus(status.OK);
-});
+);
 
 // check if email is in system
 router.get(
@@ -86,6 +95,7 @@ router.get(
       where: {
         email: request.params.email.toLowerCase(),
       },
+      paranoid: false, // allow soft-deleted operators to still log in
     });
 
     if (!user) {
@@ -132,6 +142,13 @@ router.post(
 
     if (!operator) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (operator.deletedAt) {
+      return response.status(status.FORBIDDEN).send({
+        message: 'The account has been marked for deletion',
+        errorCode: 'ACCOUNT_DEACTIVATED',
+      });
     }
 
     await database.transaction(async transaction => {

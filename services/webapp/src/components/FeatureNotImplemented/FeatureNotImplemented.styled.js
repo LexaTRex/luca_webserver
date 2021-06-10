@@ -33,7 +33,7 @@ export const StyledMissingFeatureLogo = styled.img`
   object-fit: contain;
 `;
 export const StyledStoreLogo = styled.img`
-  height: 50px;
+  height: 60px;
   object-fit: contain;
 `;
 export const StyledStoreLink = styled.a`
@@ -44,4 +44,6 @@ export const StyledStoreLink = styled.a`
 export const StyledStoreWrapper = styled.div`
   display: flex;
   padding: 8px 0;
+  flex-wrap: wrap;
+  justify-content: center;
 `;

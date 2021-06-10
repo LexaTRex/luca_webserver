@@ -17,6 +17,8 @@ const {
 } = require('../../middlewares/requireUser');
 const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
+const { DEVICE_TYPE_STATIC } = require('../../constants/deviceTypes');
+
 const {
   checkoutSchema,
   checkinSchema,
@@ -26,8 +28,6 @@ const {
   traceSchema,
 } = require('./traces.schemas');
 
-const STATIC_DEVICE_TYPE = 2;
-
 // checkin
 router.post(
   '/checkin',
@@ -36,10 +36,19 @@ router.post(
   async (request, response) => {
     const location = await database.Location.findOne({
       where: { scannerId: request.body.scannerId },
+      include: {
+        model: database.Operator,
+        attributes: ['deletedAt'],
+        required: false,
+      },
     });
 
     if (!location) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (location.Operator && location.Operator.deletedAt) {
+      return response.sendStatus(status.GONE);
     }
 
     const trace = await database.Trace.findByPk(request.body.traceId);
@@ -135,7 +144,7 @@ router.post('/bulk', validateSchema(bulkSchema), async (request, response) => {
     where: {
       traceId: request.body.traceIds,
       deviceType: {
-        [Op.not]: STATIC_DEVICE_TYPE,
+        [Op.not]: DEVICE_TYPE_STATIC,
       },
       createdAt: {
         [Op.gt]: moment().subtract(
@@ -166,7 +175,7 @@ router.get(
       where: {
         traceId: hexToBase64(request.params.traceId),
         deviceType: {
-          [Op.not]: STATIC_DEVICE_TYPE,
+          [Op.not]: DEVICE_TYPE_STATIC,
         },
         createdAt: {
           [Op.gt]: moment().subtract(

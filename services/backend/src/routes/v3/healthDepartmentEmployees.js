@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const status = require('http-status');
-const { Op } = require('sequelize');
 const crypto = require('crypto');
 const { generatePassword } = require('../../utils/generators');
 
@@ -11,8 +10,10 @@ const {
 } = require('../../middlewares/validateSchema');
 const {
   requireHealthDepartmentAdmin,
+  requireHealthDepartmentEmployee,
 } = require('../../middlewares/requireUser');
 const passwordRouter = require('./healthDepartmentEmployees/password');
+const locationsRouter = require('./healthDepartmentEmployees/locations');
 
 const {
   createSchema,
@@ -21,14 +22,11 @@ const {
 } = require('./healthDepartmentEmployees.schemas');
 
 // HD get all employees
-router.get('/', requireHealthDepartmentAdmin, async (request, response) => {
+router.get('/', requireHealthDepartmentEmployee, async (request, response) => {
   const healthDepartmentEmployees = await database.HealthDepartmentEmployee.findAll(
     {
       where: {
         departmentId: request.user.departmentId,
-        uuid: {
-          [Op.not]: request.user.uuid,
-        },
       },
     }
   );
@@ -85,7 +83,12 @@ router.patch(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    await employee.update({ isAdmin: request.body.isAdmin });
+    await employee.update({
+      isAdmin: request.body.isAdmin,
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      phone: request.body.phone,
+    });
     return response.sendStatus(status.NO_CONTENT);
   }
 );
@@ -126,5 +129,6 @@ router.post(
 );
 
 router.use('/password', passwordRouter);
+router.use('/locations', locationsRouter);
 
 module.exports = router;

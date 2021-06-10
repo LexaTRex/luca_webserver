@@ -7,7 +7,10 @@ const {
   validateSchema,
 } = require('../../../middlewares/validateSchema');
 
-const { requireOperator } = require('../../../middlewares/requireUser');
+const {
+  requireOperator,
+  requireNonDeletedUser,
+} = require('../../../middlewares/requireUser');
 
 const {
   locationIdParametersSchema,
@@ -41,6 +44,7 @@ router.get(
 router.post(
   '/:locationId',
   requireOperator,
+  requireNonDeletedUser,
   validateParametersSchema(locationIdParametersSchema),
   validateSchema(additionalDataBody),
   async (request, response) => {
@@ -75,6 +79,7 @@ router.post(
 router.patch(
   '/:additionalDataId',
   requireOperator,
+  requireNonDeletedUser,
   validateParametersSchema(additionalDataParameters),
   validateSchema(additionalDataBody),
   async (request, response) => {
@@ -107,6 +112,7 @@ router.patch(
 router.delete(
   '/:additionalDataId',
   requireOperator,
+  requireNonDeletedUser,
   validateParametersSchema(additionalDataParameters),
   async (request, response) => {
     const additionalData = await database.AdditionalDataSchema.findOne({

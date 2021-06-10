@@ -18,7 +18,7 @@ export const StyledContainer = styled.div`
   background-color: #000;
   padding: 32px 32px 0 32px;
 `;
-export const StyledContent = styled.div`
+export const StyledContent = styled.main`
   flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -30,15 +30,15 @@ export const StyledHeadline = styled(SmallHeadline)`
   margin-top: 32px;
 `;
 export const StyledInfoText = styled(Text)`
+  color: #fff;
   padding: 8px 0;
   display: block;
-  color: #ffffff;
 `;
 export const StyledSecondaryButton = styled(SecondaryButton)`
   width: 100%;
   height: 48px;
   margin-top: 12px;
 `;
-export const StyledFooter = styled.div`
+export const StyledFooter = styled.footer`
   height: 72px;
 `;

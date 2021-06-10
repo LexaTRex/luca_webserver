@@ -8,7 +8,10 @@ const createSchema = z.object({
 });
 
 const updateSchema = z.object({
-  isAdmin: z.boolean(),
+  isAdmin: z.boolean().optional(),
+  firstName: z.string().max(255).optional(),
+  lastName: z.string().max(255).optional(),
+  phone: z.string().max(255).optional(),
 });
 
 const employeeIdParametersSchema = z.object({

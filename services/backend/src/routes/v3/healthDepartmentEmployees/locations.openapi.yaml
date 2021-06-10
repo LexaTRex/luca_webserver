@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: keys
+  version: '1.0'
+  description: Partial OpenAPI doc
+  contact: {}
+tags:
+  - name: HealthDepartmentEmployees
+paths:
+  'healthDepartmentEmployees/locations/{locationId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: locationId
+        in: path
+        required: true
+    get:
+      tags:
+        - HealthDepartmentEmployees
+      summary:
+        Gets a location by ID with detailed information for the health
+        department
+      operationId: get-locations-id-hd
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locationId:
+                    type: string
+                    minLength: 1
+                  groupName:
+                    type: string
+                    minLength: 1
+                  locationName:
+                    type: string
+                    minLength: 1
+                  name: {}
+                  streetName:
+                    type: string
+                    minLength: 1
+                  streetNr:
+                    type: string
+                    minLength: 1
+                  city:
+                    type: string
+                    minLength: 1
+                  zipCode:
+                    type: string
+                    minLength: 1
+                  phone:
+                    type: string
+                    minLength: 1
+                  type:
+                    type: string
+                    minLength: 1
+                  state:
+                    type: string
+                    minLength: 1
+                  isIndoor:
+                    type: boolean
+      description: |-
+        Gets a location with detailed information for the health
+        department (also referred to as [venue](https://luca-app.de/securityconcept/processes/venue_registration.html)) by its primary ID.

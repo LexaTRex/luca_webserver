@@ -52,7 +52,7 @@ router.post(
   limitRequestsPerHour(10),
   limitRequestsPerMinute(7200, { global: true }),
   validateSchema(requestSchema),
-  limitRequestsByFixedLinePhoneNumberPerDay(1),
+  limitRequestsByFixedLinePhoneNumberPerDay(2),
   limitRequestsByPhoneNumberPerDay(5),
   requireNonBlockedIp,
   async (request, response) => {

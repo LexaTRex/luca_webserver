@@ -59,7 +59,9 @@ export const App = () => {
             <Profile profileData={profileData} />
           </Route>
           <Route path={TRACKING_ROUTE} component={Tracking} />
-          <Route path={USER_MANAGEMENT_ROUTE} component={UserManagement} />
+          <Route path={USER_MANAGEMENT_ROUTE}>
+            <UserManagement profileData={profileData} />
+          </Route>
           <Redirect to={`${TRACKING_ROUTE}${window.location.search}`} />
         </Switch>
       </AppWrapper>

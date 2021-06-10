@@ -92,3 +92,10 @@ indexDB
         .delete();
     }
   });
+indexDB.version(4).stores({
+  covidTests: '&createdAt, type, result, labName, doctorName, jwt',
+});
+indexDB.version(5).stores({
+  users:
+    '&userId, firstName, lastName, phoneNumber, email, street, houseNumber, zip, city, useWebApp, version',
+});

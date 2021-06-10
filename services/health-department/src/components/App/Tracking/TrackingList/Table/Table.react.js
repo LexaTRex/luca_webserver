@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
 
-import { getProcesses } from 'network/api';
+import { TIME_DESC } from 'constants/sorting';
 
-import { TIME_DOWN } from 'constants/sorting';
-
-import { useFilters } from './useFilters';
+import { useFilterSorter } from '../ListFilters/hooks/useFilterSorter';
 
 // Components
 import { Entry } from './Entry';
@@ -13,26 +10,31 @@ import { Header } from './Header';
 import { EmptyProcesses } from './EmptyProcesses';
 import { TableWrapper, RowWrapper } from './Table.styled';
 
-export const Table = ({ filters }) => {
-  const [sorting] = useState(TIME_DOWN);
-  const filter = useFilters(filters, sorting);
-  const { isLoading, error, data: processes, refetch } = useQuery(
-    'processes',
-    () => getProcesses().then(response => response.json()),
-    {
-      cacheTime: 0,
-    }
-  );
-  if (isLoading || error) return null;
+export const Table = ({ filters, processes, refetch }) => {
+  const [sorting, setSorting] = useState(TIME_DESC);
+  const [processNames, setProcessNames] = useState([]);
+  const filter = useFilterSorter(filters, sorting);
+
+  const onProcessName = (processId, processName) => {
+    if (!processId || !processName) return;
+    if (processNames.some(process => process.processId === processId)) return;
+    processNames.push({ processId, processName });
+    setProcessNames(processNames);
+  };
 
   return (
     <TableWrapper>
-      <Header />
+      <Header setSorting={setSorting} sorting={sorting} />
 
-      {filter(processes).length > 0 ? (
+      {filter(processes, processNames).length > 0 ? (
         <RowWrapper id="processes">
-          {filter(processes).map(process => (
-            <Entry key={process.uuid} process={process} refetch={refetch} />
+          {filter(processes, processNames).map(process => (
+            <Entry
+              key={process.uuid}
+              process={process}
+              refetch={refetch}
+              onProcessName={onProcessName}
+            />
           ))}
         </RowWrapper>
       ) : (

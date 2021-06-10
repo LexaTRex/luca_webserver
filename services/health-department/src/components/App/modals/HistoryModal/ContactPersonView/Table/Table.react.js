@@ -118,7 +118,7 @@ const TableRaw = ({ traces, setSelectedTraces }) => {
               onSelectionUpdate={onSelectionUpdate}
             />
           ) : (
-            <NonRegistredBadgeTrace />
+            <NonRegistredBadgeTrace key={trace.traceId} />
           )
         )
       ) : (

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
-import { Form, Input, Button, notification, Popconfirm } from 'antd';
+import { Form, Button, notification, Popconfirm } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import {
@@ -21,6 +21,9 @@ import {
   Divider,
   SubmitWrapper,
   ItemWrapper,
+  StyledInput,
+  StyledFormItem,
+  buttonStyle,
 } from './TrackInfectionModal.styled';
 
 import { getTanRules, TAN_SECTION_LENGTH } from './InfectionModal.helper';
@@ -65,6 +68,30 @@ export const TrackInfectionModal = () => {
       });
   };
 
+  const handleResponse = response => {
+    if (response === EMPTY_HISTORY) {
+      notification.info({
+        message: intl.formatMessage({
+          id: 'modal.trackInfection.error.emptyUserTracing',
+        }),
+      });
+    }
+    if (response === INVALID_VERSION) {
+      notification.error({
+        message: intl.formatMessage({
+          id: 'modal.trackInfection.error.invalidVersion',
+        }),
+      });
+    }
+    if (response === DECRYPTION_FAILED) {
+      notification.error({
+        message: intl.formatMessage({
+          id: 'modal.trackInfection.error.decryptionFailed',
+        }),
+      });
+    }
+  };
+
   const onFinish = values => {
     const { tanChunk0, tanChunk1, tanChunk2 } = values;
     const tan = tanChunk0 + tanChunk1 + tanChunk2;
@@ -73,27 +100,7 @@ export const TrackInfectionModal = () => {
     if (tan.endsWith('1')) {
       initiateUserTracingProcess(tan, lang)
         .then(response => {
-          if (response === EMPTY_HISTORY) {
-            notification.info({
-              message: intl.formatMessage({
-                id: 'modal.trackInfection.error.emptyUserTracing',
-              }),
-            });
-          }
-          if (response === INVALID_VERSION) {
-            notification.error({
-              message: intl.formatMessage({
-                id: 'modal.trackInfection.error.invalidVersion',
-              }),
-            });
-          }
-          if (response === DECRYPTION_FAILED) {
-            notification.error({
-              message: intl.formatMessage({
-                id: 'modal.trackInfection.error.decryptionFailed',
-              }),
-            });
-          }
+          handleResponse(response);
 
           refetchProcesses();
         })
@@ -107,7 +114,10 @@ export const TrackInfectionModal = () => {
         });
     } else {
       initiateStaticUserTracingProcess(tan, lang)
-        .then(refetchProcesses)
+        .then(response => {
+          handleResponse(response);
+          refetchProcesses();
+        })
         .catch(error => {
           console.error(error);
           setIsLoading(false);
@@ -134,51 +144,54 @@ export const TrackInfectionModal = () => {
         validateMessages={null}
       >
         <ItemWrapper>
-          <Form.Item
+          <StyledFormItem
             name="tanChunk0"
             style={{ width: '30%', margin: 0 }}
             rules={getTanRules(intl, inputReference0)}
             validateTrigger={['onBlur', 'onFocus']}
             normalize={value => value.toUpperCase()}
           >
-            <Input
+            <StyledInput
               maxLength={TAN_SECTION_LENGTH}
               onChange={handleMoveToNextInput}
               data-index={0}
               ref={inputReference0}
+              placeholder={intl.formatMessage({
+                id: 'tan',
+              })}
               autoFocus
             />
-          </Form.Item>
+          </StyledFormItem>
           <Divider> - </Divider>
-          <Form.Item
+          <StyledFormItem
             name="tanChunk1"
             style={{ width: '30%', margin: 0 }}
             rules={getTanRules(intl, inputReference1)}
             validateTrigger={['onBlur', 'onFocus']}
             normalize={value => value.toUpperCase()}
           >
-            <Input
+            <StyledInput
               maxLength={TAN_SECTION_LENGTH}
               onChange={handleMoveToNextInput}
               data-index={1}
               ref={inputReference1}
             />
-          </Form.Item>
+          </StyledFormItem>
           <Divider> - </Divider>
-          <Form.Item
+          <StyledFormItem
             name="tanChunk2"
             style={{ width: '30%', margin: 0 }}
             rules={getTanRules(intl, inputReference2)}
             validateTrigger={['onBlur', 'onFocus']}
             normalize={value => value.toUpperCase()}
           >
-            <Input
+            <StyledInput
               maxLength={TAN_SECTION_LENGTH}
               onChange={handleMoveToNextInput}
               data-index={2}
               ref={inputReference2}
             />
-          </Form.Item>
+          </StyledFormItem>
         </ItemWrapper>
 
         <SubmitWrapper>
@@ -197,7 +210,7 @@ export const TrackInfectionModal = () => {
               })}
               icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             >
-              <Button style={{ padding: '0 40px' }} loading={isLoading}>
+              <Button style={buttonStyle} loading={isLoading}>
                 {intl.formatMessage({ id: 'modal.trackInfection.button' })}
               </Button>
             </Popconfirm>

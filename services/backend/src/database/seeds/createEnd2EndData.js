@@ -32,6 +32,7 @@ const operators = [
     privateKeySecret: crypto.randomBytes(32).toString('base64'),
     password: crypto.scryptSync(E2E_PASSWORD, E2E_SALT, 64).toString('base64'),
     salt: E2E_SALT,
+    avvAccepted: true,
   },
 ];
 

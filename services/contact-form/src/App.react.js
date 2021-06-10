@@ -49,7 +49,7 @@ const LoadContactFormHOC = ({ component: Component }) => {
 
   if (isLoading) return <LoadingScreen />;
 
-  if (error) return <ErrorPage />;
+  if (error || data.error) return <ErrorPage error={error || data.error} />;
 
   return (
     <>

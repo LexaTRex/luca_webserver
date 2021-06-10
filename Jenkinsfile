@@ -125,7 +125,7 @@ Closure buildAndPushContainer(String service, String tag) {
         withCredentials([
           usernamePassword(credentialsId: 'luca-docker-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD'),
           string(credentialsId: 'luca-docker-registry', variable: 'DOCKER_REGISTRY'),
-          string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH')
+          string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
         ]) {
           sh('docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD $DOCKER_REGISTRY')
           sh("IMAGE_TAG=${tag} GIT_VERSION=${GIT_VERSION} GIT_COMMIT=${GIT_COMMIT} docker-compose -f docker-compose.yml build ${service}")
@@ -145,7 +145,7 @@ Closure executeTestScriptForService(String script, String service) {
       try {
         updateSourceCode()
         withCredentials([
-          string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH')
+          string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
         ]) {
           sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml build ${service}")
           sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm ${service} ${script}")
@@ -165,7 +165,7 @@ void e2eTest() {
 
       withCredentials([
         string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
-        string(credentialsId: 'luca-google-maps-api-key', variable: 'REACT_APP_GOOGLE_MAPS_API_KEY')
+        string(credentialsId: 'luca-google-maps-api-key', variable: 'REACT_APP_GOOGLE_MAPS_API_KEY'),
       ]) {
         sh("IMAGE_TAG=e2e docker-compose -f docker-compose.yml build --parallel")
         lock('docker-host') {

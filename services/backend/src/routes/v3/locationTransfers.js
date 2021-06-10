@@ -67,6 +67,7 @@ router.post(
               include: {
                 required: true,
                 model: database.Operator,
+                paranoid: false,
               },
               paranoid: false,
             }

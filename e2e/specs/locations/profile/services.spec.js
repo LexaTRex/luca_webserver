@@ -3,6 +3,7 @@ import { PROFILE_ROUTE } from '../helpers/routes';
 
 import {
   TERMS_CONDITIONS_LINK,
+  FAQ_LINK,
   TOMS_FRAGMENT,
   DPA_FRAGMENT,
   PRIVACY_OPTIONAL_FRAGMENT,
@@ -11,6 +12,9 @@ import {
 
 describe('Profile Services', () => {
   beforeEach(() => login(PROFILE_ROUTE));
+  it('can show the faq', () => {
+    cy.getByCy('faqLink').should('have.attr', 'href').and('eq', FAQ_LINK);
+  });
   it('can show the terms and conditions', () => {
     cy.getByCy('termsLink')
       .should('have.attr', 'href')

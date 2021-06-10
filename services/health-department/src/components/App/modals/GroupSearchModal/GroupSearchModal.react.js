@@ -61,7 +61,7 @@ export const GroupSearchModal = () => {
               id: 'groupSearch.form.group.placeholder',
             })}
             autoFocus
-            id="noBorder"
+            id="groupSearch"
             style={{
               borderLeft: 'none',
               borderRight: 'none',

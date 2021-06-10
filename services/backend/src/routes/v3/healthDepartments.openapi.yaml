@@ -48,6 +48,34 @@ paths:
                   type: string
                 publicHDSKP:
                   type: string
+  /healthDepartments/region:
+    get:
+      summary: Get department region and district
+      tags:
+        - HealthDepartments
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+        - HealthDepartments
+      summary: Update region options used for SORMAS data export
+      operationId: post-healthDepartment-region
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Department Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                region:
+                  type: string
+                district:
+                  type: string
   '/healthDepartments/{departmentId}':
     get:
       summary: Get department info by ID

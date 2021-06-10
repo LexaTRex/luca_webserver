@@ -12,7 +12,7 @@ const deserializeUser = async (info, done) => {
 
     switch (info.type) {
       case 'Operator':
-        user = await database.Operator.findByPk(info.uuid);
+        user = await database.Operator.findByPk(info.uuid, { paranoid: false });
         if (!user) throw new SessionError('Operator does not exist');
         user.type = 'Operator';
         break;

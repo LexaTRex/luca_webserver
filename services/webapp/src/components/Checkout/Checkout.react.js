@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 
 import moment from 'moment';
-import { useIntl } from 'react-intl';
 import { notification } from 'antd';
+import { useIntl } from 'react-intl';
+import { Helmet } from 'react-helmet';
 import useInterval from '@use-it/interval';
 import { useHistory } from 'react-router-dom';
 
@@ -10,9 +11,10 @@ import { checkout } from 'helpers/crypto';
 import { getSession } from 'helpers/history';
 import { getLocation } from 'helpers/locations';
 import { base64UrlToBytes } from 'utils/encodings';
+import { AppContent, AppLayout } from 'components/AppLayout';
 import { HOME_PATH, CHECK_OUT_LOCATION_TYPE } from 'constants/routes';
+import { WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY } from 'constants/storage';
 
-import { AppContent, AppLayout } from '../AppLayout';
 import {
   StyledTime,
   StyledTimeType,
@@ -139,66 +141,74 @@ export function CheckOut({ location: { search } }) {
   }, [intl]);
 
   return (
-    <AppLayout
-      header={
-        <StyledAppHeadline color="#000">{location?.name}</StyledAppHeadline>
-      }
-      bgColor="linear-gradient(-180deg, rgb(211, 222, 195) 0%, rgb(132, 137, 101) 100%);"
-    >
-      <AppContent noCentering>
-        <StyledLocationInfoContainer>
-          <StyledLocationInfoTextContainer>
-            <StyledLocationInfoText>
-              {intl.formatMessage({ id: 'Checkout.YouAreCheckIn' })}
-            </StyledLocationInfoText>
-            <StyledLocationInfoText>
-              {intl.formatMessage({ id: 'Checkout.CheckIn' })}{' '}
-              {session?.checkin &&
-                `${moment
-                  .unix(session?.checkin)
-                  .format('DD.MM.YYYY - HH.mm')} Uhr`}
-            </StyledLocationInfoText>
-            {additionalData &&
-              Object.keys(additionalData).map(valueKey => (
-                <StyledLocationInfoText key={valueKey}>
-                  {valueKey[0].toUpperCase() + valueKey.slice(1)}:{' '}
-                  {additionalData[valueKey]}
-                </StyledLocationInfoText>
-              ))}
-          </StyledLocationInfoTextContainer>
-          <StyledNumberOfAccountsOnThisLocation />
-        </StyledLocationInfoContainer>
-      </AppContent>
-      <AppContent>
-        <StyledInfoText>
-          {intl.formatMessage({ id: 'Checkout.CurrentLocation' })}
-        </StyledInfoText>
-        <StyledCheckInTimeContainer>
-          <StyledCheckInTime>
-            <StyledTime>{clock.hour}</StyledTime>
-            <StyledTimeType>h</StyledTimeType>
-          </StyledCheckInTime>
-          <StyledCheckInTime>
-            <StyledTime>:{clock.minute}</StyledTime>
-            <StyledTimeType isNotHours>min</StyledTimeType>
-          </StyledCheckInTime>
-          <StyledCheckInTime>
-            <StyledTime>:{clock.seconds}</StyledTime>
-            <StyledTimeType isNotHours>s</StyledTimeType>
-          </StyledCheckInTime>
-        </StyledCheckInTimeContainer>
-      </AppContent>
-      <AppContent>
-        <StyledCheckoutButton
-          disabled={!isCheckoutAllowed}
-          onClick={async () => {
-            await checkout(traceId);
-            history.push(HOME_PATH);
-          }}
-        >
-          {intl.formatMessage({ id: 'Checkout.CheckOutButton' })}
-        </StyledCheckoutButton>
-      </AppContent>
-    </AppLayout>
+    <>
+      <Helmet>
+        <title>{intl.formatMessage({ id: 'Checkout.PageTitle' })}</title>
+      </Helmet>
+      <AppLayout
+        header={
+          <StyledAppHeadline color="#000">{location?.name}</StyledAppHeadline>
+        }
+        bgColor="linear-gradient(-180deg, rgb(211, 222, 195) 0%, rgb(132, 137, 101) 100%);"
+      >
+        <AppContent noCentering>
+          <StyledLocationInfoContainer>
+            <StyledLocationInfoTextContainer>
+              <StyledLocationInfoText>
+                {intl.formatMessage({ id: 'Checkout.YouAreCheckIn' })}
+              </StyledLocationInfoText>
+              <StyledLocationInfoText>
+                {intl.formatMessage({ id: 'Checkout.CheckIn' })}{' '}
+                {session?.checkin &&
+                  `${moment
+                    .unix(session?.checkin)
+                    .format('DD.MM.YYYY - HH.mm')} Uhr`}
+              </StyledLocationInfoText>
+              {additionalData &&
+                Object.keys(additionalData).map(valueKey => (
+                  <StyledLocationInfoText key={valueKey}>
+                    {valueKey[0].toUpperCase() + valueKey.slice(1)}:{' '}
+                    {additionalData[valueKey]}
+                  </StyledLocationInfoText>
+                ))}
+            </StyledLocationInfoTextContainer>
+            <StyledNumberOfAccountsOnThisLocation />
+          </StyledLocationInfoContainer>
+        </AppContent>
+        <AppContent>
+          <StyledInfoText>
+            {intl.formatMessage({ id: 'Checkout.CurrentLocation' })}
+          </StyledInfoText>
+          <StyledCheckInTimeContainer>
+            <StyledCheckInTime>
+              <StyledTime>{clock.hour}</StyledTime>
+              <StyledTimeType>h</StyledTimeType>
+            </StyledCheckInTime>
+            <StyledCheckInTime>
+              <StyledTime>:{clock.minute}</StyledTime>
+              <StyledTimeType isNotHours>min</StyledTimeType>
+            </StyledCheckInTime>
+            <StyledCheckInTime>
+              <StyledTime>:{clock.seconds}</StyledTime>
+              <StyledTimeType isNotHours>s</StyledTimeType>
+            </StyledCheckInTime>
+          </StyledCheckInTimeContainer>
+        </AppContent>
+        <AppContent>
+          <StyledCheckoutButton
+            tabIndex="1"
+            id="checkout"
+            disabled={!isCheckoutAllowed}
+            onClick={async () => {
+              await checkout(traceId);
+              history.push(HOME_PATH);
+              sessionStorage.removeItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY);
+            }}
+          >
+            {intl.formatMessage({ id: 'Checkout.CheckOutButton' })}
+          </StyledCheckoutButton>
+        </AppContent>
+      </AppLayout>
+    </>
   );
 }

@@ -25,7 +25,7 @@ import {
   MenuWrapper,
 } from './Header.styled';
 
-export const Header = () => {
+export const Header = ({ operator }) => {
   const intl = useIntl();
   const isTablet = useTabletSize();
   const locationsRoute = useRouteMatch(LOCATION_ROUTE);
@@ -33,6 +33,8 @@ export const Header = () => {
 
   const groupId =
     locationsRoute?.params?.groupId || groupSettingsRoute?.params?.groupId;
+
+  const isActiveAccount = !operator.deletedAt;
 
   return (
     <HeaderWrapper>
@@ -47,11 +49,11 @@ export const Header = () => {
             id: 'header.subtitle',
           })}
         </SubTitle>
-        {groupId && <GroupDisplay groupId={groupId} />}
+        {isActiveAccount && groupId && <GroupDisplay groupId={groupId} />}
       </Title>
       <MenuWrapper>
-        {groupId && <SelectGroup groupId={groupId} />}
-        {!isTablet && <CreateGroup />}
+        {isActiveAccount && groupId && <SelectGroup groupId={groupId} />}
+        {isActiveAccount && !isTablet && <CreateGroup />}
         <DataRequests />
         <LinkMenu />
       </MenuWrapper>

@@ -27,8 +27,12 @@ export const en = {
     'Please use Safari. This browser is not supported on iOS.',
   'error.timestampOutdated': 'The QR code is expired.',
   'error.genericScanner': 'The scanner had a problem. Please try again.',
+  'error.noUserData':
+    'It seems like you did not register your badge yet. If you just registered you badge please wait a few minutes and try again.',
   'error.wrongLocalTime':
     'Your system clock seems to be out of sync. Please check your time settings.',
+  'error.accountDeleted':
+    'Your account has been deleted. You cannot check in any more guests.',
   // ADDITIONAL DATA
   'additionalData.isRequired': 'This field is required for your check-in.',
   'additionalData.info':

@@ -14,6 +14,7 @@ describe('Webapp onboarding', () => {
   beforeEach(() => cy.visit(WEBAPP_ROUTE));
   it('can register a visitor', () => {
     // Welcome step
+    cy.getByCy('ignoreWarning').click();
     cy.getByCy('welcomeStep').should('exist');
     cy.getByCy('termsConsCheckbox').click();
     cy.getByCy('privacyCheckbox').click();

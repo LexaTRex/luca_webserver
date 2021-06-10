@@ -27,10 +27,18 @@ export function HostPrivateMeetingWarningModal({ onCheck, onCancel }) {
             })}
           </StyledInfoText>
         </StyledContent>
-        <StyledSubmitButton onClick={onCheck}>
+        <StyledSubmitButton
+          tabIndex="1"
+          id="createPrivateMeeting"
+          onClick={onCheck}
+        >
           {formatMessage({ id: 'HostPrivateMeetingWarningModal.Submit' })}
         </StyledSubmitButton>
-        <StyledCancelButton onClick={onCancel}>
+        <StyledCancelButton
+          tabIndex="1"
+          id="cancelPrivateMeeting"
+          onClick={onCancel}
+        >
           {formatMessage({ id: 'HostPrivateMeetingWarningModal.Cancel' })}
         </StyledCancelButton>
       </StyledContainer>

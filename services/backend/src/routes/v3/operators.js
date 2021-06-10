@@ -10,7 +10,10 @@ const database = require('../../database');
 const mailjet = require('../../utils/mailjet');
 const { generateSupportCode } = require('../../utils/generators');
 const { validateSchema } = require('../../middlewares/validateSchema');
-const { requireOperator } = require('../../middlewares/requireUser');
+const {
+  requireOperator,
+  requireNonDeletedUser,
+} = require('../../middlewares/requireUser');
 const { limitRequestsPerDay } = require('../../middlewares/rateLimit');
 const {
   requireNonBlockedIp,
@@ -37,6 +40,7 @@ router.post(
       where: {
         username: request.body.email.toLowerCase(),
       },
+      paranoid: false,
     });
 
     if (existingOperator) {
@@ -58,6 +62,7 @@ router.post(
           privateKeySecret: crypto.randomBytes(32).toString('base64'),
           supportCode: generateSupportCode(),
           avvAccepted: request.body.avvAccepted,
+          lastVersionSeen: request.body.lastVersionSeen,
         },
         { transaction }
       );
@@ -159,6 +164,7 @@ router.post(
 router.post(
   '/publicKey',
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(storePublicKeySchema),
   async (request, response) => {
     if (request.user.publicKey) {
@@ -177,12 +183,15 @@ router.post(
 router.patch(
   '/',
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(updateOperatorSchema),
   async (request, response) => {
     const operator = request.user;
     await operator.update({
       firstName: request.body.firstName,
       lastName: request.body.lastName,
+      avvAccepted: request.body.avvAccepted,
+      lastVersionSeen: request.body.lastVersionSeen,
     });
 
     return response.sendStatus(status.NO_CONTENT);
@@ -192,6 +201,35 @@ router.patch(
 // get private key secret
 router.get('/privateKeySecret', requireOperator, (request, response) => {
   return response.send({ privateKeySecret: request.user.privateKeySecret });
+});
+
+// request account deactivation
+router.delete('/', requireOperator, async (request, response) => {
+  const operator = request.user;
+
+  const locations = await operator.getLocations();
+
+  await database.transaction(async transaction => {
+    for (const location of locations) {
+      await database.Location.checkoutAllTraces({ location, transaction });
+    }
+    await operator.destroy({ transaction });
+  });
+
+  const deletionScheduledAfter = moment()
+    .add(config.get('luca.operators.deleted.maxAgeHours'), 'hours')
+    .unix();
+
+  response.send({
+    deletionScheduledAfter,
+  });
+});
+
+// undo account deactivation
+router.post('/restore', requireOperator, async (request, response) => {
+  const operator = request.user;
+  await operator.restore();
+  response.sendStatus(status.NO_CONTENT);
 });
 
 router.use('/locations', locationsRouter);

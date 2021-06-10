@@ -28,6 +28,7 @@ services:
     volumes:
       - ./services/locations/package.json:/app/package.json
       - ./services/locations/src:/app/src
+      - yarn-cache:/usr/local/share/.cache/yarn
     environment:
       - REACT_APP_GOOGLE_MAPS_API_KEY
     depends_on:
@@ -39,6 +40,7 @@ services:
     volumes:
       - ./services/health-department/package.json:/app/package.json
       - ./services/health-department/src:/app/src
+      - yarn-cache:/usr/local/share/.cache/yarn
     depends_on:
       - backend
       - elb
@@ -48,6 +50,7 @@ services:
     volumes:
       - ./services/scanner/package.json:/app/package.json
       - ./services/scanner/src:/app/src
+      - yarn-cache:/usr/local/share/.cache/yarn
     depends_on:
       - backend
       - elb
@@ -57,6 +60,7 @@ services:
     volumes:
       - ./services/contact-form/package.json:/app/package.json
       - ./services/contact-form/src:/app/src
+      - yarn-cache:/usr/local/share/.cache/yarn
     depends_on:
       - backend
       - elb
@@ -66,6 +70,7 @@ services:
     volumes:
       - ./services/webapp/package.json:/app/package.json
       - ./services/webapp/src:/app/src
+      - yarn-cache:/usr/local/share/.cache/yarn
     depends_on:
       - backend
       - elb
@@ -77,3 +82,6 @@ services:
     depends_on:
       - backend
       - elb
+
+volumes:
+  yarn-cache:

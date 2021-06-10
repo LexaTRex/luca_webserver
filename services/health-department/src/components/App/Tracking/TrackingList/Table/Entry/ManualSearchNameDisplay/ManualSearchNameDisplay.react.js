@@ -4,17 +4,21 @@ import { useQuery } from 'react-query';
 
 import { getLocationTransfers } from 'network/api';
 
-export const ManualSearchNameDisplay = ({ processId }) => {
+export const ManualSearchNameDisplay = ({ processId, onProcessName }) => {
   const { isLoading, error, data } = useQuery(
     `locationTransfer${processId}`,
-    () => getLocationTransfers(processId)
+    () =>
+      getLocationTransfers(processId).then(processData => {
+        onProcessName(processId, processData?.[0]?.name);
+        return processData;
+      })
   );
 
   if (isLoading || error) return null;
 
   return (
     <div>
-      {data.length && (
+      {data.length ? (
         <>
           <div>{data[0].name}</div>
           <div>
@@ -24,6 +28,8 @@ export const ManualSearchNameDisplay = ({ processId }) => {
             {`${moment.unix(data[0].time[1]).format('DD.MM.YYYY HH:mm')})`}
           </div>
         </>
+      ) : (
+        '–'
       )}
     </div>
   );

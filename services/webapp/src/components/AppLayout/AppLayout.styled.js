@@ -8,7 +8,7 @@ export const StyledContainer = styled.div`
   flex-direction: column;
   background: ${({ bgColor }) => bgColor};
 `;
-export const StyledHeader = styled.div`
+export const StyledHeader = styled.header`
   height: 82px;
   display: flex;
   margin: 0 0 8px;
@@ -17,6 +17,7 @@ export const StyledHeader = styled.div`
   border-bottom: 1px solid rgb(151, 151, 151);
 `;
 export const AppHeadline = styled(LucaStyledHeadline)`
+  margin: 0;
   font-size: 36px;
   overflow: hidden;
   font-weight: normal;
@@ -37,9 +38,15 @@ export const AppContent = styled.div`
       justify-content: center;
     `}
 `;
-export const StyledFooter = styled.div`
-  height: 64px;
+export const StyledMain = styled.main`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+`;
+export const StyledFooter = styled.nav`
   display: flex;
   padding: 0 16px;
   border-top: 1px solid rgb(151, 151, 151);
+  height: ${({ footerHeight }) => footerHeight};
 `;

@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { notification } from 'antd';
-import parsePhoneNumber from 'libphonenumber-js/max';
-
+import { Helmet } from 'react-helmet';
 import { useHistory } from 'react-router-dom';
+import parsePhoneNumber from 'libphonenumber-js/max';
 
 import { indexDB } from 'db';
 import { SETTINGS_PATH } from 'constants/routes';
@@ -12,8 +12,8 @@ import { sendSMSTAN, verifySMSTAN } from 'network/api';
 import { changeUserInformation } from 'helpers/crypto';
 import { requiredFieldValidation } from 'form/validations';
 
-import { TextInput } from '../TextInput';
-import { AppHeadline, AppLayout } from '../AppLayout';
+import { TextInput } from 'components/TextInput';
+import { AppHeadline, AppLayout } from 'components/AppLayout';
 
 import {
   StyledForm,
@@ -28,7 +28,7 @@ import {
 const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
   const { formatMessage } = useIntl();
   return (
-    <>
+    <StyledContent>
       <StyledDescription>
         {formatMessage({
           id: 'OnBoarding.PhoneNumberInputStep.TANDescription',
@@ -38,7 +38,8 @@ const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
         type="tel"
         name="tan"
         auto-complete="one-time-code"
-        placeholder={formatMessage({ id: 'Form.Tan' })}
+        label={formatMessage({ id: 'Form.Tan.Label' })}
+        placeholder={formatMessage({ id: 'Form.Tan.Placeholder' })}
         rules={[
           {
             required: true,
@@ -49,6 +50,7 @@ const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
       <StyledFooter>
         <StyledPlaceholder />
         <StyledLink
+          id="resendTAN"
           onClick={() => {
             sendSMSTAN(newPhoneNumber)
               .then(id => setChallengeId(id))
@@ -58,7 +60,7 @@ const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
           {formatMessage({ id: 'Form.Resend' })}
         </StyledLink>
       </StyledFooter>
-    </>
+    </StyledContent>
   );
 };
 
@@ -68,59 +70,73 @@ function UserInformationFormContent(user) {
     <>
       <StyledContent>
         <TextInput
+          isRequired
           bgColor="#000"
           name="firstName"
           autocomplete="given-name"
           defaultValue={user?.firstName || ''}
-          placeholder={formatMessage({ id: 'Form.FirstName' })}
+          placeholder={formatMessage({ id: 'Form.FirstName.Placeholder' })}
+          label={formatMessage({ id: 'Form.FirstName.Label' })}
           rules={requiredFieldValidation(formatMessage)}
         />
         <TextInput
+          isRequired
           bgColor="#000"
           name="lastName"
           autocomplete="family-name"
           defaultValue={user?.lastName || ''}
-          placeholder={formatMessage({ id: 'Form.LastName' })}
           rules={requiredFieldValidation(formatMessage)}
+          label={formatMessage({ id: 'Form.LastName.Label' })}
+          placeholder={formatMessage({ id: 'Form.LastName.Placeholder' })}
         />
         <TextInput
+          isRequired
           name="street"
           bgColor="#000"
           autocomplete="street-address1"
           defaultValue={user?.street || ''}
-          placeholder={formatMessage({ id: 'Form.Street' })}
           rules={requiredFieldValidation(formatMessage)}
+          label={formatMessage({ id: 'Form.Street.Label' })}
+          placeholder={formatMessage({ id: 'Form.Street.Placeholder' })}
         />
         <TextInput
+          isRequired
           bgColor="#000"
           name="houseNumber"
           autocomplete="street-address2"
           defaultValue={user?.houseNumber || ''}
-          placeholder={formatMessage({ id: 'Form.HouseNumber' })}
           rules={requiredFieldValidation(formatMessage)}
+          label={formatMessage({ id: 'Form.HouseNumber.Label' })}
+          placeholder={formatMessage({ id: 'Form.HouseNumber.Placeholder' })}
         />
         <TextInput
           name="zip"
+          isRequired
           bgColor="#000"
           autocomplete="postal-code"
           defaultValue={user?.zip || ''}
-          placeholder={formatMessage({ id: 'Form.Zip' })}
           rules={requiredFieldValidation(formatMessage)}
+          label={formatMessage({ id: 'Form.Zip.Label' })}
+          placeholder={formatMessage({ id: 'Form.Zip.Placeholder' })}
         />
         <TextInput
+          isRequired
           name="city"
           bgColor="#000"
           autocomplete="country-name"
           defaultValue={user?.city || ''}
-          placeholder={formatMessage({ id: 'Form.City' })}
           rules={requiredFieldValidation(formatMessage)}
+          label={formatMessage({ id: 'Form.City.Label' })}
+          placeholder={formatMessage({ id: 'Form.City.Placeholder' })}
         />
         <TextInput
+          isRequired
           name="email"
           bgColor="#000"
           autocomplete="email"
           defaultValue={user?.email || ''}
-          placeholder={formatMessage({ id: 'Form.Email' })}
+          label={formatMessage({ id: 'Form.Email.Label' })}
+          placeholder={formatMessage({ id: 'Form.Email.Placeholder' })}
           rules={[
             {
               type: 'email',
@@ -132,11 +148,13 @@ function UserInformationFormContent(user) {
         />
         <TextInput
           type="tel"
-          name="phoneNumber"
+          isRequired
           bgColor="#000"
+          name="phoneNumber"
           autocomplete="tel"
           defaultValue={user?.phoneNumber || ''}
-          placeholder={formatMessage({ id: 'Form.Phone' })}
+          label={formatMessage({ id: 'Form.Phone.Label' })}
+          placeholder={formatMessage({ id: 'Form.Phone.Placeholder' })}
           rules={[
             {
               validator: (_, value) => {
@@ -226,31 +244,45 @@ export function ContactInformation() {
   };
 
   return (
-    <AppLayout
-      header={
-        <AppHeadline>
-          {formatMessage({ id: 'ContactInformation.Headline' })}
-        </AppHeadline>
-      }
-    >
+    <>
+      <Helmet>
+        <title>{formatMessage({ id: 'ContactInformation.PageTitle' })}</title>
+      </Helmet>
       <StyledForm initialValues={user} onFinish={onSubmit}>
-        {challengeId
-          ? ChallengeFormContent(newPhoneNumber, setChallengeId)
-          : UserInformationFormContent(user)}
-        <StyledSaveButton htmlType="submit">
-          {formatMessage({ id: 'ContactInformation.Submit' })}
-        </StyledSaveButton>
-        {challengeId && (
-          <StyledLink
-            isCentered
-            onClick={() => {
-              setChallengeId(null);
-            }}
-          >
-            {formatMessage({ id: 'Form.Cancel' })}
-          </StyledLink>
-        )}
+        <AppLayout
+          footerHeight={challengeId ? '92px' : '64px'}
+          header={
+            <AppHeadline>
+              {formatMessage({ id: 'ContactInformation.Headline' })}
+            </AppHeadline>
+          }
+          footer={
+            <StyledFooter>
+              <StyledSaveButton
+                htmlType="submit"
+                id={challengeId ? 'verifyTAN' : 'save'}
+              >
+                {formatMessage({ id: 'ContactInformation.Submit' })}
+              </StyledSaveButton>
+              {challengeId && (
+                <StyledLink
+                  isCentered
+                  id="cancelTAN"
+                  onClick={() => {
+                    setChallengeId(null);
+                  }}
+                >
+                  {formatMessage({ id: 'Form.Cancel' })}
+                </StyledLink>
+              )}
+            </StyledFooter>
+          }
+        >
+          {challengeId
+            ? ChallengeFormContent(newPhoneNumber, setChallengeId)
+            : UserInformationFormContent(user)}
+        </AppLayout>
       </StyledForm>
-    </AppLayout>
+    </>
   );
 }

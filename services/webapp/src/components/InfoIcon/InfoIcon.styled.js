@@ -3,9 +3,12 @@ import styled from 'styled-components';
 import { Text } from '../Text';
 
 export const StyledInfoText = styled(Text)`
+  top: 5px;
+  left: 9px;
   font-size: 14px;
   user-select: none;
   line-height: 14px;
+  position: absolute;
   color: ${({ inverted }) => (inverted ? '#fff' : '#000')};
 `;
 export const StyledContainer = styled.button`
@@ -15,6 +18,7 @@ export const StyledContainer = styled.button`
   outline: none;
   margin: 0 8px;
   display: block;
+  position: relative;
   border-radius: 12px;
   align-items: center;
   justify-content: center;

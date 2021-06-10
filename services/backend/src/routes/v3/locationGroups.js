@@ -20,6 +20,7 @@ const {
 
 const {
   requireOperator,
+  requireNonDeletedUser,
   requireHealthDepartmentEmployee,
 } = require('../../middlewares/requireUser');
 
@@ -75,6 +76,7 @@ router.get(
 router.post(
   '/',
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(createSchema),
   async (request, response) => {
     const operator = await database.Operator.findOne({
@@ -245,6 +247,7 @@ router.get(
 router.patch(
   '/:groupId',
   requireOperator,
+  requireNonDeletedUser,
   validateParametersSchema(groupIdSchema),
   validateSchema(updateSchema),
   async (request, response) => {
@@ -289,6 +292,7 @@ router.patch(
 router.delete(
   '/:groupId',
   requireOperator,
+  requireNonDeletedUser,
   validateParametersSchema(groupIdSchema),
   async (request, response) => {
     const group = await database.LocationGroup.findOne({

@@ -60,6 +60,7 @@ export const Authentication = () => {
       agreement: true,
       avvAccepted: true,
       lang: intl.locale,
+      lastVersionSeen: process.env.REACT_APP_VERSION,
     };
 
     registerOperator(registrationData)

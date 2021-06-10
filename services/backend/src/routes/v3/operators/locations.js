@@ -1,8 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 const router = require('express').Router();
 const status = require('http-status');
-const { Op } = require('sequelize');
-const moment = require('moment');
 
 const {
   createSchema,
@@ -15,7 +13,10 @@ const {
   validateSchema,
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
-const { requireOperator } = require('../../../middlewares/requireUser');
+const {
+  requireOperator,
+  requireNonDeletedUser,
+} = require('../../../middlewares/requireUser');
 
 // get own locations
 router.get('/', requireOperator, async (request, response) => {
@@ -57,6 +58,7 @@ router.get(
 router.post(
   '/',
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(createSchema),
   async (request, response) => {
     const group = await database.LocationGroup.findOne({
@@ -124,6 +126,7 @@ router.post(
 router.patch(
   '/:locationId',
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(updateSchema),
   validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
@@ -158,6 +161,7 @@ router.delete(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
   requireOperator,
+  requireNonDeletedUser,
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -170,7 +174,11 @@ router.delete(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    await location.destroy();
+    await database.transaction(async transaction => {
+      await database.Location.checkoutAllTraces({ location, transaction });
+      await location.destroy({ transaction });
+    });
+
     return response.sendStatus(status.NO_CONTENT);
   }
 );
@@ -180,6 +188,7 @@ router.post(
   '/:locationId/check-out',
   validateParametersSchema(locationIdParametersSchema),
   requireOperator,
+  requireNonDeletedUser,
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -192,33 +201,7 @@ router.post(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const oldTraces = await database.Trace.findAll({
-      where: {
-        locationId: location.uuid,
-        time: {
-          [Op.contains]: moment(),
-        },
-      },
-    });
-
-    const now = moment();
-
-    await database.transaction(async transaction => {
-      const updateQueries = [];
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const checkIn of oldTraces) {
-        updateQueries.push(
-          checkIn.update(
-            {
-              time: [checkIn.time[0].value, now],
-            },
-            { transaction }
-          )
-        );
-      }
-      await Promise.all(updateQueries);
-    });
+    await database.Location.checkoutAllTraces({ location });
 
     return response.sendStatus(status.NO_CONTENT);
   }

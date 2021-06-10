@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl';
 import lucaLogo from 'assets/LucaLogoWhite.svg';
 import { hasMobileCamAccess } from 'utils/environment';
 
+import { CheckBoxWithText } from 'components/CheckBoxWithText';
 import {
   StyledLink,
   StyledFooter,
@@ -15,7 +16,6 @@ import {
   StyledPrimaryButton,
   StyledWarning,
 } from './WelcomeStep.styled';
-import { CheckBoxWithText } from '../../CheckBoxWithText';
 
 export function WelcomeStep({ onSubmit = () => {} }) {
   const { formatMessage } = useIntl();
@@ -29,7 +29,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
   return (
     <StyledContainer>
       <StyledContent data-cy="welcomeStep">
-        <StyledLucaLogo src={lucaLogo} />
+        <StyledLucaLogo alt="luca" src={lucaLogo} />
         <StyledHeadline>
           {formatMessage({ id: 'OnBoarding.WelcomeStep.Headline' })}
         </StyledHeadline>
@@ -42,6 +42,8 @@ export function WelcomeStep({ onSubmit = () => {} }) {
           </StyledWarning>
         ) : null}
         <CheckBoxWithText
+          tabIndex="1"
+          id="termsConsCheckbox"
           testId="termsConsCheckbox"
           checked={isTermsAndConditionsChecked}
           onChange={() =>
@@ -53,6 +55,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
               // eslint-disable-next-line react/display-name
               a: (...chunks) => (
                 <StyledLink
+                  tabIndex="2"
                   href={formatMessage({
                     id: 'OnBoarding.termsAndConditionsLink',
                   })}
@@ -66,6 +69,8 @@ export function WelcomeStep({ onSubmit = () => {} }) {
           )}
         />
         <CheckBoxWithText
+          tabIndex="3"
+          id="privacyCheckbox"
           testId="privacyCheckbox"
           checked={isPrivacyChecked}
           onChange={() => setIsPrivacyChecked(!isPrivacyChecked)}
@@ -75,6 +80,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
               // eslint-disable-next-line react/display-name
               a: (...chunks) => (
                 <StyledLink
+                  tabIndex="4"
                   href={formatMessage({
                     id: 'OnBoarding.privacyLink',
                   })}
@@ -90,6 +96,8 @@ export function WelcomeStep({ onSubmit = () => {} }) {
       </StyledContent>
       <StyledFooter>
         <StyledPrimaryButton
+          id="next"
+          tabIndex="5"
           data-cy="welcomeSubmit"
           disabled={!(isPrivacyChecked && isTermsAndConditionsChecked)}
           onClick={() => {

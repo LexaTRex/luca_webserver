@@ -78,6 +78,11 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: false,
         type: DataTypes.BOOLEAN,
       },
+      lastVersionSeen: {
+        allowNull: false,
+        defaultValue: '1.0.0',
+        type: DataTypes.STRING(32),
+      },
     },
     {
       paranoid: true,

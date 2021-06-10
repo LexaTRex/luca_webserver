@@ -30,9 +30,10 @@ const {
 
 const UNABLE_TO_SERIALIZE_ERROR_CODE = '40001';
 
-router.get('/verification/current', async (request, response) => {
+router.get('/attestation', (request, response) => {
+  response.setHeader('Cache-Control', 'max-age=600');
   return response.send({
-    publicKey: config.get('keys.badge.public'),
+    publicKeys: config.get(`keys.badge.attestation`),
   });
 });
 

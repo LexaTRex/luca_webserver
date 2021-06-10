@@ -37,15 +37,15 @@ export function FeatureNotImplemented() {
         <StyledStoreWrapper>
           <StyledStoreLink
             rel="noopener noreferrer"
-            href="https://play.google.com/store/apps/details?id=de.culture4life.luca"
-          >
-            <StyledStoreLogo src={googlePlayLogo} alt="Google Play" />
-          </StyledStoreLink>
-          <StyledStoreLink
-            rel="noopener noreferrer"
             href="https://apps.apple.com/de/app/luca-app/id1531742708"
           >
             <StyledStoreLogo src={appStoreLogo} alt="Apple App Store" />
+          </StyledStoreLink>
+          <StyledStoreLink
+            rel="noopener noreferrer"
+            href="https://play.google.com/store/apps/details?id=de.culture4life.luca"
+          >
+            <StyledStoreLogo src={googlePlayLogo} alt="Google Play" />
           </StyledStoreLink>
         </StyledStoreWrapper>
       </StyledContent>

@@ -1,3 +1,5 @@
+const { Op, fn, col } = require('sequelize');
+
 module.exports = (Sequelize, DataTypes) => {
   const Location = Sequelize.define(
     'Location',
@@ -131,5 +133,21 @@ module.exports = (Sequelize, DataTypes) => {
       foreignKey: 'locationId',
     });
   };
+
+  Location.checkoutAllTraces = ({ location, transaction }) => {
+    return Sequelize.models.Trace.update(
+      { time: fn('tstzrange', fn('lower', col('time')), fn('now')) },
+      {
+        where: {
+          locationId: location.uuid,
+          time: {
+            [Op.contains]: fn('now'),
+          },
+        },
+      },
+      { transaction }
+    );
+  };
+
   return Location;
 };

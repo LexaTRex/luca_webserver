@@ -1,6 +1,13 @@
 {
     "coveragePathIgnorePatterns": [
     ],
+    "modulePaths": [
+      "<rootDir>",
+      "<rootDir>/src"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
     "testPathIgnorePatterns": [
       "/node_modules/"
     ],

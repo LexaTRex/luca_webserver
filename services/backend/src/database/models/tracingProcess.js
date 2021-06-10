@@ -18,9 +18,18 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false,
     },
+    assigneeId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+    },
   });
 
   TracingProcess.associate = models => {
+    TracingProcess.belongsTo(models.HealthDepartmentEmployee, {
+      foreignKey: 'assigneeId',
+    });
+
     TracingProcess.hasMany(models.LocationTransfer, {
       foreignKey: 'tracingProcessId',
     });

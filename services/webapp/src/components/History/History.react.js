@@ -1,17 +1,19 @@
-import moment from 'moment';
-import { useIntl } from 'react-intl';
-import { Steps, notification } from 'antd';
-import { useHistory } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { indexDB } from 'db';
-import { HOME_PATH } from 'constants/routes';
-import { reportInfection } from 'helpers/crypto';
-import { getLocation } from 'helpers/locations';
+import moment from 'moment';
+import { useIntl } from 'react-intl';
+import { Helmet } from 'react-helmet';
+import { Steps, notification } from 'antd';
+import { useHistory } from 'react-router-dom';
 
-import { HistoryIcon, MenuIcon } from '../Icons';
-import { InfoIcon } from '../InfoIcon/InfoIcon.react';
-import { AppLayout, AppHeadline, AppContent } from '../AppLayout';
+import { indexDB } from 'db';
+import { getLocation } from 'helpers/locations';
+import { reportInfection } from 'helpers/crypto';
+import { HOME_PATH } from 'constants/routes';
+
+import { InfoIcon } from 'components/InfoIcon/InfoIcon.react';
+import { CheckinIcon, HistoryIcon } from 'components/Icons';
+import { AppLayout, AppHeadline, AppContent } from 'components/AppLayout';
 
 import {
   StyledSteps,
@@ -118,6 +120,9 @@ export function History() {
 
   return (
     <>
+      <Helmet>
+        <title>{formatMessage({ id: 'History.PageTitle' })}</title>
+      </Helmet>
       <AppLayout
         header={
           <AppHeadline>{formatMessage({ id: 'History.Headline' })}</AppHeadline>
@@ -126,13 +131,20 @@ export function History() {
           <>
             <StyledFooterContainer>
               <StyledFooterItem onClick={() => history.push(HOME_PATH)}>
-                <MenuIcon color="rgb(195, 206, 217)" />
+                <CheckinIcon />
                 {formatMessage({ id: 'Home.MenuItem' })}
               </StyledFooterItem>
             </StyledFooterContainer>
             <StyledFooterContainer>
-              <StyledFooterItem isActive>
-                <HistoryIcon />
+              <StyledFooterItem
+                id="history"
+                tabIndex="3"
+                isActive
+                aria-label={formatMessage({
+                  id: 'History.AriaLabel',
+                })}
+              >
+                <HistoryIcon color="rgb(195, 206, 217)" />
                 {formatMessage({ id: 'History.MenuItem' })}
               </StyledFooterItem>
             </StyledFooterContainer>
@@ -187,6 +199,10 @@ export function History() {
                           {historyEntry.type === PRIVATE_MEETING_HOST_TYPE && (
                             <InfoIcon
                               inverted
+                              id={`PrivateMeeting${title.replaceAll(
+                                ' ',
+                                '_'
+                              )}Info`}
                               onClick={() =>
                                 setActivePrivateMeeting(historyEntry.locationId)
                               }
@@ -216,7 +232,7 @@ export function History() {
           </StyledSteps>
         </AppContent>
         <StyledFooter flex="unset">
-          <StyledSecondaryButton onClick={shareHistory}>
+          <StyledSecondaryButton tabIndex="4" onClick={shareHistory}>
             {formatMessage({ id: 'History.ShareHistory' })}
           </StyledSecondaryButton>
         </StyledFooter>

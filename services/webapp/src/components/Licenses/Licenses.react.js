@@ -1,8 +1,11 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import { useIntl } from 'react-intl';
+
 import { Table } from 'antd';
+import { useIntl } from 'react-intl';
+import { Helmet } from 'react-helmet';
+import { useQuery } from 'react-query';
 import { getLicenses } from 'network/static';
+
 import { TableStyle, StyledLicenseLink } from './Licenses.styled';
 
 const PUBLIC_URL_PATH = process.env.PUBLIC_URL;
@@ -30,6 +33,9 @@ export const Licenses = () => {
   if (isLoading || error) return null;
   return (
     <>
+      <Helmet>
+        <title>{intl.formatMessage({ id: 'Licenses.PageTitle' })}</title>
+      </Helmet>
       <StyledLicenseLink href={`${PUBLIC_URL_PATH}/licenses-full.txt`}>
         {intl.formatMessage({ id: 'license.license.full' })}
       </StyledLicenseLink>

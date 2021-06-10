@@ -8,12 +8,12 @@ info:
   description: Partial OpenAPI doc
   contact: {}
 paths:
-  /keys/badge/verification/current:
+  /keys/badge/attestation:
     get:
-      summary: Verify the current key
+      summary: Get the current badge attestation public key
       tags:
         - Keys
-      operationId: get-keys-badge-verification-current
+      operationId: get-keys-badge-attestation-version
       responses:
         '200':
           description: OK
@@ -23,11 +23,22 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  publicKey:
-                    type: string
-                    minLength: 1
+                  publicKeys:
+                    type: object
+                    properties:
+                      v3:
+                        type: string
+                        minLength: 1
+                      v4:
+                        type: string
+                        minLength: 1
+                    required:
+                      - v3
+                      - v4
                 required:
-                  - publicKey
+                  - publicKeys
+      description: 'Get the current badge attestation public keys, by version. These attest that a badge was issued by Luca.'
+    parameters: []
   /keys/badge/targetKeyId:
     get:
       summary: Target key ID

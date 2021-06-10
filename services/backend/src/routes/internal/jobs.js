@@ -61,6 +61,25 @@ router.post('/deleteOldInactiveOperators', async (request, response) => {
   response.send({ affectedRows, time: performance.now() - t0 });
 });
 
+router.post('/removeDeletedOperators', async (request, response) => {
+  const t0 = performance.now();
+  const earliestTimeToKeep = moment().subtract(
+    config.get('luca.operators.deleted.maxAgeHours'),
+    'hours'
+  );
+  const affectedRows = await database.Operator.destroy({
+    where: {
+      deletedAt: {
+        [Op.lt]: earliestTimeToKeep,
+      },
+    },
+    paranoid: false,
+    force: true,
+  });
+
+  response.send({ affectedRows, time: performance.now() - t0 });
+});
+
 router.post('/deleteUnusedUserTransfers', async (request, response) => {
   const t0 = performance.now();
   const affectedRows = await database.UserTransfer.destroy({

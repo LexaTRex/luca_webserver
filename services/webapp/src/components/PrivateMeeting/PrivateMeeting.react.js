@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 
 import QRCode from 'qrcode.react';
+import { notification } from 'antd';
 import { useIntl } from 'react-intl';
+import { Helmet } from 'react-helmet';
 import useInterval from '@use-it/interval';
 import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';
+import { HOME_PATH } from 'constants/routes';
 import {
   syncMeeting,
   stopMeeting,
@@ -13,11 +16,10 @@ import {
   checkinToPrivateMeeting,
   checkForActiveHostedPrivateMeeting,
 } from 'helpers/privateMeeting';
-import { HOME_PATH } from 'constants/routes';
 import { getCheckOutPath } from 'helpers/routes';
 
-import { InfoIcon } from '../InfoIcon/InfoIcon.react';
-import { AppContent, AppHeadline, AppLayout } from '../AppLayout';
+import { InfoIcon } from 'components/InfoIcon/InfoIcon.react';
+import { AppContent, AppHeadline, AppLayout } from 'components/AppLayout';
 
 import {
   StyledHeader,
@@ -59,21 +61,35 @@ function PrivateMeetingComponent({
 
   const checkForActiveMeeting = useMemo(() => {
     return async () => {
-      if (activeMeeting) {
-        await syncMeeting(activeMeeting);
-        setNumberOfGuests(
-          await indexDB.guests
-            .where({ locationId: activeMeeting.locationId || '' })
-            .count()
-        );
-        setNumberOfActiveGuests(
-          await indexDB.guests
-            .where({ locationId: activeMeeting.locationId || '', checkout: -1 })
-            .count()
-        );
+      try {
+        if (activeMeeting) {
+          await syncMeeting(activeMeeting);
+          setNumberOfGuests(
+            await indexDB.guests
+              .where({ locationId: activeMeeting.locationId || '' })
+              .count()
+          );
+          setNumberOfActiveGuests(
+            await indexDB.guests
+              .where({
+                locationId: activeMeeting.locationId || '',
+                checkout: -1,
+              })
+              .count()
+          );
+        }
+      } catch {
+        notification.error({
+          message: formatMessage({
+            id: 'error.headline',
+          }),
+          description: formatMessage({
+            id: 'error.description',
+          }),
+        });
       }
     };
-  }, [activeMeeting]);
+  }, [activeMeeting, formatMessage]);
 
   useEffect(() => {
     if (parameters.scannerId) {
@@ -118,6 +134,9 @@ function PrivateMeetingComponent({
 
   return (
     <>
+      <Helmet>
+        <title>{formatMessage({ id: 'PrivateMeeting.PageTitle' })}</title>
+      </Helmet>
       <AppLayout
         header={
           <AppHeadline color="#000">

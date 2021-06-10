@@ -47,6 +47,7 @@ module.exports = {
     'max-lines': [1, 400],
     complexity: 2,
     'react/prop-types': 0,
+    'require-await': 2,
     'react/require-default-props': 0,
     'react/jsx-filename-extension': 0,
     'react-hooks/exhaustive-deps': 2,

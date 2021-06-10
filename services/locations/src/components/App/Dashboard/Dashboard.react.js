@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-
-import { Layout } from 'antd';
+import { Redirect, Route, Switch, useHistory } from 'react-router';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { Redirect, Route, Switch, useHistory } from 'react-router';
+import { Layout } from 'antd';
+
+import { useWhatsNew } from 'components/hooks/useWhatsNew';
 
 import {
   AUTHENTICATION_ROUTE,
@@ -24,6 +25,7 @@ import { RegisterOperatorModal } from 'components/App/modals/RegisterOperatorMod
 
 import { Location } from './Location';
 import { EmptyGroup } from './EmptyGroup';
+import { DeletionMessageLayout } from './DeletionMessage/DeletionMessage.react';
 import { LocationList } from './LocationList';
 import { LinkButton, LocationSider, MainContent } from './Dashboard.styled';
 
@@ -31,6 +33,8 @@ export const Dashboard = ({ operator }) => {
   const intl = useIntl();
   const history = useHistory();
   const [openModal, closeModal] = useModal();
+  const { avvAccepted, isActiveVersion } = useWhatsNew(operator);
+
   const { data: privateKeySecret, isLoading: isPrivateKeyLoading } = useQuery(
     'privateKeySecret',
     getPrivateKeySecret
@@ -54,6 +58,8 @@ export const Dashboard = ({ operator }) => {
       });
     } else if (
       !privateKey &&
+      avvAccepted &&
+      isActiveVersion &&
       !isPrivateKeyLoading &&
       !hasSeenPrivateKeyModal()
     ) {
@@ -81,7 +87,11 @@ export const Dashboard = ({ operator }) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPrivateKeyLoading]);
+  }, [isPrivateKeyLoading, avvAccepted, isActiveVersion]);
+
+  if (operator.deletedAt) {
+    return <DeletionMessageLayout operator={operator} />;
+  }
 
   return (
     <Layout>

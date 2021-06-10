@@ -8,6 +8,7 @@ export const ButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  margin-top: 16px;
 `;
 
 export const Info = styled.div`
@@ -20,3 +21,24 @@ export const Password = styled.div`
   text-align: center;
   margin-bottom: 24px;
 `;
+
+const baseStyles = {
+  backgroundColor: 'white',
+  padding: '0 40px',
+  color: 'black',
+  fontFamily: 'Montserrat-Bold, sans-serif',
+  fontSize: 16,
+  fontWeight: 'bold',
+};
+
+export const cancelStyle = {
+  ...baseStyles,
+  marginRight: 24,
+  border: 'none',
+  boxShadow: 'none',
+};
+
+export const buttonStyle = {
+  ...baseStyles,
+  backgroundColor: 'rgb(195, 206, 217)',
+};

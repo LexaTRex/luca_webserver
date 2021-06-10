@@ -1,12 +1,6 @@
 import { Form } from 'antd';
 import styled from 'styled-components';
 
-export const StyledContainer = styled.div`
-  width: 100%;
-  height: 54px;
-  margin: 12px 0 0;
-  position: relative;
-`;
 export const FormItem = styled(Form.Item)`
   width: 100% !important;
 
@@ -18,6 +12,7 @@ export const StyledLabel = styled.label`
   top: -10px;
   left: 15px;
   z-index: 0;
+  color: white;
   height: 20px;
   display: block;
   font-size: 12px;
@@ -26,7 +21,6 @@ export const StyledLabel = styled.label`
   line-height: 20px;
   position: absolute;
   letter-spacing: 0.4px;
-  color: rgba(255, 255, 255, 0.38);
   font-family: Montserrat-Medium, sans-serif;
   background-color: ${({ bgColor }) => bgColor};
 `;
@@ -51,11 +45,20 @@ export const StyledInput = styled.input`
     color: transparent;
   }
 
-  &:placeholder-shown ~ ${StyledLabel} {
+  &:placeholder-shown + ${StyledLabel} {
     top: 18px;
     left: 15px;
     cursor: text;
     font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.38);
+  }
+
+  &:focus {
+    font-weight: 700;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.38) !important;
+    }
   }
 
   &:focus ~ ${StyledLabel} {
@@ -67,12 +70,15 @@ export const StyledInput = styled.input`
     position: absolute;
   }
 
-  &:focus {
-    font-weight: 700;
-  }
   /* reset input */
   &:required,
   &:invalid {
     box-shadow: none;
   }
+`;
+export const StyledContainer = styled.div`
+  width: 100%;
+  height: 54px;
+  margin: 12px 0 0;
+  position: relative;
 `;

@@ -32,11 +32,21 @@ paths:
                       type: boolean
                     createdAt:
                       type: number
+                    assignee:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
                   required:
                     - uuid
                     - didRequestLocations
                     - isCompleted
                     - createdAt
+                    - assigneeId
         '401':
           description: Unauthorized
       operationId: get-tracingProcesses
@@ -65,6 +75,8 @@ paths:
                   type: boolean
                 isCompleted:
                   type: boolean
+                assigneeId:
+                  type: string
       tags:
         - TracingProcesses
       description: Update tracing process information.

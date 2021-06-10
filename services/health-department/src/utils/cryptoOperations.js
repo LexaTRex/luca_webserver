@@ -34,6 +34,7 @@ import {
   decryptStaticDeviceTrace,
 } from './decryption';
 import { assertStringOrNumericValues } from './typeAssertions';
+import { IncompleteDataError } from '../errors/incompleteDataError';
 
 const STATIC_DEVICE_TYPE = 2;
 
@@ -69,6 +70,10 @@ export const decryptUserTransfer = async userTransferId => {
   const userDataSecret = base64ToHex(userSecrets.uds);
   const encryptedUserContactData = await getEncryptedUserContactData(userId);
 
+  const { data, iv } = encryptedUserContactData;
+  if (!data || !iv) {
+    throw new IncompleteDataError(data, iv);
+  }
   const userDataEncryptionKey =
     userSecrets.qrv === QR_V4
       ? base64ToHex(userSecrets.uds)
@@ -76,11 +81,7 @@ export const decryptUserTransfer = async userTransferId => {
 
   const userContactData = decodeUtf8(
     hexToBytes(
-      DECRYPT_AES_CTR(
-        base64ToHex(encryptedUserContactData.data),
-        userDataEncryptionKey,
-        base64ToHex(encryptedUserContactData.iv)
-      )
+      DECRYPT_AES_CTR(base64ToHex(data), userDataEncryptionKey, base64ToHex(iv))
     )
   );
 

@@ -14,13 +14,21 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
 
 beforeEach(() => {
   cy.intercept('/', req => {
-    req.headers['X-Forwarded-For'] = "10.0.0.1";
-  })
-})
+    req.headers['X-Forwarded-For'] = '10.0.0.1';
+  });
+});
+
+Cypress.on('uncaught:exception', err => {
+  // returning false here prevents Cypress from failing the test
+  // deal with issue https://github.com/quasarframework/quasar/issues/2233
+  if (err.message.includes('ResizeObserver')) {
+    return false;
+  }
+});
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

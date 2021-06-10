@@ -25,11 +25,16 @@ export const StyledMenuIcon = styled.img`
   height: 4px;
   width: 20px;
 `;
-export const StyledHeaderMenuIconContainer = styled.div`
+export const StyledHeaderMenuIconContainer = styled.button`
   flex: 1;
+  margin: 0;
+  border: none;
   display: flex;
+  outline: none;
+  padding: 20px 0;
   align-items: center;
   justify-content: flex-end;
+  background-color: transparent;
 `;
 
 export const StyledBackButton = styled(SecondaryButton)`

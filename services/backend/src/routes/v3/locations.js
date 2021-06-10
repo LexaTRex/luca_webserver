@@ -13,62 +13,14 @@ const {
   limitRequestsPerDay,
   limitRequestsPerHour,
 } = require('../../middlewares/rateLimit');
-const {
-  requireHealthDepartmentEmployee,
-} = require('../../middlewares/requireUser');
 const { formatLocationName } = require('../../utils/format');
-
 const additionalDataSchemaRouter = require('./locations/additionalDataSchema');
-
 const {
-  searchSchema,
   privateEventCreateSchema,
   locationTracesQuerySchema,
   locationIdParametersSchema,
   accessIdParametersSchema,
 } = require('./locations.schemas');
-
-// HD search for locations
-router.get(
-  '/search',
-  requireHealthDepartmentEmployee,
-  validateQuerySchema(searchSchema),
-  async (request, response) => {
-    const limit = Number.parseInt(request.query.limit, 10);
-    const offset = Number.parseInt(request.query.offset, 10);
-
-    const locations = await database.Location.findAll({
-      where: {
-        name: {
-          [Op.iLike]: `%${request.query.name}%`,
-        },
-        isPrivate: false,
-      },
-      include: {
-        model: database.Operator,
-        attributes: ['uuid', 'email'],
-      },
-      limit: limit || 10,
-      offset: offset || 0,
-    });
-
-    return response.send(
-      locations.map(location => ({
-        locationId: location.uuid,
-        name: location.name,
-        firstName: location.firstName,
-        lastName: location.lastName,
-        phone: location.phone,
-        streetName: location.streetName,
-        streetNr: location.streetNr,
-        zipCode: location.zipCode,
-        city: location.city,
-        state: location.state,
-        operator: location.Operator,
-      }))
-    );
-  }
-);
 
 // create private event
 router.post(
@@ -130,7 +82,6 @@ router.delete(
 router.get(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
-  // eslint-disable-next-line complexity
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -150,33 +101,16 @@ router.get(
       isIndoor: location.isIndoor,
       type: location.type,
       locationId: location.uuid,
+      publicKey: location.publicKey,
+      name: formatLocationName(location, location.LocationGroup),
       groupName: location.LocationGroup?.name,
       locationName: location.name,
-      name: formatLocationName(location, location.LocationGroup),
-      publicKey: location.publicKey,
-      firstName: location.firstName,
-      lastName: location.lastName,
-      phone: location.phone,
-      streetName: location.streetName || '',
-      streetNr: location.streetNr || '',
-      zipCode: location.zipCode || '',
-      city: location.city || '',
-      state: location.state || '',
       lat: location.lat || 0,
       lng: location.lng || 0,
       radius: location.shouldProvideGeoLocation ? location.radius : 0,
       createdAt: moment(location.createdAt).unix(),
       isPrivate: location.isPrivate,
     };
-
-    const userIsHealthDepartment =
-      request.user && request.user.type === 'HealthDepartmentEmployee';
-
-    if (!userIsHealthDepartment) {
-      locationDTO.firstName = '';
-      locationDTO.lastName = '';
-      locationDTO.phone = '';
-    }
 
     return response.send(locationDTO);
   }

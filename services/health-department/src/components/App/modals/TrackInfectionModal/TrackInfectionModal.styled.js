@@ -1,28 +1,52 @@
 import styled from 'styled-components';
+import { Input, Form } from 'antd';
 
 export const NewTrackingWrapper = styled.div`
   width: 100%;
-  background-color: #4e6180;
 `;
 
 export const Info = styled.div`
   font-size: 14px;
-  color: white;
+  color: black;
   margin-bottom: 24px;
 `;
 
 export const Divider = styled.div`
-  margin: 4px 12px 0 12px;
-  color: white;
+  margin: 0 12px;
+  display: flex;
+  height: 80px;
+  align-items: center;
 `;
 
 export const ItemWrapper = styled.div`
   display: flex;
+  justify-content: center;
   width: 100%;
 `;
 
 export const SubmitWrapper = styled.div`
   margin-top: 24px;
   display: flex;
-  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
 `;
+
+export const StyledInput = styled(Input)`
+  height: 80px;
+  width: 160px;
+  font-size: 24px;
+  text-align: center;
+`;
+
+export const StyledFormItem = styled(Form.Item)`
+  width: auto !important;
+  max-width: 160px;
+`;
+
+export const buttonStyle = {
+  background: 'rgb(195, 206, 217)',
+  fontFamily: 'Montserrat-Bold, sans-serif',
+  fontSize: 14,
+  fontWeight: 'bold',
+  padding: '0 40px',
+};

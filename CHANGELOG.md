@@ -1,5 +1,39 @@
 # Changelog
 
+### 1.2.0 (2021-05-31)
+
+* **backend:** feature: split generic locations route into specific routes for apps and healthdepartment
+* **backend:** fix: only include app traceIds in notification endpoint
+* **backend:** security: added jsonbigint resolution
+* **backend:** security: added redis resolution
+* **health-department:** fix: floating dropdown menu for filter
+* **health-department:** security: added hosted-git-info resolution
+* **health-department:** feature: escape download filenames
+* **health-department:** feature: update the designs of the modal to track an infection
+* **health-department:** feature: escape all data provided by operators and users
+* **health-department:** feature: added the possibility for an admin to change name and phone of other users
+* **health-department:** feature: added the possibility to assign processes to users
+* **health-department:** feature: added the possibility for an admin to generate a new password for other users
+* **health-department:** feature: update the designs of the modal to add new users
+* **health-department:** feature: order processes by creation time and process name
+* **health-department:** feature: show additional data infos in the contact person view
+* **health-department:** feature: filter processes by assignee
+* **locations:** fix: qr code download on edge
+* **locations:** fix: private key download on iPad x Safari
+* **locations:** security: added hosted-git-info resolution
+* **locations:** feature: link FAQs in menu
+* **locations:** feature: improve error messages in login and registration
+* **locations:** feature: added the possibility to delete an account
+* **locations:** feature: added a "Whats new modal" to inform about the AVV's
+* **webapp:** security: added hosted-git-info resolution
+* **webapp:** feature: support cwa qr codes
+* **webapp:** feature: prefer native apps modal
+* **webapp:** feature: improved accessibility
+* **scanner:** security: added hosted-git-info resolution
+* **contact-form:** security: added hosted-git-info resolution
+* **development:** feature: added script to run yarn in all services at once
+* **development:** feature: speed up rebuilding images by using common yarn cache
+
 ### 1.1.16 (2021-06-02)
 * **backend:** feat: expire sms challenges
 * **health-department:** feat: include additional check in data directly in contact person view and not only in the download files

@@ -13,7 +13,7 @@ export const SERIAL_NUMBER_SECTION_LENGTH = 4;
 
 export const getSerialNumberRules = (intl, reference) => [
   () => ({
-    validator: async (rule, value) => {
+    validator: (rule, value) => {
       if (reference.current.state.focused) {
         return Promise.resolve();
       }
@@ -52,7 +52,7 @@ const isV4 = serialNumber => {
   );
 };
 
-const calculateSecretsV3 = async serialNumber => {
+const calculateSecretsV3 = serialNumber => {
   const entropy = base32CrockfordToHex(serialNumber);
 
   const cryptoSeed = KDF_SHA256(entropy, '01');

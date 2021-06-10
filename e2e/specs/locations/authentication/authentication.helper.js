@@ -14,6 +14,13 @@ export const enterEmail = email => {
   cy.get('button').click();
 };
 
+export const confirmNewAccountRegistration = () => {
+  // wait for transition to next step
+  cy.getByCy('confirmRegister');
+  // Confirm
+  cy.get('button[type=submit]').click();
+};
+
 export const enterPassword = password => {
   cy.get('#password').type(password);
   cy.get('button[type=submit]').click();

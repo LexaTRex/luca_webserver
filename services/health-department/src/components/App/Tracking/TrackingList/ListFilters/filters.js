@@ -14,7 +14,7 @@ import {
   INCOMPLETED_PROCESSES_STATE,
   PARTIAL_APPROVED_PROCESSES_STATUS,
   PARTIAL_REQUESTED_PROCESSES_STATUS,
-} from 'constants/filter';
+} from 'constants/filters';
 
 export function useProcessTypeFilter(onChange = () => {}) {
   const intl = useIntl();

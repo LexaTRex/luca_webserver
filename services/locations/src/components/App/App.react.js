@@ -60,7 +60,7 @@ export const App = () => {
         <meta name="description" content={meta} />
       </Helmet>
       <AppWrapper>
-        <Header />
+        <Header operator={operator} />
         <ModalArea />
         <Switch>
           <Route path={PROFILE_ROUTE}>

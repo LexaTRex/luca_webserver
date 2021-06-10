@@ -8,6 +8,11 @@ const changePasswordSchema = z.object({
   newPassword: z.string().refine(password => passwordMeetsCriteria(password)),
 });
 
+const renewSchema = z.object({
+  employeeId: z.string().uuid(),
+});
+
 module.exports = {
   changePasswordSchema,
+  renewSchema,
 };

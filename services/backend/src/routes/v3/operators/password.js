@@ -10,7 +10,10 @@ const {
   validateSchema,
 } = require('../../../middlewares/validateSchema');
 const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
-const { requireOperator } = require('../../../middlewares/requireUser');
+const {
+  requireOperator,
+  requireNonDeletedUser,
+} = require('../../../middlewares/requireUser');
 
 const {
   changePasswordSchema,
@@ -24,6 +27,7 @@ router.post(
   '/change',
   limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
   requireOperator,
+  requireNonDeletedUser,
   validateSchema(changePasswordSchema),
   async (request, response) => {
     const operator = request.user;

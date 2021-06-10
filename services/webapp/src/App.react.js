@@ -6,8 +6,8 @@ import { createBrowserHistory } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import moment from 'moment';
 import 'moment/locale/de';
+import moment from 'moment';
 
 // i18n
 import { IntlProvider } from 'react-intl';
@@ -21,7 +21,6 @@ import {
   APPOINTMENT_PATH,
   COVID_TEST_PATH,
   ON_BOARDING_PATH,
-  SELF_CHECKIN_PATH,
   BASE_PRIVATE_MEETING_PATH,
   EDIT_CONTACT_INFORMATION_SETTING,
 } from 'constants/routes';
@@ -40,13 +39,13 @@ import { OnBoarding } from 'components/OnBoarding';
 import { ContactInformation } from 'components/ContactInformation';
 import { FeatureNotImplemented } from 'components/FeatureNotImplemented';
 
-import { QRCodeScanner } from 'components/QRCodeScanner/QRCodeScanner.react';
 import { AuthenticationWrapper } from 'components/AuthenticationWrapper.react';
 import { PrivateMeeting } from 'components/PrivateMeeting/PrivateMeeting.react';
 
-import { configureStore } from './configureStore';
 import { AppWrapper } from './App.styled';
+
 import { messages } from './messages';
+import { configureStore } from './configureStore';
 
 const history = createBrowserHistory();
 const store = configureStore(undefined, history);
@@ -84,10 +83,6 @@ export const Main = () => {
                       <Route
                         path={EDIT_CONTACT_INFORMATION_SETTING}
                         component={ContactInformation}
-                      />
-                      <Route
-                        path={SELF_CHECKIN_PATH}
-                        component={QRCodeScanner}
                       />
                       <Route path={HISTORY_PATH} component={History} />
                       <Route path={SETTINGS_PATH} component={Settings} />

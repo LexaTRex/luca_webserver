@@ -59,6 +59,11 @@ module.exports = {
     locations: {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
+    operators: {
+      deleted: {
+        maxAgeHours: moment.duration(28, 'days').as('hours'),
+      },
+    },
     users: {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
@@ -76,10 +81,15 @@ module.exports = {
     },
     badge: {
       targetKeyId: 1,
-      // DEV ONLY KEYPAIR
-      public:
-        'BDxaTgQ9VLl1I3VMdfT+dtLz+/EaEgAoYmn22/PFABpgFPvEh5dst2Ns20YufsofVyDE/Z+eBBBVYOOjEG40dA8=',
+      // DEV ONLY
       private: 'qzbym5WwwkbSQ9BJvIdGZIjdh9p72HwQseZXbDs+AbU=',
+      attestation: {
+        // DEV ONLY
+        v3:
+          'BDxaTgQ9VLl1I3VMdfT+dtLz+/EaEgAoYmn22/PFABpgFPvEh5dst2Ns20YufsofVyDE/Z+eBBBVYOOjEG40dA8=',
+        v4:
+          'BDxaTgQ9VLl1I3VMdfT+dtLz+/EaEgAoYmn22/PFABpgFPvEh5dst2Ns20YufsofVyDE/Z+eBBBVYOOjEG40dA8=',
+      },
     },
   },
   proxy: {

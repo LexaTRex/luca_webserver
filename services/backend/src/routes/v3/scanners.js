@@ -23,13 +23,24 @@ router.get(
       where: {
         scannerId: request.params.scannerId,
       },
-      include: {
-        model: database.LocationGroup,
-      },
+      include: [
+        {
+          model: database.LocationGroup,
+        },
+        {
+          model: database.Operator,
+          paranoid: false,
+          attributes: ['deletedAt'],
+        },
+      ],
     });
 
     if (!location) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (location.Operator && location.Operator.deletedAt) {
+      return response.sendStatus(status.GONE);
     }
 
     return response.send({
@@ -54,13 +65,24 @@ router.get(
       where: {
         scannerAccessId: request.params.scannerAccessId,
       },
-      include: {
-        model: database.LocationGroup,
-      },
+      include: [
+        {
+          model: database.LocationGroup,
+        },
+        {
+          model: database.Operator,
+          paranoid: false,
+          attributes: ['deletedAt'],
+        },
+      ],
     });
 
     if (!location) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (location.Operator.deletedAt) {
+      return response.sendStatus(status.GONE);
     }
 
     return response.send({

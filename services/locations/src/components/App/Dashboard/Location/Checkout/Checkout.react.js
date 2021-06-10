@@ -16,6 +16,7 @@ import {
   CardSectionTitle,
 } from '../LocationCard';
 import { Switch } from '../../Switch';
+
 import { StyledSwitchContainer } from '../GenerateQRCodes/GenerateQRCodes.styled';
 
 export const Checkout = ({ location }) => {

@@ -1,15 +1,12 @@
 import moment from 'moment';
 
 import {
-  ECDH,
   hexToBytes,
-  base64ToHex,
-  hexToBase64,
-  KDF_SHA256,
-  HMAC_SHA256,
   encodeUtf8,
   decodeUtf8,
-  DECRYPT_AES_CTR,
+  base64ToHex,
+  hexToBase64,
+  DECRYPT_DLIES,
   EC_KEYPAIR_GENERATE,
 } from '@lucaapp/crypto';
 
@@ -47,9 +44,8 @@ export async function createMeeting() {
   });
 }
 
-export async function checkForActiveHostedPrivateMeeting() {
-  return indexDB.privateLocations.where('endedAt').equals(-1).first();
-}
+export const checkForActiveHostedPrivateMeeting = () =>
+  indexDB.privateLocations.where('endedAt').equals(-1).first();
 
 export async function generateMeetingQRCode(privateLocation) {
   const { scannerId } = privateLocation;
@@ -103,31 +99,26 @@ export async function syncMeeting({ locationId, accessId, privateKey }) {
 
       const { data, publicKey, iv, mac } = guest.data;
 
-      const dhKey = ECDH(base64ToHex(privateKey), base64ToHex(publicKey));
-      const encryptionKey = KDF_SHA256(dhKey, '01').slice(0, 32);
-      const authenticationKey = KDF_SHA256(dhKey, '02');
-      const checkMAC = HMAC_SHA256(base64ToHex(data), authenticationKey);
+      const decryptedData = DECRYPT_DLIES(
+        base64ToHex(privateKey),
+        base64ToHex(publicKey),
+        base64ToHex(data),
+        base64ToHex(iv),
+        base64ToHex(mac)
+      );
 
-      if (checkMAC === base64ToHex(mac)) {
-        const decryptedData = DECRYPT_AES_CTR(
-          base64ToHex(data),
-          encryptionKey,
-          base64ToHex(iv)
-        );
+      const { fn: firstName, ln: lastName } = JSON.parse(
+        decodeUtf8(hexToBytes(decryptedData))
+      );
 
-        const { fn: firstName, ln: lastName } = JSON.parse(
-          decodeUtf8(hexToBytes(decryptedData))
-        );
-
-        indexDB.guests.add({
-          traceId,
-          locationId,
-          firstName,
-          lastName,
-          checkin,
-          checkout: checkout || -1,
-        });
-      }
+      indexDB.guests.add({
+        traceId,
+        locationId,
+        firstName,
+        lastName,
+        checkin,
+        checkout: checkout || -1,
+      });
     }
   }
 }

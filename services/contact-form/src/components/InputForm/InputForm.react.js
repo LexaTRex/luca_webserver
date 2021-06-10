@@ -193,7 +193,7 @@ export const InputForm = ({
             })}
           />
         </Form.Item>
-        {(scanner?.tableCount || checkinData?.additionalData) && (
+        {(scanner?.tableCount || checkinData?.additionalData.length !== 0) && (
           <Divider>
             {intl.formatMessage({
               id: 'contactDataForm.additionalData.divider',

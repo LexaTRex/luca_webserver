@@ -50,7 +50,9 @@ export const Navigation = () => {
       value: USER_MANAGEMENT_ROUTE,
       intlId: 'navigation.userManagement',
       backgroundColor:
-        currentRoute === USER_MANAGEMENT_ROUTE ? 'white' : 'transparent',
+        currentRoute === USER_MANAGEMENT_ROUTE
+          ? 'rgb(232, 231, 229)'
+          : 'transparent',
     },
   ];
 

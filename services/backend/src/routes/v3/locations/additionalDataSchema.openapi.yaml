@@ -33,6 +33,8 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: The account has been deactivated
     patch:
       summary: Change additional data
       tags: [Locations]
@@ -40,6 +42,8 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: The account has been deactivated
     delete:
       summary: Delete additional data
       tags: [Locations]
@@ -47,5 +51,7 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: The account has been deactivated
         '404':
           description: Not Found

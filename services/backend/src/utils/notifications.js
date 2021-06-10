@@ -14,6 +14,11 @@ const redis = require('./redis');
 const database = require('../database');
 
 const NOTIFICATIONS_CACHE_KEY = 'cache:notifications';
+const {
+  DEVICE_TYPE_IOS,
+  DEVICE_TYPE_ANDROID,
+  DEVICE_TYPE_WEBAPP,
+} = require('../constants/deviceTypes');
 
 const generateNotifications = async () => {
   const twoWeeksAgo = moment().subtract(2, 'weeks');
@@ -37,7 +42,14 @@ const generateNotifications = async () => {
         attributes: ['traceId'],
         model: database.LocationTransferTrace,
         where: {
-          traceId: { [Op.not]: null },
+          traceId: {
+            [Op.not]: null,
+          },
+          deviceType: [
+            DEVICE_TYPE_IOS,
+            DEVICE_TYPE_ANDROID,
+            DEVICE_TYPE_WEBAPP,
+          ],
         },
       },
     ],

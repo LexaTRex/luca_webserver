@@ -2,7 +2,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Tooltip } from 'antd';
 
-import { TERMS_CONDITIONS_LINK } from 'constants/links';
+import { TERMS_CONDITIONS_LINK, FAQ_LINK } from 'constants/links';
 import { LICENSES_ROUTE } from 'constants/routes';
 import AVV from 'assets/documents/AVV_Luca.pdf';
 import TOMS from 'assets/documents/TOMS_Luca.pdf';
@@ -72,6 +72,14 @@ export const Services = ({ supportCode }) => {
             {intl.formatMessage({ id: 'profile.services.supportCode' })}
           </Text>
         </Tooltip>
+        <Link
+          data-cy="faqLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={FAQ_LINK}
+        >
+          {intl.formatMessage({ id: 'profile.services.faq' })}
+        </Link>
       </Wrapper>
     </Content>
   );

@@ -9,9 +9,9 @@ import {
   ProfileContent,
   Heading,
   Overview,
-  buttonStyles,
   ButtonWrapper,
 } from './ChangePassword.styled';
+import { buttonStyles } from '../../App.styled';
 
 export const ChangePassword = () => {
   const intl = useIntl();

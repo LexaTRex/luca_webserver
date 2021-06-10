@@ -16,7 +16,7 @@ export const sanitizeForCSV = value => {
   const sanitizedStringGeneral = value
     // limit to allowed characters
     .replace(
-      /[^\w +.:@£À-ÿāăąćĉċčđēėęěĝğģĥħĩīįİıĵķĸĺļłńņōőœŗřśŝšţŦũūŭůűųŵŷźżžơưếệ-]+/gi,
+      /[^\w +.:@£À-ÿāăąćĉċčđēėęěĝğģĥħĩīįİıĵķĸĺļłńņōőœŗřśŝşšţŦũūŭůűųŵŷźżžơưếệ-]+/gi,
       ' '
     )
     // remove new lines

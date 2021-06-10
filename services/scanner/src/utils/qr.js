@@ -12,17 +12,14 @@ import {
   base32ToHex,
   hexToBytes,
 } from '@lucaapp/crypto';
-import {
-  BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V3,
-  BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V4,
-} from 'constants/keys';
 
 import { convertDELayoutToUSLayout } from './layout';
+import { getBadgeAttestationPublicKeys } from '../network/api';
 
 export const STATIC_DEVICE_TYPE = 2;
 
 // the buffer needs to be advanced by one byte
-function parsePayloadV3(buffer, decodedBytes) {
+async function parsePayloadV3(buffer, decodedBytes) {
   const deviceType = buffer.getByte();
 
   if (deviceType === STATIC_DEVICE_TYPE) {
@@ -48,14 +45,15 @@ function parsePayloadV3(buffer, decodedBytes) {
     }
 
     // signature check
+    const { publicKeys } = await getBadgeAttestationPublicKeys();
     const isV3SignatureValid = VERIFY_EC_SHA256_DER_SIGNATURE(
-      base64ToHex(BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V3),
+      base64ToHex(publicKeys.v3),
       base64ToHex(data),
       base64ToHex(signature)
     );
 
     const isV3BSignatureValid = VERIFY_EC_SHA256_DER_SIGNATURE(
-      base64ToHex(BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V4),
+      base64ToHex(publicKeys.v4),
       SHA256(base64ToHex(data) + base64ToHex(publicKey)),
       base64ToHex(signature)
     );
@@ -135,8 +133,10 @@ async function parsePayloadV4(buffer, decodedBytes) {
     const userId = hexToUuid4(rawUserId);
 
     // signature check
+    const { publicKeys } = await getBadgeAttestationPublicKeys();
+
     const isSignatureValid = VERIFY_EC_SHA256_IEEE_SIGNATURE(
-      base64ToHex(BADGE_SIGNATURE_PUBLIC_KEY_BASE64_V4),
+      base64ToHex(publicKeys.v4),
       userId + base64ToHex(data),
       base64ToHex(signature)
     );
@@ -159,7 +159,7 @@ async function parsePayloadV4(buffer, decodedBytes) {
   return null;
 }
 
-const parseDecodedPayload = async decodedBytes => {
+const parseDecodedPayload = decodedBytes => {
   try {
     const buffer = bytesToBuffer(decodedBytes);
 
@@ -178,15 +178,15 @@ const parseDecodedPayload = async decodedBytes => {
   }
 };
 
-const parseBase32Encoded = async payload => {
+const parseBase32Encoded = payload => {
   const decoded = hexToBytes(base32ToHex(payload));
   return parseDecodedPayload(decoded);
 };
 
-async function parseZ85Encoded(payload) {
+const parseZ85Encoded = payload => {
   const decodedBytes = z85ToBytes(payload);
   return parseDecodedPayload(decodedBytes);
-}
+};
 
 // try to decode with different layout settings
 const strategies = [

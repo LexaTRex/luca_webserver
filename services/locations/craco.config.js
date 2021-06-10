@@ -1,6 +1,7 @@
 const CracoLessPlugin = require('craco-less');
 const { LicenseWebpackPlugin } = require('license-webpack-plugin');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 const { THEME } = require('./ant.theme');
 
@@ -28,6 +29,11 @@ module.exports = {
   webpack: {
     plugins: {
       add: [
+        new DefinePlugin({
+          'process.env.REACT_APP_VERSION': JSON.stringify(
+            require('./package.json').version
+          ),
+        }),
         new LicenseWebpackPlugin({
           perChunkOutput: false,
           outputFilename: 'licenses.json',

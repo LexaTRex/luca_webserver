@@ -9,15 +9,13 @@ ENV PORT=8080
 ENV CHOKIDAR_USEPOLLING=true
 ENV PUBLIC_URL=/webapp
 ENV WDS_SOCKET_PATH=/webapp/sockjs-node
+ENV GIT_COMMIT $GIT_COMMIT
+ENV GIT_VERSION $GIT_VERSION
 
-
-COPY package.json yarn.lock ./
-RUN yarn install --check-files && yarn cache clean
-
-COPY jsconfig.json craco.config.js ant.theme.js ./
+COPY package.json yarn.lock jsconfig.json craco.config.js ant.theme.js ./
 COPY public/  ./public/
 COPY src/  ./src/
 
 
 EXPOSE 8080
-CMD ["yarn", "start"]
+CMD yarn install --mutex file:/usr/local/share/.cache/yarn/.yarn-mutex && yarn start

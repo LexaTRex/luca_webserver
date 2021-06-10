@@ -40,6 +40,8 @@ export function ResetDeviceModal({ onClose }) {
           </StyledInfoText>
         </StyledContent>
         <StyledCancelButton
+          id="cancel"
+          tabIndex="1"
           onClick={async () => {
             try {
               const secrets = await getSecrets();
@@ -66,7 +68,7 @@ export function ResetDeviceModal({ onClose }) {
         >
           {formatMessage({ id: 'Data.DeleteAccount.Confirm' })}
         </StyledCancelButton>
-        <StyledSubmitButton onClick={onClose}>
+        <StyledSubmitButton id="delete" tabIndex="1" onClick={onClose}>
           {formatMessage({ id: 'Data.DeleteAccount.Cancel' })}
         </StyledSubmitButton>
       </StyledContainer>

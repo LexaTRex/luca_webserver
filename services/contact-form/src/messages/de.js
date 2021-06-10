@@ -41,6 +41,8 @@ export const de = {
     'Da ist leider etwas schiefgelaufen. Bitte versuche, die Seite neu zu laden oder probiere es später noch einmal. Wenn es weiterhin nicht klappt, wende dich bitte an locations@luca-app.de.',
   'authentication.background.legal.agb': 'AGB',
   'error.getScannerWrapper': 'Der Scanner konnte nicht gefunden werden.',
+  'error.accountDeleted':
+    'Dein Account wurde gelöscht. Du kannst keine Gäste mehr einchecken.',
 
   // LICENSES
   'license.name': 'Name',

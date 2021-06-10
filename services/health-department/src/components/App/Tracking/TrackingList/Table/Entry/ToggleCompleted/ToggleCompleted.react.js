@@ -1,17 +1,26 @@
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { Popconfirm, Button } from 'antd';
+import { Popconfirm } from 'antd';
 
 // Api
-import { toggleCompleted } from 'network/api';
+import { updateProcess } from 'network/api';
+
+import { GrowingActionButton } from '../Entry.styled';
 
 const ToggleCompletedRaw = ({ process, refetch }) => {
   const intl = useIntl();
 
   const updateComplete = useCallback(
-    () => toggleCompleted(process.uuid, !process.isCompleted).then(refetch),
+    () =>
+      updateProcess(process.uuid, { isCompleted: !process.isCompleted }).then(
+        refetch
+      ),
     [process, refetch]
   );
+
+  const toggleMessage = process.isCompleted
+    ? 'processTable.toggleIncomplete'
+    : 'processTable.toggleComplete';
 
   return (
     <Popconfirm
@@ -20,15 +29,9 @@ const ToggleCompletedRaw = ({ process, refetch }) => {
       onConfirm={updateComplete}
       cancelText={intl.formatMessage({ id: 'toggleComplete.cancel' })}
     >
-      {process.isCompleted ? (
-        <Button style={{ padding: '0 40px', backgroundColor: '#b8c0ca' }}>
-          {intl.formatMessage({ id: 'processTable.toggleIncomplete' })}
-        </Button>
-      ) : (
-        <Button style={{ padding: '0 40px', backgroundColor: '#b8c0ca' }}>
-          {intl.formatMessage({ id: 'processTable.toggleComplete' })}
-        </Button>
-      )}
+      <GrowingActionButton>
+        {intl.formatMessage({ id: toggleMessage })}
+      </GrowingActionButton>
     </Popconfirm>
   );
 };

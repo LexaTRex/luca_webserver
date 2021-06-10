@@ -54,7 +54,8 @@ const LoadScannerHOC = ({ component: Component }) => {
 
   if (isLoading) return <LoadingScreen />;
 
-  if (error) return <ErrorPage />;
+  if (error || scanner.error)
+    return <ErrorPage error={error || scanner.error} />;
 
   return (
     <>

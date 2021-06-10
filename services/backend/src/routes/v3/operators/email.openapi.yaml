@@ -13,6 +13,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '403':
+          description: The account has been deactivated
         '409':
           description: Conflict because the email is already in use
       requestBody:
@@ -34,6 +36,8 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: The account has been deactivated
         '404':
           description: Not Found
       operationId: get-operators-email-isChangeActive
@@ -65,6 +69,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '403':
+          description: The account has been deactivated
         '404':
           description: Not Found
         '409':

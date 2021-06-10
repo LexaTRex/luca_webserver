@@ -10,6 +10,11 @@ import {
 } from './functions.helper';
 
 export const login = route => {
+  basicLogin();
+  cy.visit(route ? route : APP_ROUTE);
+};
+
+export const basicLogin = route => {
   cy.request({
     method: 'POST',
     url: 'api/v3/auth/login',
@@ -93,4 +98,12 @@ export const createLocation = (groupId, locationName) => {
 
 export const contactFormCheckin = traceDataPayload => {
   cy.request('POST', '/api/v3/traces/checkin', traceDataPayload);
+};
+
+export const requestAccountDeletion = () => {
+  return cy.request('DELETE', 'api/v3/operators');
+};
+
+export const undoAccountDeletion = () => {
+  return cy.request('POST', 'api/v3/operators/restore');
 };

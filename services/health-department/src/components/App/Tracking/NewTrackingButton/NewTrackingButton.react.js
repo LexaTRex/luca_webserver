@@ -18,7 +18,6 @@ export const NewTrackingButton = () => {
         id: 'modal.trackInfection.title',
       }),
       content: <TrackInfectionModal />,
-      blueModal: true,
     });
   };
 

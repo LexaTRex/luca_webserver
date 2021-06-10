@@ -13,6 +13,7 @@ import {
 
 export const Trace = ({ trace, checked, onSelectionUpdate }) => {
   const intl = useIntl();
+
   const [isChecked, setIsChecked] = useState(checked);
   const onCheckedStateChange = () => {
     onSelectionUpdate(trace.traceId);
@@ -42,7 +43,7 @@ export const Trace = ({ trace, checked, onSelectionUpdate }) => {
   }
 
   return (
-    <Row key={trace.checkin}>
+    <Row key={trace.checkin} highlighted={trace.isIndexCase}>
       <Column flex="10%">
         <div>{trace.userData.fn}</div>
         <div>{trace.userData.ln}</div>

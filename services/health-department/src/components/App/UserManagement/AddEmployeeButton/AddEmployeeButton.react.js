@@ -1,7 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 
 // Hooks
 import { useModal } from 'components/hooks/useModal';
@@ -10,11 +9,12 @@ import { useModal } from 'components/hooks/useModal';
 import { AddEmployeeModal } from 'components/App/modals/AddEmployeeModal';
 
 const buttonStyles = {
-  position: 'absolute',
-  right: 32,
-  top: 16,
-  backgroundColor: '#4e6180',
-  color: 'white',
+  padding: '0 40px',
+  backgroundColor: 'white',
+  color: 'black',
+  fontFamily: 'Montserrat-Bold, sans-serif',
+  fontSize: 14,
+  fontWeight: 'bold',
 };
 
 export const AddEmployeeButton = () => {
@@ -28,17 +28,15 @@ export const AddEmployeeButton = () => {
         id: 'modal.addEmployee.title',
       }),
       content: <AddEmployeeModal />,
-      blueModal: true,
+      closable: false,
     });
   };
 
   return (
-    <Button
-      onClick={addEmployee}
-      icon={<PlusOutlined />}
-      shape="circle"
-      size="large"
-      style={buttonStyles}
-    />
+    <Button onClick={addEmployee} style={buttonStyles}>
+      {intl.formatMessage({
+        id: 'modal.addEmployee.button',
+      })}
+    </Button>
   );
 };

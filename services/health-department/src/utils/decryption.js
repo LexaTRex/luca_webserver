@@ -13,6 +13,7 @@ import {
 } from '@lucaapp/crypto';
 
 import { getEncryptedUserContactData } from 'network/api';
+import { IncompleteDataError } from 'errors/incompleteDataError';
 import {
   DECRYPT_DLIES_USING_HDEKP,
   getBadgePrivateKey,
@@ -41,7 +42,7 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
   const encryptedUser = await getEncryptedUserContactData(userId);
 
   if (!encryptedUser.data) {
-    return {};
+    throw new IncompleteDataError(encryptedUser.data, encryptedUser.iv);
   }
   const decryptedUser = decodeUtf8(
     hexToBytes(

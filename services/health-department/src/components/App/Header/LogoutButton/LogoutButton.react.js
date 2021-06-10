@@ -39,8 +39,11 @@ export const LogoutButton = () => {
     <Button
       style={{
         border: 'none',
-        padding: '0 80px',
+        padding: '0 40px',
         backgroundColor: '#b8c0ca',
+        fontFamily: 'Montserrat-Bold, sans-serif',
+        fontSize: 14,
+        fontWeight: 'bold',
       }}
       shape="round"
       onClick={handleClick}

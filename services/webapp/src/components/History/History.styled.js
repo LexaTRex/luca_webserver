@@ -1,9 +1,9 @@
 import { Steps } from 'antd';
 import styled, { css } from 'styled-components';
 
-import { AppContent } from '../AppLayout';
-import { SecondaryButton } from '../Buttons';
-import { SmallHeadline, Text } from '../Text';
+import { AppContent } from 'components/AppLayout';
+import { SecondaryButton } from 'components/Buttons';
+import { SmallHeadline, Text } from 'components/Text';
 
 export const StyledHistoryStepContainer = styled.div`
   width: 100%;
@@ -24,19 +24,27 @@ export const StyledFooterContainer = styled.div`
   justify-content: center;
   color: rgb(255, 255, 255);
 `;
-export const StyledFooterItem = styled(SmallHeadline)`
+export const StyledFooterItem = styled.button`
   flex: 1;
+  margin: 0;
+  border: none;
+  outline: none;
   width: 75px;
   display: flex;
   font-size: 10px;
   font-weight: 600;
   padding-top: 8px;
   line-height: 30px;
+  user-select: none;
+  letter-spacing: 0;
   text-align: center;
   align-items: center;
   flex-direction: column;
   color: rgb(195, 206, 217);
   justify-content: flex-start;
+  background-color: transparent;
+  font-family: Montserrat-SemiBold, sans-serif;
+
   ${({ isActive }) =>
     isActive &&
     css`

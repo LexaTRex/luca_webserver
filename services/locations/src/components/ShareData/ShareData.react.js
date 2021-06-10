@@ -55,7 +55,7 @@ export const ShareData = () => {
 
   const { isLoading, error, data: transfers } = useQuery(
     `uncompletedTransfers/${transferId}`,
-    async () => {
+    () => {
       if (transferId) {
         return getLocationTransfer(transferId).then(async response => {
           if (response.status > 400) {

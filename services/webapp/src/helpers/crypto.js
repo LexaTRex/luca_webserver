@@ -13,75 +13,36 @@ import {
 import { APPLICATION_JSON, CONTENT_TYPE } from 'constants/header';
 import { API_PATH, DEVICE_TYPE, VERSION } from 'constants/environment';
 import {
-  KDF_SHA256,
-  bytesToHex,
-  encodeUtf8,
-  GET_RANDOM_BYTES,
-  HMAC_SHA256,
-  ENCRYPT_AES_CTR,
-  SIGN_EC_SHA256_DER,
-  VERIFY_EC_SHA256_DER_SIGNATURE,
-  hexToBase64,
-  int32ToHex,
-  uuidToHex,
-  ECDH,
   base64ToHex,
-  SHA256,
-  int8ToHex,
-  hexToBase32,
+  bytesToHex,
   EC_KEYPAIR_GENERATE,
+  ECDH,
+  encodeUtf8,
+  ENCRYPT_AES_CTR,
   ENCRYPT_DLIES,
+  GET_RANDOM_BYTES,
+  hexToBase32,
+  hexToBase64,
+  HMAC_SHA256,
+  int32ToHex,
+  int8ToHex,
+  KDF_SHA256,
+  SHA256,
+  SIGN_EC_SHA256_DER,
+  uuidToHex,
 } from '@lucaapp/crypto';
 
 import {
   indexDB,
-  USER_ID,
   USER_DATA_SECRET,
+  USER_ID,
   USER_SECRET_PRIVATE_KEY,
   USER_SECRET_PUBLIC_KEY,
   USER_TRACING_SECRET,
 } from 'db';
 
 import { getLocation } from './locations';
-
-export class ExpiredDailyKey extends Error {}
-export class InvalidDailyKeySignature extends Error {}
-
-export async function getDailyPublicKey() {
-  const date = moment().format('DD-MM-YYYY');
-  const keys = await indexDB.dailyKeys.where({ date }).toArray();
-
-  if (keys.length === 0) {
-    const { keyId, issuerId, publicKey, signature, createdAt } = await fetch(
-      `${API_PATH}/v3/keys/daily/current`
-    ).then(response => response.json());
-
-    const { publicHDSKP } = await fetch(
-      `${API_PATH}/v3/keys/issuers/${issuerId}`
-    ).then(response => response.json());
-
-    const isValidSignature = await VERIFY_EC_SHA256_DER_SIGNATURE(
-      base64ToHex(publicHDSKP),
-      `${int32ToHex(keyId)}${int32ToHex(createdAt)}${base64ToHex(publicKey)}`,
-      base64ToHex(signature)
-    );
-
-    if (!isValidSignature) {
-      throw new InvalidDailyKeySignature('Signature is not valid');
-    }
-
-    if (moment.duration(moment().diff(moment.unix(createdAt))).asDays() > 7) {
-      throw new ExpiredDailyKey('The current daily key is expired');
-    }
-
-    await indexDB.dailyKeys.where('date').notEqual(date).delete();
-    await indexDB.dailyKeys.add({ publicKey, date, keyId });
-    return { publicKey, keyId };
-  }
-
-  const { publicKey, keyId } = keys[0];
-  return { publicKey, keyId };
-}
+import { getDailyPublicKey } from './dailyKeys';
 
 export async function getUserTracingSecret() {
   const timestamp = moment().seconds(0);
@@ -182,6 +143,7 @@ export async function registerDevice({
       city,
       userId,
       version: 3,
+      useWebApp: true,
     });
     await indexDB.secrets.bulkAdd([
       {

@@ -2,7 +2,7 @@ export const TAN_SECTION_LENGTH = 4;
 
 export const getTanRules = (intl, reference) => [
   () => ({
-    validator: async (rule, value) => {
+    validator: (rule, value) => {
       if (reference.current.state.focused) {
         return Promise.resolve();
       }

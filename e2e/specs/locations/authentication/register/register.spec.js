@@ -12,6 +12,7 @@ import {
   enterName,
   setNewPassword,
   setLegals,
+  confirmNewAccountRegistration,
 } from '../authentication.helper';
 
 describe('Autentication', () => {
@@ -26,8 +27,7 @@ describe('Autentication', () => {
     });
     it('collects the user name', () => {
       enterEmail(NEW_E2E_EMAIL);
-      // Confirm
-      cy.get('button[type=submit]').click();
+      confirmNewAccountRegistration();
       // Enter name
       enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
       cy.getByCy('setPassword').should('exist');
@@ -36,8 +36,7 @@ describe('Autentication', () => {
       describe('Password meets criteria', () => {
         it('sets the password ', () => {
           enterEmail(NEW_E2E_EMAIL);
-          // Confirm
-          cy.get('button[type=submit]').click();
+          confirmNewAccountRegistration();
           // Enter name
           enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
           // Set password
@@ -50,8 +49,7 @@ describe('Autentication', () => {
         describe('Password not set', () => {
           it('does not set the password ', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set no password
@@ -62,8 +60,7 @@ describe('Autentication', () => {
         describe('Wrong password confirmation', () => {
           it('does not set the password ', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -74,8 +71,7 @@ describe('Autentication', () => {
         describe('Password too short', () => {
           it('does not set the password ', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -86,8 +82,7 @@ describe('Autentication', () => {
         describe('Password with no number', () => {
           it('does not set the password ', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -98,8 +93,7 @@ describe('Autentication', () => {
         describe('Password with no upper case char', () => {
           it('does not set the password ', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -110,8 +104,7 @@ describe('Autentication', () => {
         describe('Password with no lower case char', () => {
           it('does not set the password ', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -138,8 +131,7 @@ describe('Autentication', () => {
         describe('Terms not accepted', () => {
           it('does not set the legals', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -152,8 +144,7 @@ describe('Autentication', () => {
         describe('AVV not accepted', () => {
           it('does not set the legals', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -166,8 +157,7 @@ describe('Autentication', () => {
         describe('Both not accepted', () => {
           it('does not set the legals', () => {
             enterEmail(NEW_E2E_EMAIL);
-            // Confirm
-            cy.get('button[type=submit]').click();
+            confirmNewAccountRegistration();
             // Enter name
             enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
             // Set password
@@ -181,8 +171,7 @@ describe('Autentication', () => {
       describe('All legals accepted', () => {
         it('finishes the rgistration', () => {
           enterEmail(NEW_E2E_EMAIL);
-          // Confirm
-          cy.get('button[type=submit]').click();
+          confirmNewAccountRegistration();
           // Enter name
           enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
           // Set password

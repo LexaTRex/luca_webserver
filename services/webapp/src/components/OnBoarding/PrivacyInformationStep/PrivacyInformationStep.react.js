@@ -32,7 +32,12 @@ export function PrivacyInformationStep({ onSubmit = () => {} }) {
         </StyledInfoText>
       </StyledContent>
       <StyledFooter>
-        <StyledSecondaryButton data-cy="dataSubmit" onClick={onSubmit}>
+        <StyledSecondaryButton
+          id="next"
+          tabIndex="1"
+          onClick={onSubmit}
+          data-cy="dataSubmit"
+        >
           {formatMessage({ id: 'OnBoarding.DataInformationStep.Submit' })}
         </StyledSecondaryButton>
       </StyledFooter>

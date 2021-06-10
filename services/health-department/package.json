@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/health-department",
-  "version": "1.1.16",
+  "version": "1.2.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -19,7 +19,7 @@
   "dependencies": {
     "@ant-design/icons": "4.5.0",
     "@craco/craco": "6.1.1",
-    "@lucaapp/crypto": "1.0.3",
+    "@lucaapp/crypto": "2.0.1",
     "antd": "4.12.3",
     "argon2-browser": "1.15.3",
     "base32-decode": "1.0.0",
@@ -98,6 +98,8 @@
     ]
   },
   "resolutions": {
+    "css-what": "5.0.1",
+    "glob-parent": "5.1.2",
     "hosted-git-info": "4.0.2",
     "browserslist": "4.16.6",
     "multicast-dns": "7.2.3",

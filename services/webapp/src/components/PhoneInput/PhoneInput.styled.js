@@ -24,7 +24,7 @@ export const StyledContainer = styled.div`
 
   .special-label {
     background-color: #000 !important;
-    color: rgba(255, 255, 255, 0.38) !important;
+    color: white !important;
   }
 
   .flag-dropdown {
@@ -54,7 +54,7 @@ export const StyledLabel = styled.label`
   line-height: 20px;
   position: absolute;
   letter-spacing: 0.4px;
-  color: rgba(255, 255, 255, 0.38);
+  color: white;
   font-family: Montserrat-Medium, sans-serif;
   background-color: ${({ bgColor }) => bgColor};
 `;

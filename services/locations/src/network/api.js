@@ -7,6 +7,21 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
+class ApiError extends Error {
+  constructor(response) {
+    super();
+    this.response = response;
+    this.status = response.status;
+  }
+}
+
+const checkResponse = response => {
+  if (!response.ok) {
+    throw new ApiError(response);
+  }
+  return response;
+};
+
 // AUTH
 export const login = data => {
   return fetch(`${API_PATH}/v3/auth/login`, {
@@ -40,6 +55,20 @@ export const checkEmail = email => {
     method: 'GET',
     headers,
   });
+};
+
+export const requestAccountDeletion = () => {
+  return fetch(`${API_PATH}/v3/operators`, {
+    method: 'DELETE',
+    headers,
+  }).then(checkResponse);
+};
+
+export const undoAccountDeletion = () => {
+  return fetch(`${API_PATH}/v3/operators/restore`, {
+    method: 'POST',
+    headers,
+  }).then(checkResponse);
 };
 
 // GROUPS

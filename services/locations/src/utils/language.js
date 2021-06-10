@@ -1,3 +1,5 @@
+import { useIntl } from 'react-intl';
+
 const isSupportedLanguage = lang => lang === 'de' || lang === 'en';
 
 export const getLanguage = () => {
@@ -6,4 +8,9 @@ export const getLanguage = () => {
     return language;
   }
   return 'en';
+};
+
+export const useFormatMessage = () => {
+  const intl = useIntl();
+  return id => intl.formatMessage({ id });
 };

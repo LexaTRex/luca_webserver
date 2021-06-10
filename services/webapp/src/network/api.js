@@ -1,15 +1,44 @@
 import { hexToBase64 } from '@lucaapp/crypto';
 import { APPLICATION_JSON, CONTENT_TYPE } from 'constants/header';
 
-const API_PATH = '/api/';
+const API_PATH = '/api';
 
 const headers = {
   'Content-Type': 'application/json',
 };
 
+const HTTP_GONE = 410;
+export class AccountDeletedError extends Error {}
+AccountDeletedError.status = HTTP_GONE;
+
+const checkHttpStatus = response => {
+  if (!response.ok) {
+    const error = new Error(response.statusText);
+    error.status = response.status;
+    throw error;
+  }
+  return response;
+};
+
+const validateAndParse = response => {
+  const validated = checkHttpStatus(response);
+  return validated.json();
+};
+
+// KEYS
+export function getCurrentDailyKey() {
+  return fetch(`${API_PATH}/v3/keys/daily/current`).then(validateAndParse);
+}
+
+export function getIssuerDetails(issuerId) {
+  return fetch(`${API_PATH}/v3/keys/issuers/${issuerId}`).then(
+    validateAndParse
+  );
+}
+
 // TIMESYNC
 export const getTimesync = () =>
-  fetch(`${API_PATH}v3/timesync`, {
+  fetch(`${API_PATH}/v3/timesync`, {
     method: 'GET',
     headers,
   });
@@ -17,9 +46,14 @@ export const getTimesync = () =>
 // SCANNER
 
 export function getScanner(scannerId) {
-  return fetch(`${API_PATH}/v3/scanners/${scannerId}`).then(response =>
-    response.json()
-  );
+  return fetch(`${API_PATH}/v3/scanners/${scannerId}`)
+    .then(validateAndParse)
+    .catch(error => {
+      if (error.status === AccountDeletedError.status) {
+        throw new AccountDeletedError();
+      }
+      throw error;
+    });
 }
 
 // USERS

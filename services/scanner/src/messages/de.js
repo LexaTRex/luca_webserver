@@ -29,8 +29,12 @@ export const de = {
   'error.timestampOutdated': 'Der QR-Code ist abgelaufen.',
   'error.genericScanner':
     'Der Scanner hatte ein Problem. Bitte versuche es erneut.',
+  'error.noUserData':
+    'Es scheint als ob du noch keine Kontaktdaten hinterlegt hast. Wenn du dies erst kürzlich getan hast, warte bitte einige Minuten und versuche es nocheinmal.',
   'error.wrongLocalTime':
     'Dein System scheint eine falsche Zeit zu haben. Bitte überprüfe deine Zeiteinstellungen.',
+  'error.accountDeleted':
+    'Dein Account wurde gelöscht. Du kannst keine Gäste mehr einchecken.',
   // ADDITIONAL DATA
   'additionalData.isRequired':
     'Dieses Feld wird benötigt, um einen Gast einzuchecken.',

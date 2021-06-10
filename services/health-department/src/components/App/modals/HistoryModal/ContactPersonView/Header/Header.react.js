@@ -1,26 +1,24 @@
 import React from 'react';
-import { Dropdown, Button, Menu } from 'antd';
-
+import { Button, Dropdown, Menu } from 'antd';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
-
 import { useIntl } from 'react-intl';
-import {
-  CSVDownload,
-  ExcelDownload,
-  SormasDownload,
-} from '../ContactPersonView.helper';
-import { HeaderArea, DateDisplay } from '../ContactPersonView.styled';
+
+import { useModal } from 'components/hooks/useModal';
+
+import { CSVDownload, ExcelDownload } from '../ContactPersonView.helper';
+import { DateDisplay, HeaderArea } from '../ContactPersonView.styled';
 
 import { SormasModal } from '../../../SormasModal';
-import { useModal } from '../../../../../hooks/useModal';
 
-import { StyledSORMASExportButton } from './Header.styled';
+import { LinkStyleButton } from './Header.styled';
+import { SormasDownload } from '../SormasDownload';
 
-const HeaderRaw = ({ traces, location }) => {
+export const Header = ({ traces, location }) => {
   const intl = useIntl();
   const isSORMASEnabled = !!new URLSearchParams(window.location.search).get(
     'sormas'
   );
+
   const [openModal, closeModal] = useModal();
   const getRequestTime = () =>
     `${getFormattedDate(location.time[0])} ${getFormattedTime(
@@ -29,7 +27,7 @@ const HeaderRaw = ({ traces, location }) => {
       location.time[1]
     )}`;
 
-  const openHistory = () => {
+  const openSormasExportModal = () => {
     openModal({
       title: null,
       content: (
@@ -57,9 +55,9 @@ const HeaderRaw = ({ traces, location }) => {
       </Menu.Item>
       {isSORMASEnabled && (
         <Menu.Item>
-          <StyledSORMASExportButton onClick={openHistory} type="button">
+          <LinkStyleButton onClick={openSormasExportModal} type="button">
             {intl.formatMessage({ id: 'export.sormas.label' })}
-          </StyledSORMASExportButton>
+          </LinkStyleButton>
         </Menu.Item>
       )}
     </Menu>
@@ -79,5 +77,3 @@ const HeaderRaw = ({ traces, location }) => {
     </HeaderArea>
   );
 };
-
-export const Header = React.memo(HeaderRaw);

@@ -98,11 +98,11 @@ export const getUserTraces = data => {
   }).then(response => response.json());
 };
 
-export const toggleCompleted = (tracingProcessId, isCompleted) => {
+export const updateProcess = (tracingProcessId, data) => {
   return fetch(`${API_PATH}/v3/tracingProcesses/${tracingProcessId}`, {
     method: 'PATCH',
     headers,
-    body: JSON.stringify({ isCompleted }),
+    body: JSON.stringify(data),
   });
 };
 
@@ -114,10 +114,17 @@ export const getLocationTransfers = tracingProcessId => {
       headers,
     }
   ).then(async response => {
+    if (response.status === 401) {
+      console.error(
+        `error fetching tracingProcess ${tracingProcessId}`,
+        await response.json()
+      );
+      return [];
+    }
     const transfers = await response.json();
     const transferPromises = transfers.map(async transfer => {
       const locationTransferResponse = await fetch(
-        `${API_PATH}/v3/locations/${transfer.locationId}`,
+        `${API_PATH}/v3/healthDepartmentEmployees/locations/${transfer.locationId}`,
         {
           method: 'GET',
           headers,
@@ -177,6 +184,14 @@ export const createLocationTransfer = data => {
 export const getEmployees = () => {
   return fetch(`${API_PATH}/v3/healthDepartmentEmployees/`, {
     method: 'GET',
+    headers,
+  }).then(response => response.json());
+};
+
+export const renewEmployeePassword = data => {
+  return fetch(`${API_PATH}/v3/healthDepartmentEmployees/password/renew`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
     headers,
   }).then(response => response.json());
 };

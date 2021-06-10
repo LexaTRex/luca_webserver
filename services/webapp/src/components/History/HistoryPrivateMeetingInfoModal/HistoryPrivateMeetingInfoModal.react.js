@@ -76,7 +76,7 @@ export function HistoryPrivateMeetingInfoModal({
             ))}
           </StyledGuestList>
         </StyledContent>
-        <StyledCloseButton onClick={onClose}>
+        <StyledCloseButton id="closeModal" tabIndex="1" onClick={onClose}>
           {formatMessage({ id: 'Modal.Close' })}
         </StyledCloseButton>
       </StyledContainer>

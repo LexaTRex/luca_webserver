@@ -5,7 +5,6 @@ export const LICENSES_ROUTE = `${BASE_PATH}/licenses`;
 export const ON_BOARDING_PATH = `${BASE_PATH}/setup`;
 export const CHECK_OUT_PATH = `${BASE_PATH}/checkout`;
 export const SETTINGS_PATH = `${BASE_PATH}/settings`;
-export const SELF_CHECKIN_PATH = `${BASE_PATH}/checkin`;
 export const APPOINTMENT_PATH = `${BASE_PATH}/appointment`;
 export const COVID_TEST_PATH = `${BASE_PATH}/testresult`;
 export const BASE_PRIVATE_MEETING_PATH = `${BASE_PATH}/meeting`;

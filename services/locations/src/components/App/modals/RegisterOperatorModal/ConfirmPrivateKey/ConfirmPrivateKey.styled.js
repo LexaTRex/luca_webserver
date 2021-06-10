@@ -6,7 +6,7 @@ export const Expand = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: height 1s;
+  transition: all 1000ms;
   height: ${({ open }) => (open ? '200px' : '0')};
   border-top: ${({ open }) => (open ? '1px solid rgb(151, 151, 151)' : '')};
   margin-top: ${({ open }) => (open ? '32px' : '')};

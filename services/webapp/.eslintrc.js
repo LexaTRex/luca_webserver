@@ -45,6 +45,7 @@ module.exports = {
     'max-lines': [1, 400],
     complexity: 0,
     'no-plusplus': 0,
+    'require-await': 2,
     'max-classes-per-file': 0,
     'sonarjs/no-duplicate-string': 0,
     'react/prop-types': 0,
@@ -70,6 +71,7 @@ module.exports = {
     'sonarjs/no-small-switch': 0,
     'import/no-extraneous-dependencies': ['error'],
     'unicorn/number-literal-case': 0,
+    'jsx-a11y/tabindex-no-positive': 0,
     'no-restricted-syntax': ['error', 'LabeledStatement', 'WithStatement'],
   },
 };

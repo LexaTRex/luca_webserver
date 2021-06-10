@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledSORMASExportButton = styled.button`
+export const LinkStyleButton = styled.button`
   padding: 0;
   color: black;
   border: none;

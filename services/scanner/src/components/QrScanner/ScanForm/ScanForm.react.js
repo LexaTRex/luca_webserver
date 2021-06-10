@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import moment from 'moment';
 import { useQueryClient, useQuery } from 'react-query';
@@ -31,6 +32,7 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
   const [latestUpdate, setLatestUpdate] = useState(moment().unix());
   const inputReference = useRef(null);
   const debounceTimeout = useRef(null);
+  const isOpen = useSelector(({ modal }) => !!modal);
 
   const triggerFocus = useCallback(() => {
     if (!inputReference.current) return;
@@ -95,7 +97,7 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
     });
   };
 
-  const onSubmit = async event => {
+  const onSubmit = event => {
     if (event) event.preventDefault();
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
@@ -163,7 +165,7 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
               <HiddenInput
                 type="text"
                 ref={inputReference}
-                autoFocus
+                autoFocus={!isOpen}
                 autoComplete="off"
                 value={inputValue}
                 onChange={handleChange}

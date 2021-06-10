@@ -10,11 +10,13 @@ import { base64UrlToBytes } from 'utils/encodings';
 import { checkin, registerDevice } from 'helpers/crypto';
 import { checkinToPrivateMeeting } from 'helpers/privateMeeting';
 
+import { Helmet } from 'react-helmet';
 import { StyledContainer } from './OnBoarding.styled';
 
 import { FinishStep } from './FinishStep';
 import { WelcomeStep } from './WelcomeStep';
 import { NameInputStep } from './NameInputStep';
+import { WebAppWarningStep } from './WebAppWarningStep';
 import { LocationInputStep } from './LocationInputStep';
 import { PrivacyInformationStep } from './PrivacyInformationStep';
 import { ContactInformationInputStep } from './ContactInformationInputStep';
@@ -24,6 +26,7 @@ const WELCOME_STEP = 'WELCOME_STEP';
 const PRIVACY_STEP = 'PRIVACY_STEP';
 const NAME_INPUT_STEP = 'NAME_INPUT_STEP';
 const LOCATION_INPUT_STEP = 'LOCATION_INPUT_STEP';
+const GETTING_STARTED_STEP = 'GETTING_STARTED_STEP';
 const CONTACT_INFORMATION_STEP = 'CONTACT_INFORMATION_STEP';
 
 export function OnBoarding({
@@ -33,7 +36,7 @@ export function OnBoarding({
   const intl = useIntl();
   const history = useHistory();
   const [account, setAccount] = useState({});
-  const [activeStep, setActiveStep] = useState(WELCOME_STEP);
+  const [activeStep, setActiveStep] = useState(GETTING_STARTED_STEP);
 
   const registrationHandling = useCallback(async () => {
     try {
@@ -88,6 +91,12 @@ export function OnBoarding({
 
   return (
     <StyledContainer>
+      <Helmet>
+        <title>{intl.formatMessage({ id: 'OnBoarding.PageTitle' })}</title>
+      </Helmet>
+      {activeStep === GETTING_STARTED_STEP && (
+        <WebAppWarningStep onSubmit={() => setActiveStep(WELCOME_STEP)} />
+      )}
       {activeStep === WELCOME_STEP && (
         <WelcomeStep onSubmit={() => setActiveStep(PRIVACY_STEP)} />
       )}

@@ -23,13 +23,15 @@ export const Profile = ({ profileData }) => {
   if (!department) return null;
 
   return (
-    <ProfileWrapper>
-      <StyledChildWrapper>
-        <ProfileOverview me={profileData} department={department} />
-      </StyledChildWrapper>
-      <StyledChildWrapper>
-        <ChangePasswordView />
-      </StyledChildWrapper>
-    </ProfileWrapper>
+    <>
+      <ProfileWrapper>
+        <StyledChildWrapper>
+          <ProfileOverview me={profileData} department={department} />
+        </StyledChildWrapper>
+        <StyledChildWrapper>
+          <ChangePasswordView />
+        </StyledChildWrapper>
+      </ProfileWrapper>
+    </>
   );
 };

@@ -3,10 +3,10 @@ import React from 'react';
 import { EmployeeList } from './EmployeeList';
 import { Wrapper } from './UserManagement.styled';
 
-export const UserManagement = () => {
+export const UserManagement = ({ profileData }) => {
   return (
     <Wrapper>
-      <EmployeeList />
+      <EmployeeList profileData={profileData} />
     </Wrapper>
   );
 };

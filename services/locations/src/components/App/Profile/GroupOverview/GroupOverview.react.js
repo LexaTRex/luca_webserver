@@ -25,7 +25,7 @@ export const GroupOverview = () => {
   return (
     <Content>
       <Heading>{intl.formatMessage({ id: 'profile.groups.overview' })}</Heading>
-      <Wrapper>
+      <Wrapper data-cy="groupsOverview">
         <Count>{groups.length}</Count>
         <Details>
           {groups.map((group, index) => (

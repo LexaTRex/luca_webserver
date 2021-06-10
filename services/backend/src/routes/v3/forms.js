@@ -19,13 +19,23 @@ router.get(
       where: {
         formId: request.params.formId,
       },
-      include: {
-        model: database.LocationGroup,
-      },
+      include: [
+        {
+          model: database.LocationGroup,
+        },
+        {
+          model: database.Operator,
+          paranoid: false,
+        },
+      ],
     });
 
     if (!location) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (location.Operator.deletedAt) {
+      return response.sendStatus(status.GONE);
     }
 
     return response.send({

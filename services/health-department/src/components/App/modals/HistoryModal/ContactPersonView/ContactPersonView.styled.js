@@ -56,9 +56,12 @@ export const TableHeader = styled.div`
 `;
 
 export const Row = styled.div`
+  background-color: ${({ highlighted }) =>
+    highlighted && 'rgba(184,202,211,0.25)'};
   display: flex;
   border-bottom: 1px solid rgb(151, 151, 151);
   padding: 12px 24px;
+  height: 180px;
 `;
 
 export const Column = styled.div`

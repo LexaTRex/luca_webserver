@@ -4,6 +4,9 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
+const HTTP_GONE = 410;
+export class AccountDeletedError extends Error {}
+
 // KEYS
 export const getDailyKey = () => {
   return fetch(`${API_PATH}v3/keys/daily/current`, {
@@ -13,11 +16,15 @@ export const getDailyKey = () => {
 };
 
 // LOCATION
-export const getForm = formId => {
-  return fetch(`${API_PATH}v3/forms/${formId}`, {
+export const getForm = async formId => {
+  const result = await fetch(`${API_PATH}v3/forms/${formId}`, {
     method: 'GET',
     headers,
   });
+  if (result.status === HTTP_GONE) {
+    throw new AccountDeletedError();
+  }
+  return result;
 };
 
 // USERS

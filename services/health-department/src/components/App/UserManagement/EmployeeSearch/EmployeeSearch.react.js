@@ -1,6 +1,14 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input } from 'antd';
+import Icon from '@ant-design/icons';
+
+import { ReactComponent as SearchSvg } from 'assets/search.svg';
+
+import { StyledInput } from './EmployeeSearch.styled';
+
+const SearchIcon = () => (
+  <Icon component={SearchSvg} style={{ color: 'black' }} />
+);
 
 export const EmployeeSearch = ({ onSearch }) => {
   const intl = useIntl();
@@ -9,19 +17,13 @@ export const EmployeeSearch = ({ onSearch }) => {
     onSearch(event.target.value);
   };
   return (
-    <Input
-      id="noBorder"
+    <StyledInput
+      id="employeeSearch"
       placeholder={intl.formatMessage({
         id: 'userManagement.search.placeholder',
       })}
+      prefix={<SearchIcon />}
       onChange={search}
-      style={{
-        width: '50%',
-        margin: '0 0 24px 0',
-        borderTop: 'none',
-        borderLeft: 'none',
-        borderRight: 'none',
-      }}
     />
   );
 };

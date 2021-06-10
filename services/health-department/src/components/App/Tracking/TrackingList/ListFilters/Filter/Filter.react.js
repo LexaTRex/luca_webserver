@@ -1,5 +1,7 @@
 import React from 'react';
-import { Checkbox, Select } from 'antd';
+import { Select, Checkbox, Tag } from 'antd';
+import { useIntl } from 'react-intl';
+import { truncateString } from 'utils/string';
 
 import {
   StyledContainer,
@@ -14,46 +16,70 @@ const SelectStyles = {
 
 const { Option } = Select;
 
-function FilterTagRender({ label }) {
-  return label;
+function FilterTagRender({ label, closable, onClose }) {
+  const onPreventMouseDown = event => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  return (
+    <Tag
+      color="#4e6180"
+      onMouseDown={onPreventMouseDown}
+      closable={closable}
+      onClose={onClose}
+      style={{ display: 'inline-flex', alignItems: 'center', marginRight: 3 }}
+    >
+      {label}
+    </Tag>
+  );
 }
-
-export function Filter({
-  active,
-  onChange,
+export const Filter = ({
   title = '',
   options = [],
-  multiple = false,
-}) {
+  active,
+  onChange,
+  showSearch = false,
+  optionFilterProp,
+  filterOption,
+  mode,
+}) => {
+  const intl = useIntl();
   return (
     <StyledContainer>
       <StyledFilterTitle>{title}</StyledFilterTitle>
       <Select
         showArrow
         value={active}
-        maxTagCount={1}
-        showSearch={false}
-        className="filter"
         onChange={onChange}
         style={SelectStyles}
+        showSearch={showSearch}
+        optionFilterProp={optionFilterProp}
+        filterOption={filterOption}
+        mode={mode}
+        maxTagCount={3}
+        className="filter"
         maxTagPlaceholder="..."
         dropdownClassName="filter"
         tagRender={FilterTagRender}
-        mode={multiple ? 'multiple' : 'single'}
-      >
-        {options.map(filterOption => {
-          return (
-            <Option value={filterOption.value} key={filterOption.value}>
-              <StyledOptionContainer>
-                {multiple && (
-                  <Checkbox checked={active.includes(filterOption.value)} />
-                )}
-                <StyledOptionTitle>{filterOption.intl}</StyledOptionTitle>
-              </StyledOptionContainer>
-            </Option>
-          );
+        getPopupContainer={trigger => trigger.parentNode}
+        autoClearSearchValue
+        notFoundContent={intl.formatMessage({
+          id: 'processTable.selectAssignee.notFound',
         })}
+      >
+        {options.map(option => (
+          <Option value={option.value} key={option.name}>
+            <StyledOptionContainer>
+              {mode === 'multiple' && (
+                <Checkbox checked={active.includes(option.value)} />
+              )}
+              <StyledOptionTitle title={option.name}>
+                {truncateString(option.name, 20)}
+              </StyledOptionTitle>
+            </StyledOptionContainer>
+          </Option>
+        ))}
       </Select>
     </StyledContainer>
   );
-}
+};

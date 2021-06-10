@@ -14,13 +14,16 @@ paths:
           description: No Content
         '409':
           description: Conflict
-      description: Register a new operator. Needs to be confirmed via email link.
+      description:
+        Register a new operator. Needs to be confirmed via email link.
     patch:
       summary: Patch operator
       operationId: patch-operators
       responses:
         '204':
           description: No Content
+        '403':
+          description: The operator account has been deactivated
       requestBody:
         content:
           application/json:
@@ -31,6 +34,20 @@ paths:
                   type: string
                 lastName:
                   type: string
+                avvAccepted:
+                  type: boolean
+                lastVersionSeen:
+                  type: string
+      tags:
+        - Operators
+    delete:
+      summary: Request deletion of operator's account
+      operationId: post-operators-deletionRequest
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden
       tags:
         - Operators
   /operators/activate:
@@ -75,7 +92,7 @@ paths:
         '204':
           description: No Content
         '403':
-          description: Forbidden
+          description: Forbidden. The account might have been deactivated.
   /operators/privateKeySecret:
     get:
       summary: Get private key secret
@@ -94,5 +111,16 @@ paths:
         '403':
           description: Forbidden
       operationId: get-operators-privateKeySecret
+  /operators/restore:
+    post:
+      tags:
+        - Operators
+      summary: Revoke deletion request of operator's account
+      operationId: delete-operators-deletionRequest
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
 tags:
   - name: Operators

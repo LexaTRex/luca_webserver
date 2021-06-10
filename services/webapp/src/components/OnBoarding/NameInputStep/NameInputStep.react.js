@@ -1,28 +1,41 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+import { TextInput } from 'components/TextInput';
 import {
   StyledForm,
   StyledFooter,
   StyledContent,
+  StyledInfoText,
   StyledHeadline,
   StyledSecondaryButton,
 } from './NameInputStep.styled';
-import { TextInput } from '../../TextInput';
 
 export function NameInputStep({ onSubmit }) {
   const { formatMessage } = useIntl();
+  const [isReady, setIsReady] = useState(false);
+
+  const onValuesChange = useCallback(
+    (_, { firstName, lastName }) => setIsReady(firstName && lastName),
+    [setIsReady]
+  );
 
   return (
-    <StyledForm onFinish={onSubmit}>
+    <StyledForm onFinish={onSubmit} onValuesChange={onValuesChange}>
       <StyledContent data-cy="nameInput">
         <StyledHeadline>
           {formatMessage({ id: 'OnBoarding.NameInputStep.Headline' })}
         </StyledHeadline>
+        <StyledInfoText>
+          {formatMessage({ id: 'Form.RequiredField.Explanation' })}
+        </StyledInfoText>
         <TextInput
+          autoFocus
+          tabIndex="1"
           name="firstName"
           autocomplete="given-name"
-          placeholder={formatMessage({ id: 'Form.FirstName' })}
+          label={formatMessage({ id: 'Form.FirstName.Label' })}
+          placeholder={formatMessage({ id: 'Form.FirstName.Placeholder' })}
           rules={[
             {
               required: true,
@@ -31,9 +44,11 @@ export function NameInputStep({ onSubmit }) {
           ]}
         />
         <TextInput
+          tabIndex="2"
           name="lastName"
           autocomplete="family-name"
-          placeholder={formatMessage({ id: 'Form.LastName' })}
+          label={formatMessage({ id: 'Form.LastName.Label' })}
+          placeholder={formatMessage({ id: 'Form.LastName.Placeholder' })}
           rules={[
             {
               required: true,
@@ -43,7 +58,13 @@ export function NameInputStep({ onSubmit }) {
         />
       </StyledContent>
       <StyledFooter>
-        <StyledSecondaryButton htmlType="submit" data-cy="nameInputSubmit">
+        <StyledSecondaryButton
+          id="next"
+          tabIndex="3"
+          htmlType="submit"
+          disabled={!isReady}
+          data-cy="nameInputSubmit"
+        >
           {formatMessage({ id: 'Form.Next' })}
         </StyledSecondaryButton>
       </StyledFooter>

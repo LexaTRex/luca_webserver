@@ -113,6 +113,8 @@ paths:
                   - groupId
                   - name
                   - location
+        '403':
+          description: The operator account has been deactivated
       requestBody:
         content:
           application/json:
@@ -230,6 +232,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '403':
+          description: The operator account has been deactivated
         '404':
           description: Not Found
       requestBody:
@@ -253,6 +257,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '403':
+          description: The operator account has been deactivated
         '404':
           description: Not Found
       tags:

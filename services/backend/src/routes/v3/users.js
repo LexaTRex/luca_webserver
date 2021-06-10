@@ -1,19 +1,16 @@
 const router = require('express').Router();
 const status = require('http-status');
-const config = require('config');
-const passport = require('passport');
 const { Op } = require('sequelize');
 
 const {
   uuidToHex,
   bytesToHex,
   base64ToHex,
-  hexToBase64,
-  SIGN_EC_SHA256_IEEE,
   VERIFY_EC_SHA256_DER_SIGNATURE,
 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
+
 const {
   validateSchema,
   validateParametersSchema,
@@ -22,7 +19,6 @@ const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
 const {
   createSchema,
-  badgeCreateSchema,
   userIdParametersSchema,
   patchSchema,
   deleteSchema,
@@ -83,64 +79,18 @@ router.post(
   }
 );
 
-// create badge user
-router.post(
-  '/badge',
-  passport.authenticate('bearer-badgeGenerator', { session: false }),
-  validateSchema(badgeCreateSchema),
-  async (request, response) => {
-    const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
-      base64ToHex(request.body.publicKey),
-      uuidToHex(request.body.userId) + base64ToHex(request.body.data),
-      base64ToHex(request.body.signature)
-    );
-
-    if (!isValidSignature) {
-      return response.sendStatus(status.FORBIDDEN);
-    }
-
-    const existingUser = await database.User.findOne({
-      where: {
-        uuid: request.body.userId,
-      },
-    });
-
-    if (existingUser) {
-      return response.sendStatus(status.CONFLICT);
-    }
-
-    await database.User.create({
-      uuid: request.body.userId,
-      data: '',
-      publicKey: request.body.publicKey,
-      deviceType: STATIC_USER_TYPE,
-    });
-
-    const signature = SIGN_EC_SHA256_IEEE(
-      base64ToHex(config.get('keys.badge.private')),
-      uuidToHex(request.body.userId) + base64ToHex(request.body.data)
-    );
-
-    return response.send({
-      signature: hexToBase64(signature),
-    });
-  }
-);
-
 // get user by id
 router.get(
   '/:userId',
   limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
   validateParametersSchema(userIdParametersSchema),
   async (request, response) => {
-    const user = await database.User.findOne(
-      {
-        where: {
-          uuid: request.params.userId,
-        },
+    const user = await database.User.findOne({
+      where: {
+        uuid: request.params.userId,
       },
-      { paranoid: false }
-    );
+      paranoid: false,
+    });
 
     if (!user) {
       return response.sendStatus(status.NOT_FOUND);

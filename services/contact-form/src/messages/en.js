@@ -39,6 +39,8 @@ export const en = {
     'Something went wrong. Please try reloading the page or come back later. If the error still occurs, please get in touch with locations@luca-app.de.',
   'authentication.background.legal.agb': 'Terms and conditions',
   'error.getScannerWrapper': 'Could not find the requested scanner.',
+  'error.accountDeleted':
+    'Your account has been deleted. You cannot check in any more guests.',
 
   // LICENSES
   'license.name': 'Name',

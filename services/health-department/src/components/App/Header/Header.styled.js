@@ -4,6 +4,7 @@ export const HeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  margin: 0 40px;
 `;
 
 export const SubTitle = styled.div`

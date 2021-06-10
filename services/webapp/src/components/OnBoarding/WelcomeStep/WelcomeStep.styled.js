@@ -18,13 +18,13 @@ export const StyledLucaLogo = styled.img`
   width: 87px;
   margin-bottom: 32px;
 `;
-export const StyledContent = styled.div`
+export const StyledContent = styled.main`
   flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
   padding-bottom: 32px;
 `;
-export const StyledFooter = styled.div`
+export const StyledFooter = styled.footer`
   height: 72px;
 `;
 export const StyledPrimaryButton = styled(SecondaryButton)`
@@ -40,6 +40,7 @@ export const StyledHeadline = styled(Headline)`
 export const StyledInfoText = styled(Text)`
   display: block;
   color: #ffffff;
+  line-height: 20px;
   margin-bottom: 22px;
 `;
 export const StyledLink = styled(Link)`

@@ -1,13 +1,28 @@
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useIntl } from 'react-intl';
 
 import { decryptUserTransfer } from 'utils/cryptoOperations';
+import { IncompleteDataError } from 'errors/incompleteDataError';
 
-export const UserNameDisplay = ({ userTransferId }) => {
+export const UserNameDisplay = ({ userTransferId, onProcessName }) => {
+  const intl = useIntl();
   const { isLoading, error, data } = useQuery(
     `userTransfer${userTransferId}`,
-    () => decryptUserTransfer(userTransferId)
+    () =>
+      decryptUserTransfer(userTransferId).then(processData => {
+        onProcessName(userTransferId, processData.fn + processData.ln);
+        return processData;
+      })
   );
+
+  if (error instanceof IncompleteDataError) {
+    return (
+      <div>
+        {intl.formatMessage({ id: 'contactPersonTable.unregistredBadgeUser' })}
+      </div>
+    );
+  }
 
   if (isLoading || error) return null;
 

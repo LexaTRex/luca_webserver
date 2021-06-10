@@ -18,7 +18,7 @@ export const StyledContainer = styled.div`
   background-color: #000;
   padding: 32px 32px 0 32px;
 `;
-export const StyledContent = styled.div`
+export const StyledContent = styled.main`
   flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -39,6 +39,6 @@ export const StyledSecondaryButton = styled(SecondaryButton)`
   height: 48px;
   margin-top: 12px;
 `;
-export const StyledFooter = styled.div`
+export const StyledFooter = styled.footer`
   height: 72px;
 `;

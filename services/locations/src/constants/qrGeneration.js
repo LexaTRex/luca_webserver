@@ -1,4 +1,10 @@
-import { isSafari, isFirefox, isChrome } from 'react-device-detect';
+import {
+  isSafari,
+  isFirefox,
+  isChrome,
+  isEdge,
+  isEdgeChromium,
+} from 'react-device-detect';
 import LucaLogo from 'assets/luca_logo_padding.svg';
 
 const PER_CHUNK = 3;
@@ -16,7 +22,7 @@ export const imageSettings = {
 export const isLessOrEqual = (a, b) => (a <= b ? a : b);
 
 export const browserSupportsQrCodeDownload = () =>
-  isSafari || isFirefox || isChrome;
+  isSafari || isFirefox || isChrome || isEdge || isEdgeChromium;
 
 export const arrayChunk = (array, size) =>
   array.reduce((accumulator, _, index) => {
@@ -28,7 +34,7 @@ export const createBatches = (labels, key, getTitle) => {
   const items = [];
 
   const itemCount = labels.length;
-  const lowerCount = Math.floor(itemCount / PER_CHUNK);
+  const lowerCount = Math.floor(itemCount / PER_CHUNK) || 1;
 
   for (let index = 0; index < lowerCount; index += 1) {
     items.push({ qrCodes: [], rowIndex: index });

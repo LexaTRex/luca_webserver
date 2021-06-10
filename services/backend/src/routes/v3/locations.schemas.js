@@ -1,17 +1,5 @@
 const { z } = require('../../middlewares/validateSchema');
 
-const searchSchema = z.object({
-  name: z.string().min(3).max(128),
-  limit: z
-    .string()
-    .regex(/^\d{1,4}$/)
-    .optional(),
-  offset: z
-    .string()
-    .regex(/^\d{1,9}$/)
-    .optional(),
-});
-
 const locationIdParametersSchema = z.object({
   locationId: z.string().uuid(),
 });
@@ -29,7 +17,6 @@ const accessIdParametersSchema = z.object({
 });
 
 module.exports = {
-  searchSchema,
   privateEventCreateSchema,
   locationTracesQuerySchema,
   locationIdParametersSchema,

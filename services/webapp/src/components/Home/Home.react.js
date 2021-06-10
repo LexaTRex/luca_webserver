@@ -1,22 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import QRCode from 'qrcode.react';
 
+import QRCode from 'qrcode.react';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
+import { Helmet } from 'react-helmet';
 import useInterval from '@use-it/interval';
 import { decodeUtf8 } from '@lucaapp/crypto';
 import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';
-import {
-  checkin,
-  generateQRCode,
-  InvalidDailyKeySignature,
-} from 'helpers/crypto';
+import { checkin, generateQRCode } from 'helpers/crypto';
 import {
   HISTORY_PATH,
   SETTINGS_PATH,
-  SELF_CHECKIN_PATH,
   BASE_PRIVATE_MEETING_PATH,
 } from 'constants/routes';
 import { getCheckOutPath } from 'helpers/routes';
@@ -27,13 +23,16 @@ import { base64UrlToBytes } from 'utils/encodings';
 import menu from 'assets/menu.svg';
 import lucaLogo from 'assets/LucaLogoWhite.svg';
 
-import { AppContent, AppLayout } from '../AppLayout';
+import { WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY } from 'constants/storage';
+
+import { CheckinIcon, HistoryIcon } from 'components/Icons';
+import { AppContent, AppHeadline, AppLayout } from 'components/AppLayout';
+
 import {
   StyledLucaLogo,
   StyledMenuIcon,
   StyledQRCodeInfo,
   StyledFooterItem,
-  StyledQRCodeCounter,
   StyledQRCodeWrapper,
   StyledSecondaryButton,
   StyledQRCodeInfoContainer,
@@ -41,13 +40,15 @@ import {
   StyledHeaderMenuIconContainer,
   StyledFooterContainer,
 } from './Home.styled';
-
-import { HistoryIcon, MenuIcon } from '../Icons';
+import { SelfCheckin } from './SelfCheckin';
+import { WebAppWarningModal } from './WebAppWarningModal';
 import { HostPrivateMeetingWarningModal } from './HostPrivateMeetingWarningModal';
 
 export function Home({ match: { params: parameters }, location: { hash } }) {
   const intl = useIntl();
   const history = useHistory();
+  const [showSelfCheckin, setShowSelfCheckin] = useState(false);
+  const [showWebAppWarningModal, setShowWebAppWarningModal] = useState(false);
   const [
     showPrivateMeetingWarningModal,
     setShowPrivateMeetingWarningModal,
@@ -76,13 +77,14 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
           setQRCode(await generateQRCode(userId));
         }
       } catch (error) {
+        const descriptionId =
+          error.descriptionId ?? 'QRCodeGenerator.error.unknown';
         notification.error({
-          message: intl.formatMessage({ id: 'QRCodeGenerator.error.headline' }),
+          message: intl.formatMessage({
+            id: 'QRCodeGenerator.error.headline',
+          }),
           description: intl.formatMessage({
-            id:
-              error instanceof InvalidDailyKeySignature
-                ? 'QRCodeGenerator.error.invalidSignature'
-                : 'QRCodeGenerator.error.unknown',
+            id: descriptionId,
           }),
         });
       }
@@ -116,6 +118,23 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
             }),
           });
         });
+    } else {
+      indexDB.users
+        .toArray()
+        .then(([user]) => {
+          if (
+            !user.useWebApp &&
+            sessionStorage.getItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY) !==
+              'true'
+          ) {
+            setShowWebAppWarningModal(true);
+            sessionStorage.setItem(
+              WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY,
+              'true'
+            );
+          }
+        })
+        .catch(() => {});
     }
   }, [intl, hash, history, parameters]);
 
@@ -125,59 +144,92 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
 
   return (
     <>
+      <Helmet>
+        <title>{intl.formatMessage({ id: 'Home.PageTitle' })}</title>
+      </Helmet>
       <AppLayout
         header={
-          <>
-            <StyledLucaLogo src={lucaLogo} />
-            <StyledHeaderMenuIconContainer>
-              <StyledMenuIcon
-                src={menu}
+          showSelfCheckin ? (
+            <AppHeadline>
+              {intl.formatMessage({ id: 'Home.Scanner.Headline' })}
+            </AppHeadline>
+          ) : (
+            <>
+              <StyledLucaLogo alt="luca" src={lucaLogo} />
+              <StyledHeaderMenuIconContainer
+                tabIndex="4"
+                id="settings"
                 onClick={() => history.push(SETTINGS_PATH)}
-              />
-            </StyledHeaderMenuIconContainer>
-          </>
+                aria-label={intl.formatMessage({
+                  id: 'Home.AriaSettingsLabel',
+                })}
+              >
+                <StyledMenuIcon src={menu} alt="settings" />
+              </StyledHeaderMenuIconContainer>
+            </>
+          )
         }
         footer={
           <>
             <StyledFooterContainer>
               <StyledFooterItem isActive>
-                <MenuIcon />
+                <CheckinIcon color="rgb(195, 206, 217)" />
                 {intl.formatMessage({ id: 'Home.MenuItem' })}
               </StyledFooterItem>
             </StyledFooterContainer>
-            <StyledFooterContainer>
-              <StyledFooterItem onClick={() => history.push(HISTORY_PATH)}>
-                <HistoryIcon color="rgb(195, 206, 217)" />
+            <StyledFooterContainer
+              id="history"
+              aria-label={intl.formatMessage({
+                id: 'History.AriaLabel',
+              })}
+            >
+              <StyledFooterItem
+                tabIndex="3"
+                onClick={() => history.push(HISTORY_PATH)}
+              >
+                <HistoryIcon />
                 {intl.formatMessage({ id: 'History.MenuItem' })}
               </StyledFooterItem>
             </StyledFooterContainer>
           </>
         }
       >
-        <AppContent>
-          <StyledQRCodeInfoContainer data-cy="QRCodeInfo">
-            <StyledQRCodeInfo>
-              {intl.formatMessage({ id: 'Home.QRCodeInfo' })}
-            </StyledQRCodeInfo>
-            <StyledQRCodeCounter />
-          </StyledQRCodeInfoContainer>
-          <StyledQRCodeWrapper>
-            <QRCode size={200} value={qrCode} />
-          </StyledQRCodeWrapper>
-        </AppContent>
-        <AppContent flex="unset">
-          <StyledSecondaryButton
-            onClick={() => history.push(SELF_CHECKIN_PATH)}
-          >
-            {intl.formatMessage({ id: 'Home.CheckIn' })}
-          </StyledSecondaryButton>
-          <StyledPrivateMeetingButton
-            onClick={() => setShowPrivateMeetingWarningModal(true)}
-          >
-            {intl.formatMessage({ id: 'Home.PrivateMeeting' })}
-          </StyledPrivateMeetingButton>
-        </AppContent>
+        {showSelfCheckin ? (
+          <SelfCheckin onClose={() => setShowSelfCheckin(false)} />
+        ) : (
+          <>
+            <AppContent>
+              <StyledQRCodeInfoContainer data-cy="QRCodeInfo">
+                <StyledQRCodeInfo>
+                  {intl.formatMessage({ id: 'Home.QRCodeInfo' })}
+                </StyledQRCodeInfo>
+              </StyledQRCodeInfoContainer>
+              <StyledQRCodeWrapper>
+                <QRCode size={200} value={qrCode} />
+              </StyledQRCodeWrapper>
+            </AppContent>
+            <AppContent flex="unset">
+              <StyledSecondaryButton
+                id="selfCheckin"
+                tabIndex="5"
+                onClick={() => setShowSelfCheckin(true)}
+              >
+                {intl.formatMessage({ id: 'Home.CheckIn' })}
+              </StyledSecondaryButton>
+              <StyledPrivateMeetingButton
+                tabIndex="6"
+                id="privateMeeting"
+                onClick={() => setShowPrivateMeetingWarningModal(true)}
+              >
+                {intl.formatMessage({ id: 'Home.PrivateMeeting' })}
+              </StyledPrivateMeetingButton>
+            </AppContent>
+          </>
+        )}
       </AppLayout>
+      {showWebAppWarningModal && (
+        <WebAppWarningModal onClose={() => setShowWebAppWarningModal(false)} />
+      )}
       {showPrivateMeetingWarningModal && (
         <HostPrivateMeetingWarningModal
           onCheck={() => {

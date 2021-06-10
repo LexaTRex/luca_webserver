@@ -5,6 +5,7 @@ import { notification } from 'antd';
 
 import { contactLocation, getLocationTransfers } from 'network/api';
 import { decryptUserTransfer } from 'utils/cryptoOperations';
+import { IncompleteDataError } from 'errors/incompleteDataError';
 
 // Components
 import {
@@ -33,7 +34,7 @@ export const HistoryModal = ({ process }) => {
   const {
     isLoading: isUserLoading,
     error: userError,
-    data: userName,
+    data: userData,
   } = useQuery(`userTransfer${process.userTransferId}`, () =>
     process.userTransferId ? decryptUserTransfer(process.userTransferId) : {}
   );
@@ -67,7 +68,8 @@ export const HistoryModal = ({ process }) => {
     }
   };
 
-  if (isLoading || error || isUserLoading || userError) return null;
+  if (isLoading || error || isUserLoading) return null;
+  if (userError && !(userError instanceof IncompleteDataError)) return null;
 
   const locations = data || [];
 
@@ -76,9 +78,20 @@ export const HistoryModal = ({ process }) => {
     a.locationName < b.locationName ? -1 : 1
   );
 
-  const historyName = process.userTransferId
-    ? `${userName.fn} ${userName.ln}`
-    : locations[0].name;
+  const historyName = (() => {
+    if (!process.userTransferId) {
+      return locations?.[0]?.name || '–';
+    }
+    if (userData) {
+      return `${userData.fn} ${userData.ln}`;
+    }
+    if (userError instanceof IncompleteDataError) {
+      return intl.formatMessage({
+        id: 'contactPersonTable.unregistredBadgeUser',
+      });
+    }
+    return '–';
+  })();
 
   return (
     <ModalWrapper>
@@ -87,7 +100,7 @@ export const HistoryModal = ({ process }) => {
           location={openLocation}
           onClose={closeContactWindow}
           contactFromIndexPerson={!!process.userTransferId}
-          indexPersonData={userName}
+          indexPersonData={userData}
         />
       ) : (
         <>

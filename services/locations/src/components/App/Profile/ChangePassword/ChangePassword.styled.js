@@ -22,11 +22,3 @@ export const ButtonWrapper = styled.div`
 export const Overview = styled.div`
   border-bottom: 1px solid rgb(151, 151, 151);
 `;
-
-export const buttonStyles = {
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-  border: '1px solid rgb(80, 102, 124)',
-};

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const status = require('http-status');
 const moment = require('moment');
+const { pick } = require('lodash');
 
 const {
   validateSchema,
@@ -55,21 +56,33 @@ router.get('/', requireHealthDepartmentEmployee, async (request, response) => {
     where: {
       departmentId: request.user.departmentId,
     },
-    include: {
-      model: database.LocationTransfer,
-      attributes: ['tracingProcessId', 'isCompleted', 'contactedAt'],
-    },
+    include: [
+      {
+        model: database.LocationTransfer,
+        attributes: ['tracingProcessId', 'isCompleted', 'contactedAt'],
+      },
+      {
+        model: database.HealthDepartmentEmployee,
+        attributes: ['uuid', 'firstName', 'lastName'],
+      },
+    ],
   });
 
   return response.send(
-    processes.map(tracingProcess => ({
-      uuid: tracingProcess.uuid,
-      status: getTraceProcessStatus(tracingProcess),
-      userTransferId: tracingProcess.userTransferId,
-      didRequestLocations: tracingProcess.didRequestLocations,
-      isCompleted: tracingProcess.isCompleted,
-      createdAt: moment(tracingProcess.createdAt).unix(),
-    }))
+    processes.map(tracingProcess => {
+      const assignee = tracingProcess.HealthDepartmentEmployee;
+      return {
+        uuid: tracingProcess.uuid,
+        status: getTraceProcessStatus(tracingProcess),
+        userTransferId: tracingProcess.userTransferId,
+        didRequestLocations: tracingProcess.didRequestLocations,
+        isCompleted: tracingProcess.isCompleted,
+        createdAt: moment(tracingProcess.createdAt).unix(),
+        assignee: assignee
+          ? pick(assignee, ['uuid', 'firstName', 'lastName'])
+          : null,
+      };
+    })
   );
 });
 
@@ -86,9 +99,22 @@ router.patch(
         departmentId: request.user.departmentId,
       },
     });
-
-    await process.update(request.body);
-
+    if (request.body.assigneeId) {
+      const assignee = await database.HealthDepartmentEmployee.findOne({
+        where: {
+          uuid: request.body.assigneeId,
+          departmentId: request.user.departmentId,
+        },
+      });
+      if (!assignee) {
+        return response.sendStatus(status.NOT_FOUND);
+      }
+    }
+    await process.update({
+      didRequestLocations: request.body.didRequestLocations,
+      isCompleted: request.body.isCompleted,
+      assigneeId: request.body.assigneeId,
+    });
     return response.sendStatus(status.NO_CONTENT);
   }
 );

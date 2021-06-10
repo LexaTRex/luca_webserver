@@ -22,6 +22,7 @@ const badgeRegistratorsRouter = require('./v3/badgeRegistrators');
 const tracingProcessesRouter = require('./v3/tracingProcesses');
 const supportedZipCodesRouter = require('./v3/supportedZipCodes');
 const healthDepartmentEmployeesRouter = require('./v3/healthDepartmentEmployees');
+const badgesRouter = require('./v3/badges');
 const timesyncRouter = require('./v3/timesync');
 const swaggerRouter = require('./v3/swagger');
 
@@ -186,6 +187,14 @@ router.use('/healthDepartmentEmployees', healthDepartmentEmployeesRouter);
  *   description: Check server time
  */
 router.use('/timesync', timesyncRouter);
+
+/**
+ * @openapi
+ * tags:
+ *   name: Badges
+ *   description: Gets required information to check in badges.
+ */
+router.use('/badges', badgesRouter);
 
 router.use('/swagger', swaggerRouter);
 

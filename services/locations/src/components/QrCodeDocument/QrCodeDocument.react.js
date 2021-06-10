@@ -24,14 +24,14 @@ import { Wrapper, messageStyle } from './QrCodeDocument.styled';
 
 const Context = createContext({ name: 'messageContext' });
 
-async function generateOneFile({
+const generateOneFile = ({
   intl,
   downloadTableQRCodes,
   group,
   processedLocation,
   printReference,
   fileNumber,
-}) {
+}) => {
   return new Promise(resolve => {
     const qrPDF = new jsPDF('p', 'pt', 'a4', true);
     let locationName =
@@ -65,7 +65,7 @@ async function generateOneFile({
       html2canvas: { scale: 0.8 },
     });
   });
-}
+};
 
 export const QrCodeDocument = ({
   group,

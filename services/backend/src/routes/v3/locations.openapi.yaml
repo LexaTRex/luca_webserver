@@ -7,43 +7,6 @@ info:
 tags:
   - name: Locations
 paths:
-  /locations/search:
-    get:
-      summary: Search
-      tags:
-        - Locations
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                description: ''
-                minItems: 1
-                uniqueItems: true
-                items:
-                  $ref: '#/components/schemas/Location'
-        '401':
-          description: Unauthorized
-      operationId: get-locationGroups-search
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: name
-          required: true
-        - schema:
-            type: string
-            default: '10'
-          in: query
-          name: limit
-        - schema:
-            type: string
-            default: '0'
-          in: query
-          name: offset
-      description: 'Search locations (also referred to as [venues](https://luca-app.de/securityconcept/processes/venue_registration.html)).'
   /locations/private:
     post:
       tags:
@@ -100,7 +63,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Location'
+                type: object
+                properties:
+                  locationId:
+                    type: string
+                    minLength: 1
+                  publicKey:
+                    type: string
+                    minLength: 1
+                  name: {}
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+                  radius:
+                    type: number
       description: |-
         Gets a location (also referred to as [venue](https://luca-app.de/securityconcept/processes/venue_registration.html)) by its primary ID.
   '/locations/traces/{accessId}':
@@ -262,45 +239,3 @@ paths:
         '404':
           description: Not Found
       description: Deletes a location (by accessId) and ends all ongoing traces.
-components:
-  schemas:
-    Location:
-      description: ''
-      type: object
-      properties:
-        uuid:
-          type: string
-          minLength: 1
-        name: {}
-        streetName:
-          type: string
-          minLength: 1
-        streetNr:
-          type: string
-          minLength: 1
-        city:
-          type: string
-          minLength: 1
-        zipCode:
-          type: string
-          minLength: 1
-        lat:
-          type: number
-        lng:
-          type: number
-        state:
-          type: string
-          minLength: 1
-        phone:
-          type: string
-          minLength: 1
-      required:
-        - uuid
-        - streetName
-        - streetNr
-        - city
-        - zipCode
-        - lat
-        - lng
-        - state
-        - phone

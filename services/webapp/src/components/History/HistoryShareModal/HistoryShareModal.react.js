@@ -28,7 +28,7 @@ export function HistoryShareModal({ tan = '', onClose }) {
             {tan.slice(0, 4)}-{tan.slice(4, 8)}-{tan.slice(8, 12)}
           </StyledTan>
         </StyledContent>
-        <StyledCloseButton onClick={onClose}>
+        <StyledCloseButton id="closeModal" tabIndex="1" onClick={onClose}>
           {formatMessage({ id: 'HistoryShareModel.Submit' })}
         </StyledCloseButton>
       </StyledContainer>

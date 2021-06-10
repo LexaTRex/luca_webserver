@@ -41,7 +41,7 @@ export const AddressInput = ({
   const [filled, setFilled] = useState(!!temporaryAddress);
   const [disabled, setDisabled] = useState(true);
 
-  const onFinish = async values => {
+  const onFinish = values => {
     setTemporaryAddress(values);
     setAddress(values);
     next();

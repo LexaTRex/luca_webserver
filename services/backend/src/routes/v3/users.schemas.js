@@ -8,13 +8,6 @@ const createSchema = z.object({
   publicKey: z.string().length(88),
 });
 
-const badgeCreateSchema = z.object({
-  userId: z.string().uuid(),
-  publicKey: z.string().max(88),
-  data: z.string().length(44),
-  signature: z.string().max(96),
-});
-
 const userIdParametersSchema = z.object({
   userId: z.string().uuid(),
 });
@@ -32,7 +25,6 @@ const deleteSchema = z.object({
 
 module.exports = {
   createSchema,
-  badgeCreateSchema,
   userIdParametersSchema,
   patchSchema,
   deleteSchema,

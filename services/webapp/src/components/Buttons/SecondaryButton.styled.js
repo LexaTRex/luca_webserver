@@ -10,4 +10,8 @@ export const SecondaryButton = styled(Button)`
   text-align: center;
   line-height: 26.3px;
   font-family: Montserrat-SemiBold, sans-serif;
+
+  &[disabled] {
+    color: rgba(0, 0, 0, 0.25) !important;
+  }
 `;

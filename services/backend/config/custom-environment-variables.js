@@ -38,8 +38,11 @@ module.exports = {
   keys: {
     badge: {
       targetKeyId: 'BADGE_TARGET_KEY_ID',
-      public: 'BADGE_KEY_PUBLIC',
       private: 'BADGE_KEY_PRIVATE',
+      attestation: {
+        v3: 'BADGE_ATTESTATION_KEY_PUBLIC_V3',
+        v4: 'BADGE_ATTESTATION_KEY_PUBLIC_V4',
+      },
     },
   },
   proxy: {

@@ -15,24 +15,36 @@ export const ContactConfirmationButton = ({ location, callback }) => {
   const intl = useIntl();
   const { contactedAt, isCompleted, time } = location;
 
+  const expiryDate = `${intl.formatMessage({
+    id: 'history.expiry',
+  })}: ${moment.unix(time[0]).add(28, 'days').format('DD.MM.YYYY')}`;
+
   if (!isCompleted && !!contactedAt) {
     return (
-      <ContactedLabel>
-        {intl.formatMessage({ id: 'history.contacted' })}
-      </ContactedLabel>
+      <div>
+        <ContactedLabel>
+          {intl.formatMessage({ id: 'history.contacted' })}
+        </ContactedLabel>
+        <div style={{ paddingTop: '8px', fontWeight: 400 }}>{expiryDate}</div>
+      </div>
     );
   }
 
   if (isCompleted) {
     return (
-      <CompletedWrapper>
-        <CompletedLabel>
-          {intl.formatMessage({ id: 'history.confirmed' })}
-        </CompletedLabel>
-        <Button onClick={() => callback(location)}>
-          {intl.formatMessage({ id: 'history.viewDetails' })}
-        </Button>
-      </CompletedWrapper>
+      <ButtonWrapper>
+        <CompletedWrapper>
+          <CompletedLabel>
+            {intl.formatMessage({ id: 'history.confirmed' })}
+          </CompletedLabel>
+          <Button onClick={() => callback(location)}>
+            {intl.formatMessage({ id: 'history.viewDetails' })}
+          </Button>
+        </CompletedWrapper>
+        <span style={{ paddingTop: '8px', alignSelf: 'flex-start' }}>
+          {expiryDate}
+        </span>
+      </ButtonWrapper>
     );
   }
 
@@ -64,12 +76,7 @@ export const ContactConfirmationButton = ({ location, callback }) => {
         >
           {intl.formatMessage({ id: 'history.contact' })}
         </Button>
-        <span>{`${intl.formatMessage({
-          id: 'history.expiry',
-        })}: ${moment
-          .unix(time[0])
-          .add(28, 'days')
-          .format('DD.MM.YYYY')}`}</span>
+        <span>{expiryDate}</span>
       </ButtonWrapper>
     </Popconfirm>
   );

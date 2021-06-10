@@ -15,7 +15,7 @@ export const StyledForm = styled(Form)`
   padding: 32px 32px 0 32px;
 `;
 
-export const StyledContent = styled.div`
+export const StyledContent = styled.main`
   flex: 1;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -23,13 +23,13 @@ export const StyledContent = styled.div`
 `;
 
 export const StyledInfoText = styled(Text)`
+  color: #fff;
   padding: 8px 0;
   display: block;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
 `;
 
-export const StyledFooter = styled.div`
+export const StyledFooter = styled.footer`
   height: 72px;
 `;
 

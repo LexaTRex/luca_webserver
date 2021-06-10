@@ -1,18 +1,28 @@
 import React from 'react';
 import {
-  StyledContent,
+  StyledText,
   StyledCheckbox,
   StyledContainer,
-  StyledText,
 } from './CheckBoxWithText.styled';
 
-export function CheckBoxWithText({ value, onChange, description, testId }) {
+export function CheckBoxWithText({
+  value,
+  testId,
+  tabIndex,
+  onChange,
+  description,
+  color = '#fff',
+}) {
   return (
     <StyledContainer>
-      <StyledCheckbox value={value} onChange={onChange} data-cy={testId} />
-      <StyledContent>
-        <StyledText>{description}</StyledText>
-      </StyledContent>
+      <StyledCheckbox
+        value={value}
+        data-cy={testId}
+        onChange={onChange}
+        tabIndex={tabIndex}
+      >
+        <StyledText style={{ color }}>{description}</StyledText>
+      </StyledCheckbox>
     </StyledContainer>
   );
 }

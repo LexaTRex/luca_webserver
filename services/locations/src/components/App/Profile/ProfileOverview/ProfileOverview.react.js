@@ -8,12 +8,12 @@ import { updateOperator, isEmailUpdatePending, updateEmail } from 'network/api';
 import { nameChanged, mailChanged } from './ProfileOverview.helper';
 
 import {
-  buttonStyles,
   ProfileContent,
   Overview,
   Heading,
   ButtonWrapper,
 } from './ProfileOverview.styled';
+import { buttonStyles } from '../../App.styled';
 
 export const ProfileOverview = ({ operator, refetch }) => {
   const intl = useIntl();
@@ -71,7 +71,7 @@ export const ProfileOverview = ({ operator, refetch }) => {
 
   return (
     <ProfileContent>
-      <Overview>
+      <Overview data-cy="profileOverview">
         <Heading>{intl.formatMessage({ id: 'profile.overview' })}</Heading>
         <Form
           onFinish={onFinish}

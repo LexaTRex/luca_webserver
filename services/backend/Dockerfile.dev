@@ -5,6 +5,8 @@ ARG GIT_COMMIT
 ARG GIT_VERSION
 ARG NPM_CONFIG__AUTH
 ENV NODE_ENV=development
+ENV GIT_COMMIT $GIT_COMMIT
+ENV GIT_VERSION $GIT_VERSION
 
 COPY package.json yarn.lock .npmrc .yarnrc ./
 RUN yarn install --production --check-files && yarn cache clean

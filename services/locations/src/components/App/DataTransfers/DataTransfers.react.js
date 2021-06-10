@@ -27,7 +27,7 @@ export const DataTransfers = () => {
     getAllTransfers()
   );
   const uncompletedTransfers = (transfers || [])
-    .filter(transfer => !transfer.isCompleted)
+    .filter(transfer => !!transfer.contactedAt && !transfer.isCompleted)
     .map(transfer => transfer.uuid);
 
   const shareAll = () => window.open(SHARE_ALL_DATA_ROUTE, '_blank');
@@ -39,7 +39,7 @@ export const DataTransfers = () => {
       <Sider style={sliderStyles}>
         <NavigationButton />
       </Sider>
-      <Layout>
+      <Layout data-cy="dataTransfers">
         <Content style={contentStyles}>
           <Wrapper>
             <Header>

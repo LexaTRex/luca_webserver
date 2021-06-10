@@ -20,6 +20,17 @@ const GlobalModalStyle = createGlobalStyle`
     background-color: black;
   }
 
+  .black-transparent .ant-modal-content {
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+
+  .black-transparent .ant-modal-header {
+    background-color: transparent;
+  }
+
+  .black-transparent .ant-modal-content,
+  .black-transparent .ant-modal-title,
+  .black-transparent .ant-modal-close,
   .primary .ant-modal-content,
   .primary .ant-modal-title,
   .primary .ant-modal-close,
@@ -27,6 +38,13 @@ const GlobalModalStyle = createGlobalStyle`
   .black .ant-modal-title,
   .black .ant-modal-close {
     color: white;
+  }
+
+  .lightHeader .ant-modal-title {
+    color: rgba(255, 255, 255, 0.87);
+    font-family: Montserrat-Medium, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
   }
 
   .noHeader .ant-modal-title {

@@ -18,6 +18,7 @@ import {
   CloseButtonStyles,
   FilterSettingsContainer,
 } from './ContactPersonView.styled';
+import { IncompleteDataError } from '../../../../../errors/incompleteDataError';
 
 const ContactPersonViewRaw = ({
   location,
@@ -54,7 +55,12 @@ const ContactPersonViewRaw = ({
 
       const decryptedTraces = await Promise.all(
         contactPersons.traces.map(trace =>
-          decryptTrace(trace).catch(() => ({ isInvalid: true }))
+          decryptTrace(trace).catch(decryptionError => {
+            if (decryptionError instanceof IncompleteDataError) {
+              return { isUnregistered: true };
+            }
+            return { isInvalid: true };
+          })
         )
       );
 
