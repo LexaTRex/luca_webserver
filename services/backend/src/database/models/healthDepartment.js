@@ -9,19 +9,31 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
       },
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       privateKeySecret: {
+        type: DataTypes.STRING(44),
         allowNull: false,
         defaultValue: null,
-        type: DataTypes.STRING(44),
       },
       publicHDEKP: {
         type: DataTypes.STRING(88),
       },
       publicHDSKP: {
         type: DataTypes.STRING(88),
+      },
+      commonName: {
+        type: DataTypes.STRING(255),
+      },
+      publicCertificate: {
+        type: DataTypes.STRING(8192),
+      },
+      signedPublicHDEKP: {
+        type: DataTypes.STRING(2048),
+      },
+      signedPublicHDSKP: {
+        type: DataTypes.STRING(2048),
       },
     },
     {

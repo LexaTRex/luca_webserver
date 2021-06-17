@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.2.1 (2021-06-17)
+* **backend:** feat: add v4 signed keys upload
+
 ### 1.2.0 (2021-05-31)
 
 * **backend:** feature: split generic locations route into specific routes for apps and healthdepartment

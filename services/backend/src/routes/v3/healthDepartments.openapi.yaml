@@ -1,9 +1,3 @@
-openapi: 3.0.0
-info:
-  title: Health departments
-  version: '1.0'
-  contact: {}
-  description: See main doc.
 paths:
   /healthDepartments/keys:
     get:
@@ -20,17 +14,17 @@ paths:
                 properties:
                   publicHDEKP:
                     type: string
+                    nullable: true
                   publicHDSKP:
                     type: string
+                    nullable: true
         '404':
           description: Department not found
-      operationId: get-healthDepartment-keys
       description: 'Get the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)''s public keys.'
     post:
+      summary: Post key pair
       tags:
         - HealthDepartments
-      summary: Post key pair
-      operationId: post-healthDepartment-keys
       responses:
         '204':
           description: No Content
@@ -57,10 +51,9 @@ paths:
         '200':
           description: OK
     post:
+      summary: Update region options used for SORMAS data export
       tags:
         - HealthDepartments
-      summary: Update region options used for SORMAS data export
-      operationId: post-healthDepartment-region
       responses:
         '204':
           description: No Content
@@ -79,6 +72,7 @@ paths:
   '/healthDepartments/{departmentId}':
     get:
       summary: Get department info by ID
+      description: 'Get [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) info by its UUID.'
       tags:
         - HealthDepartments
       responses:
@@ -87,28 +81,18 @@ paths:
           content:
             application/json:
               schema:
-                description: ''
                 type: object
                 properties:
                   departmentId:
                     type: string
-                    minLength: 1
                   name:
                     type: string
-                    minLength: 1
                   publicHDEKP:
                     type: string
-                    minLength: 1
+                    nullable: true
                   publicHDSKP:
                     type: string
-                    minLength: 1
-                required:
-                  - departmentId
-                  - name
-                  - publicHDEKP
-                  - publicHDSKP
-      operationId: 'get-healthDepartments-:departmentId'
-      description: 'Get [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) info by its UUID.'
+                    nullable: true
     parameters:
       - schema:
           type: string
@@ -119,7 +103,9 @@ paths:
   /healthDepartments/privateKeySecret:
     get:
       summary: Get privateKeySecret
-      tags: []
+      description: Get privateKeySecret for the current user's health department.
+      tags:
+        - HealthDepartments
       responses:
         '200':
           description: OK
@@ -130,5 +116,3 @@ paths:
                 properties:
                   privateKeySecret:
                     type: string
-      operationId: get-healthDepartments-privateKeySecret
-      description: Get privateKeySecret for the current user's health department.

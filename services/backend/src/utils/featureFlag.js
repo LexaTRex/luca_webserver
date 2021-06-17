@@ -5,6 +5,7 @@ const DEFAULT_VALUES = {
   sms_rate_sinch: 1,
   dummy_max_tracings: 10,
   dummy_max_traces: 20,
+  v4_signed_public_keys: false,
 };
 
 const get = async key => {

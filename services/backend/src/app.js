@@ -23,6 +23,7 @@ const licensesRouter = require('./routes/licenses');
 const internalRouter = require('./routes/internal');
 const v2Router = require('./routes/v2');
 const v3Router = require('./routes/v3');
+const v4Router = require('./routes/v4');
 
 let app;
 
@@ -106,6 +107,7 @@ const configureApp = database => {
   router.use('/internal', internalRouter);
   router.use('/v2', v2Router);
   router.use('/v3', v3Router);
+  router.use('/v4', v4Router);
 
   return app;
 };
