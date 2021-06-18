@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.2.2 (2021-06-18)
+* **health-department:** fix: fix trying to trim a non-string
+* **health-department:** chore: upgrade xlsx package
+* **backend:** feat: add expireAt functionality to test redeems
+
 ### 1.2.1 (2021-06-17)
 * **backend:** feat: add v4 signed keys upload
 

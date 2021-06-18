@@ -38,20 +38,20 @@ export const formatTraceForSormas = (trace, locationUserProvided, intl) => {
       additionalData,
       intl
     )}`.trim(),
-    'person.firstName': userData?.fn?.trim() ?? '',
+    'person.firstName': String(userData?.fn).trim() ?? '',
     'person.lastName': userData
-      ? userData.ln?.trim()
+      ? String(userData?.ln).trim()
       : intl.formatMessage({
           id: 'contactPersonTable.unregistredBadgeUser',
         }),
     'person.sex': 'UNKNOWN',
-    'person.phone': userData?.pn?.trim() ?? '',
-    'person.address.city': userData?.c?.trim() ?? '',
-    'person.address.postalCode': userData?.pc?.trim() ?? '',
-    'person.address.street': userData?.st?.trim() ?? '',
-    'person.address.houseNumber': userData?.hn?.trim() ?? '',
+    'person.phone': String(userData?.pn).trim() ?? '',
+    'person.address.city': String(userData?.c).trim() ?? '',
+    'person.address.postalCode': String(userData?.pc).trim() ?? '',
+    'person.address.street': String(userData?.st).trim() ?? '',
+    'person.address.houseNumber': String(userData?.hn).trim() ?? '',
     'person.address.addressType': 'HOME',
-    'person.emailAddress': userData?.e?.trim() ?? '',
+    'person.emailAddress': String(userData?.e).trim() ?? '',
   };
 };
 

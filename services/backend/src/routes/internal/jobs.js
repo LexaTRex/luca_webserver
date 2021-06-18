@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 const { performance } = require('perf_hooks');
 const config = require('config');
 const router = require('express').Router();
@@ -246,12 +247,22 @@ router.post('/addDummyTraces', async (request, response) => {
 
 router.post('/deleteOldTestRedeems', async (request, response) => {
   const t0 = performance.now();
-  const maxAge = config.get('luca.testRedeems.maxAge');
+  const defaultMaxAge = config.get('luca.testRedeems.defaultMaxAge');
   const affectedRows = await database.TestRedeem.destroy({
     where: {
-      createdAt: {
-        [Op.lt]: moment().subtract(maxAge, 'hours'),
-      },
+      [Op.or]: [
+        {
+          expireAt: {
+            [Op.lt]: moment(),
+          },
+        },
+        {
+          expireAt: null,
+          createdAt: {
+            [Op.lt]: moment().subtract(defaultMaxAge, 'hours'),
+          },
+        },
+      ],
     },
   });
   response.send({ affectedRows, time: performance.now() - t0 });

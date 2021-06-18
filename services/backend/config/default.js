@@ -68,7 +68,8 @@ module.exports = {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
     testRedeems: {
-      maxAge: moment.duration(72, 'hours').as('hours'),
+      defaultMaxAge: moment.duration(72, 'hours').as('hours'),
+      maxAge: moment.duration(1, 'years').as('hours'),
     },
   },
   emails: {
