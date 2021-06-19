@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.2.3 (2021-06-19)
+* **health-department:** fix: disable SORMAS CSV export
+
 ### 1.2.2 (2021-06-18)
 * **health-department:** fix: fix trying to trim a non-string
 * **health-department:** chore: upgrade xlsx package
