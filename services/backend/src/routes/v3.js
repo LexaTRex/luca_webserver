@@ -17,7 +17,6 @@ const notificationsRouter = require('./v3/notifications');
 const healthDepartmentsRouter = require('./v3/healthDepartments');
 const userTransfersRouter = require('./v3/userTransfers');
 const locationTransfersRouter = require('./v3/locationTransfers');
-const locationTransferGroupsRouter = require('./v3/locationTransferGroups');
 const badgeRegistratorsRouter = require('./v3/badgeRegistrators');
 const tracingProcessesRouter = require('./v3/tracingProcesses');
 const supportedZipCodesRouter = require('./v3/supportedZipCodes');
@@ -145,13 +144,6 @@ router.use('/userTransfers', userTransfersRouter);
  *   description: Manage location transfers.
  */
 router.use('/locationTransfers', locationTransfersRouter);
-/**
- * @openapi
- * tags:
- *   name: LocationTransferGroups
- *   description: Manage location transfer groups.
- */
-router.use('/locationTransferGroups', locationTransferGroupsRouter);
 /**
  * @openapi
  * tags:

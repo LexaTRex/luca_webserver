@@ -1,3 +1,8 @@
+/**
+ * @overview Provides endpoints to venue operators to update their email, which they are required to provide
+ * @see https://www.luca-app.de/securityoverview/processes/venue_registration.html?highlight=email#process
+ */
+
 const router = require('express').Router();
 const status = require('http-status');
 const moment = require('moment');
@@ -31,7 +36,7 @@ router.patch(
   async (request, response) => {
     const operator = request.user;
 
-    const email = request.body.email.toLowerCase();
+    const { email, lang } = request.body;
 
     const existingUser = await database.Operator.findOne({
       where: { username: email },
@@ -47,7 +52,7 @@ router.patch(
       type: 'EmailChange',
     });
 
-    mailjet.updateEmail(email, `${operator.fullName}`, request.body.lang, {
+    mailjet.updateEmail(email, `${operator.fullName}`, lang, {
       firstName: operator.firstName,
       activationLink: `https://${config.get('hostname')}/activateEmail/${
         activationMail.uuid
@@ -93,7 +98,7 @@ router.get(
   async (request, response) => {
     const user = await database.Operator.findOne({
       where: {
-        email: request.params.email.toLowerCase(),
+        email: request.params.email,
       },
       paranoid: false, // allow soft-deleted operators to still log in
     });

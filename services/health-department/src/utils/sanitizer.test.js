@@ -1,14 +1,24 @@
 import { sanitizeObject, sanitizeForCSV } from './sanitizer';
 
-it('prepends a space to leading plus signs', () => {
+it('replaces leading plus signs with 00', () => {
   const data = { phone: '+1 555 672 1121' };
   expect(sanitizeObject(data).phone).toBe(`001 555 672 1121`);
 });
 
+it('leave the objet intact', () => {
+  const data = { fn: 'Philipp' };
+  const sanitized = sanitizeObject(data);
+  expect(data).toEqual(sanitized);
+});
+
 it('removes newline characters', () => {
-  const data = { newline: '"\n\n"=1+2";"', linefeed: 'l\ruca\r\napp.de' };
+  const data = { 'newline\n': '"\n\n"=1+2";"', linefeed: 'l\ruca\r\napp.de' };
   const sanitized = sanitizeObject(data);
   Object.values(sanitized).forEach(value => {
+    expect(value).not.toContain('\n');
+    expect(value).not.toContain('\r');
+  });
+  Object.keys(sanitized).forEach(value => {
     expect(value).not.toContain('\n');
     expect(value).not.toContain('\r');
   });
@@ -84,7 +94,17 @@ it('handles/removes formulas', () => {
   Object.keys(formulars).forEach(value => {
     expect(sanitizeForCSV(value)).toBe(formulars[value]);
   });
+
+  const testObject = Object.fromEntries(
+    Object.keys(formulars).map(key => [key, key])
+  );
+  const sanitizedObject = sanitizeObject(testObject);
+
+  Object.keys(formulars).forEach(testValue => {
+    expect(sanitizedObject[formulars[testValue]]).toBe(formulars[testValue]);
+  });
 });
+
 it('handles other input', () => {
   const undef = undefined;
   expect(sanitizeForCSV(undef)).toBe('');

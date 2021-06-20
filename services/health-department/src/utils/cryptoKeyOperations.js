@@ -36,7 +36,7 @@ export const DECRYPTION_FAILED = 'DECRYPTION_FAILED';
 let hdekp;
 let hdskp;
 
-export function isHdekpSet() {
+export function isHdekpInMemory() {
   return hdekp !== undefined;
 }
 
@@ -75,6 +75,14 @@ export const DECRYPT_DLIES_USING_HDEKP = (publicKey, data, iv, mac) => {
   return DECRYPT_DLIES(hdekp, publicKey, data, iv, mac);
 };
 
+/**
+ * Checks if the daily keypair needs to be refreshed and if so, generates it,
+ * signs it with the health department's private key and encrypts the new daily
+ * private key for all other health departments individually. Then uploads the
+ * new daily public key and the encrypted private keys to the backend.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/daily_key_rotation.html#daily-public-key-rotation
+ */
 export const rotateDailyKeypair = async () => {
   let dailyKey;
   try {
@@ -134,6 +142,14 @@ export const rotateDailyKeypair = async () => {
   return sendDailyKeyRotation(serverPayload);
 };
 
+/**
+ * Checks if there are any new health departments for which there exist no
+ * encrypted daily private keys yet. If so, encrypts all available signed
+ * daily private keys for the relevant health departments and uploads them
+ * to the backend.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/health_department_registration.html#re-encryption-of-the-daily-keypair
+ */
 export const rekeyDailyKeypairs = async () => {
   const dailyKeys = await getAllDailyKeys();
   const issuers = await getIssuers();
@@ -203,6 +219,12 @@ export const rekeyDailyKeypairs = async () => {
   await Promise.all(rekeyPromises);
 };
 
+/**
+ * Checks if the badge keypair needs to be refreshed and if so, generates it,
+ * signs it with the health department's private key and encrypts the new badge
+ * private key for all other health departments individually. Then uploads the
+ * new badge public key and the encrypted private keys to the backend.
+ */
 export const rotateBadgeKeypairs = async () => {
   let currentBadgeKey;
   try {
@@ -258,6 +280,12 @@ export const rotateBadgeKeypairs = async () => {
   return sendBadgeKeyRotation(serverPayload);
 };
 
+/**
+ * Checks if there are any new health departments for which there exist no
+ * encrypted badge private key yet. If so, encrypts the current signed
+ * badge private key for the relevant health departments and uploads them
+ * to the backend.
+ */
 export const rekeyBadgeKeypairs = async () => {
   const badgeKey = await getCurrentBadgeKey();
   const keyedList = await getBadgeKeyedList(badgeKey.keyId);

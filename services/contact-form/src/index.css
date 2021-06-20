@@ -14,3 +14,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+a:focus {
+  border-bottom: thin solid #57a8e9;
+}
+
+button[type='submit'] {
+  background-color: #4e6180;
+  padding: 0 40px;
+  border: none;
+}
+
+button[type='submit']:focus {
+  border-color: #57a8e9;
+}

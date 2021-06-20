@@ -1,11 +1,3 @@
-openapi: 3.0.0
-info:
-  title: Health department employees
-  version: '1.0'
-  contact: {}
-  description: See main doc.
-tags:
-  - name: HealthDepartmentEmployees
 paths:
   /healthDepartmentEmployees:
     get:
@@ -41,6 +33,8 @@ paths:
                       minLength: 1
                   required:
                     - uuid
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
       operationId: get-healthDepartmentEmployees
       description:
         "Returns all employees of the current user's [health
@@ -53,7 +47,7 @@ paths:
       operationId: post-healthDepartmentEmployees
       responses:
         '201':
-          description: Created
+          description: Success
           content:
             application/json:
               schema:
@@ -66,38 +60,11 @@ paths:
                 required:
                   - password
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      required:
-                        - validation
-                        - code
-                        - message
-                      properties:
-                        validation:
-                          type: string
-                          minLength: 1
-                        code:
-                          type: string
-                          minLength: 1
-                        path:
-                          type: array
-                          items:
-                            properties: {}
-                        message:
-                          type: string
-                          minLength: 1
-                required:
-                  - errors
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployeeAdmin'
+        '404':
+          description: Health Department not found
       description: Create a new employee in the current user's department.
       requestBody:
         content:
@@ -138,9 +105,13 @@ paths:
       operationId: patch-healthDepartmentEmployees-employeeId
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployeeAdmin'
         '404':
-          description: Not Found
+          description: Health Department Employee not found
       requestBody:
         content:
           application/json:
@@ -165,9 +136,13 @@ paths:
       operationId: delete-healthDepartmentEmployees-employeeId
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployeeAdmin'
         '404':
-          description: Not Found
+          description: Health Department Employee not found
       description:
         'Delete a [health
         department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)

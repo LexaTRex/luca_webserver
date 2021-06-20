@@ -1,5 +1,4 @@
 const config = require('config');
-const Sequelize = require('sequelize');
 
 module.exports = {
   production: {
@@ -26,15 +25,7 @@ module.exports = {
     },
     pool: {
       max: 20,
-      min: 0,
-    },
-    retry: {
-      max: 3,
-      match: [
-        Sequelize.ConnectionError,
-        Sequelize.ConnectionRefusedError,
-        Sequelize.ConnectionTimedOutError,
-      ],
+      min: 1,
     },
     seederStorage: 'sequelize',
     seederStorageTableName: '_Seeds',
@@ -48,15 +39,7 @@ module.exports = {
     host: config.get('db.host'),
     pool: {
       max: 5,
-      min: 0,
-    },
-    retry: {
-      max: 50,
-      match: [
-        Sequelize.ConnectionError,
-        Sequelize.ConnectionRefusedError,
-        Sequelize.ConnectionTimedOutError,
-      ],
+      min: 1,
     },
     seederStorage: 'sequelize',
     seederStorageTableName: '_Seeds',

@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/contact-form",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -12,7 +12,8 @@
     "build": "GENERATE_SOURCEMAP=false craco build",
     "lint": "yarn eslint && yarn stylelint",
     "eslint": "eslint src",
-    "stylelint": "stylelint 'src/**/*.js'"
+    "stylelint": "stylelint 'src/**/*.js'",
+    "update:locales": "./scripts/updateLocales.sh"
   },
   "dependencies": {
     "@craco/craco": "6.1.1",

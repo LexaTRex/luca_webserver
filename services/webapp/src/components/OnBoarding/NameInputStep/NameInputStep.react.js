@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { TextInput } from 'components/TextInput';
+import { MAX_NAME_LENGTH } from 'constants/valueLength';
+
 import {
   StyledForm,
   StyledFooter,
@@ -41,6 +43,10 @@ export function NameInputStep({ onSubmit }) {
               required: true,
               message: formatMessage({ id: 'Form.Validation.isRequired' }),
             },
+            {
+              max: MAX_NAME_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
           ]}
         />
         <TextInput
@@ -53,6 +59,10 @@ export function NameInputStep({ onSubmit }) {
             {
               required: true,
               message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_NAME_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
             },
           ]}
         />

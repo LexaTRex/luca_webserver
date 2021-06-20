@@ -128,7 +128,6 @@ export const Authentication = () => {
       id: '3',
       content: (
         <SetPasswordStep
-          currentPassword={password}
           setPassword={setPassword}
           back={previousStep}
           next={nextStep}

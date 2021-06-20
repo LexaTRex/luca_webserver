@@ -1,6 +1,7 @@
 const moment = require('moment');
 
 module.exports = {
+  e2e: true,
   debug: true,
   loglevel: 'info',
   hostname: 'localhost',

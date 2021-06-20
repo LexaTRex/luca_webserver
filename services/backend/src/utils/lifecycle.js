@@ -1,34 +1,53 @@
 const moment = require('moment');
 const logger = require('./logger');
-const redis = require('./redis');
+const { sleep } = require('./sleep');
 
 const state = {
   isShuttingDown: false,
 };
 
 const SHUTDOWN_DELAY = moment.duration(15, 'seconds');
+const shutdownHandlers = [];
 
-const shutdown = httpServer => {
-  httpServer.close(async error => {
-    if (error) {
-      logger.error(error);
-      process.exit(1);
-    }
-    await redis.quit();
-    logger.info('shutdown complete');
-    process.exit();
-  });
-};
-
-const sigtermHandler = httpServer => {
-  logger.info('SIGTERM received.');
+const gracefulShutdown = async () => {
   if (state.isShuttingDown) return;
-  logger.info(`shutting down in ${SHUTDOWN_DELAY.seconds()}s.`);
   state.isShuttingDown = true;
-  setTimeout(() => shutdown(httpServer), SHUTDOWN_DELAY.asMilliseconds());
+  logger.info(`shutting down in ${SHUTDOWN_DELAY.as('seconds')}s.`);
+
+  await sleep(SHUTDOWN_DELAY.as('milliseconds'));
+
+  logger.info('starting shutdown');
+  for (const shutdownHandler of shutdownHandlers) {
+    await shutdownHandler();
+  }
+  logger.info('shutdown complete');
+  process.exit(0);
 };
+
+const sigtermHandler = () => {
+  logger.info('SIGTERM received.');
+  gracefulShutdown();
+};
+
+const unhandledRejectionHandler = error => {
+  logger.error('unhandledRejection', error);
+  process.exit(1);
+};
+
+const uncaughtExceptionHandler = error => {
+  logger.error('uncaughtException', error);
+  process.exit(1);
+};
+
+const registerShutdownHandler = shutdownHandler => {
+  shutdownHandlers.push(shutdownHandler);
+};
+
+process.on('SIGTERM', sigtermHandler);
+process.on('uncaughtException', uncaughtExceptionHandler);
+process.on('unhandledRejection', unhandledRejectionHandler);
 
 module.exports = {
-  sigtermHandler,
+  registerShutdownHandler,
   state,
 };

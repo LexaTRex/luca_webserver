@@ -15,18 +15,27 @@ import {
   ENCRYPT_AES_CTR,
   ENCRYPT_DLIES,
 } from '@lucaapp/crypto';
+import {
+  MAX_NAME_LENGTH,
+  MAX_CITY_LENGTH,
+  MAX_PHONE_LENGTH,
+  MAX_EMAIL_LENGTH,
+  MAX_STREET_LENGTH,
+  MAX_POSTAL_CODE_LENGTH,
+  MAX_HOUSE_NUMBER_LENGTH,
+} from 'constants/valueLength';
 
 export const getUserIdPayload = (values, userDataSecret, userKeyPair) => {
   const creationData = {
     v: 3,
-    fn: values.firstName,
-    ln: values.lastName,
-    pn: values.phone,
-    e: values.email,
-    st: values.street,
-    hn: values.number,
-    pc: values.zip,
-    c: values.city,
+    fn: String(values.firstName).slice(0, MAX_NAME_LENGTH).trim(),
+    ln: String(values.lastName).slice(0, MAX_NAME_LENGTH).trim(),
+    pn: String(values.phone).slice(0, MAX_PHONE_LENGTH).trim(),
+    e: String(values.email).slice(0, MAX_EMAIL_LENGTH).trim(),
+    st: String(values.street).slice(0, MAX_STREET_LENGTH).trim(),
+    hn: String(values.number).slice(0, MAX_HOUSE_NUMBER_LENGTH).trim(),
+    pc: String(values.zip).slice(0, MAX_POSTAL_CODE_LENGTH).trim(),
+    c: String(values.city).slice(0, MAX_CITY_LENGTH).trim(),
   };
 
   // Convert object to UTF-8 encoded json bytestring

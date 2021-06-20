@@ -1,9 +1,3 @@
-openapi: 3.0.0
-info:
-  title: Users
-  description: API to manage users.
-  version: '1.0'
-  contact: {}
 components:
   schemas:
     User:
@@ -35,9 +29,9 @@ components:
 paths:
   '/users/{userId}':
     get:
+      summary: Get user details by ID
       tags:
         - Users
-      summary: Get user details by ID
       parameters:
         - in: path
           name: userId
@@ -54,9 +48,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: User not found
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsHour'
     patch:
-      tags:
-        - Users
       summary: update the user object by id
       parameters:
         - in: path
@@ -65,6 +63,19 @@ paths:
             type: string
             format: uuid
           required: true
+      tags:
+        - Users
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '403':
+          description: User with static QR Codes can´t be updated
+        '404':
+          description: User not found
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsHour'
       requestBody:
         required: true
         content:
@@ -72,8 +83,6 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdatableUser'
     delete:
-      tags:
-        - Users
       summary: mark the user object for deletion
       parameters:
         - in: path
@@ -82,6 +91,8 @@ paths:
             type: string
             format: uuid
           required: true
+      tags:
+        - Users
       requestBody:
         required: true
         content:
@@ -94,10 +105,14 @@ paths:
       responses:
         '204':
           description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '403':
           description: Invalid Signature
         '404':
           description: User not found
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsHour'
   /users:
     post:
       summary: Create or update user
@@ -113,6 +128,12 @@ paths:
                 properties:
                   userId:
                     type: string
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '403':
+          description: Invalid Signature
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsHour'
       operationId: get-users
       requestBody:
         content:

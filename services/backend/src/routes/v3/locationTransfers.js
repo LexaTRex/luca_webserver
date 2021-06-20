@@ -22,7 +22,13 @@ const { formatLocationName } = require('../../utils/format');
 
 const { createSchema, sendSchema } = require('./locationTransfers.schemas');
 
-// HD create transfer
+/**
+ * Create a transfer request for venues traced by an infected guest. Preceded
+ * by a user transfer of check-in history, this will check for venues an
+ * infected guest has checked-in to in order to determine potential contact persons
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_find_contacts.html#process
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
+ */
 router.post(
   '/',
   requireHealthDepartmentEmployee,
@@ -59,7 +65,7 @@ router.post(
         );
       }
 
-      const locationTransfers = await Promise.all(
+      await Promise.all(
         request.body.locations.map(async locationRequest => {
           const location = await database.Location.findByPk(
             locationRequest.locationId,
@@ -120,31 +126,6 @@ router.post(
         })
       );
 
-      const locationGroups = {};
-
-      await Promise.all(
-        locationTransfers
-          .filter(transfer => transfer)
-          .map(async ({ location, locationTransfer }) => {
-            if (!locationGroups[location.operator]) {
-              const group = database.LocationTransferGroup.create(
-                {
-                  tracingProcessId: tracingProcess.uuid,
-                },
-                { transaction }
-              );
-
-              locationGroups[location.operator] = {
-                group,
-                operator: location.Operator,
-              };
-            }
-            const group = await locationGroups[location.operator].group;
-            await group.addLocationTransfer(locationTransfer, { transaction });
-            locationGroups[location.operator].group = group;
-          })
-      );
-
       await transaction.commit();
 
       return response.send({ tracingProcessId: tracingProcess.uuid });
@@ -155,7 +136,9 @@ router.post(
   }
 );
 
-// get all transfers the logged in operator
+/**
+ * Get all location transfers the currently logged-in health department operator has created
+ */
 router.get('/', requireOperator, async (request, response) => {
   const operatorId = request.user.uuid;
 
@@ -304,7 +287,10 @@ const transferIdParametersSchema = z.object({
   transferId: z.string().uuid(),
 });
 
-// get a single transfer
+/**
+ * Get a single location transfer by ID, containing issuing health department,
+ * involved locations and associated traces
+ */
 router.get(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),
@@ -394,7 +380,13 @@ router.get(
   }
 );
 
-// HD request transfer
+/**
+ * Send an email to the venue of the given location transfer request. The venue
+ * has to specifically assist in the tracing process by removing the venue's
+ * layer of encryption of contact data references
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-contact-data-reference
+ */
 router.post(
   '/:transferId/contact',
   requireHealthDepartmentEmployee,
@@ -455,7 +447,11 @@ router.post(
   }
 );
 
-// HD get trasnferred traces
+/**
+ * Fetch transferred traces of a given location transfer after the request has been fulfilled by a venue, meaning
+ * the venue has provided encrypted contact data references without the venue's layer of encryption
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
+ */
 router.get(
   '/:transferId/traces',
   requireHealthDepartmentEmployee,
@@ -501,7 +497,13 @@ router.get(
   }
 );
 
-// transfer traces
+/**
+ * Upload trace data associated with the given transfer request. This is done by a venue fulfilling the location transfer
+ * request by a health department. The venue will remove its layer of encryption of the contact data references and upload
+ * the resulting data to the luca server. Health departments still need to decrypt the references using their private key.
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-contact-data-reference
+ */
 router.post(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),

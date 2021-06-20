@@ -28,7 +28,7 @@ export const DataRequests = () => {
   return (
     <Badge style={badgeStyle} count={getIncompletedTransfers(transfers).length}>
       <ExclamationOutlined
-        data-cy="createGroup"
+        data-cy="dataRequests"
         style={iconStyles}
         onClick={navigate}
       />

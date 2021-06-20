@@ -23,28 +23,24 @@ import {
   Step,
 } from 'components/Authentication/Authentication.styled';
 
-import { Criteria, CriteriaIcon, CriteriaText } from './SetPasswordStep.styled';
+import {
+  Criteria,
+  CriteriaIcon,
+  CriteriaText,
+  inputStyle,
+} from './SetPasswordStep.styled';
+import { useCriteria } from './SetPasswordStep.helper';
 
-const inputStyle = {
-  border: '1px solid #696969',
-  backgroundColor: 'transparent',
-};
-
-export const SetPasswordStep = ({
-  currentPassword,
-  setPassword,
-  next,
-  back,
-  navigation,
-}) => {
+export const SetPasswordStep = ({ setPassword, next, back, navigation }) => {
   const intl = useIntl();
-  const [criteriaCheck, setCriteriaCheck] = useState({
+  const defaultCriteria = {
     length: false,
     number: false,
     upperCase: false,
     lowerCase: false,
     specialChar: false,
-  });
+  };
+  const [criteriaCheck, setCriteriaCheck] = useState(defaultCriteria);
 
   const onFinish = values => {
     setPassword(values.password);
@@ -53,53 +49,20 @@ export const SetPasswordStep = ({
 
   const onChange = values => {
     const { password } = values;
-    if (!password) return;
-    setCriteriaCheck({
-      length: hasSufficientLength(password),
-      number: hasNumber(password),
-      upperCase: hasUpperCase(password),
-      lowerCase: hasLowerCase(password),
-      specialChar: hasSpecialCharacter(password),
-    });
+    if (password) {
+      setCriteriaCheck({
+        length: hasSufficientLength(password),
+        number: hasNumber(password),
+        upperCase: hasUpperCase(password),
+        lowerCase: hasLowerCase(password),
+        specialChar: hasSpecialCharacter(password),
+      });
+    } else {
+      setCriteriaCheck(defaultCriteria);
+    }
   };
 
-  const criterias = [
-    {
-      type: 'length',
-      intl: intl.formatMessage({
-        id: 'authentication.setPassword.criteria.length',
-      }),
-      ok: criteriaCheck.length,
-    },
-    {
-      type: 'number',
-      intl: intl.formatMessage({
-        id: 'authentication.setPassword.criteria.number',
-      }),
-      ok: criteriaCheck.number,
-    },
-    {
-      type: 'upperCase',
-      intl: intl.formatMessage({
-        id: 'authentication.setPassword.criteria.upperCase',
-      }),
-      ok: criteriaCheck.upperCase,
-    },
-    {
-      type: 'lowerCase',
-      intl: intl.formatMessage({
-        id: 'authentication.setPassword.criteria.lowerCase',
-      }),
-      ok: criteriaCheck.lowerCase,
-    },
-    {
-      type: 'specialChar',
-      intl: intl.formatMessage({
-        id: 'authentication.setPassword.criteria.specialChar',
-      }),
-      ok: criteriaCheck.specialChar,
-    },
-  ];
+  const criterion = useCriteria(criteriaCheck);
 
   return (
     <>
@@ -120,7 +83,7 @@ export const SetPasswordStep = ({
         })}
       </CardSubTitle>
       {!IS_MOBILE &&
-        criterias.map(criteria => (
+        criterion.map(criteria => (
           <Criteria
             key={criteria.type}
             style={criteria.ok ? { color: 'rgb(108, 132, 72)' } : {}}
@@ -131,11 +94,7 @@ export const SetPasswordStep = ({
             <CriteriaText>{criteria.intl}</CriteriaText>
           </Criteria>
         ))}
-      <Form
-        onFinish={onFinish}
-        initialValues={currentPassword ? { password: currentPassword } : {}}
-        onValuesChange={onChange}
-      >
+      <Form onFinish={onFinish} onValuesChange={onChange}>
         <Form.Item
           colon={false}
           name="password"
@@ -166,6 +125,7 @@ export const SetPasswordStep = ({
         >
           <Input.Password style={inputStyle} autoFocus />
         </Form.Item>
+
         <Form.Item
           colon={false}
           name="passwordConfirm"

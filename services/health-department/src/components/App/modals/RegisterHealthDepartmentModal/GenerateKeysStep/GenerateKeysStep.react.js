@@ -57,6 +57,7 @@ export const GenerateKeysStep = ({
       <DownloadRow>
         <FileProtectOutlined style={{ fontSize: 40, marginBottom: 24 }} />
         <Button
+          data-cy="downloadPrivateKey"
           onClick={onDownLoad}
           style={{
             padding: '0 40px',
@@ -77,6 +78,7 @@ export const GenerateKeysStep = ({
         }}
       >
         <Button
+          data-cy="next"
           onClick={proceed}
           disabled={!hasDownloaded}
           style={{

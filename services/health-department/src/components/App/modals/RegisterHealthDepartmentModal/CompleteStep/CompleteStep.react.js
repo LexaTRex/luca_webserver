@@ -22,6 +22,7 @@ export const CompleteStep = ({ closeModal }) => {
         }}
       >
         <Button
+          data-cy="finish"
           onClick={closeModal}
           style={{
             backgroundColor: '#4e6180',

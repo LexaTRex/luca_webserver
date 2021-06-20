@@ -21,7 +21,6 @@ import {
   SHARE_DATA_ROUTE,
   LICENSES_ROUTE,
   SHARE_ALL_DATA_ROUTE,
-  GROUP_SHARE_DATA_ROUTE,
 } from 'constants/routes';
 
 // i18n
@@ -40,7 +39,6 @@ import { Activation } from 'components/Activation';
 import { ActivateEmail } from 'components/ActivateEmail';
 import { ShareData } from 'components/ShareData';
 import { ErrorWrapper } from 'components/ErrorWrapper';
-import { GroupShareData } from 'components/GroupShareData';
 import { SmallDeviceWrapper } from 'components/SmallDeviceWrapper';
 
 // Misc
@@ -90,10 +88,6 @@ export const Main = () => {
                   <Route
                     path={REGISTER_BADGE_ROUTE}
                     render={() => <RegisterBadge requiresVerification />}
-                  />
-                  <Route
-                    path={GROUP_SHARE_DATA_ROUTE}
-                    component={GroupShareData}
                   />
                   <Route path={SHARE_ALL_DATA_ROUTE} component={ShareData} />
                   <Route path={SHARE_DATA_ROUTE} component={ShareData} />

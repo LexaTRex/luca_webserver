@@ -38,8 +38,6 @@ export const Header = ({ setSorting, sorting }) => {
       <Column flex="10%">
         {intl.formatMessage({ id: 'processTable.status' })}
       </Column>
-      <Column flex="10%" />
-      <Column flex="15%" />
     </TableHeader>
   );
 };

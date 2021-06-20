@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { LeftOutlined } from '@ant-design/icons';
 
 export const Navigation = styled.div`
   display: flex;
@@ -9,4 +10,9 @@ export const Navigation = styled.div`
   cursor: pointer;
   margin-top: 40px;
   margin-left: 42px;
+`;
+
+export const LeftOutlinedLuca = styled(LeftOutlined)`
+  margin-right: 14px;
+  font-size: 10px;
 `;

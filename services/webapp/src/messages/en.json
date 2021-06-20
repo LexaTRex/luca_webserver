@@ -157,5 +157,6 @@
     "Home.WebAppWarningModal.Headline": "Get the luca app",
     "Home.WebAppWarningModal.Description": "luca works best as an app on your smartphone. For example, you can easily store negative test results that makes it easier for you to access restaurants and other locations. Download the luca app now from your App or Play Store to get the most out of luca.",
     "Home.WebAppWarningModal.Checkbox": "Do not show again",
-    "Home.WebAppWarningModal.Submit": "Okay"
+    "Home.WebAppWarningModal.Submit": "Okay",
+    "Form.Validation.toLong": "Input is too long"
 }

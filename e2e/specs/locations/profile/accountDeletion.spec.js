@@ -1,6 +1,6 @@
 import {
   login,
-  basicLogin,
+  basicLocationLogin,
   requestAccountDeletion,
   undoAccountDeletion,
 } from '../helpers/functions';
@@ -28,7 +28,7 @@ describe('an active account', () => {
 
 describe('a deactivated account', () => {
   beforeEach(() => {
-    basicLogin();
+    basicLocationLogin();
     requestAccountDeletion();
   });
 

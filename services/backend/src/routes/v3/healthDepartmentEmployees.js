@@ -112,8 +112,7 @@ router.post(
     const initialPassword = generatePassword(8);
 
     await database.HealthDepartmentEmployee.create({
-      email: request.body.email.toLowerCase(),
-      username: request.body.email.toLowerCase(),
+      email: request.body.email,
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       phone: request.body.phone,

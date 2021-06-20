@@ -1,15 +1,11 @@
-const config = require('config');
 const moment = require('moment');
 const RateLimit = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis');
 const parsePhoneNumber = require('libphonenumber-js/max');
 const { SHA256 } = require('@lucaapp/crypto');
+const { client } = require('../utils/redis');
 
 const { isInternalIp, isRateLimitExemptIp } = require('../utils/ipChecks');
-
-const redisURL = `redis://${config.get('redis.hostname')}?password=${config.get(
-  'redis.password'
-)}`;
 
 const minuteDuration = moment.duration(1, 'minute');
 const hourDuration = moment.duration(1, 'hour');
@@ -35,17 +31,17 @@ const isFixedLinePhoneNumber = request => {
 };
 
 const minuteStore = new RedisStore({
-  redisURL,
+  client,
   expiry: minuteDuration.as('s'),
 });
 
 const hourStore = new RedisStore({
-  redisURL,
+  client,
   expiry: hourDuration.as('s'),
 });
 
 const dayStore = new RedisStore({
-  redisURL,
+  client,
   expiry: dayDuration.as('s'),
 });
 

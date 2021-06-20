@@ -159,27 +159,28 @@ Closure executeTestScriptForService(String script, String service) {
 }
 
 void e2eTest() {
-  node("docker") {
-    try {
-      updateSourceCode()
+  lock(label: 'docker-host', quantity: 1, variable: 'LOCKED_NODE') {
+    node(env.LOCKED_NODE) {
+      try {
+        updateSourceCode()
 
-      withCredentials([
-        string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
-        string(credentialsId: 'luca-google-maps-api-key', variable: 'REACT_APP_GOOGLE_MAPS_API_KEY'),
-      ]) {
-        sh("IMAGE_TAG=e2e docker-compose -f docker-compose.yml build --parallel")
-        lock('docker-host') {
+        withCredentials([
+          string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
+          string(credentialsId: 'luca-google-maps-api-key', variable: 'REACT_APP_GOOGLE_MAPS_API_KEY')
+        ]) {
+          sh("IMAGE_TAG=e2e docker-compose -f docker-compose.yml build --parallel")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml up -d database")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn migrate")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn seed")
-          sh("IMAGE_TAG=e2e_${UNIQUE_TAG} SKIP_SMS_VERIFICATION=true docker-compose -f docker-compose.yml up -d")
-          sh("docker run --rm --network=host --ipc=host --entrypoint='' -v `pwd`/e2e:/e2e -w /e2e cypress/included:6.2.0 /bin/bash -c 'npx wait-on https://127.0.0.1/api/v3/health -t 30000 && cypress run' ")
+          sh("IMAGE_TAG=e2e_${UNIQUE_TAG} SKIP_SMS_VERIFICATION=true E2E=true docker-compose -f docker-compose.yml up -d")
+          sh("docker run --rm --network=host --ipc=host --entrypoint='' -v `pwd`/e2e:/e2e -w /e2e cypress/included:7.3.0 /bin/bash -c 'npx wait-on https://127.0.0.1/api/v3/keys/daily/ -t 30000 && yarn install && yarn cache clean && cypress run' ")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down")
         }
+      } finally {
+        sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down")
+        archiveArtifacts(artifacts: 'e2e/cypress/screenshots/**/*', allowEmptyArchive: true)
+        cleanWs()
       }
-    } finally {
-      sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down")
-      cleanWs()
     }
   }
 }

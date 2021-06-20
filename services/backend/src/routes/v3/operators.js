@@ -38,7 +38,7 @@ router.post(
   async (request, response) => {
     const existingOperator = await database.Operator.findOne({
       where: {
-        username: request.body.email.toLowerCase(),
+        username: request.body.email,
       },
       paranoid: false,
     });
@@ -55,8 +55,8 @@ router.post(
         {
           firstName: request.body.firstName,
           lastName: request.body.lastName,
-          email: request.body.email.toLowerCase(),
-          username: request.body.email.toLowerCase(),
+          email: request.body.email,
+          username: request.body.email,
           password: request.body.password,
           salt: crypto.randomBytes(16).toString('base64'),
           privateKeySecret: crypto.randomBytes(32).toString('base64'),

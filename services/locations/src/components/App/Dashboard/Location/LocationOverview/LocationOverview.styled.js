@@ -37,10 +37,22 @@ export const InfoWrapper = styled.div`
 `;
 
 export const buttonStyles = {
-  backgroundColor: 'rgb(195, 206, 217)',
+  background: 'rgb(195, 206, 217)',
   color: 'rgba(0, 0, 0, 0.87)',
   fontFamily: 'Montserrat-Bold, sans-serif',
   fontSize: 14,
   fontWeight: 'bold',
   padding: '0 40px',
+};
+
+export const checkoutButton = {
+  background: 'rgb(195, 206, 217)',
+  fontFamily: 'Montserrat-Bold, sans-serif',
+  fontSize: 14,
+  fontWeight: 'bold',
+  padding: '0 40px',
+};
+
+export const disabledStyle = {
+  backgroundColor: '#dae0e7',
 };

@@ -12,7 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
     },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.CITEXT,
       allowNull: true,
     },
     type: {

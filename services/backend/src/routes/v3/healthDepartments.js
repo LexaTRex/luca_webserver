@@ -1,3 +1,8 @@
+/**
+ * @overview Provides endpoints allowing health departments to update their keys
+ * and the public to retrieve the respective public keys
+ * @see https://www.luca-app.de/securityoverview/properties/actors.html#term-Health-Department
+ */
 const router = require('express').Router();
 const status = require('http-status');
 
@@ -16,7 +21,11 @@ const {
   departmentIdParametersSchema,
 } = require('./healthDepartments.schemas');
 
-// HD get own public keys
+/**
+ * Get the public keys of the currently logged in health department
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDSKP
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDEKP
+ */
 router.get(
   '/keys',
   requireHealthDepartmentEmployee,
@@ -36,7 +45,11 @@ router.get(
   }
 );
 
-// HD set own public keys
+/**
+ * Set the public keys of currently logged-in health department
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDSKP
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDEKP
+ */
 router.post(
   '/keys',
   requireHealthDepartmentEmployee,
@@ -80,7 +93,11 @@ router.get(
   }
 );
 
-// get a single health department
+/**
+ * Get the public keys of a given health department, available publicly
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDSKP
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDEKP
+ */
 router.get(
   '/:departmentId',
   validateParametersSchema(departmentIdParametersSchema),

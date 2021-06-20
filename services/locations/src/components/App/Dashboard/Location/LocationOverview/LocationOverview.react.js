@@ -1,21 +1,23 @@
 import React from 'react';
+import moment from 'moment';
 import { useIntl } from 'react-intl';
-import { useQueryClient } from 'react-query';
-import { Button, Popconfirm, notification } from 'antd';
+import { useQuery, useQueryClient } from 'react-query';
+import { Button, notification, Popconfirm } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import { forceCheckoutUsers } from 'network/api';
+import { forceCheckoutUsers, getCurrentCount } from 'network/api';
 
 import { GuestList } from './GuestList';
 import { TableAllocation } from './TableAllocation';
 import { Count } from './Count';
 
 import {
-  Info,
+  checkoutButton,
+  disabledStyle,
   GuestHeader,
-  InfoWrapper,
-  buttonStyles,
   GuestWrapper,
+  Info,
+  InfoWrapper,
   LinkWrapper,
 } from './LocationOverview.styled';
 import { LocationCard } from '../LocationCard';
@@ -23,6 +25,29 @@ import { LocationCard } from '../LocationCard';
 export const LocationOverview = ({ location }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
+
+  const {
+    data: currentCount,
+    isLoading: isCurrentLoading,
+    isError: isCurrentError,
+  } = useQuery(
+    `current/${location.scannerId}`,
+    () =>
+      getCurrentCount(location.scannerAccessId).then(response =>
+        response.json()
+      ),
+    {
+      refetchInterval: moment.duration('5', 'minutes').as('ms'),
+      onError: () => {
+        if (isCurrentError) {
+          const message = intl.formatMessage({ id: 'location.count.error' });
+          notification.error({ message });
+        }
+      },
+    }
+  );
+
+  const checkoutDisabled = !isCurrentLoading && currentCount === 0;
 
   const onCheckout = () => {
     forceCheckoutUsers(location.uuid)
@@ -66,6 +91,7 @@ export const LocationOverview = ({ location }) => {
             <Popconfirm
               placement="topLeft"
               onConfirm={onCheckout}
+              disabled={checkoutDisabled}
               title={intl.formatMessage({
                 id: 'location.checkout.confirmText',
               })}
@@ -77,7 +103,14 @@ export const LocationOverview = ({ location }) => {
               })}
               icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             >
-              <Button data-cy="checkoutGuest" style={buttonStyles}>
+              <Button
+                data-cy="checkoutGuest"
+                style={{
+                  ...checkoutButton,
+                  ...(checkoutDisabled && disabledStyle),
+                }}
+                disabled={checkoutDisabled}
+              >
                 {intl.formatMessage({ id: 'group.view.overview.checkout' })}
               </Button>
             </Popconfirm>

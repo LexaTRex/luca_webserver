@@ -1,22 +1,5 @@
-openapi: 3.0.0
-info:
-  title: additionalData
-  version: '1.0'
-  description: Partial OpenAPI doc
-  contact: {}
-tags:
-  - name: Locations
 paths:
-  '/locations/additionalDataSchema/{id}':
-    get:
-      summary: Get additional data
-      tags: [Locations]
-      operationId: get-locations-additionalDataSchema-id
-      parameters: []
-      description: ''
-      responses:
-        '200':
-          description: OK
+  '/locations/additionalDataSchema/{locationId}':
     parameters:
       - schema:
           type: string
@@ -24,34 +7,124 @@ paths:
         name: id
         in: path
         required: true
-        description:
-          'locationId (GET, POST) or additionalDataId (PATCH, DELETE)'
+    get:
+      summary: Get additional data schemas
+      tags:
+        - Locations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                    key:
+                      type: string
+                    label:
+                      type: string
+                    isRequired:
+                      type: boolean
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+      operationId: get-locations-additionalDataSchema-locationId
+      description: Get additional data schemas for the location.
     post:
-      summary: Set additional data
-      tags: [Locations]
-      operationId: post-locations-additionalDataSchema-id
+      summary: Create new
+      description: Create new additional data schema.
+      operationId: post-locations-additionalDataSchema-locationId
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  label:
+                    type: string
+                  uuid:
+                    type: string
+                  isRequired:
+                    type: boolean
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
         '403':
-          description: The account has been deactivated
+        description: The account has been deactivated
+        '404':
+          description: Location not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                label:
+                  type: string
+                isRequired:
+                  type: string
+      tags:
+        - Locations
+  '/locations/additionalDataSchema/{additionalDataId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: additionalDataId
+        in: path
+        required: true
     patch:
-      summary: Change additional data
-      tags: [Locations]
-      operationId: patch-locations-additionalDataSchema-id
+      summary: Change schema
+      operationId: patch-locations-additionalDataSchema-additionalDataId
       responses:
         '200':
           description: OK
-        '403':
-          description: The account has been deactivated
-    delete:
-      summary: Delete additional data
-      tags: [Locations]
-      operationId: delete-locations-additionalDataSchema-id
-      responses:
-        '200':
-          description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
         '403':
           description: The account has been deactivated
         '404':
-          description: Not Found
+          description: Additional Data not found
+      tags:
+        - Locations
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                label:
+                  type: string
+                isRequired:
+                  type: string
+    delete:
+      summary: Delete schema
+      operationId: delete-locations-additionalDataSchema-additionalDataId
+      tags:
+        - Locations
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
+        '403':
+          description: The account has been deactivated
+        '404':
+          description: Additional Data not found

@@ -15,6 +15,18 @@ const database = new Sequelize({
   logging: (message, time) => logger.debug({ time, message }),
   logQueryParameters: false,
   benchmark: true,
+  retry: {
+    name: 'database',
+    max: 60 * 2,
+    backoffBase: 500,
+    backoffExponent: 1,
+    report: message => logger.warn(message),
+    match: [
+      Sequelize.ConnectionError,
+      Sequelize.ConnectionRefusedError,
+      Sequelize.ConnectionTimedOutError,
+    ],
+  },
 });
 
 /* eslint-disable-next-line security/detect-non-literal-fs-filename */

@@ -19,6 +19,14 @@ const E2E_GROUP_ID_1 = 'c951f526-f792-498b-838f-7d1312a792a1';
 const E2E_GROUPNAME_2 = 'Nexenio_2 e2e';
 const E2E_GROUP_ID_2 = 'c951f526-f792-498b-838f-7d1312a792a2';
 
+// workflow operator
+const WORKFLOW_OPERATOR_ID = '9b26e1ba-906a-11eb-a8b3-0242ac130003';
+const WORKFLOW_OPERATOR_FIRSTNAME = 'Simon';
+const WORKFLOW_OPERATOR_LASTNAME = 'Tester';
+const WORKFLOW_OPERATOR_PASSWORD = 'workflowTesting!';
+const WORKFLOW_OPERATOR_SALT = 'r+lFYGwKucGJzu4umk7m1w==';
+const WORKFLOW_OPERATOR_EMAIL = 'complete_workflow@nexenio.com';
+
 const operators = [
   {
     uuid: E2E_OPERATOR_ID,
@@ -33,6 +41,21 @@ const operators = [
     password: crypto.scryptSync(E2E_PASSWORD, E2E_SALT, 64).toString('base64'),
     salt: E2E_SALT,
     avvAccepted: true,
+  },
+  {
+    uuid: WORKFLOW_OPERATOR_ID,
+    firstName: WORKFLOW_OPERATOR_FIRSTNAME,
+    lastName: WORKFLOW_OPERATOR_LASTNAME,
+    username: WORKFLOW_OPERATOR_EMAIL,
+    email: WORKFLOW_OPERATOR_EMAIL,
+    supportCode: generateSupportCode(),
+    activated: true,
+    avvAccepted: true,
+    privateKeySecret: crypto.randomBytes(32).toString('base64'),
+    password: crypto
+      .scryptSync(WORKFLOW_OPERATOR_PASSWORD, WORKFLOW_OPERATOR_SALT, 64)
+      .toString('base64'),
+    salt: WORKFLOW_OPERATOR_SALT,
   },
 ];
 

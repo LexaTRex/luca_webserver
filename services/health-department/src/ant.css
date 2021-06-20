@@ -360,3 +360,19 @@ input:-webkit-autofill:active {
   color: black !important;
   font-weight: 700;
 }
+
+#processDetailsHistoryTable {
+  margin: 40px -16px 0 -16px;
+}
+
+.ant-table-thead > tr > th {
+  background-color: white;
+  font-family: Montserrat-Bold, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 2px solid black;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid lightgray;
+}

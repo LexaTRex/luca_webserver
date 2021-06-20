@@ -14,6 +14,13 @@ import { storeHealthDepartmentPrivateKeys } from 'utils/cryptoKeyOperations';
 import { GenerateKeysStep } from './GenerateKeysStep';
 import { CompleteStep } from './CompleteStep';
 
+/**
+ * Modal for initial registration of a health department. Generates the
+ * encryption and signature keypairs and uploads the public keys to the
+ * backend.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/health_department_registration.html#process
+ */
 export const RegisterHealthDepartmentModal = ({ onFinish }) => {
   const intl = useIntl();
   const [, closeModal] = useModal();

@@ -2,6 +2,7 @@ paths:
   /healthDepartments/keys:
     get:
       summary: Retrieve keys
+      description: 'Get the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)''s public keys.'
       tags:
         - HealthDepartments
       responses:
@@ -18,16 +19,21 @@ paths:
                   publicHDSKP:
                     type: string
                     nullable: true
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '404':
           description: Department not found
-      description: 'Get the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)''s public keys.'
     post:
       summary: Post key pair
       tags:
         - HealthDepartments
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '403':
           description: 'Forbidden, e.g., when updating before expiration.'
         '404':
@@ -72,7 +78,14 @@ paths:
   '/healthDepartments/{departmentId}':
     get:
       summary: Get department info by ID
+<<<<<<< HEAD
+      description:
+        'Get [health
+        department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)
+        info by its UUID.'
+=======
       description: 'Get [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department) info by its UUID.'
+>>>>>>> master
       tags:
         - HealthDepartments
       responses:
@@ -93,6 +106,13 @@ paths:
                   publicHDSKP:
                     type: string
                     nullable: true
+<<<<<<< HEAD
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Department not found
+=======
+>>>>>>> master
     parameters:
       - schema:
           type: string
@@ -116,3 +136,10 @@ paths:
                 properties:
                   privateKeySecret:
                     type: string
+<<<<<<< HEAD
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        '404':
+          description: Department not found
+=======
+>>>>>>> master

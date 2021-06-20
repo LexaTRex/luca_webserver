@@ -1,15 +1,9 @@
-openapi: 3.0.0
-info:
-  title: Forms
-  version: '1.0'
-  contact: {}
-  description: See main doc.
-tags:
-  - name: Forms
 paths:
   '/forms/{formId}':
     get:
       summary: Get form content
+      tags:
+        - Forms
       responses:
         '200':
           description: OK
@@ -46,10 +40,14 @@ paths:
                   - scannerId
                   - locationId
                   - publicKey
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Location not found
+        '410':
+          description: Locations operator already deleted
       operationId: get-forms-formid
       description: Get form content.
-      tags:
-        - Forms
     parameters:
       - schema:
           type: string

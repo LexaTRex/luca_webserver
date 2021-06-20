@@ -2,6 +2,8 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Input, Button, Form, notification } from 'antd';
 
+import { MAX_NAME_LENGTH } from 'constants/valueLength';
+
 import {
   ContentTitle,
   ContentWrapper,
@@ -38,6 +40,12 @@ export const NameInfo = ({ title, next, form, setValues }) => {
               id: 'error.firstName',
             }),
           },
+          {
+            max: MAX_NAME_LENGTH,
+            message: intl.formatMessage({
+              id: 'error.length',
+            }),
+          },
         ]}
         label={intl.formatMessage({
           id: 'generic.firstName',
@@ -52,6 +60,12 @@ export const NameInfo = ({ title, next, form, setValues }) => {
             required: true,
             message: intl.formatMessage({
               id: 'error.lastName',
+            }),
+          },
+          {
+            max: MAX_NAME_LENGTH,
+            message: intl.formatMessage({
+              id: 'error.length',
             }),
           },
         ]}

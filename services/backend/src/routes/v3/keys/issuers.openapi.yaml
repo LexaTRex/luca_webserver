@@ -25,6 +25,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Issuer'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Health Department not found
     parameters:
       - schema:
           type: string

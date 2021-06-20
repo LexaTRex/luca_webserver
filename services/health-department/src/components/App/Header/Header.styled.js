@@ -12,6 +12,9 @@ export const SubTitle = styled.div`
   align-items: flex-end;
   margin-left: 24px;
   margin-bottom: -4px;
+  font-family: Montserrat-SemiBold, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
 `;
 
 export const Title = styled.div`

@@ -5,9 +5,18 @@ import { Input, Button, Form, notification } from 'antd';
 import { requestTan } from 'network/api';
 
 import {
-  ContentWrapper,
-  ContentTitle,
+  invalidPhone,
+  requiresPhone,
+  getPhoneRules,
+  getRequiredRule,
+  getMaxLengthRule,
+} from 'utils/validatorRules';
+import { MAX_EMAIL_LENGTH, MAX_PHONE_LENGTH } from 'constants/valueLength';
+
+import {
   ButtonRow,
+  ContentTitle,
+  ContentWrapper,
 } from '../RegisterForm.styled';
 
 export const ContactInfo = ({
@@ -58,12 +67,9 @@ export const ContactInfo = ({
           <Form.Item
             style={{ flexBasis: '60%' }}
             rules={[
-              {
-                required: true,
-                message: intl.formatMessage({
-                  id: 'error.phone',
-                }),
-              },
+              getRequiredRule(intl, requiresPhone),
+              getPhoneRules(intl, invalidPhone),
+              getMaxLengthRule(intl, MAX_PHONE_LENGTH),
             ]}
             label={intl.formatMessage({
               id: 'registerBadge.phone',
@@ -78,12 +84,9 @@ export const ContactInfo = ({
     return (
       <Form.Item
         rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.phone',
-            }),
-          },
+          getRequiredRule(intl, requiresPhone),
+          getPhoneRules(intl, invalidPhone),
+          getMaxLengthRule(intl, MAX_PHONE_LENGTH),
         ]}
         label={intl.formatMessage({
           id: 'registerBadge.phone',
@@ -107,6 +110,7 @@ export const ContactInfo = ({
               id: 'error.email',
             }),
           },
+          getMaxLengthRule(intl, MAX_EMAIL_LENGTH),
         ]}
         label={intl.formatMessage({
           id: 'registerBadge.email',

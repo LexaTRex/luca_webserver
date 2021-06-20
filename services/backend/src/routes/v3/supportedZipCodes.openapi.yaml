@@ -1,9 +1,3 @@
-openapi: 3.0.0
-info:
-  title: SupportedZipCodes
-  description: SupportedZipCodes
-  version: '1.0'
-  contact: {}
 paths:
   /supportedZipCodes:
     get:
@@ -37,9 +31,9 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
+          description: Zip Code not found
       operationId: get-supportedZipCodes-zipCode
       description: Check if ZIP code is supported.
-tags:
-  - name: SupportedZipCodes

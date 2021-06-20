@@ -10,24 +10,27 @@ import {
 } from './functions.helper';
 
 export const login = route => {
-  basicLogin();
+  basicLocationLogin();
   cy.visit(route ? route : APP_ROUTE);
 };
 
-export const basicLogin = route => {
+export const basicLocationLogin = (
+  username = E2E_EMAIL,
+  password = E2E_PASSWORD
+) => {
   cy.request({
     method: 'POST',
     url: 'api/v3/auth/login',
     body: {
-      username: E2E_EMAIL,
-      password: E2E_PASSWORD,
+      username,
+      password,
     },
     headers: {
       host: 'localhost',
       origin: 'https://localhost',
     },
   });
-  cy.visit(route ? route : APP_ROUTE);
+  cy.visit(APP_ROUTE);
   cy.window().then(window => {
     window.sessionStorage.setItem('PRIVATE_KEY_MODAL_SEEN', 'true');
   });
@@ -66,18 +69,16 @@ export const resetGroupName = () => {
   });
 };
 
-export const createGroup = () => {
-  cy.request('POST', 'api/v3/locationGroups/', createGroupPayload).then(
-    async response => {
-      cy.request('GET', `api/v3/locationGroups/${response.body.groupId}`).then(
-        response => {
-          cy.visit(
-            `${APP_ROUTE}/${response.body.groupId}/location/${response.body.locations[0].uuid}`
-          );
-        }
-      );
-    }
-  );
+export const createGroup = (group = createGroupPayload) => {
+  cy.request('POST', 'api/v3/locationGroups/', group).then(async response => {
+    cy.request('GET', `api/v3/locationGroups/${response.body.groupId}`).then(
+      response => {
+        cy.visit(
+          `${APP_ROUTE}/${response.body.groupId}/location/${response.body.locations[0].uuid}`
+        );
+      }
+    );
+  });
 };
 
 export const createLocation = (groupId, locationName) => {
@@ -106,4 +107,22 @@ export const requestAccountDeletion = () => {
 
 export const undoAccountDeletion = () => {
   return cy.request('POST', 'api/v3/operators/restore');
+};
+
+export const uploadLocationPrivateKeyFile = () => {
+  cy.readFile('./downloads/luca_locations_Simon_Tester_privateKey.luca').then(
+    fileContent => {
+      cy.get('input[type=file]').attachFile({
+        fileContent,
+        mimeType: 'text/plain',
+        fileName: 'luca_locations_Simon_Tester_privateKey.luca',
+      });
+    }
+  );
+};
+export const downloadLocationPrivateKeyFile = () => {
+  cy.getByCy('downloadPrivateKey', { timeout: 8000 }).click();
+  cy.getByCy('checkPrivateKeyIsDownloaded').click();
+  cy.getByCy('finish').should('exist');
+  cy.getByCy('finish').click();
 };

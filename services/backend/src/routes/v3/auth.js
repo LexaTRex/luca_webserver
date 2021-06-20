@@ -20,7 +20,7 @@ router.post(
   validateSchema(authSchema),
   (request, response) =>
     passport.authenticate('local-operator', {}, (error, user) => {
-      if (error) {
+      if (error || !user) {
         if (error.errorType === 'UNACTIVATED') {
           return response.sendStatus(status.LOCKED);
         }
@@ -55,7 +55,6 @@ router.get(
   (request, response) => {
     return response.send({
       employeeId: request.user.uuid,
-      username: request.user.username,
       firstName: request.user.firstName,
       lastName: request.user.lastName,
       email: request.user.email,

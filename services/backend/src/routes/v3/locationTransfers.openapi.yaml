@@ -1,11 +1,3 @@
-openapi: 3.0.0
-info:
-  title: locationTransfers.openapi
-  version: '1.0'
-  contact: {}
-  description: Partial OpenAPI doc
-tags:
-  - name: LocationTransfers
 paths:
   /locationTransfers:
     post:
@@ -16,6 +8,12 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        '404':
+          description: User Transfer not found
       requestBody:
         content:
           application/json:
@@ -111,6 +109,8 @@ paths:
                     - time
                     - isCompleted
                     - createdAt
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
   '/locationTransfers/{transferId}':
     parameters:
       - schema:
@@ -214,18 +214,24 @@ paths:
                   - location
                   - time
                   - traces
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
+          description: Transfer or Department not found
         '410':
-          description: Gone
+          description: Transfer already completed
       operationId: get-locationTransfers-transferId
       description: Get a specific transfer. Contains more details.
     post:
       summary: Create a location transfer
+      tags:
+        - LocationTransfers
       operationId: post-locationTransfers-transferId
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
       requestBody:
         content:
           application/json:
@@ -324,6 +330,12 @@ paths:
                         additionalData: {}
                 required:
                   - traces
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        '404':
+          description: Transfer not found
       operationId: get-locationTransfers-transferId-traces
       description:
         Get traces of a location transfer. Only accessible by health department
@@ -340,11 +352,15 @@ paths:
       operationId: post-locationTransfers-transferId-contact
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '404':
-          description: Not Found
+          description: Transfer not found
         '410':
-          description: Gone
+          description: Transfer already completed
       tags:
         - LocationTransfers
       parameters: []
@@ -352,11 +368,10 @@ paths:
   '/locationTransfers/uncompleted':
     get:
       summary: Get non-completed transfers for this operator's locations
-      description:
-        Get non-completed transfers for this operator's locations
+      description: Get non-completed transfers for this operator's locations
       tags: [LocationTransfers]
       responses:
         '200':
           description: OK
-components:
-  schemas: {}
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'

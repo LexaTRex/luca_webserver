@@ -57,6 +57,7 @@ export const GroupSearchModal = () => {
           ]}
         >
           <Input
+            data-cy="groupNameInput"
             placeholder={intl.formatMessage({
               id: 'groupSearch.form.group.placeholder',
             })}
@@ -73,6 +74,7 @@ export const GroupSearchModal = () => {
         </Form.Item>
         <Form.Item>
           <Button
+            data-cy="startGroupSearch"
             htmlType="submit"
             style={{
               color: '#000000',
@@ -98,6 +100,7 @@ export const GroupSearchModal = () => {
                 </EntryInfo>
                 <Button
                   style={{ padding: '0 40px' }}
+                  data-cy={`group_${entry.name}`}
                   onClick={() => setRequestData(entry)}
                 >
                   {intl.formatMessage({ id: 'groupSearch.form.request' })}

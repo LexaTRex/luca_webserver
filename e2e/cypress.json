@@ -4,5 +4,6 @@
   "testFiles": "**/*.spec.js",
   "integrationFolder": "./specs",
   "video": false,
-  "supportFile": "./support"
+  "supportFile": "./support",
+  "downloadsFolder": "./downloads"
 }

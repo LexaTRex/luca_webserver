@@ -5,6 +5,16 @@ import { Form, Input, Button, notification } from 'antd';
 import { updateGroup } from 'network/api';
 
 import {
+  getRequiredRule,
+  getPhoneRules,
+  requiresPhone,
+  invalidPhone,
+  requiresGroupName,
+} from 'utils/validatorRules';
+
+import { PHONE_NUMBER } from 'constants/placeholder';
+
+import {
   buttonStyles,
   Overview,
   Heading,
@@ -77,14 +87,7 @@ export const SettingsOverview = ({ group, refetch }) => {
           label={intl.formatMessage({
             id: 'settings.group.name',
           })}
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.groupName',
-              }),
-            },
-          ]}
+          rules={[getRequiredRule(intl, requiresGroupName)]}
         >
           <Input />
         </Form.Item>
@@ -94,8 +97,12 @@ export const SettingsOverview = ({ group, refetch }) => {
             id: 'settings.location.phone',
           })}
           name="phone"
+          rules={[
+            getRequiredRule(intl, requiresPhone),
+            getPhoneRules(intl, invalidPhone),
+          ]}
         >
-          <Input />
+          <Input placeholder={PHONE_NUMBER} />
         </Form.Item>
       </Form>
       <Address>

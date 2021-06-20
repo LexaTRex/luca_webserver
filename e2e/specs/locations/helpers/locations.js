@@ -27,5 +27,5 @@ export const BASE_TYPE = 'base';
 export const BUILDING_TYPE = 'building';
 export const RESTAURANT_TYPE = 'restaurant';
 
-export const TEST_NUMBER = '0176 123#####';
+export const TEST_NUMBER = '0176 1111 1111';
 export const TEST_LOCATION_NAME = 'Test_Restaurant';

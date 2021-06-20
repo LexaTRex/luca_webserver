@@ -4,6 +4,7 @@ import { Button } from 'antd';
 
 import { useModal } from 'components/hooks/useModal';
 import { GroupSearchModal } from 'components/App/modals/GroupSearchModal';
+import { buttonStyle } from '../Tracking.styled';
 
 export const ManualSearchButton = () => {
   const intl = useIntl();
@@ -21,7 +22,8 @@ export const ManualSearchButton = () => {
 
   return (
     <Button
-      style={{ padding: '0 40px', marginRight: 24 }}
+      data-cy="searchGroup"
+      style={{ ...buttonStyle, marginRight: 24 }}
       onClick={searchLocations}
     >
       {intl.formatMessage({ id: 'manualSearch.button' })}

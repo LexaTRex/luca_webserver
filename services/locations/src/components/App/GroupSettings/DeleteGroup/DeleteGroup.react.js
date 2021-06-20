@@ -23,13 +23,13 @@ export const DeleteGroup = ({ group }) => {
 
   const onDelete = () => {
     deleteGroup(group.groupId)
-      .then(() => {
+      .then(async () => {
         notification.success({
           message: intl.formatMessage({
             id: 'notification.deleteGroup.success',
           }),
         });
-        queryClient.invalidateQueries('groups');
+        await queryClient.invalidateQueries('groups');
         history.push(BASE_GROUP_ROUTE);
       })
       .catch(() => {

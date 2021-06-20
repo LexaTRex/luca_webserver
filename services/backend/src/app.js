@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const helmet = require('helmet');
 const expressWinston = require('express-winston');
+const database = require('./database');
 const logger = require('./utils/logger');
 
 const error = require('./middlewares/error');
@@ -31,7 +32,7 @@ const getApp = () => {
   return app;
 };
 
-const configureApp = database => {
+const configureApp = () => {
   // Passport Strategies
   passport.serializeUser(passportSession.serializeUser);
   passport.deserializeUser(passportSession.deserializeUser);

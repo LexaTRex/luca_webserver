@@ -1,21 +1,15 @@
-openapi: 3.0.0
-info:
-  title: UserTransfers
-  description: API to manage UserTransfers.
-  version: '1.0'
-  contact: {}
-tags:
-  - name: UserTransfers
 paths:
   /userTransfers:
     parameters: []
     post:
       summary: Create user transfer
-      description: 'Create [guest transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object).'
+      description:
+        'Create [guest
+        transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object).'
       operationId: post-userTransfers
       responses:
         '201':
-          description: Created
+          description: Success
           content:
             application/json:
               schema:
@@ -23,6 +17,10 @@ paths:
                 properties:
                   tan:
                     type: string
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsHour'
       requestBody:
         content:
           application/json:
@@ -85,8 +83,17 @@ paths:
                   - mac
                   - publicKey
                   - keyId
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        '404':
+          description: User transfer not found with provided TAN
       operationId: get-userTransfers-tan-tan
-      description: 'Get a [guest transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object) by TAN (any health department).'
+      description:
+        'Get a [guest
+        transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object)
+        by TAN (any health department).'
   '/userTransfers/{userTransferId}':
     parameters:
       - schema:
@@ -131,7 +138,14 @@ paths:
                   - mac
                   - publicKey
                   - keyId
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '404':
-          description: Not Found
+          description: User transfer not Found
       operationId: get-userTransfers-userTransferId
-      description: 'Get a [guest transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object) by ID, if it''s managed by the current user''s health department.'
+      description:
+        "Get a [guest
+        transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object)
+        by ID, if it's managed by the current user's health department."

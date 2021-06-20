@@ -83,6 +83,13 @@ export const getProcesses = () => {
   });
 };
 
+export const getProcess = processId => {
+  return fetch(`${API_PATH}/v3/tracingProcesses/${processId}`, {
+    method: 'GET',
+    headers,
+  }).then(response => response.json());
+};
+
 export const getEncryptedUserContactData = userId => {
   return fetch(`${API_PATH}/v3/users/${userId}`, {
     method: 'GET',

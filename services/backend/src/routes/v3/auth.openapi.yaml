@@ -1,11 +1,3 @@
-openapi: 3.0.0
-info:
-  title: Auth
-  version: '1.0'
-  contact: {}
-  description: See main doc.
-tags:
-  - name: Auth
 paths:
   /auth/login:
     post:
@@ -34,7 +26,7 @@ paths:
                 - password
       responses:
         '200':
-          description: Success
+          description: OK
           content:
             application/json:
               schema:
@@ -49,10 +41,14 @@ paths:
               schema:
                 type: string
               description: connect.sid
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '403':
-          description: Unauthorized
+          description: Username and Password combination does not match
         '423':
           description: The account has not been activated.
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsMinute'
   /auth/healthDepartmentEmployee/login:
     post:
       tags:
@@ -83,8 +79,12 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '401':
-          description: Unauthorized
+          description: Username and Password combination does not match
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsMinute'
     parameters: []
   /auth/logout:
     post:
@@ -158,6 +158,8 @@ paths:
                     lastName: Labadie
                     publicKey: BIFmPvOhr2shd2FKFrmiZcFIF3W8aWRa3xRAV1xUpP5HrR1VvYG/SjFM1A6YZyyNlmlKEwVd+/mZwmUlk7RU+i4=
                     email: luca@nexenio.com
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
   /auth/healthDepartmentEmployee/me:
     get:
       summary: Get the current user (health department employee)
@@ -175,9 +177,6 @@ paths:
                 type: object
                 properties:
                   employeeId:
-                    type: string
-                    minLength: 1
-                  username:
                     type: string
                     minLength: 1
                   firstName:
@@ -198,7 +197,6 @@ paths:
                     type: integer
                 required:
                   - employeeId
-                  - username
                   - firstName
                   - lastName
                   - email
@@ -208,9 +206,10 @@ paths:
                 Health department employee:
                   value:
                     employeeId: f7ee6624-1b19-45c4-ad14-dd8382787a09
-                    username: luca@nexenio.com
                     firstName: Felix
                     lastName: McCullough
                     email: luca@nexenio.com
                     departmentId: b764123d-7f3e-44d4-a64f-630ab0f9391d
                     isAdmin: true
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'

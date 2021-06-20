@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Button / Back / Black</title>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <polyline id="Path-4" stroke="#000000" stroke-width="2" stroke-linejoin="round" transform="translate(5.000000, 12.000000) rotate(-90.000000) translate(-5.000000, -12.000000) " points="-3 16 5 8 13 16"></polyline>
+        <line x1="2" y1="12" x2="23" y2="12" id="Path-5" stroke="#000000" stroke-width="2"></line>
+    </g>
+</svg>

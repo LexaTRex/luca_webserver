@@ -106,6 +106,7 @@ export const IncompletedDataRequests = ({ tracingProcesses }) => {
           <ButtonWrapper>
             <Button
               style={buttonStyles}
+              data-cy="completeDataTransfer"
               onClick={() => openShareDataView(tracingProcess.tracingProcessId)}
             >
               {intl.formatMessage({

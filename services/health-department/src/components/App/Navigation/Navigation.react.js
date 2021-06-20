@@ -29,12 +29,15 @@ export const Navigation = () => {
     dispatch(push(`${element.key}${window.location.search}`));
   };
 
+  const isTrackingRelated = route => route.includes(TRACKING_ROUTE);
+
   const viewOptions = [
     {
       value: TRACKING_ROUTE,
       intlId: 'navigation.tracking',
-      backgroundColor:
-        currentRoute === TRACKING_ROUTE ? '#b8c0ca' : 'transparent',
+      backgroundColor: isTrackingRelated(currentRoute)
+        ? 'rgb(195, 206, 217)'
+        : 'transparent',
     },
     {
       value: PROFILE_ROUTE,
@@ -80,6 +83,9 @@ export const Navigation = () => {
               margin: 0,
               padding: '8px 16px',
               borderBottom: 'none',
+              fontFamily: 'Montserrat-SemiBold,sans-serif',
+              fontSize: 16,
+              fontWeight: 600,
             }}
           >
             {intl.formatMessage({

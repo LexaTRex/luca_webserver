@@ -17,7 +17,15 @@ const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 const database = require('../../database');
 const { badgeCreateSchema } = require('./badges.schemas');
 
-// create badge user
+/**
+ * Creates an empty user for a new generated static badge. Returns an error if
+ * the given user id already exists or the signature is not valid for the
+ * given public key. On success, returns an attestation signature computed with
+ * the badge private key.
+ *
+ * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html#process
+ */
+
 router.post(
   '/',
   limitRequestsPerHour(10, { skipSuccessfulRequests: true }),

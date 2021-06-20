@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const status = require('http-status');
 const moment = require('moment');
-const { Op, fn, col } = require('sequelize');
+const { Op } = require('sequelize');
 
 const database = require('../../database');
 const {
@@ -43,7 +43,9 @@ router.post(
   }
 );
 
-// delete location
+/**
+ * Delete a single location
+ */
 router.delete(
   '/:accessId',
   validateParametersSchema(accessIdParametersSchema),
@@ -58,27 +60,19 @@ router.delete(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    // update timeframes of ongoing traces, end time is now
-    await database.Trace.update(
-      {
-        time: fn('tstzrange', fn('lower', col('time')), moment().toISOString()),
-      },
-      {
-        where: {
-          locationId: location.uuid,
-          time: {
-            [Op.contains]: moment(),
-          },
-        },
-      }
-    );
+    await database.transaction(async transaction => {
+      await database.Location.checkoutAllTraces({ location, transaction });
+      await location.destroy({ transaction });
+    });
 
-    await location.destroy();
     return response.sendStatus(status.NO_CONTENT);
   }
 );
 
-// get a single location
+/**
+ * Get a single location
+ * @see https://luca-app.de/securityoverview/processes/venue_registration.html
+ */
 router.get(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
@@ -116,7 +110,12 @@ router.get(
   }
 );
 
-// get guest list
+/**
+ * Get the guest list of a location, effectively fetching trace IDs and their
+ * associated encrypted data, decrypting contact data by a health department
+ * still requires the user to consent/share required data
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
+ */
 router.get(
   '/traces/:accessId',
   validateQuerySchema(locationTracesQuerySchema),

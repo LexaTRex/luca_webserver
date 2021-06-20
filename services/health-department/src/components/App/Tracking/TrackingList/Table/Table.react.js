@@ -10,7 +10,7 @@ import { Header } from './Header';
 import { EmptyProcesses } from './EmptyProcesses';
 import { TableWrapper, RowWrapper } from './Table.styled';
 
-export const Table = ({ filters, processes, refetch }) => {
+export const Table = ({ filters, processes }) => {
   const [sorting, setSorting] = useState(TIME_DESC);
   const [processNames, setProcessNames] = useState([]);
   const filter = useFilterSorter(filters, sorting);
@@ -32,7 +32,6 @@ export const Table = ({ filters, processes, refetch }) => {
             <Entry
               key={process.uuid}
               process={process}
-              refetch={refetch}
               onProcessName={onProcessName}
             />
           ))}

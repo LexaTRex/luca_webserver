@@ -1,3 +1,7 @@
+/**
+ * @overview Provides CRUD endpoints for additional data schemes of a given location
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 const router = require('express').Router();
 const status = require('http-status');
 
@@ -18,7 +22,11 @@ const {
   additionalDataBody,
 } = require('./additionalDataSchema.schemas');
 
-// get additional data schema
+/**
+ * Get additional data scheme of a location
+ * @param locationId of the given venue
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 router.get(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
@@ -40,7 +48,12 @@ router.get(
   }
 );
 
-// set additional data schema
+/**
+ * Set additional data scheme of a location, allowing the tracing to be narrowed down
+ * @param locationId of the given venue
+ * @returns ID of the additional data scheme
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 router.post(
   '/:locationId',
   requireOperator,
@@ -75,7 +88,11 @@ router.post(
   }
 );
 
-// update additional data schema
+/**
+ * Update additional data scheme
+ * @param additionalDataId of the scheme to be updated
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 router.patch(
   '/:additionalDataId',
   requireOperator,
@@ -108,7 +125,11 @@ router.patch(
   }
 );
 
-// remove additional data schema
+/**
+ * Remove an additional data scheme
+ * @param additionalDataId of the scheme to be deleted
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 router.delete(
   '/:additionalDataId',
   requireOperator,

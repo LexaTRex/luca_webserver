@@ -55,6 +55,14 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
   ] = useState(false);
   const [qrCode, setQRCode] = useState('');
 
+  const [users, setUsers] = useState();
+  useEffect(() => {
+    indexDB.users
+      .toArray()
+      .then(result => setUsers(result))
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     isLocalTimeCorrect()
       .then(isTimeCorrect => {
@@ -71,7 +79,6 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
   const generateTraceQRCode = useMemo(() => {
     return async () => {
       try {
-        const users = await indexDB.users.toArray();
         if (users && users[0]?.userId) {
           const [{ userId }] = users;
           setQRCode(await generateQRCode(userId));
@@ -89,12 +96,16 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
         });
       }
     };
-  }, [intl]);
+  }, [intl, users]);
 
+  /**
+   * Refreshes the current check-in qr code every minute.
+   * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#scanner-check-in
+   */
   useInterval(generateTraceQRCode, 60000);
 
   useEffect(() => {
-    if (parameters.scannerId) {
+    if (parameters.scannerId && users?.[0]?.userId) {
       let decodedData;
       try {
         decodedData = JSON.parse(
@@ -118,25 +129,14 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
             }),
           });
         });
-    } else {
-      indexDB.users
-        .toArray()
-        .then(([user]) => {
-          if (
-            !user.useWebApp &&
-            sessionStorage.getItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY) !==
-              'true'
-          ) {
-            setShowWebAppWarningModal(true);
-            sessionStorage.setItem(
-              WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY,
-              'true'
-            );
-          }
-        })
-        .catch(() => {});
+    } else if (
+      users?.[0]?.useWebApp === false &&
+      sessionStorage.getItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY) !== 'true'
+    ) {
+      setShowWebAppWarningModal(true);
+      sessionStorage.setItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY, 'true');
     }
-  }, [intl, hash, history, parameters]);
+  }, [intl, hash, history, parameters, users]);
 
   useEffect(() => {
     generateTraceQRCode();
@@ -171,8 +171,14 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
         }
         footer={
           <>
-            <StyledFooterContainer>
-              <StyledFooterItem isActive>
+            <StyledFooterContainer id="home">
+              <StyledFooterItem
+                tabIndex="2"
+                isActive
+                aria-label={intl.formatMessage({
+                  id: 'Home.AriaLabel',
+                })}
+              >
                 <CheckinIcon color="rgb(195, 206, 217)" />
                 {intl.formatMessage({ id: 'Home.MenuItem' })}
               </StyledFooterItem>

@@ -14,7 +14,12 @@ const {
   scannerAccessIdParametersSchema,
 } = require('./scanners.schemas');
 
-// get a scanner
+/**
+ * Returns data for the scanner given by the scanner id.
+ * Used for self check-in.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_self_checkin.html#check-in-via-the-guest-app
+ */
 router.get(
   '/:scannerId',
   validateParametersSchema(scannerIdParametersSchema),
@@ -39,7 +44,7 @@ router.get(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    if (location.Operator && location.Operator.deletedAt) {
+    if (location.Operator?.deletedAt) {
       return response.sendStatus(status.GONE);
     }
 
@@ -56,7 +61,12 @@ router.get(
   }
 );
 
-// get extended scanner infos
+/**
+ * Returns extended data for the scanner given by the scanner access id.
+ * Used for conventional app check-in.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-validation-and-check-in-upload
+ */
 router.get(
   '/access/:scannerAccessId',
   validateParametersSchema(scannerAccessIdParametersSchema),
@@ -99,7 +109,9 @@ router.get(
   }
 );
 
-// get current checkin count
+/**
+ * Returns the current amount of check-ins for the specified scanner access id.
+ */
 router.get(
   '/:scannerAccessId/traces/count/current',
   validateParametersSchema(scannerAccessIdParametersSchema),
@@ -127,7 +139,9 @@ router.get(
   }
 );
 
-// get total checkin count
+/**
+ * Returns the total amount of check-ins for the specified scanner access id.
+ */
 router.get(
   '/:scannerAccessId/traces/count/total',
   validateParametersSchema(scannerAccessIdParametersSchema),

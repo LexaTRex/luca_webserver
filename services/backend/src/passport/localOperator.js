@@ -11,7 +11,7 @@ const localStrategy = new LocalStrategy(
   },
   async (username, password, done) => {
     const user = await database.Operator.findOne({
-      where: { username: username.toLowerCase() },
+      where: { username },
       paranoid: false, // allow soft-deleted operators
     });
 

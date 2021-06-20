@@ -54,7 +54,7 @@ describe('Group creation', () => {
       // Select automatic checkout
       cy.getByCy('yes').click();
       // Enter radius
-      checkRadiusInput()
+      checkRadiusInput();
       cy.get('#radius').clear().type(RESTAURANT_RADIUS);
       // Proceed
       cy.get('button[type=submit]').click();

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 import { push } from 'connected-react-router';
-import { Button, notification } from 'antd';
+import { notification } from 'antd';
 
 // API
 import { logout } from 'network/api';
@@ -11,6 +11,8 @@ import { logout } from 'network/api';
 // CONSTANTS
 import { LOGIN_ROUTE } from 'constants/routes';
 import { clearPrivateKeys } from 'utils/cryptoKeyOperations';
+
+import { LogoutButtonStyled } from './LogoutButtom.styled';
 
 export const LogoutButton = () => {
   const intl = useIntl();
@@ -36,21 +38,10 @@ export const LogoutButton = () => {
       .catch(error => console.error(error));
   };
   return (
-    <Button
-      style={{
-        border: 'none',
-        padding: '0 40px',
-        backgroundColor: '#b8c0ca',
-        fontFamily: 'Montserrat-Bold, sans-serif',
-        fontSize: 14,
-        fontWeight: 'bold',
-      }}
-      shape="round"
-      onClick={handleClick}
-    >
+    <LogoutButtonStyled shape="round" onClick={handleClick}>
       {intl.formatMessage({
         id: 'header.logout',
       })}
-    </Button>
+    </LogoutButtonStyled>
   );
 };

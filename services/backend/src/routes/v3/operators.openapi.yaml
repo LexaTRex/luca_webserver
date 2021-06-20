@@ -1,7 +1,3 @@
-openapi: 3.0.0
-info:
-  title: operators.openapi
-  version: '1.0'
 paths:
   /operators:
     post:
@@ -11,9 +7,13 @@ paths:
       operationId: post-locationTransfers
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '409':
-          description: Conflict
+          description: Operator already exists
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsDay'
       description:
         Register a new operator. Needs to be confirmed via email link.
     patch:
@@ -21,7 +21,11 @@ paths:
       operationId: patch-operators
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
         '403':
           description: The operator account has been deactivated
       requestBody:
@@ -44,10 +48,12 @@ paths:
       summary: Request deletion of operator's account
       operationId: post-operators-deletionRequest
       responses:
-        '200':
-          description: OK
-        '403':
-          description: Forbidden
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
       tags:
         - Operators
   /operators/activate:
@@ -58,11 +64,15 @@ paths:
       operationId: post-operators-activate
       responses:
         '201':
-          description: Created
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
+          description: Activation Mail or Operator not found
+        '409':
+          description: Activation Mail already closed
         '410':
-          description: Gone
+          description: Activation Mail Link expired
       requestBody:
         content:
           application/json:
@@ -90,7 +100,11 @@ paths:
                   type: string
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
         '403':
           description: Forbidden. The account might have been deactivated.
   /operators/privateKeySecret:
@@ -108,8 +122,10 @@ paths:
                 properties:
                   privateKeySecret:
                     type: string
-        '403':
-          description: Forbidden
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
       operationId: get-operators-privateKeySecret
   /operators/restore:
     post:
@@ -119,8 +135,6 @@ paths:
       operationId: delete-operators-deletionRequest
       responses:
         '204':
-          description: No Content
-        '403':
-          description: Forbidden
-tags:
-  - name: Operators
+          description: Success
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'

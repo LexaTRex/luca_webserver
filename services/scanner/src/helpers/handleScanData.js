@@ -23,6 +23,11 @@ import {
   notifyScanError,
 } from './errorHandling';
 
+/**
+ * Handles the scan of a version 3 badge qr code to create a check-in for the user.
+ *
+ * @see https://www.luca-app.de/securityoverview/badge/check_in.html
+ */
 const handleV3StaticData = parameters => {
   const {
     intl,
@@ -51,6 +56,11 @@ const handleV3StaticData = parameters => {
     .catch(error => notifyScanError(error, intl));
 };
 
+/**
+ * Handles the scan of a version 3 app qr code to create a check-in for the user.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-validation-and-check-in-upload
+ */
 const handleV3AppData = parameters => {
   const {
     intl,
@@ -96,6 +106,11 @@ const handleV3Data = parameters => {
   handleV3AppData(parameters);
 };
 
+/**
+ * Handles the scan of a version 4 badge qr code to create a check-in for the user.
+ *
+ * @see https://www.luca-app.de/securityoverview/badge/check_in.html
+ */
 const handleV4StaticData = async parameters => {
   const {
     intl,

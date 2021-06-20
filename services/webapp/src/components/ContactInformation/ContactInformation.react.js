@@ -10,11 +10,19 @@ import { SETTINGS_PATH } from 'constants/routes';
 import { checkPhoneNumber } from 'utils/parsePhoneNumber';
 import { sendSMSTAN, verifySMSTAN } from 'network/api';
 import { changeUserInformation } from 'helpers/crypto';
-import { requiredFieldValidation } from 'form/validations';
 
 import { TextInput } from 'components/TextInput';
 import { AppHeadline, AppLayout } from 'components/AppLayout';
 
+import {
+  MAX_CITY_LENGTH,
+  MAX_NAME_LENGTH,
+  MAX_EMAIL_LENGTH,
+  MAX_PHONE_LENGTH,
+  MAX_STREET_LENGTH,
+  MAX_POSTAL_CODE_LENGTH,
+  MAX_HOUSE_NUMBER_LENGTH,
+} from 'constants/valueLength';
 import {
   StyledForm,
   StyledContent,
@@ -77,7 +85,16 @@ function UserInformationFormContent(user) {
           defaultValue={user?.firstName || ''}
           placeholder={formatMessage({ id: 'Form.FirstName.Placeholder' })}
           label={formatMessage({ id: 'Form.FirstName.Label' })}
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_NAME_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
         />
         <TextInput
           isRequired
@@ -85,7 +102,16 @@ function UserInformationFormContent(user) {
           name="lastName"
           autocomplete="family-name"
           defaultValue={user?.lastName || ''}
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_NAME_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.LastName.Label' })}
           placeholder={formatMessage({ id: 'Form.LastName.Placeholder' })}
         />
@@ -95,7 +121,16 @@ function UserInformationFormContent(user) {
           bgColor="#000"
           autocomplete="street-address1"
           defaultValue={user?.street || ''}
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_STREET_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.Street.Label' })}
           placeholder={formatMessage({ id: 'Form.Street.Placeholder' })}
         />
@@ -105,7 +140,16 @@ function UserInformationFormContent(user) {
           name="houseNumber"
           autocomplete="street-address2"
           defaultValue={user?.houseNumber || ''}
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_HOUSE_NUMBER_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.HouseNumber.Label' })}
           placeholder={formatMessage({ id: 'Form.HouseNumber.Placeholder' })}
         />
@@ -115,7 +159,16 @@ function UserInformationFormContent(user) {
           bgColor="#000"
           autocomplete="postal-code"
           defaultValue={user?.zip || ''}
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_POSTAL_CODE_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.Zip.Label' })}
           placeholder={formatMessage({ id: 'Form.Zip.Placeholder' })}
         />
@@ -125,7 +178,16 @@ function UserInformationFormContent(user) {
           bgColor="#000"
           autocomplete="country-name"
           defaultValue={user?.city || ''}
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_CITY_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.City.Label' })}
           placeholder={formatMessage({ id: 'Form.City.Placeholder' })}
         />
@@ -143,6 +205,10 @@ function UserInformationFormContent(user) {
               message: formatMessage({
                 id: 'Form.Validation.email',
               }),
+            },
+            {
+              max: MAX_EMAIL_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
             },
           ]}
         />
@@ -166,6 +232,10 @@ function UserInformationFormContent(user) {
                       })
                     );
               },
+            },
+            {
+              max: MAX_PHONE_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
             },
           ]}
         />

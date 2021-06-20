@@ -11,7 +11,7 @@ const localStrategy = new LocalStrategy(
   },
   async (username, password, done) => {
     const user = await database.HealthDepartmentEmployee.findOne({
-      where: { username: username.toLowerCase() },
+      where: { email: username },
     });
 
     if (!user) {

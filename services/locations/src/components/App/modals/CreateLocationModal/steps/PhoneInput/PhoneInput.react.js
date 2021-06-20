@@ -3,6 +3,13 @@ import { useIntl } from 'react-intl';
 import { Form, Input, Button } from 'antd';
 
 import {
+  getRequiredRule,
+  getPhoneRules,
+  requiresPhone,
+  invalidPhone,
+} from 'utils/validatorRules';
+
+import {
   nextButtonStyles,
   backButtonStyles,
   Wrapper,
@@ -43,12 +50,8 @@ export const PhoneInput = ({ phone: currentPhone, setPhone, back, next }) => {
           })}
           name="phone"
           rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.phone',
-              }),
-            },
+            getRequiredRule(intl, requiresPhone),
+            getPhoneRules(intl, invalidPhone),
           ]}
         >
           <Input autoFocus />

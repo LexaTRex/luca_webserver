@@ -1,3 +1,32 @@
+:root {
+  --highlight-color: #57a8e9;
+  --input-box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
+  --form-control-shadow: 0 0 0 2px rgba(87, 168, 233, 0.5);
+}
+
 .ant-input-number {
   width: 100%;
+}
+.ant-input:focus,
+.ant-input:hover {
+  border-color: var(--highlight-color);
+  outline: 0;
+  -webkit-box-shadow: var(--input-box-shadow);
+  box-shadow: var(--input-box-shadow);
+}
+
+.ant-input-number-input:focus,
+.ant-input-number-input:hover {
+  border-color: var(--highlight-color);
+  outline: 0;
+  -webkit-box-shadow: var(--form-control-shadow);
+  box-shadow: var(--form-control-shadow);
+}
+
+.ant-checkbox:focus .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner {
+  border: thin solid var(--highlight-color);
+  outline: 0;
+  -webkit-box-shadow: var(--form-control-shadow);
+  box-shadow: var(--form-control-shadow);
 }

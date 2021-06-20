@@ -31,6 +31,8 @@ export const de = {
     'Der Scanner hatte ein Problem. Bitte versuche es erneut.',
   'error.noUserData':
     'Es scheint als ob du noch keine Kontaktdaten hinterlegt hast. Wenn du dies erst kürzlich getan hast, warte bitte einige Minuten und versuche es nocheinmal.',
+  'error.noBloomFilter':
+    'Es kann nicht überprüft werden, ob schon Kontaktdaten hinterlegt wurden.',
   'error.wrongLocalTime':
     'Dein System scheint eine falsche Zeit zu haben. Bitte überprüfe deine Zeiteinstellungen.',
   'error.accountDeleted':

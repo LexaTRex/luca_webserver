@@ -1,9 +1,3 @@
-openapi: 3.0.0
-info:
-  title: Server Time
-  description: Server Time
-  version: '1.0'
-  contact: {}
 paths:
   /timesync:
     get:
@@ -21,5 +15,3 @@ paths:
                     type: integer
       operationId: get-current-server-time
       description: Get current server time
-tags:
-  - name: Server Time

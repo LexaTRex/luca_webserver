@@ -78,7 +78,7 @@ export const DataRequestModal = ({ group }) => {
         </Form.Item>
         <Form.Item>
           <ButtonRow>
-            <Button onClick={onSubmit}>
+            <Button data-cy="requestGroupData" onClick={onSubmit}>
               {intl.formatMessage({ id: 'modal.dataRequest.button' })}
             </Button>
           </ButtonRow>

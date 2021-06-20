@@ -29,6 +29,7 @@ export const en = {
   'error.genericScanner': 'The scanner had a problem. Please try again.',
   'error.noUserData':
     'It seems like you did not register your badge yet. If you just registered you badge please wait a few minutes and try again.',
+  'error.noBloomFilter': 'Cannot verify whether the badge was registered.',
   'error.wrongLocalTime':
     'Your system clock seems to be out of sync. Please check your time settings.',
   'error.accountDeleted':

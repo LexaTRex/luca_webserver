@@ -280,13 +280,6 @@ export const getLocationTransfer = transferId => {
   });
 };
 
-export const getLocationTransferGroup = transferGroupId => {
-  return fetch(`${API_PATH}/v3/locationTransferGroups/${transferGroupId}`, {
-    method: 'GET',
-    headers,
-  });
-};
-
 export const shareData = data => {
   return fetch(`${API_PATH}/v3/locationTransfers/${data.locationTransferId}`, {
     method: 'POST',

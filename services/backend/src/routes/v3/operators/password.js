@@ -1,3 +1,10 @@
+/**
+ * @overview Provides endpoints allowing venue operators to update their
+ * respective passwords, required for operating the venue owner frontend
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/venue_registration.html?highlight=password#process
+ */
+
 const router = require('express').Router();
 const status = require('http-status');
 const config = require('config');
@@ -56,12 +63,12 @@ router.post(
   async (request, response) => {
     const operator = await database.Operator.findOne({
       where: {
-        email: request.body.email.toLowerCase(),
+        email: request.body.email,
         activated: true,
       },
     });
 
-    // Operator with the mail does not exist
+    // Operator with the email does not exist or is not activated
     if (!operator) {
       return response.sendStatus(status.NOT_FOUND);
     }
@@ -166,7 +173,12 @@ router.get(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    return response.send(resetRequest);
+    return response.send({
+      uuid: resetRequest.uuid,
+      operatorId: resetRequest.operatorId,
+      email: resetRequest.email,
+      closed: resetRequest.closed,
+    });
   }
 );
 

@@ -1,3 +1,7 @@
+/**
+ * @overview Provides endpoints allowing for generation, verification and rotation of badge keys
+ * https://www.luca-app.de/securityoverview/properties/actors.html#term-Badge
+ */
 /* eslint-disable max-lines, complexity */
 const config = require('config');
 const router = require('express').Router();
@@ -43,6 +47,13 @@ router.get('/targetKeyId', async (request, response) => {
   });
 });
 
+/**
+ * Get latest badge public key used for generation of badges. Contact data
+ * references are encrypted using this. Only health departments possess the
+ * private key
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
+ * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html
+ */
 router.get('/current', async (request, response) => {
   const badgePublicKey = await database.BadgePublicKey.findOne({
     order: [['createdAt', 'DESC']],
@@ -61,6 +72,11 @@ router.get('/current', async (request, response) => {
   });
 });
 
+/**
+ * Get given encrypted private badge key. Only health departments can decrypt it.
+ * Used to decipher check-ins
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
+ */
 router.get(
   '/encrypted/:keyId',
   requireHealthDepartmentEmployee,
@@ -92,6 +108,10 @@ router.get(
   }
 );
 
+/**
+ * Determine which health department created a given badge keypair and when
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
+ */
 router.get(
   '/encrypted/:keyId/keyed',
   requireHealthDepartmentEmployee,
@@ -114,6 +134,11 @@ router.get(
   }
 );
 
+/**
+ * Fetch given badge public key used to encrypt contact data references
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
+ * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html#badge-static-badge-gen
+ */
 router.get(
   '/:keyId',
   validateParametersSchema(keyIdParametersSchema),
@@ -136,6 +161,11 @@ router.get(
   }
 );
 
+/**
+ * Share encrypted private badge keys with other health department. Private keys
+ * are encrypted for each health department before being uploaded to the luca server
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
+ */
 router.post(
   '/rekey',
   validateSchema(rekeySchema),
@@ -191,6 +221,12 @@ router.post(
   }
 );
 
+/**
+ * Rotate the badge keypair, similarly to the daily keypair, ensuring future
+ * badges will be generated using this new key
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
+ * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html
+ */
 router.post(
   '/rotate',
   validateSchema(rotateSchema),

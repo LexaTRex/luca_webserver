@@ -45,7 +45,6 @@ const employees = [
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: DEVELOPMENT_EMAIL,
-    username: DEVELOPMENT_EMAIL,
     departmentId: departments[0].uuid,
     isAdmin: true,
     ...hashPassword('testing'),

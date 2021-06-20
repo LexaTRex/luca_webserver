@@ -2,7 +2,12 @@ import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { TextInput } from 'components/TextInput';
-import { requiredFieldValidation } from 'form/validations';
+import {
+  MAX_CITY_LENGTH,
+  MAX_STREET_LENGTH,
+  MAX_POSTAL_CODE_LENGTH,
+  MAX_HOUSE_NUMBER_LENGTH,
+} from 'constants/valueLength';
 
 import {
   StyledForm,
@@ -39,14 +44,32 @@ export function LocationInputStep({ onSubmit }) {
           autoFocus
           name="street"
           autocomplete="address-line1"
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_STREET_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.Street.Label' })}
           placeholder={formatMessage({ id: 'Form.Street.Placeholder' })}
         />
         <TextInput
           name="houseNumber"
           autocomplete="address-line2"
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_HOUSE_NUMBER_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.HouseNumber.Label' })}
           placeholder={formatMessage({ id: 'Form.HouseNumber.Placeholder' })}
         />
@@ -54,14 +77,32 @@ export function LocationInputStep({ onSubmit }) {
           name="zip"
           autocomplete="postal-code"
           maxLength="5"
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_POSTAL_CODE_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.Zip.Label' })}
           placeholder={formatMessage({ id: 'Form.Zip.Placeholder' })}
         />
         <TextInput
           name="city"
           autocomplete="address-level2"
-          rules={requiredFieldValidation(formatMessage)}
+          rules={[
+            {
+              required: true,
+              message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            },
+            {
+              max: MAX_CITY_LENGTH,
+              message: formatMessage({ id: 'Form.Validation.toLong' }),
+            },
+          ]}
           label={formatMessage({ id: 'Form.City.Label' })}
           placeholder={formatMessage({ id: 'Form.City.Placeholder' })}
         />

@@ -116,6 +116,12 @@ export function AuthenticationWrapper({ children }) {
     [history, intl, location.pathname]
   );
 
+  /**
+   * Checks if the user has checked in by having their qr code scanned. This is done by
+   * sending the recent traceIds to the server to check if any has been registered.
+   *
+   * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-feedback
+   */
   const checkTraces = useMemo(() => {
     return async () => {
       if (isHostingMeeting) {

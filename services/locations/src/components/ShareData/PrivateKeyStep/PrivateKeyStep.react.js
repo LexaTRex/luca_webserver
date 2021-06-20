@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { AUTHENTICATION_ROUTE } from 'constants/routes';

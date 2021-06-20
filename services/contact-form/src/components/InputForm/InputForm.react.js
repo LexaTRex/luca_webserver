@@ -2,32 +2,35 @@ import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { v4 as generateUUID } from 'uuid';
 import {
-  Form,
-  Col,
-  Row,
-  Input,
   Button,
   Checkbox,
+  Col,
+  Form,
+  Grid,
+  Input,
   InputNumber,
+  Row,
   Divider,
 } from 'antd';
 import { useQuery } from 'react-query';
 
-import { getDailyKey, getAdditionalData } from 'network/api';
+import { getAdditionalData, getDailyKey } from 'network/api';
 
 // Hooks
 import { useRegister } from 'components/hooks/useRegister';
 import { useContactDataRules } from 'components/hooks/useContactDataRules';
 
 // Components
-import { ButtonWrapper } from './InputForm.styled';
+import { ButtonWrapper, Link } from './InputForm.styled';
 
+const { useBreakpoint } = Grid;
 export const InputForm = ({
   scanner,
   initialValues = null,
   additionalData = null,
 }) => {
   const intl = useIntl();
+  const screens = useBreakpoint();
   const [formFieldNames, setFormFieldNames] = useState({
     firstName: generateUUID(),
     lastName: generateUUID(),
@@ -41,7 +44,17 @@ export const InputForm = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formReference = useRef(null);
-  const getRules = useContactDataRules();
+  const {
+    firstNameValidator,
+    lastNameValidator,
+    streetValidator,
+    houseNoValidator,
+    zipCodeValidator,
+    cityValidator,
+    phoneValidator,
+    emailValidator,
+    tableValidator,
+  } = useContactDataRules();
 
   const { isLoading, error, data: dailyKey } = useQuery(
     'dailyKey',
@@ -92,99 +105,92 @@ export const InputForm = ({
         initialValues={initialValues}
         style={{ width: '60vw' }}
       >
-        <Form.Item
-          name={formFieldNames.firstName}
-          rules={getRules('firstName')}
-        >
+        <Form.Item name={formFieldNames.firstName} rules={firstNameValidator()}>
           <Input
             data-cy="firstName"
             autoComplete="new-password"
-            placeholder={intl.formatMessage({
+            placeholder={`* ${intl.formatMessage({
               id: 'contactDataForm.firstName',
-            })}
+            })}`}
           />
         </Form.Item>
-        <Form.Item name={formFieldNames.lastName} rules={getRules('lastName')}>
+        <Form.Item name={formFieldNames.lastName} rules={lastNameValidator()}>
           <Input
             data-cy="lastName"
             autoComplete="new-password"
-            placeholder={intl.formatMessage({
+            placeholder={`* ${intl.formatMessage({
               id: 'contactDataForm.lastName',
-            })}
+            })}`}
           />
         </Form.Item>
-        <Input.Group>
-          <Row gutter={16}>
-            <Col span={20}>
-              <Form.Item
-                name={formFieldNames.street}
-                rules={getRules('street')}
-              >
-                <Input
-                  data-cy="street"
-                  autoComplete="new-password"
-                  placeholder={intl.formatMessage({
-                    id: 'contactDataForm.street',
-                  })}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item
-                name={formFieldNames.number}
-                rules={getRules('number')}
-              >
-                <Input
-                  data-cy="number"
-                  autoComplete="new-password"
-                  placeholder={intl.formatMessage({
-                    id: 'contactDataForm.number',
-                  })}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
+        <Row gutter={16} wrap>
+          <Col span={!screens.md ? 24 : 20}>
+            <Form.Item
+              name={formFieldNames.street}
+              rules={streetValidator()}
+              width="50%"
+            >
+              <Input
+                data-cy="street"
+                autoComplete="new-password"
+                placeholder={`* ${intl.formatMessage({
+                  id: 'contactDataForm.street',
+                })}`}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={!screens.md ? 24 : 4}>
+            <Form.Item name={formFieldNames.number} rules={houseNoValidator()}>
+              <Input
+                data-cy="number"
+                autoComplete="new-password"
+                placeholder={`* ${intl.formatMessage({
+                  id: 'contactDataForm.number',
+                })}`}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
         <Input.Group
           placeholder={intl.formatMessage({
             id: 'contactDataForm.city',
           })}
         >
           <Row gutter={16}>
-            <Col span={4}>
-              <Form.Item name={formFieldNames.zip} rules={getRules('zip')}>
+            <Col span={!screens.md ? 24 : 4}>
+              <Form.Item name={formFieldNames.zip} rules={zipCodeValidator()}>
                 <Input
                   data-cy="zip"
                   autoComplete="new-password"
-                  placeholder={intl.formatMessage({
+                  placeholder={`* ${intl.formatMessage({
                     id: 'contactDataForm.zip',
-                  })}
+                  })}`}
                 />
               </Form.Item>
             </Col>
-            <Col span={20}>
-              <Form.Item name={formFieldNames.city} rules={getRules('city')}>
+            <Col span={!screens.md ? 24 : 20}>
+              <Form.Item name={formFieldNames.city} rules={cityValidator()}>
                 <Input
                   data-cy="city"
                   autoComplete="new-password"
-                  placeholder={intl.formatMessage({
+                  placeholder={`* ${intl.formatMessage({
                     id: 'contactDataForm.city',
-                  })}
+                  })}`}
                 />
               </Form.Item>
             </Col>
           </Row>
         </Input.Group>
-        <Form.Item name={formFieldNames.phone} rules={getRules('phone')}>
+        <Form.Item name={formFieldNames.phone} rules={phoneValidator()}>
           <Input
             data-cy="phone"
             autoComplete="new-password"
-            placeholder={intl.formatMessage({
+            placeholder={`* ${intl.formatMessage({
               id: 'contactDataForm.phone',
-            })}
+            })}`}
           />
         </Form.Item>
-        <Form.Item name={formFieldNames.email}>
+        <Form.Item name={formFieldNames.email} rules={emailValidator()}>
           <Input
             data-cy="email"
             autoComplete="new-password"
@@ -193,6 +199,7 @@ export const InputForm = ({
             })}
           />
         </Form.Item>
+
         {(scanner?.tableCount || checkinData?.additionalData.length !== 0) && (
           <Divider>
             {intl.formatMessage({
@@ -200,8 +207,9 @@ export const InputForm = ({
             })}
           </Divider>
         )}
+
         {scanner?.tableCount && (
-          <Form.Item name="additionalData-table">
+          <Form.Item name="additionalData-table" rules={tableValidator()}>
             <InputNumber
               min={1}
               max={scanner.tableCount}
@@ -213,7 +221,6 @@ export const InputForm = ({
             />
           </Form.Item>
         )}
-
         {checkinData?.additionalData &&
           checkinData.additionalData.map(entry => (
             <Form.Item key={entry.uuid} name={`additionalData-${entry.key}`}>
@@ -241,7 +248,7 @@ export const InputForm = ({
               {
                 // eslint-disable-next-line react/display-name
                 a: (...chunks) => (
-                  <a
+                  <Link
                     href={intl.formatMessage({
                       id: 'registration.privacyLink',
                     })}
@@ -249,7 +256,7 @@ export const InputForm = ({
                     rel="noopener noreferrer"
                   >
                     {chunks}
-                  </a>
+                  </Link>
                 ),
               }
             )}
@@ -267,11 +274,6 @@ export const InputForm = ({
               htmlType="submit"
               shape="round"
               loading={isSubmitting}
-              style={{
-                backgroundColor: '#4e6180',
-                padding: '0 40px',
-                border: 'none',
-              }}
             >
               {intl.formatMessage({
                 id: 'contactDataForm.button',

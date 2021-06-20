@@ -3,10 +3,19 @@ import { useIntl } from 'react-intl';
 import { Input, Button, Form, notification } from 'antd';
 
 import {
+  MAX_CITY_LENGTH,
+  MAX_STREET_LENGTH,
+  MAX_POSTAL_CODE_LENGTH,
+  MAX_HOUSE_NUMBER_LENGTH,
+} from 'constants/valueLength';
+
+import {
   ContentWrapper,
   ContentTitle,
   ButtonRow,
 } from '../RegisterForm.styled';
+
+const lengthErrorMessageId = 'error.length';
 
 export const AddressInfo = ({ title, next, back, form, setValues }) => {
   const intl = useIntl();
@@ -38,6 +47,12 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
               id: 'error.streetName',
             }),
           },
+          {
+            max: MAX_STREET_LENGTH,
+            message: intl.formatMessage({
+              id: lengthErrorMessageId,
+            }),
+          },
         ]}
         label={intl.formatMessage({
           id: 'registerBadge.street',
@@ -52,6 +67,12 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
             required: true,
             message: intl.formatMessage({
               id: 'error.streetNr',
+            }),
+          },
+          {
+            max: MAX_HOUSE_NUMBER_LENGTH,
+            message: intl.formatMessage({
+              id: lengthErrorMessageId,
             }),
           },
         ]}
@@ -70,6 +91,12 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
               id: 'error.zipCode',
             }),
           },
+          {
+            max: MAX_POSTAL_CODE_LENGTH,
+            message: intl.formatMessage({
+              id: lengthErrorMessageId,
+            }),
+          },
         ]}
         label={intl.formatMessage({
           id: 'registerBadge.zip',
@@ -84,6 +111,12 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
             required: true,
             message: intl.formatMessage({
               id: 'error.city',
+            }),
+          },
+          {
+            max: MAX_CITY_LENGTH,
+            message: intl.formatMessage({
+              id: lengthErrorMessageId,
             }),
           },
         ]}

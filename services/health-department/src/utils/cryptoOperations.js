@@ -15,8 +15,6 @@ import {
   base64ToHex,
   bytesToHex,
   bytesToUint8Array,
-  decodeUtf8,
-  DECRYPT_AES_CTR,
   DECRYPT_DLIES,
   ENCRYPT_DLIES,
   hexToBase64,
@@ -32,22 +30,28 @@ import {
   decryptAdditionalData,
   decryptDynamicDeviceTrace,
   decryptStaticDeviceTrace,
+  decryptUser,
 } from './decryption';
-import { assertStringOrNumericValues } from './typeAssertions';
-import { IncompleteDataError } from '../errors/incompleteDataError';
+import { sanitizeObject } from './sanitizer';
+import { QR_V3, QR_V4 } from '../constants/qrVersion';
 
 const STATIC_DEVICE_TYPE = 2;
 
 const ARGON_SALT = 'da3ae5ecd280924e';
 const L1_INFO = bytesToHex('badge_crypto_assets');
 const L2_INFO = bytesToHex('badge_tracing_assets');
-const QR_V3 = 3;
-const QR_V4 = 4;
 
 export const EMPTY_HISTORY = 'EMPTY_HISTORY';
 export const INVALID_VERSION = 'INVALID_VERSION';
 export const DECRYPTION_FAILED = 'DECRYPTION_FAILED';
 
+/**
+ * Decrypts a guest data transfer object using the corresponding daily private
+ * key, to obtain the contact data of the guest.
+ *
+ * @param userTransferId - The id of the user transfer (not the tan)
+ * @returns Contact data of the guest
+ */
 export const decryptUserTransfer = async userTransferId => {
   // also referred to as guest data transfer object
   const userDataTransferObject = await getUserTransferById(userTransferId);
@@ -68,28 +72,29 @@ export const decryptUserTransfer = async userTransferId => {
 
   const userId = userSecrets.uid;
   const userDataSecret = base64ToHex(userSecrets.uds);
-  const encryptedUserContactData = await getEncryptedUserContactData(userId);
+  const encryptedUser = await getEncryptedUserContactData(userId);
 
-  const { data, iv } = encryptedUserContactData;
-  if (!data || !iv) {
-    throw new IncompleteDataError(data, iv);
-  }
   const userDataEncryptionKey =
     userSecrets.qrv === QR_V4
       ? base64ToHex(userSecrets.uds)
       : KDF_SHA256(userDataSecret, '01').slice(0, 32);
 
-  const userContactData = decodeUtf8(
-    hexToBytes(
-      DECRYPT_AES_CTR(base64ToHex(data), userDataEncryptionKey, base64ToHex(iv))
-    )
-  );
+  const { userData } = decryptUser(encryptedUser, userDataEncryptionKey);
 
-  const parsed = JSON.parse(userContactData);
-  assertStringOrNumericValues(parsed);
-  return parsed;
+  return userData;
 };
 
+/**
+ * First decrypts the encrypted data secret and user id attached to a trace
+ * (ensuring authenticity), then fetches the corresponding encrypted personal
+ * data using the user id and decrypts it by deriving the data key from the
+ * data secret. If there is additional data associated with the trace it will
+ * also be decrypted.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_find_contacts.html#process
+ * @param encryptedTrace - A trace containing an encrypted data secret and user id
+ * @returns Decrypted trace with user and additional data
+ */
 export const decryptTrace = async encryptedTrace => {
   const isStaticDevice = encryptedTrace.deviceType === STATIC_DEVICE_TYPE;
 
@@ -98,17 +103,30 @@ export const decryptTrace = async encryptedTrace => {
     : await decryptDynamicDeviceTrace(encryptedTrace);
 
   const additionalData = decryptAdditionalData(encryptedTrace, isInvalid);
+  // santize data here
 
   return {
     traceId: encryptedTrace.traceId,
     checkin: encryptedTrace.checkin,
     checkout: encryptedTrace.checkout,
-    userData,
-    additionalData,
+    userData: sanitizeObject(userData),
+    additionalData: sanitizeObject(additionalData),
     isInvalid,
   };
 };
 
+/**
+ * Starts the process of reconstructing the check-in history of a guest. The
+ * guest data transfer object identified by the given tan is fetched and
+ * decrypted with the corresponding daily private key. The user tracing secret
+ * is then provided to the server to create a location transfer process for
+ * all affected check-ins.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html#reconstructing-the-infected-guest-s-check-in-history
+ * @param tan - Transaction number provided by the user
+ * @param lang - Language of the notification process
+ * @returns Id of the tracing process
+ */
 export const initiateUserTracingProcess = async (tan, lang) => {
   // also referred to as guest data transfer object
   const userDataTransferObject = await getUserTransferByTan(tan);
@@ -181,6 +199,16 @@ const isStaticV4 = serialNumber => {
   );
 };
 
+/**
+ * Initiates the process of reconstructing the check-in history of a user
+ * of a static badge. Requires the badge's serial number and creates a guest
+ * data transfer object and tan for the guest. Then continues with the regular
+ * initiateUserTracingProcess.
+ *
+ * @param serialNumber - Serial number of the static badge
+ * @param lang - Language of the notification process
+ * @returns Id of the tracing process
+ */
 export const initiateStaticUserTracingProcess = async (serialNumber, lang) => {
   let userId;
   let userDataSecret;

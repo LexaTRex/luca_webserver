@@ -8,6 +8,8 @@ import { checkPhoneNumber } from 'utils/parsePhoneNumber';
 import { sendSMSTAN, verifySMSTAN } from 'network/api';
 
 import { TextInput } from 'components/TextInput';
+import { MAX_EMAIL_LENGTH, MAX_PHONE_LENGTH } from 'constants/valueLength';
+
 import {
   StyledForm,
   StyledLink,
@@ -20,6 +22,12 @@ import {
   StyledDescription,
 } from './ContactInformationInputStep.styled';
 
+/**
+ * This step performs a client-side verification of the phone number.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_registration.html#verifying-the-contact-data
+ *      https://www.luca-app.de/securityoverview/processes/guest_registration.html#verification-of-the-guest-s-contact-data
+ */
 export function ContactInformationInputStep({ onSubmit }) {
   const { formatMessage } = useIntl();
   const [phone, setPhone] = useState(null);
@@ -150,6 +158,10 @@ export function ContactInformationInputStep({ onSubmit }) {
                     id: 'Form.Validation.email',
                   }),
                 },
+                {
+                  max: MAX_EMAIL_LENGTH,
+                  message: formatMessage({ id: 'Form.Validation.toLong' }),
+                },
               ]}
             />
             <TextInput
@@ -171,6 +183,10 @@ export function ContactInformationInputStep({ onSubmit }) {
                           })
                         );
                   },
+                },
+                {
+                  max: MAX_PHONE_LENGTH,
+                  message: formatMessage({ id: 'Form.Validation.toLong' }),
                 },
               ]}
             />

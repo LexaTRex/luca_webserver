@@ -50,7 +50,11 @@ function getTraceProcessStatus(tracingProcess) {
     : TRACE_PROCESS_STATUS_TYPES.PARTIAL;
 }
 
-// get all processes
+/**
+ * Retrieves information about all tracing processes for the health department
+ * of the requesting employee. This is used for display in the health
+ * department frontend.
+ */
 router.get('/', requireHealthDepartmentEmployee, async (request, response) => {
   const processes = await database.TracingProcess.findAll({
     where: {
@@ -86,19 +90,66 @@ router.get('/', requireHealthDepartmentEmployee, async (request, response) => {
   );
 });
 
-// update process
+/**
+ * Gets a tracing process by its Id.
+ */
+router.get(
+  '/:tracingProcessId',
+  validateParametersSchema(tracingProcessIdParametersSchema),
+  requireHealthDepartmentEmployee,
+  async (request, response) => {
+    const tracingProcess = await database.TracingProcess.findOne({
+      where: {
+        departmentId: request.user.departmentId,
+        uuid: request.params.tracingProcessId,
+      },
+      include: [
+        {
+          model: database.LocationTransfer,
+          attributes: ['tracingProcessId', 'isCompleted', 'contactedAt'],
+        },
+        {
+          model: database.HealthDepartmentEmployee,
+          attributes: ['uuid', 'firstName', 'lastName'],
+        },
+      ],
+    });
+
+    if (!tracingProcess) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    return response.send({
+      uuid: tracingProcess.uuid,
+      status: getTraceProcessStatus(tracingProcess),
+      userTransferId: tracingProcess.userTransferId,
+      didRequestLocations: tracingProcess.didRequestLocations,
+      isCompleted: tracingProcess.isCompleted,
+      createdAt: moment(tracingProcess.createdAt).unix(),
+      assignee: tracingProcess.HealthDepartmentEmployee,
+    });
+  }
+);
+
+/**
+ * Updates the status of a tracing process.
+ */
 router.patch(
   '/:tracingProcessId',
   requireHealthDepartmentEmployee,
   validateParametersSchema(tracingProcessIdParametersSchema),
   validateSchema(patchSchema),
   async (request, response) => {
-    const process = await database.TracingProcess.findOne({
+    const tracingProcess = await database.TracingProcess.findOne({
       where: {
         uuid: request.params.tracingProcessId,
         departmentId: request.user.departmentId,
       },
     });
+    if (!tracingProcess) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
     if (request.body.assigneeId) {
       const assignee = await database.HealthDepartmentEmployee.findOne({
         where: {
@@ -110,7 +161,7 @@ router.patch(
         return response.sendStatus(status.NOT_FOUND);
       }
     }
-    await process.update({
+    await tracingProcess.update({
       didRequestLocations: request.body.didRequestLocations,
       isCompleted: request.body.isCompleted,
       assigneeId: request.body.assigneeId,
@@ -119,7 +170,13 @@ router.patch(
   }
 );
 
-// get transfers of a process
+/**
+ * Retrieves all location transfers of a tracing process, showing which
+ * location has been contacted and which already has decrypted the outer
+ * layer of encryption.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_find_contacts.html#process
+ */
 router.get(
   '/:tracingProcessId/locationTransfers',
   requireHealthDepartmentEmployee,

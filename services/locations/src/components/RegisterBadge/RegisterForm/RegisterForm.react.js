@@ -13,6 +13,16 @@ import {
   SIGN_EC_SHA256_DER,
   GET_RANDOM_BYTES,
 } from '@lucaapp/crypto';
+import {
+  MAX_NAME_LENGTH,
+  MAX_CITY_LENGTH,
+  MAX_EMAIL_LENGTH,
+  MAX_PHONE_LENGTH,
+  MAX_STREET_LENGTH,
+  MAX_POSTAL_CODE_LENGTH,
+  MAX_HOUSE_NUMBER_LENGTH,
+} from 'constants/valueLength';
+
 import { SerialCode } from './SerialCode';
 import { NameInfo } from './NameInfo';
 import { AddressInfo } from './AddressInfo';
@@ -22,6 +32,12 @@ import { Finish } from './Finish';
 
 import { Wrapper, Title } from './RegisterForm.styled';
 
+/**
+ * Associates the encrypted personal information of a user with the provided
+ * static badge.
+ *
+ * @see https://www.luca-app.de/securityoverview/badge/personalization.html#process
+ */
 export const RegisterForm = ({ requiresVerification }) => {
   const intl = useIntl();
   const [currentStep, setCurrentStep] = useState(0);
@@ -47,15 +63,17 @@ export const RegisterForm = ({ requiresVerification }) => {
 
     const userData = {
       v: 2,
-      fn: submitFormValues.firstName,
-      ln: submitFormValues.lastName,
-      pn: submitFormValues.phone,
-      e: submitFormValues.email,
-      st: submitFormValues.street,
-      hn: submitFormValues.streetNumber,
-      pc: submitFormValues.zip,
-      c: submitFormValues.city,
       vs: hexToBase64(userSecrets.userVerificationSecret),
+      fn: String(submitFormValues.firstName).slice(0, MAX_NAME_LENGTH).trim(),
+      ln: String(submitFormValues.lastName).slice(0, MAX_NAME_LENGTH).trim(),
+      pn: String(submitFormValues.phone).slice(0, MAX_PHONE_LENGTH).trim(),
+      e: String(submitFormValues.email).slice(0, MAX_EMAIL_LENGTH).trim(),
+      st: String(submitFormValues.street).slice(0, MAX_STREET_LENGTH).trim(),
+      hn: String(submitFormValues.streetNumber)
+        .slice(0, MAX_HOUSE_NUMBER_LENGTH)
+        .trim(),
+      pc: String(submitFormValues.zip).slice(0, MAX_POSTAL_CODE_LENGTH).trim(),
+      c: String(submitFormValues.city).slice(0, MAX_CITY_LENGTH).trim(),
     };
 
     const buffer = bytesToHex(encodeUtf8(JSON.stringify(userData)));

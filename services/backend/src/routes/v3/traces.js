@@ -28,7 +28,11 @@ const {
   traceSchema,
 } = require('./traces.schemas');
 
-// checkin
+/**
+ * Performs a check-in in a location.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-validation-and-check-in-upload
+ */
 router.post(
   '/checkin',
   limitRequestsPerHour(1000),
@@ -99,7 +103,11 @@ router.post(
   }
 );
 
-// add additionalData to checkin
+/**
+ * Adds additional data to a check-in identified by the given trace id.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 router.post(
   '/additionalData',
   limitRequestsPerHour(60, { skipSuccessfulRequests: true }),
@@ -138,7 +146,12 @@ router.post(
   }
 );
 
-// check traces in bulk
+/**
+ * Checks if any of the given trace ids are known to the server. This is used
+ * in the app to provide feedback when a check-in has been successful.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-feedback
+ */
 router.post('/bulk', validateSchema(bulkSchema), async (request, response) => {
   const traces = await database.Trace.findAll({
     where: {
@@ -166,7 +179,10 @@ router.post('/bulk', validateSchema(bulkSchema), async (request, response) => {
   );
 });
 
-// get trace
+/**
+ * Retrieves information about the given trace id. This is used in the app
+ * to check if a trace id is still checked in.
+ */
 router.get(
   '/:traceId',
   validateParametersSchema(traceIdParametersSchema),
@@ -200,7 +216,11 @@ router.get(
   }
 );
 
-// checkout
+/**
+ * Performs a checkout for the given trace id.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_checkout.html
+ */
 router.post(
   '/checkout',
   validateSchema(checkoutSchema),
@@ -233,7 +253,14 @@ router.post(
   }
 );
 
-// trace via tracingSecret
+/**
+ * Returns check-in information for all trace ids that can be derived from the
+ * given user tracing secret which have been used for check-ins in the
+ * epidemiologically relevant timespan. This is used by the health departments
+ * to find potential contact persons.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html#reconstructing-the-infected-guest-s-check-in-history
+ */
 router.post(
   '/trace',
   requireHealthDepartmentEmployee,

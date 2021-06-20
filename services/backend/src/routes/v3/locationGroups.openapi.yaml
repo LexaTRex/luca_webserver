@@ -1,11 +1,3 @@
-openapi: 3.0.0
-tags:
-  - name: Keys
-info:
-  title: keys
-  version: '1.0'
-  description: Partial OpenAPI doc
-  contact: {}
 paths:
   /locationGroups/search:
     get:
@@ -55,8 +47,10 @@ paths:
                     - operator
                     - baseLocation
                     - locations
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '401':
-          description: Unauthorized
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
       operationId: get-locationGroups-search
       parameters:
         - schema:
@@ -80,7 +74,7 @@ paths:
         - LocationGroups
       responses:
         '201':
-          description: Created
+          description: Success
           content:
             application/json:
               schema:
@@ -113,8 +107,14 @@ paths:
                   - groupId
                   - name
                   - location
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
         '403':
           description: The operator account has been deactivated
+        '404':
+          description: Operator not found
       requestBody:
         content:
           application/json:
@@ -204,6 +204,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LocationGroup'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
   '/locationGroups/{groupId}':
     parameters:
       - schema:
@@ -221,8 +223,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationGroup'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
+          description: Group not found
       operationId: get-locationGroups-groupId
       tags:
         - LocationGroups
@@ -231,11 +235,19 @@ paths:
       operationId: patch-locationGroups-groupId
       responses:
         '204':
+<<<<<<< HEAD
           description: No Content
         '403':
           description: The operator account has been deactivated
+=======
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
+>>>>>>> dev
         '404':
-          description: Not Found
+          description: Group or Location not found
       requestBody:
         content:
           application/json:
@@ -256,11 +268,19 @@ paths:
       operationId: delete-locationGroups-groupId
       responses:
         '204':
+<<<<<<< HEAD
           description: No Content
         '403':
           description: The operator account has been deactivated
+=======
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
+>>>>>>> dev
         '404':
-          description: Not Found
+          description: Group  not found
       tags:
         - LocationGroups
 components:

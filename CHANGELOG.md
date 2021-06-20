@@ -1,5 +1,28 @@
 # Changelog
 
+### 1.3.0 (2021-06-18)
+* **backend:** feat: improve IP blocks
+* **backend:** feat: improve email storage in postgres
+* **backend:** feat: updated API documentation
+* **backend:** feat: removed unused LocationTransferGroups
+* **backend:** feat: add expireAt functionality to test redeems
+* **contact-form:** fix: handle input starting with mutated vowels
+* **contact-form:** feat: improved input validation
+* **health-department:** fix: typo in error notification
+* **health-department:** fix: status names in process table and filter were not identical
+* **health-department:** feat: new designs for process details
+* **locations:** fix: input fields for manual input are disab
+  led under certain conditions
+* **locations:** fix: password not persisted after back action in registration
+* **locations:** fix: password criterias were not updated after back action in registration
+* **locations:** fix: password criterias were not updated after clearing password in registration
+* **locations:** fix: button to checkout all guests was clickable even though no active guest where at the location
+* **locations:** fix: redirection to correct location/area after editing locations or areas
+* **locations:** feat: phone number validation for contact person of a location and area
+* **locations:** feat: new designs for share data view
+* **webapp:** fix: error message when visiting a scanner link with an unregistered webapp
+* **development:** feature: improve project cloning on windows machine
+
 ### 1.2.3 (2021-06-19)
 * **health-department:** fix: disable SORMAS CSV export
 
@@ -12,7 +35,6 @@
 * **backend:** feat: add v4 signed keys upload
 
 ### 1.2.0 (2021-05-31)
-
 * **backend:** feature: split generic locations route into specific routes for apps and healthdepartment
 * **backend:** fix: only include app traceIds in notification endpoint
 * **backend:** security: added jsonbigint resolution

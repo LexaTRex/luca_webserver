@@ -121,3 +121,9 @@ export const FinishButton = styled(Button)`
   background-color: #c3ced9;
   width: ${() => (IS_MOBILE ? '100%' : '200px')};
 `;
+
+export const buttonStyles = {
+  height: 40,
+  width: IS_MOBILE ? '100%' : 200,
+  backgroundColor: '#c3ced9',
+};

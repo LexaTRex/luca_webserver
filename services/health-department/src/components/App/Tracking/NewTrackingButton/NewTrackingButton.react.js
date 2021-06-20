@@ -7,6 +7,7 @@ import { useModal } from 'components/hooks/useModal';
 
 // Components
 import { TrackInfectionModal } from 'components/App/modals/TrackInfectionModal';
+import { buttonStyle } from '../Tracking.styled';
 
 export const NewTrackingButton = () => {
   const intl = useIntl();
@@ -22,10 +23,7 @@ export const NewTrackingButton = () => {
   };
 
   return (
-    <Button
-      style={{ padding: '0 40px', marginLeft: 24 }}
-      onClick={trackInfection}
-    >
+    <Button style={buttonStyle} onClick={trackInfection}>
       {intl.formatMessage({ id: 'startTracking.button' })}
     </Button>
   );

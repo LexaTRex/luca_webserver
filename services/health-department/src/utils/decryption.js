@@ -11,15 +11,64 @@ import {
   int32ToHex,
   KDF_SHA256,
 } from '@lucaapp/crypto';
-
 import { getEncryptedUserContactData } from 'network/api';
 import { IncompleteDataError } from 'errors/incompleteDataError';
+import { z } from 'zod';
+import sjson from 'secure-json-parse';
+import { sanitizeObject, sanitizeForCSV } from './sanitizer';
 import {
   DECRYPT_DLIES_USING_HDEKP,
   getBadgePrivateKey,
   getDailyPrivateKey,
 } from './cryptoKeyOperations';
-import { assertStringOrNumericValues } from './typeAssertions';
+
+const userDataSchema = z.object({
+  fn: z.string().transform(sanitizeForCSV),
+  ln: z.string().transform(sanitizeForCSV),
+  pn: z.string().transform(sanitizeForCSV),
+  e: z.string().optional().transform(sanitizeForCSV),
+  st: z.string().transform(sanitizeForCSV),
+  hn: z.string().transform(sanitizeForCSV),
+  pc: z.string().transform(sanitizeForCSV),
+  c: z.string().transform(sanitizeForCSV),
+  vs: z.string().optional(),
+  v: z.number(),
+});
+
+export const additionalDataSchema = z
+  .object({ table: z.number().optional() })
+  .catchall(z.string())
+  .transform(sanitizeObject);
+
+export const decryptUser = (encryptedUser, encKey) => {
+  let userData;
+  let isInvalid = false;
+  if (!encryptedUser.data || !encryptedUser.iv) {
+    throw new IncompleteDataError(encryptedUser.data, encryptedUser.iv);
+  }
+  let decryptedUser = hexToBytes(
+    DECRYPT_AES_CTR(
+      base64ToHex(encryptedUser.data),
+      encKey,
+      base64ToHex(encryptedUser.iv)
+    )
+  );
+
+  try {
+    decryptedUser = decodeUtf8(decryptedUser);
+  } catch (error) {
+    console.error(`invalid utf8`, error);
+  }
+
+  try {
+    userData = sanitizeObject(userDataSchema.parse(sjson.parse(decryptedUser)));
+  } catch (error) {
+    console.error(`invalid json`, error);
+    userData = null;
+    isInvalid = true;
+  }
+  return { userData, isInvalid };
+};
 
 export async function decryptStaticDeviceTrace(encryptedTrace) {
   const privateKey = await getBadgePrivateKey(encryptedTrace.keyId);
@@ -40,20 +89,10 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
   const userDataKey = traceData.slice(32, 64);
 
   const encryptedUser = await getEncryptedUserContactData(userId);
-
-  if (!encryptedUser.data) {
-    throw new IncompleteDataError(encryptedUser.data, encryptedUser.iv);
+  const { userData, userDataInvalid } = decryptUser(encryptedUser, userDataKey);
+  if (userDataInvalid) {
+    return { userData, isInvalid: true, isDynamicDevice: false };
   }
-  const decryptedUser = decodeUtf8(
-    hexToBytes(
-      DECRYPT_AES_CTR(
-        base64ToHex(encryptedUser.data),
-        userDataKey,
-        base64ToHex(encryptedUser.iv)
-      )
-    )
-  );
-  const userData = JSON.parse(decryptedUser);
 
   const expectedMac = HMAC_SHA256(
     int32ToHex(encryptedTrace.checkin) + base64ToHex(encryptedTrace.data),
@@ -69,9 +108,8 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
 }
 
 export async function decryptDynamicDeviceTrace(encryptedTrace) {
-  let userData;
-  let isInvalid = false;
   let privateKey;
+  let isInvalid = false;
   try {
     privateKey = await getDailyPrivateKey(encryptedTrace.keyId);
   } catch (error) {
@@ -87,6 +125,7 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
       isDynamicDevice: true,
     };
   }
+
   const traceData = DECRYPT_DLIES_WITHOUT_MAC(
     privateKey,
     base64ToHex(encryptedTrace.publicKey),
@@ -110,27 +149,10 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
     console.error(`invalid verification (TraceId: ${encryptedTrace.traceId})`);
     isInvalid = true;
   }
-  let decryptedUser = hexToBytes(
-    DECRYPT_AES_CTR(
-      base64ToHex(encryptedUser.data),
-      encKey,
-      base64ToHex(encryptedUser.iv)
-    )
-  );
 
-  try {
-    decryptedUser = decodeUtf8(decryptedUser);
-  } catch (error) {
-    console.error(`invalid utf8 (TraceId: ${encryptedTrace.traceId})`, error);
-  }
+  const { userData, userDataInvalid } = decryptUser(encryptedUser, encKey);
+  isInvalid = isInvalid || userDataInvalid;
 
-  try {
-    userData = JSON.parse(decryptedUser);
-  } catch (error) {
-    console.error(`invalid json (TraceId: ${encryptedTrace.traceId})`, error);
-    userData = null;
-    isInvalid = true;
-  }
   return { userData, isInvalid, isDynamicDevice: true };
 }
 
@@ -157,9 +179,9 @@ export function decryptAdditionalData(encryptedTrace, isInvalid) {
   }
 
   try {
-    const parsed = JSON.parse(decryptedAdditionalData);
-    assertStringOrNumericValues(parsed);
-    return parsed;
+    return sanitizeObject(
+      additionalDataSchema.parse(sjson.parse(decryptedAdditionalData))
+    );
   } catch (error) {
     console.error(
       `invalid json (additionalData) (TraceId: ${encryptedTrace.traceId})`,

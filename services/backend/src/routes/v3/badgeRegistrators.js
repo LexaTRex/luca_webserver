@@ -23,7 +23,10 @@ router.get(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    return response.send(badgeRegistrator);
+    return response.send({
+      uuid: badgeRegistrator.uuid,
+      name: badgeRegistrator.name,
+    });
   }
 );
 

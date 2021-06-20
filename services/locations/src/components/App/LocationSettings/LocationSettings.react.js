@@ -29,7 +29,6 @@ export const LocationSettings = () => {
     data: location,
     refetch,
   } = useQuery(`settings/${locationId}`, () => getLocation(locationId));
-
   if (isLoading || isError) return null;
 
   return (

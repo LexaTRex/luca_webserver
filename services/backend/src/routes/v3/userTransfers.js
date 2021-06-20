@@ -19,7 +19,12 @@ const {
   userTransferIdParametersSchema,
 } = require('./userTransfers.schemas');
 
-// APP create UserTransfer
+/**
+ * Creates a user transfer in case of infection of a user. Assigns and returns
+ * a randomly generated transaction number.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html#accessing-the-infected-guest-s-tracing-secrets
+ */
 router.post(
   '/',
   limitRequestsPerHour(15),
@@ -41,7 +46,12 @@ router.post(
   }
 );
 
-// HD get UserTransfer by tan
+/**
+ * Returns the user transfer object for the specified tan. The endpoint is
+ * only accessible to health department employees.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html#accessing-the-infected-guest-s-tracing-secrets
+ */
 router.get(
   '/tan/:tan',
   requireHealthDepartmentEmployee,
@@ -69,7 +79,11 @@ router.get(
   }
 );
 
-// HD get UserTransfer by id
+/**
+ * Returns a user transfer by id. Required for display in the health
+ * department frontend. The endpoint is only accessible to health department
+ * employees.
+ */
 router.get(
   '/:userTransferId',
   requireHealthDepartmentEmployee,

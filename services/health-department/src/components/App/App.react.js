@@ -11,6 +11,7 @@ import {
   TRACKING_ROUTE,
   USER_MANAGEMENT_ROUTE,
   LOGIN_ROUTE,
+  PROCESS_DETAILS_ROUTE,
 } from 'constants/routes';
 import { getMe } from 'network/api';
 
@@ -21,6 +22,7 @@ import { Navigation } from './Navigation';
 import { Profile } from './Profile';
 import { Tracking } from './Tracking';
 import { UserManagement } from './UserManagement';
+import { ProcessDetails } from './ProcessDetails';
 import { AppWrapper } from './App.styled';
 
 export const App = () => {
@@ -57,6 +59,9 @@ export const App = () => {
         <Switch>
           <Route path={PROFILE_ROUTE}>
             <Profile profileData={profileData} />
+          </Route>
+          <Route path={PROCESS_DETAILS_ROUTE}>
+            <ProcessDetails />
           </Route>
           <Route path={TRACKING_ROUTE} component={Tracking} />
           <Route path={USER_MANAGEMENT_ROUTE}>

@@ -157,5 +157,6 @@
     "Home.WebAppWarningModal.Headline": "Hol’ dir die luca App",
     "Home.WebAppWarningModal.Description": "luca funktioniert am besten als App auf deinem Smartphone. Beispielsweise kannst du dort ganz einfach negative Testergebnisse hinterlegen, die dir den Zugang zu Restaurants & Co. erleichtern. Lade dir jetzt die luca App in deinem App- oder Play Store herunter, um luca optimal einsetzen zu können.",
     "Home.WebAppWarningModal.Checkbox": "Nicht mehr anzeigen",
-    "Home.WebAppWarningModal.Submit": "Okay"
+    "Home.WebAppWarningModal.Submit": "Okay",
+    "Form.Validation.toLong": "Eingabe ist zu lang"
 }

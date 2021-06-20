@@ -1,3 +1,9 @@
+/**
+ * @overview Provides endpoints for retrieving and rotating of daily keys
+ *
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-daily-keypair
+ * @see https://www.luca-app.de/securityoverview/processes/daily_key_rotation.html
+ */
 /* eslint-disable max-lines, complexity */
 const router = require('express').Router();
 const moment = require('moment');
@@ -30,7 +36,11 @@ const {
 
 const UNABLE_TO_SERIALIZE_ERROR_CODE = '40001';
 
-// get all daily public keys
+/**
+ * Fetch all the latest daily public keys used to encrypt check-in data
+ *
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-daily-keypair
+ */
 router.get('/', async (request, response) => {
   const dailyPublicKeys = await database.DailyPublicKey.findAll({
     order: [['createdAt', 'DESC']],
@@ -47,7 +57,11 @@ router.get('/', async (request, response) => {
   );
 });
 
-// get current daily key
+/**
+ * Fetch only the current daily public key
+ *
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-daily-keypair
+ */
 router.get('/current', async (request, response) => {
   const dailyPublicKey = await database.DailyPublicKey.findOne({
     order: [['createdAt', 'DESC']],
@@ -120,7 +134,11 @@ router.get(
   }
 );
 
-// get a single daily public key
+/**
+ * Fetch a specific daily public key
+ * @param keyId of the daily key to fetch
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-daily-keypair
+ */
 router.get(
   '/:keyId',
   validateParametersSchema(keyIdParametersSchema),
@@ -143,7 +161,13 @@ router.get(
   }
 );
 
-// rotate daily key
+/**
+ * Rotate the daily key by having a health department generate a new key pair
+ * and encrypting it for each health department using their respective HDEKP,
+ * so they may retrieve it securely
+ * @see https://www.luca-app.de/securityoverview/processes/daily_key_rotation.html
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-HDEKP
+ */
 router.post(
   '/rotate',
   validateSchema(rotateSchema),
@@ -286,7 +310,13 @@ router.post(
   }
 );
 
-// provide missing daily keys to other health departments
+/**
+ * Provide missing daily keys to other health departments by having a health
+ * department generate a new one and encrypting it for each other department and
+ * finally uploading it to the luca Server to be retrieved by the other departments
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/daily_key_rotation.html
+ */
 router.post(
   '/rekey',
   validateSchema(rekeySchema),

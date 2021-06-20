@@ -16,7 +16,12 @@ export const FinishStep = ({ done }) => {
       </SuccessWrapper>
       <SubTitle>{intl.formatMessage({ id: 'shareData.finish.text' })}</SubTitle>
       <FinishButtonWrapper align="flex-end">
-        <CustomButton onClick={done} width="200px" bgColor="#c3ced9">
+        <CustomButton
+          width="200px"
+          onClick={done}
+          data-cy="finish"
+          bgColor="#c3ced9"
+        >
           {intl.formatMessage({ id: 'shareData.finish' })}
         </CustomButton>
       </FinishButtonWrapper>

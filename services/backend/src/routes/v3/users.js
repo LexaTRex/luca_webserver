@@ -26,7 +26,14 @@ const {
 
 const STATIC_USER_TYPE = 'static';
 
-// create user
+/**
+ * Creates a new or updates an existing (identified by the given public key)
+ * user. Only accepts if the signature of the payload is valid for the public
+ * key sent alongside. On success, returns a user id.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_registration.html#registering-to-the-luca-server
+ * @see https://www.luca-app.de/securityoverview/processes/guest_registration.html#updating-the-contact-data
+ */
 router.post(
   '/',
   limitRequestsPerHour(200),
@@ -79,7 +86,13 @@ router.post(
   }
 );
 
-// get user by id
+/**
+ * Returns the encrypted personal data of a user for the specified id. Is used
+ * by the health department to access the user contact information for contact
+ * tracing.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_find_contacts.html#process
+ */
 router.get(
   '/:userId',
   limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
@@ -130,7 +143,13 @@ router.get(
   }
 );
 
-// update user
+/**
+ * Updates an existing user for the given user id. Only accepts if the
+ * signature of the payload is valid for the stored public key of the
+ * user.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_registration.html#updating-the-contact-data
+ */
 router.patch(
   '/:userId',
   limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
@@ -175,22 +194,24 @@ router.patch(
   }
 );
 
-// delete user
+/**
+ * Deletes an existing user for the given user id. Only accepts if the
+ * signature of the payload is valid for the stored public key of the
+ * user.
+ */
 router.delete(
   '/:userId',
   limitRequestsPerHour(100, { skipSuccessfulRequests: true }),
   validateParametersSchema(userIdParametersSchema),
   validateSchema(deleteSchema),
   async (request, response) => {
-    const user = await database.User.findOne(
-      {
-        where: {
-          uuid: request.params.userId,
-          deviceType: { [Op.or]: { [Op.ne]: STATIC_USER_TYPE, [Op.eq]: null } },
-        },
+    const user = await database.User.findOne({
+      where: {
+        uuid: request.params.userId,
+        deviceType: { [Op.or]: { [Op.ne]: STATIC_USER_TYPE, [Op.eq]: null } },
       },
-      { paranoid: false }
-    );
+      paranoid: false,
+    });
 
     if (!user) {
       return response.sendStatus(status.NOT_FOUND);

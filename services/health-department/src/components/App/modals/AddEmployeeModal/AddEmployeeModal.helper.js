@@ -4,6 +4,7 @@ export const getFormElements = intl => [
     rules: [
       {
         required: true,
+        whitespace: true,
         message: intl.formatMessage({
           id: 'userManagement.error.firstName',
         }),
@@ -15,6 +16,7 @@ export const getFormElements = intl => [
     rules: [
       {
         required: true,
+        whitespace: true,
         message: intl.formatMessage({
           id: 'userManagement.error.lastName',
         }),
@@ -26,6 +28,7 @@ export const getFormElements = intl => [
     rules: [
       {
         required: true,
+        whitespace: true,
         message: intl.formatMessage({
           id: 'userManagement.error.phone',
         }),

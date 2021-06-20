@@ -11,7 +11,7 @@ export const UserNameDisplay = ({ userTransferId, onProcessName }) => {
     `userTransfer${userTransferId}`,
     () =>
       decryptUserTransfer(userTransferId).then(processData => {
-        onProcessName(userTransferId, processData.fn + processData.ln);
+        onProcessName(userTransferId, processData?.fn + processData?.ln);
         return processData;
       })
   );
@@ -28,7 +28,7 @@ export const UserNameDisplay = ({ userTransferId, onProcessName }) => {
 
   return (
     <div>
-      {data.fn} {data.ln}
+      {data?.fn} {data?.ln}
     </div>
   );
 };

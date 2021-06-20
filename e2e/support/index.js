@@ -16,6 +16,8 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 
+import 'cypress-file-upload';
+
 beforeEach(() => {
   cy.intercept('/', req => {
     req.headers['X-Forwarded-For'] = '10.0.0.1';

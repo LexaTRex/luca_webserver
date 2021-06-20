@@ -5,6 +5,13 @@ import { Form, Input, Button, notification } from 'antd';
 import { updateLocation } from 'network/api';
 
 import {
+  getRequiredRule,
+  getPhoneRules,
+  requiresPhone,
+  invalidPhone,
+} from 'utils/validatorRules';
+
+import {
   buttonStyles,
   Overview,
   Heading,
@@ -104,12 +111,8 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
             id: 'settings.location.phone',
           })}
           rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.phone',
-              }),
-            },
+            getRequiredRule(intl, requiresPhone),
+            getPhoneRules(intl, invalidPhone),
           ]}
         >
           <Input />

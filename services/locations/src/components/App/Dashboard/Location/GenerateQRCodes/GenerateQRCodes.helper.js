@@ -13,8 +13,8 @@ import { linkButtonStyle } from './GenerateQRCodes.styled';
 
 const getLocationName = location => {
   return location.name === null
-    ? `${location.LocationGroup.name}`
-    : `${location.LocationGroup.name} ${location.name}`;
+    ? `${location.LocationGroup?.name}`
+    : `${location.LocationGroup?.name} ${location.name}`;
 };
 
 const generateLocationCWAContentPart = location => {
@@ -101,9 +101,9 @@ const getCSVFileContentFromLocation = (
 
 const getQRCodeCSVFileName = location =>
   location.name === null
-    ? sanitize(`QR_Codes_${location.LocationGroup.name}_luca.csv`)
+    ? sanitize(`QR_Codes_${location.LocationGroup?.name}_luca.csv`)
     : sanitize(
-        `QR_Codes_${location.LocationGroup.name}_${location.name}_luca.csv`
+        `QR_Codes_${location.LocationGroup?.name}_${location.name}_luca.csv`
       );
 
 export const QRCodeCSVDownload = ({

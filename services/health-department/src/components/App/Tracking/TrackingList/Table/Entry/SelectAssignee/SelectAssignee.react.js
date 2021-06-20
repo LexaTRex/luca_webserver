@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import { useParams } from 'react-router-dom';
 import { Select, notification } from 'antd';
 import { useIntl } from 'react-intl';
 
@@ -10,13 +11,13 @@ const { Option } = Select;
 
 export const SelectAssignee = ({ process }) => {
   const intl = useIntl();
+  const { processId } = useParams();
   const queryClient = useQueryClient();
+  const [currentAssignee, setCurrentAssignee] = useState(null);
 
-  const currentAssignee = process.assignee
-    ? `${process.assignee.firstName} ${process.assignee.lastName}`
-    : intl.formatMessage({
-        id: 'processTable.selectAssignee.unassigned',
-      });
+  useEffect(() => {
+    setCurrentAssignee(process?.assignee?.uuid || null);
+  }, [process, setCurrentAssignee]);
 
   const { isLoading, error, data: employees } = useQuery(
     'employees',
@@ -43,7 +44,12 @@ export const SelectAssignee = ({ process }) => {
             });
       }
 
+      setCurrentAssignee(assignee.value);
+
       queryClient.invalidateQueries('processes');
+      if (processId) {
+        queryClient.invalidateQueries(`process${processId}`);
+      }
       return assignee.value
         ? notification.success({
             message: intl.formatMessage(
@@ -57,7 +63,7 @@ export const SelectAssignee = ({ process }) => {
             }),
           });
     },
-    [process, intl, queryClient]
+    [process, intl, queryClient, processId]
   );
 
   const handleFilterOption = (input, option) =>
@@ -71,10 +77,11 @@ export const SelectAssignee = ({ process }) => {
     <Select
       showSearch
       labelInValue
-      defaultValue={{ value: currentAssignee }}
+      value={{ value: currentAssignee }}
       style={selectStyle}
       optionFilterProp="children"
       onSelect={handleSelectAssignee}
+      onClick={event => event.stopPropagation()}
       filterOption={handleFilterOption}
       notFoundContent={intl.formatMessage({
         id: 'processTable.selectAssignee.notFound',

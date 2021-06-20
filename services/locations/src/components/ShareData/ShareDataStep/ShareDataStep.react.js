@@ -7,20 +7,30 @@ import { useIntl } from 'react-intl';
 import { shareData } from 'network/api';
 import {
   base64ToHex,
-  hexToInt8,
+  DECRYPT_DLIES,
+  ENCRYPT_DLIES,
   hexToBase64,
   hexToBytes,
-  ENCRYPT_DLIES,
-  DECRYPT_DLIES,
+  hexToInt8,
 } from '@lucaapp/crypto';
 
 import {
+  buttonStyles,
   SubHeader,
   StepLabel,
   FinishButton,
   RequestContent,
   FinishButtonWrapper,
 } from '../ShareData.styled';
+
+/**
+ * This step decrypts the outer encryption layer of the traces requested by
+ * the health department for the corresponding locationTransfer process. Any
+ * additional data will be re-encrypted with the public key of the responsible
+ * health department. The remaining data is still encrypted with the daily key.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_find_contacts.html#process
+ */
 
 export const ShareDataStep = ({
   privateKey,
@@ -29,7 +39,6 @@ export const ShareDataStep = ({
   showStepLabel,
 }) => {
   const intl = useIntl();
-
   const onFinish = async () => {
     await Promise.all(
       transfers.map(async transfer => {
@@ -106,6 +115,7 @@ export const ShareDataStep = ({
   };
 
   const timestampFormat = 'DD.MM.YYYY hh:mm';
+
   const healthDepartments = useMemo(() => {
     const departments = {};
 
@@ -121,6 +131,7 @@ export const ShareDataStep = ({
   return (
     <>
       {showStepLabel && <StepLabel>2/2</StepLabel>}
+
       <RequestContent>
         <SubHeader>
           {intl.formatMessage({ id: 'shareData.shareData' })}
@@ -138,6 +149,7 @@ export const ShareDataStep = ({
               id: 'dataTransfers.transfer.timeLabel',
             })} - ${moment
               .unix(transfer.time[1])
+
               .format(timestampFormat)} ${intl.formatMessage({
               id: 'dataTransfers.transfer.timeLabel',
             })}`}
@@ -160,9 +172,8 @@ export const ShareDataStep = ({
           <h3 key={healthDepartment.name}>{healthDepartment.name}</h3>
         ))}
       </RequestContent>
-
       <FinishButtonWrapper align="flex-end">
-        <FinishButton onClick={onFinish}>
+        <FinishButton data-cy="next" onClick={onFinish} style={buttonStyles}>
           {intl.formatMessage({ id: 'shareData.finish' })}
         </FinishButton>
       </FinishButtonWrapper>

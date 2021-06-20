@@ -39,11 +39,11 @@ module.exports = (Sequelize, DataTypes) => {
         },
       },
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.CITEXT,
         allowNull: false,
       },
       username: {
-        type: DataTypes.STRING,
+        type: DataTypes.CITEXT,
         allowNull: false,
         unique: true,
       },

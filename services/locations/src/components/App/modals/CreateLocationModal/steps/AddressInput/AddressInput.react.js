@@ -137,7 +137,12 @@ export const AddressInput = ({
                 isError={isError}
                 setIsError={setIsError}
               />
-              <ManualInputButton onClick={() => setShowManualInput(true)}>
+              <ManualInputButton
+                onClick={() => {
+                  setShowManualInput(true);
+                  setDisabled(false);
+                }}
+              >
                 {intl.formatMessage({ id: 'addressInput.manualInputTitle' })}
               </ManualInputButton>
               {showManualInput && <ManualAddressText />}

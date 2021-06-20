@@ -31,8 +31,8 @@ const escapeVariables = variables => {
 };
 
 const sendTemplate = (templateId, subject, toEmail, toName, variables) => {
-  if (!config.get('mailjet.token') && config.get('debug')) {
-    logger.debug('debug email not sent', {
+  if (!config.get('mailjet.token')) {
+    logger.warn('email not sent', {
       templateId,
       subject,
       toEmail,

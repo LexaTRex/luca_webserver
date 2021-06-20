@@ -12,7 +12,9 @@ import { reportInfection } from 'helpers/crypto';
 import { HOME_PATH } from 'constants/routes';
 
 import { InfoIcon } from 'components/InfoIcon/InfoIcon.react';
+
 import { CheckinIcon, HistoryIcon } from 'components/Icons';
+
 import { AppLayout, AppHeadline, AppContent } from 'components/AppLayout';
 
 import {
@@ -130,7 +132,14 @@ export function History() {
         footer={
           <>
             <StyledFooterContainer>
-              <StyledFooterItem onClick={() => history.push(HOME_PATH)}>
+              <StyledFooterItem
+                id="home"
+                tabIndex="2"
+                onClick={() => history.push(HOME_PATH)}
+                aria-label={formatMessage({
+                  id: 'Home.AriaLabel',
+                })}
+              >
                 <CheckinIcon />
                 {formatMessage({ id: 'Home.MenuItem' })}
               </StyledFooterItem>

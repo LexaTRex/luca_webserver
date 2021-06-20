@@ -1,3 +1,17 @@
+# postcss
+# https://nvd.nist.gov/vuln/detail/CVE-2021-23368
+# Regular Expression Denial of Service (ReDoS)
+# can only be leveraged during source map parsing
+# there is currently no version of stylelint which supports a fixed version of postcss
+1693
+
+# ws
+# https://nvd.nist.gov/vuln/detail/CVE-2021-32640
+# A specially crafted value of the `Sec-Websocket-Protocol`
+# header can be used to significantly slow down a ws server.
+# ws is only used for hot-reloads in dev and not in production (react-scripts)
+1748
+
 # normalize-url
 # https://nvd.nist.gov/vuln/detail/CVE-2021-33502
 # Regular Expression Denial of Service (ReDoS)

@@ -1,9 +1,3 @@
-openapi: 3.0.0
-info:
-  title: SMS
-  description: SMS
-  version: '1.0'
-  contact: {}
 paths:
   /sms/request:
     post:
@@ -21,11 +15,11 @@ paths:
                   challengeId:
                     type: string
         '400':
-          description: Invalid Phone Number
+          $ref: '#/components/schemas/BadRequest'
         '429':
-          description: Too Many Requests
+          $ref: '#/components/schemas/TooManyRequestsMinute'
         '503':
-          description: Service Unavailable
+          description: Provider Service unavailable
       operationId: post-sms-request
       requestBody:
         content:
@@ -43,9 +37,13 @@ paths:
         - SMS
       responses:
         '204':
-          description: No Content
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '403':
-          description: Forbidden
+          description: Challenge not found
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsDay'
       operationId: post-sms-verify
       requestBody:
         content:
@@ -74,9 +72,11 @@ paths:
                   challengeId:
                     type: string
         '204':
-          description: No Content (debug only)
+          description: Success (debug only)
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '403':
-          description: Forbidden
+          description: Challenge not found
       operationId: post-sms-verify-bulk
       requestBody:
         content:
@@ -91,5 +91,3 @@ paths:
                   items:
                     type: string
       description: Verify SMS challenge (bulk).
-tags:
-  - name: SMS

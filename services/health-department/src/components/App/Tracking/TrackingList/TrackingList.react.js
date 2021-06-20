@@ -16,9 +16,8 @@ import { ListFilters } from './ListFilters';
 import { TrackingListWrapper } from './TrackingList.styled';
 
 export const TrackingList = () => {
-  const { isLoading, error, data: processes, refetch } = useQuery(
-    'processes',
-    () => getProcesses().then(response => response.json())
+  const { isLoading, error, data: processes } = useQuery('processes', () =>
+    getProcesses().then(response => response.json())
   );
   const [filters, setFilters] = useState({
     type: ALL_PROCESS_TYPES,
@@ -36,7 +35,7 @@ export const TrackingList = () => {
         onChange={setFilters}
         processes={processes}
       />
-      <Table filters={filters} processes={processes} refetch={refetch} />
+      <Table filters={filters} processes={processes} />
     </TrackingListWrapper>
   );
 };

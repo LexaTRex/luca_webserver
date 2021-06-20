@@ -8,9 +8,12 @@ export const TableWrapper = styled.div`
 
 export const Row = styled.div`
   display: flex;
-  border-bottom: 1px solid rgb(151, 151, 151);
+  border-bottom: 1px solid lightgray;
   padding: 24px;
-  justify-content: space-bewteen;
+  justify-content: space-between;
+  cursor: pointer;
+  font-family: Montserrat-Medium, sans-serif;
+  font-size: 16px;
 `;
 
 export const RowWrapper = styled.div`

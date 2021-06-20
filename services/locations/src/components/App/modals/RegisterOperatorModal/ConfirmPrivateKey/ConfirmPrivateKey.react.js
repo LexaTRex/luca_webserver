@@ -39,7 +39,10 @@ export const ConfirmPrivateKey = ({ setHasSavedKey, hasDownloadedKey }) => {
             },
           ]}
         >
-          <Checkbox onChange={handleConfirmSavedKey}>
+          <Checkbox
+            onChange={handleConfirmSavedKey}
+            data-cy="checkPrivateKeyIsDownloaded"
+          >
             {intl.formatMessage({
               id: 'modal.registerOperator.confirmPrivateKey',
             })}

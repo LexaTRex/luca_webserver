@@ -1,3 +1,11 @@
+/**
+ * @overview Provides endpoints allowing operators to register/update/delete their venue and to
+ * check-out all guests at once
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/venue_registration.html
+ * @see https://www.luca-app.de/securityoverview/properties/actors.html#term-Venue-Owner
+ */
+
 /* eslint-disable sonarjs/no-duplicate-string */
 const router = require('express').Router();
 const status = require('http-status');
@@ -7,6 +15,7 @@ const {
   updateSchema,
   locationIdParametersSchema,
 } = require('./locations.schemas');
+const { getOperatorLocationDTO } = require('./locations.helper');
 
 const database = require('../../../database');
 const {
@@ -18,16 +27,21 @@ const {
   requireNonDeletedUser,
 } = require('../../../middlewares/requireUser');
 
-// get own locations
+/**
+ * Get all locations (venues) operated by the currently logged-in owner
+ */
 router.get('/', requireOperator, async (request, response) => {
   const locations = await database.Location.findAll({
     where: {
       operator: request.user.uuid,
     },
   });
-  response.send(locations);
+  response.send(locations.map(location => getOperatorLocationDTO(location)));
 });
 
+/**
+ * Get specific location (venue). Requires the logged-in user to be the operator of said location
+ */
 router.get(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
@@ -50,11 +64,15 @@ router.get(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    return response.send(location);
+    return response.send(getOperatorLocationDTO(location));
   }
 );
 
-// create location
+/**
+ * Create a new location (venue). The venue's private key will remain in the venue frontend
+ * @see https://www.luca-app.de/securityoverview/processes/venue_registration.html
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-venue-keypair
+ */
 router.post(
   '/',
   requireOperator,
@@ -118,11 +136,14 @@ router.post(
     });
 
     response.status(status.CREATED);
-    return response.send(location);
+    return response.send(getOperatorLocationDTO(location));
   }
 );
 
-// update location
+/**
+ * Update given location, owned by the logged-in operator
+ * @param locationId of the venue to update
+ */
 router.patch(
   '/:locationId',
   requireOperator,
@@ -152,7 +173,7 @@ router.patch(
       isIndoor: request.body.isIndoor,
     });
 
-    return response.send(location);
+    return response.send(getOperatorLocationDTO(location));
   }
 );
 
@@ -183,7 +204,10 @@ router.delete(
   }
 );
 
-// checkout all guest in a location
+/**
+ * Check-out all guests of a given venue
+ * @param locationId of the venue
+ */
 router.post(
   '/:locationId/check-out',
   validateParametersSchema(locationIdParametersSchema),

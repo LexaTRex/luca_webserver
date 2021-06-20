@@ -17,6 +17,7 @@ services:
         - GIT_COMMIT
     environment:
       - SKIP_SMS_VERIFICATION
+      - E2E
   locations:
     image: lucaapp/locations:${IMAGE_TAG}
     build:

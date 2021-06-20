@@ -1,12 +1,3 @@
-openapi: 3.0.0
-tags:
-  - name: Keys
-    description: API to manage your keys.
-info:
-  title: daily
-  version: '1.0'
-  description: Partial OpenAPI doc
-  contact: {}
 paths:
   /keys/daily:
     get:
@@ -42,7 +33,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DailyPublicKey'
         '404':
-          description: Not Found
+          description: Daily Public Key not found
       operationId: get-keys-daily-current
       description:
         'Get the most current [daily
@@ -100,8 +91,12 @@ paths:
                   - publicKey
                   - signature
                   - createdAt
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '401':
           description: Unauthorized
+        '404':
+          description: Daily Private Key not found
       operationId: get-keys-daily-encrypted-$-keyId
       description:
         "Returns the [daily key
@@ -137,9 +132,14 @@ paths:
                 required:
                   - healthDepartmentId
                   - createdAt
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
       operationId: get-keys-daily-encrypted-keyId-keyed
       description:
-        List of IDs of health departments for which the daily private key with keyId was encrypted.
+        List of IDs of health departments for which the daily private key with
+        keyId was encrypted.
   '/keys/daily/{keyId}':
     parameters:
       - schema:
@@ -167,8 +167,10 @@ paths:
                     createdAt: 1616599396
                     signature: MEUCIDWIHvWDwT5dGHAjvvrchWvHP8+mMqc8M3E93yeqPsz5AiEAvngi2IqcVyQbnrz5Pz2Cb0e4hCDeYll04H0QYBxDwr8=
                     issuerId: b764123d-7f3e-44d4-a64f-630ab0f9391d
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
+          description: Daily Private Key not found
       operationId: get-keys-daily-$-keyId
       description:
         'Get a specific [daily key
@@ -183,8 +185,16 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        '403':
+          description: Signature not valid
+        '404':
+          description: Health Department not found
         '409':
-          description: Conflict
+          description: Key ID not valid or found
       requestBody:
         content:
           application/json:
@@ -230,8 +240,14 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '403':
-          description: Forbidden
+          description: Signature not valid
+        '404':
+          description: Health Department not found
       requestBody:
         content:
           application/json:
@@ -307,4 +323,3 @@ components:
         - createdAt
         - signature
         - issuerId
-

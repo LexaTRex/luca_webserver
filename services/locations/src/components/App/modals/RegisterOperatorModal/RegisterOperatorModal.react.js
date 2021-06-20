@@ -15,6 +15,12 @@ import {
   nextButtonStyles,
 } from './RegisterOperatorModal.styled';
 
+/**
+ * Modal for registering a new location. Generates a new keypair and
+ * uploads the public key to the backend.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/venue_registration.html#process
+ */
 export const RegisterOperatorModal = ({ onClose, operator }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
@@ -61,6 +67,7 @@ export const RegisterOperatorModal = ({ onClose, operator }) => {
       />
       <ButtonWrapper multipleButtons>
         <Button
+          data-cy="finish"
           style={!hasSavedKey ? disabledStyle : nextButtonStyles}
           disabled={!hasSavedKey}
           onClick={setOperatorKey}

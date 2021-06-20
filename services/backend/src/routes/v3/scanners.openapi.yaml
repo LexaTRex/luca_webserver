@@ -1,9 +1,3 @@
-openapi: 3.0.0
-info:
-  title: Scanners
-  description: Scanners
-  version: '1.0'
-  contact: {}
 paths:
   '/scanners/{scannerId}':
     parameters:
@@ -14,12 +8,21 @@ paths:
         required: true
     get:
       summary: Get scanner information
-      description: 'Get [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend) information'
+      description:
+        'Get
+        [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)
+        information'
       tags:
         - Scanners
       responses:
         '200':
           description: OK
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Location not found
+        '410':
+          description: Location already deleted
       operationId: get-scanners-scannerId
   '/scanners/{scannerAccessId}/traces/count/current':
     parameters:
@@ -42,8 +45,15 @@ paths:
               examples:
                 Example:
                   value: '9001'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Location not found
       operationId: get-scanners-scannerId-traces-count-current
-      description: 'Count of currently active traces at the [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)''s location.'
+      description:
+        "Count of currently active traces at the
+        [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)'s
+        location."
   '/scanners/{scannerAccessId}/traces/count/total':
     parameters:
       - schema:
@@ -65,8 +75,15 @@ paths:
               examples:
                 Example:
                   value: '9001'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Location not found
       operationId: get-scanners-scannerId-traces-count-total
-      description: 'Count of all traces at the [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)''s location'
+      description:
+        "Count of all traces at the
+        [scanner](https://luca-app.de/securityconcept/properties/actors.html#term-Scanner-Frontend)'s
+        location"
   '/scanners/access/{scannerAccessId}':
     parameters:
       - schema:
@@ -76,7 +93,8 @@ paths:
         required: true
     get:
       summary: Access information
-      tags: []
+      tags:
+        - Scanners
       responses:
         '200':
           description: OK
@@ -119,6 +137,10 @@ paths:
                   - scannerAccessId
                   - locationId
                   - publicKey
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Location not found
+        '410':
+          description: Location already deleted
       operationId: get-scanners-access-scannerAccessId
-tags:
-  - name: Scanners

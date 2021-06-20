@@ -1,11 +1,3 @@
-openapi: 3.0.0
-info:
-  title: keys
-  version: '1.0'
-  description: Partial OpenAPI doc
-  contact: {}
-tags:
-  - name: HealthDepartmentEmployees
 paths:
   'healthDepartmentEmployees/locations/{locationId}':
     parameters:
@@ -63,6 +55,10 @@ paths:
                     minLength: 1
                   isIndoor:
                     type: boolean
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
       description: |-
         Gets a location with detailed information for the health
         department (also referred to as [venue](https://luca-app.de/securityconcept/processes/venue_registration.html)) by its primary ID.

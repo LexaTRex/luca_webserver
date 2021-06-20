@@ -33,6 +33,15 @@ import {
 } from '@lucaapp/crypto';
 
 import {
+  MAX_CITY_LENGTH,
+  MAX_EMAIL_LENGTH,
+  MAX_NAME_LENGTH,
+  MAX_PHONE_LENGTH,
+  MAX_STREET_LENGTH,
+  MAX_POSTAL_CODE_LENGTH,
+  MAX_HOUSE_NUMBER_LENGTH,
+} from 'constants/valueLength';
+import {
   indexDB,
   USER_DATA_SECRET,
   USER_ID,
@@ -44,6 +53,40 @@ import {
 import { getLocation } from './locations';
 import { getDailyPublicKey } from './dailyKeys';
 
+/**
+ * Returns a user payload
+ */
+function generateUserPayload({
+  firstName,
+  lastName,
+  phoneNumber,
+  email,
+  street,
+  houseNumber,
+  zip,
+  city,
+} = {}) {
+  return {
+    v: 3,
+    fn: String(firstName).slice(0, MAX_NAME_LENGTH).trim(),
+    ln: String(lastName).slice(0, MAX_NAME_LENGTH).trim(),
+    pn: String(phoneNumber).slice(0, MAX_PHONE_LENGTH).trim(),
+    e: String(email).slice(0, MAX_EMAIL_LENGTH).trim(),
+    st: String(street).slice(0, MAX_STREET_LENGTH).trim(),
+    hn: String(houseNumber).slice(0, MAX_HOUSE_NUMBER_LENGTH).trim(),
+    pc: String(zip).slice(0, MAX_POSTAL_CODE_LENGTH).trim(),
+    c: String(city).slice(0, MAX_CITY_LENGTH).trim(),
+  };
+}
+
+/**
+ * Returns the tracing secret for the current day if existing, otherwise generates a
+ * fresh one and stores it. Also deletes all tracing secrets outside of the
+ * epidemiologically relevant timespan.
+ *
+ * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-tracing-secret
+ *
+ */
 export async function getUserTracingSecret() {
   const timestamp = moment().seconds(0);
   const date = timestamp.format('DD-MM-YYYY');
@@ -87,6 +130,16 @@ export async function getSecrets() {
   return { ...secretMap, [USER_TRACING_SECRET]: await getUserTracingSecret() };
 }
 
+/**
+ * Registers a new user with the server.
+ *
+ * First generates and stores all required user secrets which are then used to
+ * encrypt and authenticate their personal data. Finally, the encrypted and
+ * authenticated data is signed and uploaded to the server, which returns a userId
+ * that is stored for later use.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_registration.html#creating-the-secrets
+ */
 export async function registerDevice({
   firstName,
   lastName,
@@ -105,17 +158,16 @@ export async function registerDevice({
     const encryptionKey = KDF_SHA256(userDataSecret, '01').slice(0, 32);
     const authenticationKey = KDF_SHA256(userDataSecret, '02');
     const iv = GET_RANDOM_BYTES(16);
-    const payload = {
-      v: 3,
-      fn: firstName,
-      ln: lastName,
-      pn: phoneNumber,
-      e: email,
-      st: street,
-      hn: houseNumber,
-      pc: zip,
-      c: city,
-    };
+    const payload = generateUserPayload({
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      street,
+      houseNumber,
+      zip,
+      city,
+    });
     const buffer = bytesToHex(encodeUtf8(JSON.stringify(payload)));
     const encryptedData = ENCRYPT_AES_CTR(buffer, encryptionKey, iv);
     const mac = HMAC_SHA256(encryptedData, authenticationKey);
@@ -170,6 +222,12 @@ export async function registerDevice({
   }
 }
 
+/**
+ * Computes the data to be included in the QR code for a check-in.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-generation-and-check-in
+ * @param userId - the userId obtained by registering with the server
+ */
 export async function generateQRCodeData(userId) {
   const secrets = await getSecrets();
   const userDataSecret = secrets[USER_DATA_SECRET];
@@ -236,7 +294,13 @@ export async function generateQRCode(userId) {
   return hexToBase32(qrData);
 }
 
-// traceId needs to be bas64 encoded
+/**
+ * Performs a checkout for the specified traceId.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_checkout.html#checkout-process
+ * @param {*} traceId - base64 encoded traceId of the corresponding check-in
+ * @param {*} timestamp - checkout time (if empty, the current time is used)
+ */
 export async function checkout(traceId, timestamp = moment().unix()) {
   const { status } = await checkoutTrace(traceId, timestamp);
 
@@ -247,8 +311,25 @@ export async function checkout(traceId, timestamp = moment().unix()) {
   return status === 204;
 }
 
+/**
+ * Associates additional data to a check-in. The data is encrypted using the location
+ * public key.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
+ */
 export async function addAdditionalData(traceId, locationId, data) {
-  const buffer = bytesToHex(encodeUtf8(JSON.stringify(data)));
+  if (typeof data !== 'object') {
+    return;
+  }
+
+  const formattedData = {};
+  for (const additionalDataKey of Object.key(data || {})) {
+    formattedData[String(additionalDataKey).trim()] = String(
+      data[additionalDataKey]
+    ).trim();
+  }
+
+  const buffer = bytesToHex(encodeUtf8(JSON.stringify(formattedData)));
 
   const { publicKey: locationPublicKey } = await getLocation(locationId);
 
@@ -260,6 +341,13 @@ export async function addAdditionalData(traceId, locationId, data) {
   await addAdditionalDataToTrace(iv, mac, traceId, encryptedData, publicKey);
 }
 
+/**
+ * Performs a self check-in via a printed QR code.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_self_checkin.html#check-in-via-the-guest-app
+ * @param scannerId - the scannerId included in the scanned QR code
+ * @param additionalData - the additional data included in the scanned QR code (if any)
+ */
 export async function checkin(scannerId, additionalData = null) {
   const scanner = await getScanner(scannerId);
   await getLocation(scanner.locationId);
@@ -316,6 +404,17 @@ export async function checkin(scannerId, additionalData = null) {
   return hexToBase64(traceId);
 }
 
+/**
+ * Updates user data on the server.
+ *
+ * Encrypts and authenticates the updated personal data, then signs it with the
+ * private key of the user and uploads it to the server.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/guest_registration.html#updating-the-contact-data
+ *
+ * @param userId - the userId obtained by registering with the server
+ * @param userData - the new userData
+ */
 export async function changeUserInformation(
   userId,
   { firstName, lastName, phoneNumber, email, street, houseNumber, zip, city }
@@ -328,17 +427,17 @@ export async function changeUserInformation(
   const encryptionKey = KDF_SHA256(userDataSecret, '01').slice(0, 32);
   const authenticationKey = KDF_SHA256(userDataSecret, '02');
   const iv = GET_RANDOM_BYTES(16);
-  const payload = {
-    v: 3,
-    fn: firstName,
-    ln: lastName,
-    pn: phoneNumber,
-    e: email,
-    st: street,
-    hn: houseNumber,
-    pc: zip,
-    c: city,
-  };
+
+  const payload = generateUserPayload({
+    firstName,
+    lastName,
+    phoneNumber,
+    email,
+    street,
+    houseNumber,
+    zip,
+    city,
+  });
 
   const buffer = bytesToHex(encodeUtf8(JSON.stringify(payload)));
   const encryptedData = ENCRYPT_AES_CTR(buffer, encryptionKey, iv);
@@ -377,6 +476,15 @@ export async function changeUserInformation(
   });
 }
 
+/**
+ * Starts a user data transfer in case of infection.
+ *
+ * The relevant user secrets are encrypted using the daily public key and uploaded
+ * to the server. The server returns a transaction number to be shared with the
+ * appropriate health department.
+ *
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html#accessing-the-infected-guest-s-tracing-secrets
+ */
 export async function reportInfection() {
   const secrets = await getSecrets();
   const userId = secrets[USER_ID];

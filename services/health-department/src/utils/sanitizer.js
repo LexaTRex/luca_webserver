@@ -1,11 +1,8 @@
-import { mapValues } from 'lodash';
+import { mapValues, mapKeys } from 'lodash';
 
 export const sanitizeForCSV = value => {
-  if (typeof value === 'object' && value !== null)
-    return mapValues(value, sanitizeForCSV);
-
   if (typeof value === 'number') {
-    return `${value}`;
+    return String(value);
   }
 
   if (typeof value !== 'string') {
@@ -28,4 +25,7 @@ export const sanitizeForCSV = value => {
   return sanitizedStringGeneral.replace(/^[\s"'+=@`-]+/g, '_');
 };
 
-export const sanitizeObject = object => mapValues(object, sanitizeForCSV);
+export const sanitizeObject = object =>
+  mapKeys(mapValues(object, sanitizeForCSV), (value, key) =>
+    sanitizeForCSV(key)
+  );
