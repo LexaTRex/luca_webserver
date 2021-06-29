@@ -7,6 +7,7 @@ import LucaLogo from 'assets/LucaLogo.svg';
 // Components
 import { LogoutButton } from './LogoutButton';
 import { LinkMenu } from './LinkMenu';
+import { Profile } from './Profile';
 import {
   HeaderWrapper,
   Logo,
@@ -17,6 +18,7 @@ import {
 
 export const Header = ({ onlyLogo = false }) => {
   const intl = useIntl();
+
   return (
     <HeaderWrapper>
       <Title>
@@ -29,6 +31,7 @@ export const Header = ({ onlyLogo = false }) => {
       </Title>
       {!onlyLogo && (
         <MenuWrapper>
+          <Profile />
           <LinkMenu />
           <LogoutButton />
         </MenuWrapper>

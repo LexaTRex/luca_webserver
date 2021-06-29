@@ -323,7 +323,7 @@ export async function addAdditionalData(traceId, locationId, data) {
   }
 
   const formattedData = {};
-  for (const additionalDataKey of Object.key(data || {})) {
+  for (const additionalDataKey of Object.keys(data || {})) {
     formattedData[String(additionalDataKey).trim()] = String(
       data[additionalDataKey]
     ).trim();

@@ -4,11 +4,13 @@ import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from 'react-query';
 import { Table, notification } from 'antd';
 
-import { useModal } from 'components/hooks/useModal';
-
+import { sortByTimeAsc } from 'utils/time';
+import { sortByNameAsc } from 'utils/string';
 import { getLocationTransfers, contactLocation } from 'network/api';
 
+import { useModal } from 'components/hooks/useModal';
 import { ContactPersonViewModal } from 'components/App/modals/ContactPersonViewModal';
+
 import { Time, Contact } from './HistoryTable.styled';
 import { ContactConfirmationButton } from './ContactConfirmationButton';
 
@@ -61,6 +63,7 @@ export const HistoryTable = ({ process, refetch }) => {
         );
     }
   };
+
   const columns = [
     {
       title: intl.formatMessage({ id: 'history.label.locationName' }),
@@ -141,7 +144,11 @@ export const HistoryTable = ({ process, refetch }) => {
     <Table
       id="processDetailsHistoryTable"
       columns={columns}
-      dataSource={locations}
+      dataSource={
+        process.userTransferId
+          ? sortByTimeAsc(locations)
+          : sortByNameAsc(locations)
+      }
       pagination={false}
       rowKey={record => record.transferId}
     />

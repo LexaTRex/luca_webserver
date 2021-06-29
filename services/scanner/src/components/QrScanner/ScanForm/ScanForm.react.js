@@ -118,7 +118,7 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
 
     setInputValue(event.target.value);
 
-    // if value ends with `` it's possible that the submit was supressed
+    // if value ends with `` it's possible that the submit was suppressed
     if (!event.target.value.endsWith('``')) return;
     debounceTimeout.current = setTimeout(() => {
       onSubmit();

@@ -29,7 +29,6 @@ export const ModalArea = () => {
 
   return (
     <Modal
-      wrapClassName={modalContent?.blueModal ? 'blueModal' : ''}
       closable={modalContent?.closable}
       visible={!!stateModal}
       zIndex={zIndex.modalArea}

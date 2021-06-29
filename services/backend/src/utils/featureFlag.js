@@ -6,6 +6,8 @@ const DEFAULT_VALUES = {
   dummy_max_tracings: 10,
   dummy_max_traces: 20,
   v4_signed_public_keys: false,
+  android_minimum_version: 57,
+  ios_minimum_version: 24,
 };
 
 const get = async key => {

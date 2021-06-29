@@ -193,8 +193,10 @@ paths:
                     minLength: 1
                   isAdmin:
                     type: boolean
-                  deletedat:
+                  deletedAt:
                     type: integer
+                  isTrusted:
+                    type: boolean
                 required:
                   - employeeId
                   - firstName
@@ -202,6 +204,7 @@ paths:
                   - email
                   - departmentId
                   - isAdmin
+                  - isTrusted
               examples:
                 Health department employee:
                   value:

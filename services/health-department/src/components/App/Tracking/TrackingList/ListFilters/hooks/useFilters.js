@@ -137,7 +137,7 @@ export function useListFilters(
 // get assignees from processes
 export function useGetAssigneeNameOptions() {
   const { isLoading, error, data: processes } = useQuery('processes', () =>
-    getProcesses().then(response => response.json())
+    getProcesses()
   );
 
   if (isLoading || error) return null;

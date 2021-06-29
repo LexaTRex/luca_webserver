@@ -430,7 +430,7 @@ router.post(
       sendShareDataRequestNotification(
         transfer.Location.Operator.email,
         `${transfer.Location.Operator.firstName} ${transfer.Location.Operator.lastName}`,
-        'de',
+        null,
         {
           firstName: transfer.Location.Operator.firstName,
           departmentName: transfer.HealthDepartment.name,

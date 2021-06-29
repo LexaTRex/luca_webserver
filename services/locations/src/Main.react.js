@@ -15,7 +15,6 @@ import {
   RESET_PASSWORD_ROUTE,
   ACTIVATION_ROUTE,
   ACTIVATE_EMAIL_ROUTE,
-  REGISTER_BADGE_WITH_ID_ROUTE,
   REGISTER_BADGE_ROUTE,
   AUTHENTICATION_ROUTE,
   SHARE_DATA_ROUTE,
@@ -82,12 +81,8 @@ export const Main = () => {
                   />
                   <Route path={APP_ROUTE} component={App} />
                   <Route
-                    path={REGISTER_BADGE_WITH_ID_ROUTE}
-                    component={RegisterBadge}
-                  />
-                  <Route
                     path={REGISTER_BADGE_ROUTE}
-                    render={() => <RegisterBadge requiresVerification />}
+                    component={RegisterBadge}
                   />
                   <Route path={SHARE_ALL_DATA_ROUTE} component={ShareData} />
                   <Route path={SHARE_DATA_ROUTE} component={ShareData} />

@@ -64,14 +64,12 @@ router.post(
     const operator = await database.Operator.findOne({
       where: {
         email: request.body.email,
-        activated: true,
       },
     });
 
-    // Operator with the email does not exist or is not activated
-    if (!operator) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
+    if (!operator) return response.sendStatus(status.NOT_FOUND);
+
+    if (!operator.activated) return response.sendStatus(status.LOCKED);
 
     await database.PasswordReset.update(
       { closed: true },

@@ -2,6 +2,9 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Form, Input, Button } from 'antd';
 
+import { getRequiredRule } from 'utils/validatorRules';
+import { requiresGroupName } from 'constants/errorMessages';
+
 import {
   nextButtonStyles,
   backButtonStyles,
@@ -42,14 +45,7 @@ export const NameInput = ({
             id: `createGroup.${groupType}.groupName`,
           })}
           name="groupName"
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.groupName',
-              }),
-            },
-          ]}
+          rules={[getRequiredRule(intl, requiresGroupName)]}
         >
           <Input autoFocus />
         </Form.Item>

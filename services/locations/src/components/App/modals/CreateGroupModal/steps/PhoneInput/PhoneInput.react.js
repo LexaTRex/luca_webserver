@@ -2,12 +2,8 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Form, Input, Button } from 'antd';
 
-import {
-  getRequiredRule,
-  getPhoneRules,
-  requiresPhone,
-  invalidPhone,
-} from 'utils/validatorRules';
+import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
+import { getPhoneRules } from 'utils/validatorRules';
 
 import {
   nextButtonStyles,
@@ -21,9 +17,8 @@ import {
 export const PhoneInput = ({ phone: currentPhone, setPhone, back, next }) => {
   const intl = useIntl();
 
-  const onFinish = values => {
-    const { phone } = values;
-    setPhone(phone);
+  const onFinish = ({ phone }) => {
+    setPhone(getFormattedPhoneNumber(phone));
     next();
   };
 
@@ -49,10 +44,7 @@ export const PhoneInput = ({ phone: currentPhone, setPhone, back, next }) => {
             id: 'createGroup.phone',
           })}
           name="phone"
-          rules={[
-            getRequiredRule(intl, requiresPhone),
-            getPhoneRules(intl, invalidPhone),
-          ]}
+          rules={[getPhoneRules(intl)]}
         >
           <Input autoFocus />
         </Form.Item>

@@ -4,15 +4,9 @@ import { Form, Input, Button, notification } from 'antd';
 
 import { updateGroup } from 'network/api';
 
-import {
-  getRequiredRule,
-  getPhoneRules,
-  requiresPhone,
-  invalidPhone,
-  requiresGroupName,
-} from 'utils/validatorRules';
-
-import { PHONE_NUMBER } from 'constants/placeholder';
+import { requiresGroupName } from 'constants/errorMessages';
+import { getRequiredRule, getPhoneRules } from 'utils/validatorRules';
+import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
 
 import {
   buttonStyles,
@@ -32,9 +26,15 @@ export const SettingsOverview = ({ group, refetch }) => {
   const baseLocation = group.locations.find(location => !location.name);
 
   const onFinish = values => {
-    updateGroup({ groupId: group.groupId, data: values })
+    const { phone } = values;
+    const formattedPhoneNumber = getFormattedPhoneNumber(phone);
+    updateGroup({
+      groupId: group.groupId,
+      data: { ...values, phone: formattedPhoneNumber },
+    })
       .then(() => {
         refetch();
+        formReference.current?.setFieldsValue({ phone: formattedPhoneNumber });
         notification.success({
           message: intl.formatMessage({
             id: 'notification.updateGroup.success',
@@ -97,12 +97,9 @@ export const SettingsOverview = ({ group, refetch }) => {
             id: 'settings.location.phone',
           })}
           name="phone"
-          rules={[
-            getRequiredRule(intl, requiresPhone),
-            getPhoneRules(intl, invalidPhone),
-          ]}
+          rules={[getPhoneRules(intl)]}
         >
-          <Input placeholder={PHONE_NUMBER} />
+          <Input />
         </Form.Item>
       </Form>
       <Address>

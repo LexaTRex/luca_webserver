@@ -1,8 +1,11 @@
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Tooltip } from 'antd';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
+
+import { getGroup } from 'network/api';
 
 import { QrCodeDocument } from 'components/QrCodeDocument';
 import { Switch } from '../../Switch';
@@ -35,6 +38,10 @@ export function GenerateQRCodes({ location }) {
     !!location.tableCount
   );
 
+  const { isLoading, error, data: group } = useQuery('group', () =>
+    getGroup(location.groupId)
+  );
+
   useEffect(() => {
     setIsLocationQRCodeEnabled(!location.tableCount);
     setIsTableQRCodeEnabled(!!location.tableCount);
@@ -65,6 +72,8 @@ export function GenerateQRCodes({ location }) {
     },
     [isLocationQRCodeEnabled, isTableQRCodeEnabled]
   );
+
+  if (isLoading || error) return null;
 
   return (
     <LocationCard
@@ -148,6 +157,7 @@ export function GenerateQRCodes({ location }) {
       <QrPrint />
       <QrCodeDocument
         location={location}
+        group={group}
         isDownload={isDownload}
         setIsDownload={setIsDownload}
         isCWAEventEnabled={isCWAEventEnabled}

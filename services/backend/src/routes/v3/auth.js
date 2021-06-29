@@ -87,6 +87,7 @@ router.get('/me', requireOperator, (request, response) => {
     avvAccepted: request.user.avvAccepted,
     lastVersionSeen: request.user.lastVersionSeen,
     deletedAt: request.user.deletedAt && moment(request.user.deletedAt).unix(),
+    isTrusted: request.user.isTrusted,
   };
   return response.send(payload);
 });

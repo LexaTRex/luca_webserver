@@ -240,7 +240,6 @@
     "modal.qrCodeDocument.additionalDataTitle": "Generate QR codes for additional information",
     "downloadFile.groups.publicKey": "luca_locations_{name}_privateKey.luca",
     "downloadFile.locations.tableQrCodes": "luca_QRCodes_{groupName}_{locationName}_Tables.pdf",
-    "downloadFile.locations.additionalDataQrCodes": "luca_AreaQRCodes_{locationName}.pdf",
     "activation.alert.410": "This link is expired.",
     "changeMail.alert.410": "This link is expired.",
     "authentication.form.button.next": "NEXT",
@@ -252,7 +251,7 @@
     "authentication.login.title": "LOGIN",
     "login.error.forgotPassword": "Forgot password?",
     "authentication.confirmRegister.title": "Do you want to register?",
-    "authentication.confirmRegister.subTitle": "Your email adress is not registred in the luca-system. Do you want to create a luca Locations account?",
+    "authentication.confirmRegister.subTitle": "Your email address is not registered in the luca-system. Do you want to create a luca Locations account?",
     "authentication.nameInput.title": "What is your name?",
     "authentication.setPassword.title": "Set password",
     "authentication.setPassword.subTitle": "Now choose a password to secure your account.",
@@ -614,6 +613,6 @@
     "message.generatingPDF": "Generating PDF. Please don't leave the page.",
     "notification.forgotPassword.invalidUser": "This user does not exist.",
     "dataTransfers.list.deleted.header": "Deleted data requests",
-    "dataTransfers.list.complete.table.header.deletedAtDate": "Deletion data",
+    "dataTransfers.list.complete.table.header.deletedAtDate": "Deletion date",
     "error.length": "Input is too long"
 }

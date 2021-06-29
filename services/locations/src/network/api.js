@@ -12,6 +12,7 @@ class ApiError extends Error {
     super();
     this.response = response;
     this.status = response.status;
+    this.message = `Request to ${response.url} failed with status ${response.status}`;
   }
 }
 
@@ -19,7 +20,31 @@ const checkResponse = response => {
   if (!response.ok) {
     throw new ApiError(response);
   }
+
   return response;
+};
+
+const getRequest = path => {
+  return fetch(path, {
+    method: 'GET',
+    headers,
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.text();
+      }
+
+      throw new ApiError(response);
+    })
+    .then(payload => {
+      try {
+        return JSON.parse(payload);
+      } catch {
+        // This is fine:
+        // Payload is just text like "OK"
+        return payload;
+      }
+    });
 };
 
 // AUTH
@@ -39,22 +64,16 @@ export const logout = () => {
 };
 
 export const getMe = () => {
-  return fetch(`${API_PATH}/v3/auth/me`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/auth/me`);
 };
 
 export const getPrivateKeySecret = () =>
-  fetch(`${API_PATH}/v3/operators/privateKeySecret`)
-    .then(response => response.json())
-    .then(data => base64ToHex(data.privateKeySecret));
+  getRequest(`${API_PATH}/v3/operators/privateKeySecret`).then(data =>
+    base64ToHex(data.privateKeySecret)
+  );
 
 export const checkEmail = email => {
-  return fetch(`${API_PATH}/v3/operators/email/${email}`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/operators/email/${email}`);
 };
 
 export const requestAccountDeletion = () => {
@@ -73,17 +92,11 @@ export const undoAccountDeletion = () => {
 
 // GROUPS
 export const getGroups = () => {
-  return fetch(`${API_PATH}/v3/locationGroups`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/locationGroups`);
 };
 
 export const getGroup = groupId => {
-  return fetch(`${API_PATH}/v3/locationGroups/${groupId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/locationGroups/${groupId}`);
 };
 
 export const updateGroup = parameters => {
@@ -151,10 +164,7 @@ export const resetPassword = data => {
 };
 
 export const getPasswordResetRequest = resetId => {
-  return fetch(`${API_PATH}/v3/operators/password/reset/${resetId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/operators/password/reset/${resetId}`);
 };
 
 export const updateOperator = data => {
@@ -174,10 +184,7 @@ export const updateEmail = data => {
 };
 
 export const isEmailUpdatePending = () => {
-  return fetch(`${API_PATH}/v3/operators/email/isChangeActive`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/operators/email/isChangeActive`);
 };
 
 export const confirmEmail = activationId => {
@@ -190,17 +197,7 @@ export const confirmEmail = activationId => {
 
 // LOCATION
 export const getLocation = locationId => {
-  return fetch(`${API_PATH}/v3/operators/locations/${locationId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
-};
-
-export const getLocations = () => {
-  return fetch(`${API_PATH}/v3/operators/locations`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/operators/locations/${locationId}`);
 };
 
 export const activateAccount = data => {
@@ -253,31 +250,21 @@ export const forceCheckoutSingleTrace = traceId => {
 
 // COUNTER
 export const getCurrentCount = scannerId => {
-  return fetch(`${API_PATH}/v3/scanners/${scannerId}/traces/count/current`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(
+    `${API_PATH}/v3/scanners/${scannerId}/traces/count/current`
+  );
 };
 
 export const getAllTransfers = () => {
-  return fetch(`${API_PATH}/v3/locationTransfers`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/locationTransfers`);
 };
 
 export const getAllUncompletedTransfers = () => {
-  return fetch(`${API_PATH}/v3/locationTransfers/uncompleted`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/locationTransfers/uncompleted`);
 };
 
 export const getLocationTransfer = transferId => {
-  return fetch(`${API_PATH}/v3/locationTransfers/${transferId}`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/locationTransfers/${transferId}`);
 };
 
 export const shareData = data => {
@@ -289,10 +276,9 @@ export const shareData = data => {
 };
 
 export const getAdditionalData = locationId => {
-  return fetch(`${API_PATH}/v3/locations/additionalDataSchema/${locationId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(
+    `${API_PATH}/v3/locations/additionalDataSchema/${locationId}`
+  );
 };
 
 export const createAdditionalData = (additionalDataId, body = {}) => {
@@ -325,23 +311,16 @@ export const deleteAdditionalData = additionalDataId => {
 
 // TRACES
 export const getTraces = (accessId, duration) => {
-  return fetch(
+  return getRequest(
     `${API_PATH}/v3/locations/traces/${accessId}/${
       duration ? `?duration=${duration}` : ''
-    }`,
-    {
-      method: 'GET',
-      headers,
-    }
+    }`
   );
 };
 
 // BADGE
 export const getBadgeUser = userId => {
-  return fetch(`${API_PATH}/v3/users/${userId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/users/${userId}`);
 };
 
 export const updateBadgeUser = (userId, data) => {
@@ -353,10 +332,7 @@ export const updateBadgeUser = (userId, data) => {
 };
 
 export const getBadgeRegistrator = registratorId => {
-  return fetch(`${API_PATH}/v3/badgeRegistrators/${registratorId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/badgeRegistrators/${registratorId}`);
 };
 
 // TAN

@@ -64,5 +64,6 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error'],
     'unicorn/number-literal-case': 0,
     'no-restricted-syntax': ['error', 'LabeledStatement', 'WithStatement'],
+    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
   },
 };

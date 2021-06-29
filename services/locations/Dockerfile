@@ -1,4 +1,4 @@
-FROM node:14.16.0-alpine3.13 as builder
+FROM node:14.17.0-alpine3.13 as builder
 WORKDIR /app
 
 ARG GIT_COMMIT
@@ -18,7 +18,7 @@ RUN yarn build
 
 # production container
 
-FROM nginx:1.19.9-alpine
+FROM nginx:1.20.1-alpine
 
 ## add permissions
 RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html && \

@@ -12,6 +12,12 @@ function generateVersionFile() {
   };
 }
 
+const licenseTypeOverrides = {
+  // part of libphonenumber-js which is licensed under MIT
+  'libphonenumber-js-core': 'MIT',
+  'libphonenumber-js-min': 'MIT',
+};
+
 module.exports = {
   plugins: [
     {
@@ -41,6 +47,7 @@ module.exports = {
             warnings: false,
             errors: false,
           },
+          licenseTypeOverrides,
           renderLicenses: modules => {
             const licenseList = [];
             modules.forEach(
@@ -67,6 +74,7 @@ module.exports = {
             warnings: false,
             errors: false,
           },
+          licenseTypeOverrides,
         }),
         new GenerateJsonPlugin('version.json', generateVersionFile()),
       ],

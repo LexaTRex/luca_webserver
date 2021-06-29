@@ -1,59 +1,54 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Descriptions } from 'antd';
 
 // Components
-import { Value } from './ProfileOverview.styled';
+import {
+  InformationValue,
+  InformationKey,
+  ItemsWrapper,
+  ItemWrapper,
+} from './ProfileOverview.styled';
 
 export const ProfileOverview = ({ me, department }) => {
   const intl = useIntl();
 
+  const profileInformation = [
+    {
+      key: intl.formatMessage({
+        id: 'profile.name',
+      }),
+      value: department.name,
+    },
+    {
+      key: intl.formatMessage({
+        id: 'profile.firstname',
+      }),
+      value: me.firstName,
+    },
+    {
+      key: intl.formatMessage({
+        id: 'profile.lastname',
+      }),
+      value: me.lastName,
+    },
+    {
+      key: intl.formatMessage({
+        id: 'profile.email',
+      }),
+      value: me.email,
+    },
+  ];
+
   return (
-    <Descriptions layout="vertical" colon={false}>
-      <Descriptions.Item
-        style={{
-          padding: '0',
-        }}
-        label={intl.formatMessage({
-          id: 'profile.name',
-        })}
-        span="3"
-      >
-        <Value> {department.name} </Value>
-      </Descriptions.Item>
-      <Descriptions.Item
-        style={{
-          padding: '0',
-        }}
-        label={intl.formatMessage({
-          id: 'profile.firstname',
-        })}
-        span="3"
-      >
-        <Value> {me.firstName} </Value>
-      </Descriptions.Item>
-      <Descriptions.Item
-        style={{
-          padding: '0',
-        }}
-        label={intl.formatMessage({
-          id: 'profile.lastname',
-        })}
-        span="3"
-      >
-        <Value> {me.lastName} </Value>
-      </Descriptions.Item>
-      <Descriptions.Item
-        style={{
-          padding: '0',
-        }}
-        label={intl.formatMessage({
-          id: 'profile.email',
-        })}
-        span="3"
-      >
-        <Value> {me.email} </Value>
-      </Descriptions.Item>
-    </Descriptions>
+    <>
+      <ItemsWrapper>
+        {profileInformation.map(item => (
+          <ItemWrapper key={item.key}>
+            <InformationKey>{item.key}</InformationKey>
+            <InformationValue>{item.value}</InformationValue>
+          </ItemWrapper>
+        ))}
+      </ItemsWrapper>
+    </>
   );
 };

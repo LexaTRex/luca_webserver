@@ -5,6 +5,7 @@ module.exports = {
   env: {
     browser: true,
     es6: true,
+    jest: true,
   },
   plugins: ['jsx-a11y', 'sonarjs'],
   extends: [
@@ -73,12 +74,8 @@ module.exports = {
     'react/no-array-index-key': 1,
     'unicorn/number-literal-case': 0,
     'no-restricted-syntax': ['error', 'LabeledStatement', 'WithStatement'],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: ['**/*.test.js', 'src/testHelper/*'],
-      },
-    ],
+    'import/no-extraneous-dependencies': ['error'],
+    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
   },
   overrides: [
     {

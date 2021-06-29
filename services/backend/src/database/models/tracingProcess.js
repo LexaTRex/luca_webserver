@@ -33,12 +33,6 @@ module.exports = (Sequelize, DataTypes) => {
     TracingProcess.hasMany(models.LocationTransfer, {
       foreignKey: 'tracingProcessId',
     });
-
-    TracingProcess.hasMany(models.LocationTransferGroup, {
-      foreignKey: 'tracingProcessId',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    });
   };
 
   return TracingProcess;

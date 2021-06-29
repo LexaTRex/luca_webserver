@@ -14,6 +14,11 @@ export const Row = styled.div`
   cursor: pointer;
   font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
+
+  &:hover {
+    background-color: rgb(243, 243, 243);
+    cursor: pointer;
+  }
 `;
 
 export const RowWrapper = styled.div`

@@ -92,8 +92,6 @@ router.get(
     }
 
     const locationDTO = {
-      isIndoor: location.isIndoor,
-      type: location.type,
       locationId: location.uuid,
       publicKey: location.publicKey,
       name: formatLocationName(location, location.LocationGroup),
@@ -102,7 +100,6 @@ router.get(
       lat: location.lat || 0,
       lng: location.lng || 0,
       radius: location.shouldProvideGeoLocation ? location.radius : 0,
-      createdAt: moment(location.createdAt).unix(),
       isPrivate: location.isPrivate,
     };
 

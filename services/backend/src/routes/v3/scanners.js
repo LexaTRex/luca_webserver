@@ -49,14 +49,9 @@ router.get(
     }
 
     return response.send({
-      groupName: location.LocationGroup?.name,
-      locationName: location.name,
-      name: formatLocationName(location, location.LocationGroup),
       scannerId: location.scannerId,
       locationId: location.uuid,
       publicKey: location.publicKey,
-      endsAt: moment(location.endsAt).unix(),
-      tableCount: location.tableCount,
     });
   }
 );

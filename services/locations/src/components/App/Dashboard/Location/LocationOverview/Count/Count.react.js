@@ -18,10 +18,7 @@ export const Count = ({ location }) => {
     refetch,
   } = useQuery(
     `current/${location.scannerId}`,
-    () =>
-      getCurrentCount(location.scannerAccessId).then(response =>
-        response.json()
-      ),
+    () => getCurrentCount(location.scannerAccessId),
     {
       refetchInterval: COUNTER_REFETCH_INTERVAL_MS,
     }

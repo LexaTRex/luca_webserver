@@ -37,6 +37,7 @@ const createSchema = z.object({
 
 const searchSchema = z.object({
   name: z.string().min(3).max(128),
+  zipCode: z.string().length(5).optional(),
   limit: z
     .string()
     .regex(/^\d{1,4}$/)

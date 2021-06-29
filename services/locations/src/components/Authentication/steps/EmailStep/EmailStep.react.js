@@ -21,51 +21,40 @@ export const EmailStep = ({
   const onFinish = values => {
     const { email } = values;
     checkEmail(email.toLowerCase())
-      .then(response => {
-        if (response.status === 429) {
-          // Too many requests
-          notification.error({
-            message: intl.formatMessage({
-              id: 'registration.server.error.tooManyRequests.title',
-            }),
-            description: intl.formatMessage({
-              id: 'registration.server.error.tooManyRequests.desc',
-            }),
-          });
-          return;
-        }
-        if (response.status >= 500) {
-          // Server erros
-          notification.error({
-            message: intl.formatMessage({
-              id: 'registration.server.error.msg',
-            }),
-            description: intl.formatMessage({
-              id: 'registration.server.error.desc',
-            }),
-          });
-          return;
-        }
-        if (response.status === 200) {
-          // Email exists
-          setEmail(email.toLowerCase());
-          next();
-          return;
-        }
-        // Email does not exist
+      .then(() => {
+        // Email exists
         setEmail(email.toLowerCase());
-        setIsRegistration(true);
         next();
       })
-      .catch(() => {
-        notification.error({
-          message: intl.formatMessage({
-            id: 'registration.server.error.msg',
-          }),
-          description: intl.formatMessage({
-            id: 'registration.server.error.desc',
-          }),
-        });
+      .catch(error => {
+        switch (error.status) {
+          case 404:
+            // email simply does not exist
+            setEmail(email.toLowerCase());
+            setIsRegistration(true);
+            next();
+            break;
+          case 429:
+            // Too many requests
+            notification.error({
+              message: intl.formatMessage({
+                id: 'registration.server.error.tooManyRequests.title',
+              }),
+              description: intl.formatMessage({
+                id: 'registration.server.error.tooManyRequests.desc',
+              }),
+            });
+            break;
+          default:
+            notification.error({
+              message: intl.formatMessage({
+                id: 'registration.server.error.msg',
+              }),
+              description: intl.formatMessage({
+                id: 'registration.server.error.desc',
+              }),
+            });
+        }
       });
   };
 

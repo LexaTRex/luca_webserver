@@ -1,2 +1,2 @@
 export const TERMS_CONDITIONS_LINK =
-  'https://luca-app.de/app-terms-and-conditions/';
+  'https://www.luca-app.de/operator-terms-and-conditions/';

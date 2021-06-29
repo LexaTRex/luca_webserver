@@ -20,12 +20,12 @@ export const ProfileOverview = ({ operator, refetch }) => {
   const formReference = useRef(null);
   const [status, setStatus] = useState(null);
 
-  const {
-    data: emailChangeIsActive,
-    refetch: refetchEmailPending,
-  } = useQuery(
+  const { data: emailChangeIsActive, refetch: refetchEmailPending } = useQuery(
     'isMailChangeInProgress',
-    () => isEmailUpdatePending().then(response => response.ok),
+    () =>
+      isEmailUpdatePending()
+        .then(() => true)
+        .catch(() => false),
     { cacheTime: 0 }
   );
 

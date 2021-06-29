@@ -9,11 +9,7 @@ import { Menu } from 'antd';
 import { getMe } from 'network/api';
 
 // Constants
-import {
-  PROFILE_ROUTE,
-  TRACKING_ROUTE,
-  USER_MANAGEMENT_ROUTE,
-} from 'constants/routes';
+import { TRACKING_ROUTE, USER_MANAGEMENT_ROUTE } from 'constants/routes';
 
 // Components
 import { NavigationWrapper } from './Navigation.styled';
@@ -38,12 +34,6 @@ export const Navigation = () => {
       backgroundColor: isTrackingRelated(currentRoute)
         ? 'rgb(195, 206, 217)'
         : 'transparent',
-    },
-    {
-      value: PROFILE_ROUTE,
-      intlId: 'navigation.profile',
-      backgroundColor:
-        currentRoute === PROFILE_ROUTE ? '#bdd5dc' : 'transparent',
     },
   ];
 

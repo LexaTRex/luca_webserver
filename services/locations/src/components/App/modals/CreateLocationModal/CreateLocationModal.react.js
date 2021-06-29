@@ -178,7 +178,7 @@ export const CreateLocationModal = ({ groupId }) => {
     },
     {
       id: QR_CODES_STEP,
-      content: <QRDownload location={location} done={onDone} />,
+      content: <QRDownload location={location} done={onDone} group={group} />,
     },
   ];
 
@@ -212,6 +212,7 @@ export const CreateLocationModal = ({ groupId }) => {
           setLocationName={setLocationName}
           next={nextStep}
           back={previousStep}
+          groupId={groupId}
         />
       ),
     },

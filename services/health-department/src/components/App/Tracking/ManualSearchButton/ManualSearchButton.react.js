@@ -16,7 +16,6 @@ export const ManualSearchButton = () => {
         id: 'modal.searchGroup.title',
       }),
       content: <GroupSearchModal />,
-      blueModal: true,
     });
   };
 

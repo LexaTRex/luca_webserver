@@ -2,9 +2,13 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { Route, Switch, Redirect, useHistory } from 'react-router';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 
 import { getMe } from 'network/api';
+
+// UTILS
+import { usePrivateKey } from 'utils/privateKey';
+import { clearHasSeenPrivateKeyModal } from 'utils/storage';
 
 // Constants
 import {
@@ -28,7 +32,10 @@ import { AppWrapper } from './App.styled';
 
 export const App = () => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
   const history = useHistory();
+
+  const [, clearPrivateKey] = usePrivateKey(null);
 
   const title = intl.formatMessage({
     id: 'locations.site.title',
@@ -42,12 +49,15 @@ export const App = () => {
     error: operatorError,
     data: operator,
     refetch,
-  } = useQuery('me', () => getMe().then(response => response.json()), {
+  } = useQuery('me', () => getMe(), {
     cacheTime: 0,
     retry: false,
   });
 
   if (operatorError) {
+    queryClient.clear();
+    clearPrivateKey(null);
+    clearHasSeenPrivateKeyModal();
     history.push(AUTHENTICATION_ROUTE);
   }
 

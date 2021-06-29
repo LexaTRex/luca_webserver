@@ -33,19 +33,11 @@
 }
 
 #employeeSearch.ant-input:focus,
-#employeeSearch.ant-input:hover {
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  box-shadow: none;
-}
-
-#groupSearch::placeholder {
-  color: white;
-}
-
+#employeeSearch.ant-input:hover,
 #groupSearch.ant-input:focus,
-#groupSearch.ant-input:hover {
+#groupSearch.ant-input:hover,
+#zipCode.ant-input:focus,
+#zipCode.ant-input:hover {
   border-top: none;
   border-left: none;
   border-right: none;
@@ -276,40 +268,17 @@ input:-webkit-autofill:active {
   }
 }
 
-.blueModal .ant-modal-content {
-  background-color: #4e6180;
-  color: white !important;
-}
-
-.blueModal .ant-modal-header {
-  background-color: #4e6180;
-}
-
-.blueModal .ant-modal-title {
-  color: white;
-}
-
-.blueModal .ant-modal-close {
-  color: white;
-}
-
-.blueModal .ant-modal-content .ant-form-item-label > label {
-  color: white;
-}
-
 #tan.ant-input {
   color: white;
 }
 
-.blueModal input {
-  color: white;
-}
-
-.blueModal .ant-picker-separator {
-  color: white;
-}
-.blueModal .ant-picker-suffix {
-  color: white;
+.ant-picker {
+  border-bottom: 2px solid black;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Popconfirm */
@@ -375,4 +344,9 @@ input:-webkit-autofill:active {
 
 .ant-table-tbody > tr > td {
   border-bottom: 1px solid lightgray;
+}
+
+.ant-form-item-no-colon {
+  font-family: Montserrat-Bold, sans-serif;
+  font-size: 32px;
 }

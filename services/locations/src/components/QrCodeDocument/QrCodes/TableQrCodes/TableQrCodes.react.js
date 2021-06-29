@@ -4,7 +4,12 @@ import { useIntl } from 'react-intl';
 import { QrCodeComponent } from '../QrCodeComponent';
 import { Row, Item, Text } from '../../QrCodeDocument.styled';
 
-export const TableQrCodes = ({ location, qrData, isCWAEventEnabled }) => {
+export const TableQrCodes = ({
+  group,
+  location,
+  qrData,
+  isCWAEventEnabled,
+}) => {
   const intl = useIntl();
 
   return (
@@ -16,6 +21,7 @@ export const TableQrCodes = ({ location, qrData, isCWAEventEnabled }) => {
               <Item key={value}>
                 <Text style={{ marginBottom: 20 }}>{title}</Text>
                 <QrCodeComponent
+                  group={group}
                   location={location}
                   valueKey={key}
                   value={value}

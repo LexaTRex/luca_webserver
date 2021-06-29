@@ -10,6 +10,7 @@ export const InputField = ({ name, disabled }) => {
       rules={[
         {
           required: true,
+          whitespace: true,
           message: intl.formatMessage({
             id: `error.${name}`,
           }),

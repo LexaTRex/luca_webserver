@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 // Api
 import { getHealthDepartment } from 'network/api';
 
 // Components
+import { BackButton } from './BackButton';
 import { ProfileOverview } from './ProfileOverview';
 import { ChangePasswordView } from './ChangePasswordView';
-import { ProfileWrapper, StyledChildWrapper } from './Profile.styled';
+import {
+  ProfileWrapper,
+  StyledChildWrapper,
+  ProfileHeader,
+} from './Profile.styled';
 
 export const Profile = ({ profileData }) => {
+  const intl = useIntl();
   const [department, setDepartment] = useState(null);
 
   useEffect(() => {
@@ -26,6 +33,10 @@ export const Profile = ({ profileData }) => {
     <>
       <ProfileWrapper>
         <StyledChildWrapper>
+          <BackButton />
+          <ProfileHeader>
+            {intl.formatMessage({ id: 'navigation.profile' })}
+          </ProfileHeader>
           <ProfileOverview me={profileData} department={department} />
         </StyledChildWrapper>
         <StyledChildWrapper>

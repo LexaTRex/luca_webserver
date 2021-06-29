@@ -57,20 +57,13 @@ export const ShareData = () => {
     `uncompletedTransfers/${transferId}`,
     () => {
       if (transferId) {
-        return getLocationTransfer(transferId).then(async response => {
-          if (response.status > 400) {
-            return { status: response.status };
-          }
-          return [await response.json()];
+        return getLocationTransfer(transferId).then(response => {
+          return [response];
         });
       }
 
       return getAllUncompletedTransfers().then(response => {
-        if (response.status > 400) {
-          return { status: response.status };
-        }
-
-        return response.json();
+        return response;
       });
     }
   );
@@ -127,14 +120,14 @@ export const ShareData = () => {
       </Helmet>
       <Main style={{ backgroundColor: 'black' }}>
         <Header title={intl.formatMessage({ id: 'shareData.header.title' })} />
-        {transfers[0]?.status === 410 && (
+        {error?.status === 410 && (
           <Alert
             style={{ textAlign: 'center', marginTop: 48 }}
             type="success"
             message={intl.formatMessage({ id: 'shareData.completed' })}
           />
         )}
-        {transfers[0]?.status > 400 && transfers[0]?.status !== 410 && (
+        {error?.status > 400 && error?.status !== 410 && (
           <Alert
             style={{ textAlign: 'center', marginTop: 48 }}
             type="error"
@@ -142,7 +135,7 @@ export const ShareData = () => {
           />
         )}
         <Content>
-          {transfers && transfers[0] && !transfers[0].status && (
+          {!error && transfers && (
             <RequestWrapper>
               <>{steps[currentStep].content}</>
             </RequestWrapper>

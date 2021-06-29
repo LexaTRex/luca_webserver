@@ -9,6 +9,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 const router = require('express').Router();
 const status = require('http-status');
+const { Op } = require('sequelize');
 
 const {
   createSchema,
@@ -82,8 +83,21 @@ router.post(
     const group = await database.LocationGroup.findOne({
       where: { uuid: request.body.groupId, operatorId: request.user.uuid },
     });
+
     if (!group) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    const trimmedLocationName = request.body.locationName.trim();
+    const existingLocation = await database.Location.findOne({
+      where: {
+        name: trimmedLocationName,
+        groupId: request.body.groupId,
+      },
+    });
+
+    if (existingLocation) {
+      return response.sendStatus(status.CONFLICT);
     }
 
     const baseLocation = await database.Location.findOne({
@@ -98,7 +112,7 @@ router.post(
           operator: request.user.uuid,
           publicKey: baseLocation.publicKey,
           groupId: request.body.groupId,
-          name: request.body.locationName,
+          name: trimmedLocationName,
           firstName: request.body.firstName || request.user.firstName,
           lastName: request.body.lastName || request.user.lastName,
           phone: request.body.phone,
@@ -162,8 +176,23 @@ router.patch(
       return response.sendStatus(status.NOT_FOUND);
     }
 
+    if (request.body.locationName) {
+      const existingLocation = await database.Location.findOne({
+        where: {
+          name: request.body.locationName.trim(),
+          groupId: location.groupId,
+          uuid: {
+            [Op.not]: request.params.locationId,
+          },
+        },
+      });
+      if (existingLocation) {
+        return response.sendStatus(status.CONFLICT);
+      }
+    }
+
     await location.update({
-      name: location.name ? request.body.locationName : null,
+      name: location.name ? request.body.locationName?.trim() : null,
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       phone: request.body.phone,

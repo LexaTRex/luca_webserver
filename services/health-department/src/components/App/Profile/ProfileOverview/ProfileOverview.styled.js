@@ -1,6 +1,28 @@
 import styled from 'styled-components';
 
-export const Value = styled.div`
-  font-weight: bold;
+export const ItemsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ItemWrapper = styled.div`
+  display: flex;
   margin-bottom: 16px;
+`;
+
+export const InformationValue = styled.div`
+  margin-right: 16px;
+  text-align: left;
+  color: rgb(0, 0, 0);
+  font-family: Montserrat-Medium, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+`;
+
+export const InformationKey = styled.div`
+  font-weight: bold;
+  width: 250px;
+  color: rgb(0, 0, 0);
+  font-family: Montserrat-Bold, sans-serif;
+  font-size: 16px;
 `;

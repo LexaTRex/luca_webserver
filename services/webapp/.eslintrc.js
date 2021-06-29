@@ -44,7 +44,7 @@ module.exports = {
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
     'max-lines': [1, 400],
     complexity: 0,
-    'no-plusplus': 0,
+    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'require-await': 2,
     'max-classes-per-file': 0,
     'sonarjs/no-duplicate-string': 0,

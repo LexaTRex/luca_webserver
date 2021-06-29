@@ -1,6 +1,28 @@
 # Changelog
 
-### 1.3.0 (2021-06-18)
+### 1.4.0 (2021-06-29)
+* **backend:** feat: add test provider key route
+* **backend:** feat: add isTrusted to Operators
+* **backend:** chore: remove LocationTransferGroups table
+* **health-department:** fix: added missing mac check
+* **health-department:** fix: session not cleared correctly after automatic checkout due to inactivity
+* **health-department:** fix: order of locations changed after contacting venues
+* **health-department:** feat: add hover effect to process list for better usability
+* **health-department:** feat: new designs for location search
+* **health-department:** feat: locations can be search by zip code as additional parameter to the location name 
+* **health-department:** feat: new designs for profile view
+* **health-department:** feat: select profile view got moved from tab to header
+* **health-department:** feat: improved locales
+* **locations:** fix: session not cleared correctly after automatic checkout due to inactivity
+* **locations:** fix: incorrect download file names when downloading qr codes
+* **locations:** fix: clear session storage after session timed out
+* **locations:** fix: forgot password view displayed a wrong error message if the user is not activated
+* **locations:** feat: updated DPA document
+* **locations:** feat: updated terms and conditions links for venues
+* **locations:** feat: trusted venues can register badges without phone validation
+
+
+### 1.3.0 (2021-06-20)
 * **backend:** feat: improve IP blocks
 * **backend:** feat: improve email storage in postgres
 * **backend:** feat: updated API documentation
@@ -11,8 +33,7 @@
 * **health-department:** fix: typo in error notification
 * **health-department:** fix: status names in process table and filter were not identical
 * **health-department:** feat: new designs for process details
-* **locations:** fix: input fields for manual input are disab
-  led under certain conditions
+* **locations:** fix: input fields for manual input are disabled under certain conditions
 * **locations:** fix: password not persisted after back action in registration
 * **locations:** fix: password criterias were not updated after back action in registration
 * **locations:** fix: password criterias were not updated after clearing password in registration

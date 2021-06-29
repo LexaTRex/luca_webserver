@@ -1,8 +1,17 @@
 import styled from 'styled-components';
 
 export const ProfileWrapper = styled.div`
-  padding: 80px 32px;
-  background-color: #bdd5dc;
+  padding: 30px 32px 80px;
+  background-color: white;
+  margin: 40px;
+`;
+
+export const ProfileHeader = styled.div`
+  color: rgba(0, 0, 0, 0.87);
+  font-family: Montserrat-SemiBold, sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  margin-bottom: 36px;
 `;
 
 export const StyledChildWrapper = styled.div`
@@ -25,10 +34,3 @@ export const StyledButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-export const buttonStyle = {
-  backgroundColor: '#B8C0CA',
-  color: '#000000',
-  height: '48px',
-  padding: '0 80px',
-  marginTop: '24px',
-};

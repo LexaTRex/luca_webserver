@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
-import { Form, Input, notification, Button } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
 import { useHistory } from 'react-router';
 
 import LucaLogoWhite from 'assets/LucaLogoWhite.svg';
@@ -11,18 +11,19 @@ import { forgotPassword } from 'network/api';
 import { AUTHENTICATION_ROUTE } from 'constants/routes';
 
 import {
-  ForgotPasswordWrapper,
-  ForgotPasswordCard,
+  buttonStyle,
   ButtonWrapper,
-  LinkWrapper,
+  ForgotPasswordCard,
+  ForgotPasswordWrapper,
+  HeaderWrapper,
   Link,
-  Wrapper,
+  LinkWrapper,
   Logo,
   SubTitle,
-  HeaderWrapper,
-  buttonStyle,
   Title,
+  Wrapper,
 } from './ForgotPassword.styled';
+import { messageForResponse } from './ForgotPassword.helper';
 
 export const ForgotPassword = ({ location }) => {
   const intl = useIntl();
@@ -34,29 +35,33 @@ export const ForgotPassword = ({ location }) => {
 
   const onFinish = values => {
     forgotPassword({ email: values.email, lang: intl.locale })
-      .then(response => {
-        if (response.status === 204) {
+      .then(({ status }) => {
+        const { message, route } = messageForResponse(status);
+
+        if (status === 204) {
           notification.success({
-            message: intl.formatMessage({
-              id: 'notification.forgotPassword.success',
-            }),
+            message: intl.formatMessage({ id: message }),
           });
-          history.push(AUTHENTICATION_ROUTE);
+        } else if (status === 404 || status === 423) {
+          notification.warning({
+            message: intl.formatMessage({ id: message }),
+          });
         } else {
           notification.error({
-            message: intl.formatMessage({
-              id: 'notification.forgotPassword.error',
-            }),
+            message: intl.formatMessage({ id: message }, { error: status }),
           });
         }
+
+        history.push(route);
       })
-      .catch(() =>
+      .catch(error => {
         notification.error({
-          message: intl.formatMessage({
-            id: 'notification.network.error',
-          }),
-        })
-      );
+          message: intl.formatMessage(
+            { id: 'notification.network.error' },
+            { error }
+          ),
+        });
+      });
   };
 
   return (

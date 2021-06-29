@@ -19,16 +19,18 @@ import { IndoorSelection } from './IndoorSelection';
 import { GenerateQRCodes } from './GenerateQRCodes';
 import { TableSubdivision } from './TableSubdivision';
 import { LocationOverview } from './LocationOverview';
+import { RegisterBadges } from './RegisterBadges';
 import {
   Header,
   Wrapper,
+  ButtonWrapper,
   Settings,
   HiddenImage,
   NameWrapper,
   HeaderWrapper,
 } from './Location.styled';
 
-export const Location = () => {
+export const Location = ({ isOperatorTrusted }) => {
   const intl = useIntl();
   const history = useHistory();
 
@@ -63,7 +65,10 @@ export const Location = () => {
           </Settings>
         </NameWrapper>
       </HeaderWrapper>
-      <StartScanner location={location} />
+      <ButtonWrapper>
+        {isOperatorTrusted && <RegisterBadges />}
+        <StartScanner location={location} />
+      </ButtonWrapper>
       <LocationOverview location={location} />
       <CheckInQuery location={location} />
       <IndoorSelection location={location} />

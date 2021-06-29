@@ -34,12 +34,13 @@ const generateOneFile = ({
 }) => {
   return new Promise(resolve => {
     const qrPDF = new jsPDF('p', 'pt', 'a4', true);
-    let locationName =
-      group?.name ||
+
+    const locationName =
       processedLocation?.name ||
       intl.formatMessage({ id: 'location.defaultName' });
 
-    locationName = sanitize(
+    const sanitizedGroupName = sanitize(`${group.name}`);
+    const sanitizedLocationName = sanitize(
       fileNumber ? `${locationName}_${fileNumber}` : locationName
     );
 
@@ -50,13 +51,15 @@ const generateOneFile = ({
             ? intl.formatMessage(
                 { id: 'downloadFile.locations.tableQrCodes' },
                 {
-                  locationName,
+                  groupName: sanitizedGroupName,
+                  locationName: sanitizedLocationName,
                 }
               )
             : intl.formatMessage(
                 { id: 'downloadFile.locations.generalQrCode' },
                 {
-                  locationName,
+                  groupName: sanitizedGroupName,
+                  locationName: sanitizedLocationName,
                 }
               )
         );
@@ -81,7 +84,7 @@ export const QrCodeDocument = ({
   const [qrData, setQrData] = useState([]);
   const [downloadStatus, setDownloadStatus] = useState({});
 
-  const processedLocation = group ? group.location : location;
+  const processedLocation = group?.location || location;
   const { tableCount } = processedLocation;
 
   processedLocation.name = processedLocation.name ? processedLocation.name : '';

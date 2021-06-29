@@ -4,12 +4,19 @@ import { Form, Input, Button, notification } from 'antd';
 
 import { updateLocation } from 'network/api';
 
+import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
 import {
-  getRequiredRule,
   getPhoneRules,
-  requiresPhone,
-  invalidPhone,
+  getRequiredRule,
+  showErrorNotification,
+  checkExistingLocation,
+  getDefaultNameRule,
 } from 'utils/validatorRules';
+
+import {
+  requiresLocationName,
+  updateLocationNotificationError,
+} from 'constants/errorMessages';
 
 import {
   buttonStyles,
@@ -23,19 +30,18 @@ import {
 
 export const SettingsOverview = ({ location, isLast, refetch }) => {
   const intl = useIntl();
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [form] = Form.useForm();
   const formReference = useRef(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLocationNameTaken, setIsLocationNameTaken] = useState(false);
 
-  const onFinish = values => {
-    updateLocation({
-      locationId: location.uuid,
-      data: {
-        ...values,
-        locationName: location.name === null ? undefined : values.locationName,
-      },
-    })
-      .then(() => {
-        refetch();
+  const handleServerError = () => {
+    showErrorNotification(notification, intl, updateLocationNotificationError);
+  };
+
+  const handleResponse = response => {
+    switch (response.status) {
+      case 200:
         notification.success({
           message: intl.formatMessage({
             id: 'notification.updateLocation.success',
@@ -43,13 +49,35 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
           className: 'editLocationSuccess',
         });
         setIsButtonDisabled(true);
+        break;
+      case 409:
+        setIsLocationNameTaken(true);
+        form.validateFields(['locationName']);
+        break;
+      default:
+        handleServerError();
+        break;
+    }
+  };
+
+  const onFinish = values => {
+    const { phone } = values;
+    const formattedPhoneNumber = getFormattedPhoneNumber(phone);
+    updateLocation({
+      locationId: location.uuid,
+      data: {
+        phone: formattedPhoneNumber,
+        locationName:
+          location.name === null ? undefined : values.locationName.trim(),
+      },
+    })
+      .then(response => {
+        refetch();
+        formReference.current?.setFieldsValue({ phone: formattedPhoneNumber });
+        handleResponse(response);
       })
       .catch(() => {
-        notification.error({
-          message: intl.formatMessage({
-            id: 'notification.updateLocation.error',
-          }),
-        });
+        handleServerError();
       });
   };
 
@@ -58,7 +86,8 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
   };
 
   const onValueUpdate = (_, values) => {
-    if (!values.locationName) {
+    setIsLocationNameTaken(false);
+    if (!values.locationName && location.name !== null) {
       setIsButtonDisabled(true);
       return;
     }
@@ -70,8 +99,20 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
       setIsButtonDisabled(false);
       return;
     }
+
     setIsButtonDisabled(true);
   };
+
+  const locationNameRules = [
+    getDefaultNameRule(intl),
+    {
+      required: isLocationNameTaken,
+      validator: checkExistingLocation(isLocationNameTaken, intl),
+    },
+  ];
+  if (location.name !== null) {
+    locationNameRules.push(getRequiredRule(intl, requiresLocationName));
+  }
 
   return (
     <Overview isLast={isLast}>
@@ -79,10 +120,10 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
       <Form
         onFinish={onFinish}
         style={{ maxWidth: 350 }}
+        form={form}
         ref={formReference}
         initialValues={{
-          locationName:
-            location.name || intl.formatMessage({ id: 'location.defaultName' }),
+          locationName: location.name,
           phone: location.phone,
         }}
         onValuesChange={onValueUpdate}
@@ -93,16 +134,16 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
           label={intl.formatMessage({
             id: 'settings.location.name',
           })}
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.locationName',
-              }),
-            },
-          ]}
+          rules={locationNameRules}
         >
-          <Input disabled={location.name === null} />
+          <Input
+            disabled={location.name === null}
+            placeholder={
+              location.name === null
+                ? intl.formatMessage({ id: 'location.defaultName' })
+                : ''
+            }
+          />
         </Form.Item>
         <Form.Item
           name="phone"
@@ -110,10 +151,7 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
           label={intl.formatMessage({
             id: 'settings.location.phone',
           })}
-          rules={[
-            getRequiredRule(intl, requiresPhone),
-            getPhoneRules(intl, invalidPhone),
-          ]}
+          rules={[getPhoneRules(intl)]}
         >
           <Input />
         </Form.Item>

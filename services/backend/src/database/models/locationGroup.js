@@ -33,6 +33,11 @@ module.exports = (Sequelize, DataTypes) => {
     LocationGroup.hasMany(models.Location, {
       foreignKey: 'groupId',
     });
+
+    LocationGroup.hasOne(models.Location, {
+      foreignKey: 'groupId',
+      as: 'BaseLocation',
+    });
   };
   return LocationGroup;
 };

@@ -2,6 +2,7 @@ import { login } from '../../helpers/functions';
 import {
   E2E_DEFAULT_LOCATION_NAME,
   E2E_SECOND_LOCATION_NAME,
+  E2E_THIRD_LOCATION_NAME,
   E2E_DEFAULT_LOCATION_UUID,
   E2E_SECOND_LOCATION_UUID,
   TEST_LOCATION_NAME,
@@ -60,6 +61,31 @@ describe('Location settings', () => {
       cy.getByCy('openSettings').click();
       cy.getByCy('editLocation').should('be.disabled');
     });
+
+    it('checks if the location name is the default name', () => {
+      cy.getByCy(`location-${E2E_SECOND_LOCATION_NAME}`).click();
+      cy.getByCy('locationDisplayName').should(
+        'contain',
+        E2E_SECOND_LOCATION_NAME
+      );
+      cy.getByCy('openSettings').click();
+      cy.get('#locationName').clear().type(E2E_DEFAULT_LOCATION_NAME);
+      cy.getByCy('editLocation').click();
+      cy.get('.ant-form-item-explain-error').should('exist');
+    });
+
+    it('checks if the location name is unique', () => {
+      cy.getByCy(`location-${E2E_SECOND_LOCATION_NAME}`).click();
+      cy.getByCy('locationDisplayName').should(
+        'contain',
+        E2E_SECOND_LOCATION_NAME
+      );
+      cy.getByCy('openSettings').click();
+      cy.get('#locationName').clear().type(E2E_THIRD_LOCATION_NAME);
+      cy.getByCy('editLocation').click();
+      cy.get('.ant-form-item-explain-error').should('exist');
+    });
+
     it('can change both the name and phone number of the location', () => {
       // Click the other location
       cy.getByCy(`location-${E2E_SECOND_LOCATION_NAME}`).click();

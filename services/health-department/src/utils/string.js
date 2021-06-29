@@ -4,3 +4,9 @@ export const truncateString = (string, maxLength) => {
     ? `${string.slice(0, maxLengthValue)}...`
     : string;
 };
+
+export const sortByNameAsc = locations =>
+  locations.sort((location1, location2) => {
+    if (location1.name === location2.name) return 0;
+    return location1.name > location2.name ? 1 : -1;
+  });

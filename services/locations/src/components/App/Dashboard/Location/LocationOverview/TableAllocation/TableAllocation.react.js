@@ -24,7 +24,7 @@ export const TableAllocation = ({ location }) => {
   } = useQuery('privateKeySecret', getPrivateKeySecret, {});
   const { data: operator, isLoading: isOperatorLoading } = useQuery(
     'me',
-    () => getMe().then(response => response.json()),
+    () => getMe(),
     {}
   );
   const [privateKey] = usePrivateKey(privateKeySecret);

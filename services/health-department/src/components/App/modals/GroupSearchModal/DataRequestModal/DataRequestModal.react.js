@@ -1,32 +1,51 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import moment from 'moment';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
-import { Form, DatePicker, Button, notification } from 'antd';
-
+import { Form, DatePicker, TimePicker, notification } from 'antd';
 import { createLocationTransfer } from 'network/api';
+import { mergeTimeAndDateObject } from 'utils/moment';
 
 import { useModal } from 'components/hooks/useModal';
-import { ButtonRow, Info } from './DataRequestModal.styled';
+import {
+  ButtonRow,
+  GroupText,
+  InfoText,
+  AddressText,
+  DateText,
+  OpenProcessButton,
+  DateSelectorWrapper,
+  BackButton,
+  DatePickerRow,
+} from './DataRequestModal.styled';
 
-const { RangePicker } = DatePicker;
-
-export const DataRequestModal = ({ group }) => {
+export const DataRequestModal = ({ group, back }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
-  const formReference = useRef(null);
   const [, closeModal] = useModal();
+  const { streetName, streetNr, zipCode, city } = group.baseLocation;
 
-  const onSubmit = () => {
-    formReference.current.submit();
-  };
+  const requiredFieldMessage = intl.formatMessage({
+    id: 'modal.dataRequest.form.error.required',
+  });
 
   const onFinish = values => {
-    const startTime = moment(values.date[0]);
-    const endTime = moment(values.date[1]);
+    const startTime = mergeTimeAndDateObject(
+      moment(values.startDate),
+      moment(values.startTime)
+    );
+    const endTime = mergeTimeAndDateObject(
+      moment(values.endDate),
+      moment(values.endTime)
+    );
 
-    if (startTime.isSame(endTime)) {
-      endTime.add(5, 'minutes');
+    if (startTime.isSameOrAfter(endTime)) {
+      notification.error({
+        message: intl.formatMessage({
+          id: 'modal.dataRequest.error.timeframe',
+        }),
+      });
+      return;
     }
 
     const time = [startTime.unix(), endTime.unix()];
@@ -51,7 +70,7 @@ export const DataRequestModal = ({ group }) => {
       .catch(() => {
         notification.error({
           message: intl.formatMessage({
-            id: 'modal.dataRequest.error.description',
+            id: 'modal.dataRequest.error',
           }),
         });
       });
@@ -59,30 +78,119 @@ export const DataRequestModal = ({ group }) => {
 
   return (
     <>
-      <Info>
-        {intl.formatMessage(
-          { id: 'groupSearch.requestData.info' },
-          { group: <b>{group.name}</b> }
-        )}
-      </Info>
-      <Form onFinish={onFinish} ref={formReference}>
-        <Form.Item
-          style={{ color: 'white' }}
-          label={intl.formatMessage({ id: 'modal.dataRequest.date' })}
-          name="date"
-        >
-          <RangePicker
-            showTime={{ format: 'HH:mm' }}
-            format="DD.MM.YYYY HH:mm"
-          />
-        </Form.Item>
-        <Form.Item>
-          <ButtonRow>
-            <Button data-cy="requestGroupData" onClick={onSubmit}>
+      <GroupText>{group.name}</GroupText>
+      <AddressText>{`${streetName} ${streetNr}, ${zipCode} ${city}`}</AddressText>
+      <InfoText>
+        {intl.formatMessage({ id: 'modal.dataRequest.info.timeframe' })}
+      </InfoText>
+      <Form onFinish={onFinish}>
+        <DateSelectorWrapper>
+          <DateText>
+            {intl.formatMessage({ id: 'modal.dataRequest.from' })}
+          </DateText>
+          <DatePickerRow>
+            <Form.Item
+              name="startDate"
+              style={{ paddingRight: '24px' }}
+              rules={[
+                {
+                  required: true,
+                  message: requiredFieldMessage,
+                },
+              ]}
+            >
+              <DatePicker
+                suffixIcon={null}
+                format="DD.MM.YYYY"
+                placeholder={intl.formatMessage({
+                  id: 'modal.dataRequest.date.placeholder',
+                })}
+                showToday={false}
+                id="startDate"
+              />
+            </Form.Item>
+            <Form.Item
+              name="startTime"
+              rules={[
+                {
+                  required: true,
+                  message: requiredFieldMessage,
+                },
+              ]}
+            >
+              <TimePicker
+                format={`HH.mm [${intl.formatMessage({
+                  id: 'modal.dataRequest.time.clock',
+                })}]`}
+                suffixIcon={null}
+                placeholder={intl.formatMessage({
+                  id: 'modal.dataRequest.time.placeholder',
+                })}
+                showNow={false}
+                id="startTime"
+              />
+            </Form.Item>
+          </DatePickerRow>
+        </DateSelectorWrapper>
+        <DateSelectorWrapper>
+          <DateText>
+            {intl.formatMessage({ id: 'modal.dataRequest.to' })}
+          </DateText>
+          <DatePickerRow>
+            <Form.Item
+              name="endDate"
+              style={{ paddingRight: '24px' }}
+              rules={[
+                {
+                  required: true,
+                  message: requiredFieldMessage,
+                },
+              ]}
+            >
+              <DatePicker
+                suffixIcon={null}
+                format="DD.MM.YYYY"
+                placeholder={intl.formatMessage({
+                  id: 'modal.dataRequest.date.placeholder',
+                })}
+                showToday={false}
+                id="endDate"
+              />
+            </Form.Item>
+            <Form.Item
+              name="endTime"
+              rules={[
+                {
+                  required: true,
+                  message: requiredFieldMessage,
+                },
+              ]}
+            >
+              <TimePicker
+                format={`HH.mm [${intl.formatMessage({
+                  id: 'modal.dataRequest.time.clock',
+                })}]`}
+                suffixIcon={null}
+                placeholder={intl.formatMessage({
+                  id: 'modal.dataRequest.time.placeholder',
+                })}
+                showNow={false}
+                id="endTime"
+              />
+            </Form.Item>
+          </DatePickerRow>
+        </DateSelectorWrapper>
+
+        <ButtonRow>
+          <BackButton onClick={back}>
+            {intl.formatMessage({ id: 'modal.dataRequest.back' })}
+          </BackButton>
+          <Form.Item>
+            <OpenProcessButton htmlType="submit" data-cy="requestGroupData">
               {intl.formatMessage({ id: 'modal.dataRequest.button' })}
-            </Button>
-          </ButtonRow>
-        </Form.Item>
+            </OpenProcessButton>
+          </Form.Item>
+        </ButtonRow>
       </Form>
     </>
   );

@@ -1,24 +1,62 @@
-export const requiresPhone = {
-  id: 'error.phone',
-};
-export const invalidPhone = {
-  id: 'error.phone.invalid',
-};
+import {
+  DEFAULT_LOCATION_NAME_EN,
+  DEFAULT_LOCATION_NAME_DE,
+} from 'constants/locations';
 
-export const requiresGroupName = {
-  id: 'error.groupName',
+import { checkPhoneNumber } from './parsePhoneNumber';
+
+export const showErrorNotification = (notification, intl, errorMessage) => {
+  notification.error({
+    message: intl.formatMessage(errorMessage),
+  });
 };
 
 export const getRequiredRule = (intl, message) => ({
   required: true,
+  whitespace: true,
   message: intl.formatMessage(message),
 });
 
-export const getPhoneRules = (intl, message) => ({
-  pattern: /^\+*\({0,1}\d{1,3}\){0,1}[\d\s./-]{7,20}$/g,
-  message: intl.formatMessage(message),
+export const getPhoneRules = intl => ({
+  validator: (_, value) => {
+    return checkPhoneNumber(value)
+      ? Promise.resolve()
+      : Promise.reject(
+          intl.formatMessage({
+            id: 'error.phone.invalid',
+          })
+        );
+  },
 });
 
+export const getDefaultNameRule = intl => () => ({
+  validator: (rule, value) => {
+    if (
+      value?.toLowerCase().trim() === DEFAULT_LOCATION_NAME_EN ||
+      value?.toLowerCase().trim() === DEFAULT_LOCATION_NAME_DE
+    ) {
+      return Promise.reject(
+        intl.formatMessage({
+          id: 'error.locationName.notDefault',
+        })
+      );
+    }
+    return Promise.resolve();
+  },
+});
+
+export const checkExistingLocation = (isLocationNameTaken, intl) => {
+  return () => {
+    if (isLocationNameTaken) {
+      return Promise.reject(
+        intl.formatMessage({
+          id: 'error.locationName.exist',
+        })
+      );
+    }
+    return Promise.resolve();
+  };
+};
 export const getMaxLengthRule = (intl, max) => ({
   max,
   message: intl.formatMessage({ id: 'error.length' }),

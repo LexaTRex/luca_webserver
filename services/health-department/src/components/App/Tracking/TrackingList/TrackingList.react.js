@@ -17,7 +17,7 @@ import { TrackingListWrapper } from './TrackingList.styled';
 
 export const TrackingList = () => {
   const { isLoading, error, data: processes } = useQuery('processes', () =>
-    getProcesses().then(response => response.json())
+    getProcesses()
   );
   const [filters, setFilters] = useState({
     type: ALL_PROCESS_TYPES,

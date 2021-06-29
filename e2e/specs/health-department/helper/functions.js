@@ -6,6 +6,7 @@ import {
   E2E_HEALTH_DEPARTMENT_USERNAME,
   E2E_HEALTH_DEPARTMENT_PASSWORD,
 } from './user';
+import path from 'path';
 
 export const loginHealthDepartment = () => {
   cy.request({
@@ -37,7 +38,14 @@ export const logout = () => {
   cy.visit(HEALTH_DEPARTMENT_BASE_ROUTE);
 };
 
+const deleteHealthDepartmentPrivateKey = () => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  const keyPath = path.join(downloadsFolder, 'HealthDepartmentKeyFile.luca');
+  cy.task('deleteFileIfExists', keyPath);
+};
+
 export const downloadHealthDepartmentPrivateKey = () => {
+  deleteHealthDepartmentPrivateKey();
   cy.get('.ant-modal').should('exist');
   cy.getByCy('downloadPrivateKey', { timeout: 8000 }).click();
   cy.getByCy('next').should('exist');
@@ -45,12 +53,15 @@ export const downloadHealthDepartmentPrivateKey = () => {
   cy.getByCy('finish').should('exist');
   cy.getByCy('finish').click();
 };
+
 export const uploadHealthDepartmentPrivateKeyFile = () => {
   cy.get('.ant-modal').should('exist');
-  cy.readFile('./downloads/HealthDepartmentKeyFile.luca').then(fileContent => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  const fileName = 'HealthDepartmentKeyFile.luca';
+  cy.readFile(path.join(downloadsFolder, fileName)).then(fileContent => {
     cy.get('input[type="file"]').attachFile({
       fileContent,
-      fileName: 'HealthDepartmentKeyFile.luca',
+      fileName,
       mimeType: 'text/plain',
     });
   });

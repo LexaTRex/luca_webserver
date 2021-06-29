@@ -11,6 +11,9 @@ export const E2E_DEFAULT_LOCATION_NAME = 'General';
 export const E2E_SECOND_LOCATION_UUID = 'c951f526-f792-498b-838f-7d1312a792a3';
 export const E2E_SECOND_LOCATION_NAME = 'Restaurant';
 
+export const E2E_THIRD_LOCATION_UUID = '04d3e0b3-c64f-43bd-9b1a-f53f9032e312';
+export const E2E_THIRD_LOCATION_NAME = 'Nexenio Kitchen';
+
 export const E2E_DEFAULT_LOCATION_SCANNER =
   '09eb8d41-1914-4950-9526-36ebc6ad58fd';
 export const E2E_DEFAULT_SCANNER_LINK = `https://localhost/scanner/${E2E_DEFAULT_LOCATION_SCANNER}`;

@@ -2,7 +2,7 @@ export const APP_ROUTE = '/app/group';
 export const PROFILE_ROUTE = 'app/profile';
 export const DATA_TRANSFERS_ROUTE = 'app/dataTransfers';
 export const TERMS_CONDITIONS_LINK =
-  'https://luca-app.de/app-terms-and-conditions/';
+  'https://www.luca-app.de/operator-terms-and-conditions/';
 
 export const FAQ_LINK = 'https://www.luca-app.de/faq/';
 

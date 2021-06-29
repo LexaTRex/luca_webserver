@@ -15,11 +15,9 @@ paths:
                 properties:
                   scannerId:
                     type: string
-                    minLength: 1
                     format: uuid
                   locationId:
                     type: string
-                    minLength: 1
                     format: uuid
                   accessId:
                     type: string
@@ -63,17 +61,32 @@ paths:
                 properties:
                   locationId:
                     type: string
-                    minLength: 1
                   publicKey:
                     type: string
-                    minLength: 1
-                  name: {}
+                  name:
+                    type: string
+                  groupName:
+                    type: string
+                  locationName:
+                    type: string
                   lat:
                     type: number
                   lng:
                     type: number
                   radius:
                     type: number
+                  isPrivate:
+                    type: boolean
+                required:
+                  - locationId
+                  - publicKey
+                  - name
+                  - groupName
+                  - locationName
+                  - lat
+                  - lng
+                  - radius
+                  - isPrivate
         '400':
           $ref: '#/components/schemas/BadRequest'
         '404':

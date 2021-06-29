@@ -1,5 +1,6 @@
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
+const path = require('path');
 
 function generateCameraStream(path) {
   if (!fs.existsSync('/tmp/luca')) {
@@ -30,6 +31,12 @@ module.exports = (on, config) => {
       await generateCameraStream(path);
       return true;
     },
+    deleteFileIfExists: path => {
+      if (fs.existsSync(path)) {
+        fs.unlinkSync(path);
+      }
+      return true;
+    }
   });
   on('before:browser:launch', async (browser = {}, launchOptions) => {
     launchOptions.args.push('--another-arg');
@@ -40,6 +47,9 @@ module.exports = (on, config) => {
       launchOptions.args.push(
         '--use-file-for-fake-video-capture=/tmp/luca/stream.mjpeg'
       );
+      launchOptions.preferences.default["download"] = {
+        default_directory: path.join(__dirname, 'downloads'),
+      };
     }
 
     return launchOptions;

@@ -42,6 +42,8 @@ export const Dashboard = ({ operator }) => {
 
   const [privateKey] = usePrivateKey(privateKeySecret);
 
+  const { isTrusted: isOperatorTrusted } = operator;
+
   useEffect(() => {
     if (!operator) {
       history.push(AUTHENTICATION_ROUTE);
@@ -102,7 +104,7 @@ export const Dashboard = ({ operator }) => {
         <MainContent>
           <Switch>
             <Route path={LOCATION_ROUTE}>
-              <Location />
+              <Location isOperatorTrusted={isOperatorTrusted} />
             </Route>
             <Route path={GROUP_ROUTE}>
               <EmptyGroup />

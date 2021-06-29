@@ -50,13 +50,6 @@ module.exports = (Sequelize, DataTypes) => {
       onDelete: 'CASCADE',
     });
 
-    LocationTransfer.belongsToMany(models.LocationTransferGroup, {
-      through: 'LocationTransferGroupMappings',
-      foreignKey: 'transferId',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-    });
-
     LocationTransfer.hasMany(models.LocationTransferTrace, {
       foreignKey: 'locationTransferId',
       onDelete: 'CASCADE',

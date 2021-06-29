@@ -14,6 +14,7 @@ export const QrCodes = ({
     <>
       {downloadTableQRCodes ? (
         <TableQrCodes
+          group={group}
           qrData={qrData}
           location={location}
           isCWAEventEnabled={isCWAEventEnabled}

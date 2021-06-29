@@ -6,88 +6,108 @@ import {
   RESTAURANT_TYPE,
   NEW_RESTAURANT_LOCATION,
 } from '../../helpers/locations';
-import { checkRadiusInput } from '../../helpers/inputValidation.helper';
+import {
+  checkRadiusInput,
+  defaultLocationNameShouldBeRejected,
+  checkLocationNameIsUnique,
+} from '../../helpers/inputValidation.helper';
 
-describe('Create restaurant location', () => {
-  beforeEach(() => login());
-  afterEach(() => removeLocation(NEW_RESTAURANT_LOCATION));
-  describe('Without extra information', () => {
-    it('generate location without tables and auto checkout', () => {
+context('Create restaurant location', () => {
+  describe('Location name validation', () => {
+    beforeEach(() => login());
+    it('checks if the location name is the default name', () => {
       cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-      // Select type
       cy.getByCy(RESTAURANT_TYPE).click();
-      // Enter name
-      cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
-      cy.getByCy('nextStep').click();
-      // Same address
-      cy.getByCy('yes').click();
-      //Enter phone
-      cy.get('#phone').type(E2E_PHONE_NUMBER);
-      cy.getByCy('nextStep').click();
-      // Select indoor
-      cy.getByCy('indoorSelection').click();
-      cy.getByCy('selectIndoor').click();
-      cy.get('button[type=submit]').click();
-      // Select tables
-      cy.getByCy('no').click();
-      // Select automatic checkout
-      cy.getByCy('no').click();
-      // Submit
-      cy.getByCy('done').click();
-      cy.getByCy('yes').click();
-      cy.getByCy('done').click();
-      cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
+      defaultLocationNameShouldBeRejected();
     });
-  });
-  describe('With tables', () => {
-    it('with tables', () => {
+    it('checks if the location name is unique', () => {
       cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
       cy.getByCy(RESTAURANT_TYPE).click();
-      cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
-      cy.getByCy('nextStep').click();
-      cy.getByCy('yes').click();
-      cy.get('#phone').type(E2E_PHONE_NUMBER);
-      cy.getByCy('nextStep').click();
-      // Select indoor
-      cy.getByCy('indoorSelection').click();
-      cy.getByCy('selectIndoor').click();
-      cy.get('button[type=submit]').click();
-      cy.getByCy('yes').click();
-      cy.get('#tableCount').type('10');
-      cy.getByCy('nextStep').click();
-      cy.getByCy('no').click();
-      cy.getByCy('done').click();
-      cy.getByCy('yes').click();
-      cy.getByCy('nextStep').click();
-      cy.getByCy('done').click();
-      cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
+      checkLocationNameIsUnique();
     });
   });
 
-  describe('With auto checkout', () => {
-    it('generate location with auto checkout', () => {
-      cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-      cy.getByCy(RESTAURANT_TYPE).click();
-      cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
-      cy.getByCy('nextStep').click();
-      cy.getByCy('yes').click();
-      cy.get('#phone').type(E2E_PHONE_NUMBER);
-      cy.getByCy('nextStep').click();
-      // Select indoor
-      cy.getByCy('indoorSelection').click();
-      cy.getByCy('selectIndoor').click();
-      cy.get('button[type=submit]').click();
-      cy.getByCy('no').click();
-      cy.getByCy('yes').click();
-      // Invalid radius input: empty, under 50 or over 5000
-      checkRadiusInput();
-      // Valid radius input
-      cy.get('#radius').clear().type(100);
-      cy.getByCy('nextStep').click();
-      cy.getByCy('done').click();
-      cy.getByCy('yes').click();
-      cy.getByCy('done').click();
-      cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
+  describe('Create a restaurant location', () => {
+    beforeEach(() => login());
+    afterEach(() => removeLocation(NEW_RESTAURANT_LOCATION));
+    describe('Without extra information', () => {
+      it('generate location without tables and auto checkout', () => {
+        cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
+        // Select type
+        cy.getByCy(RESTAURANT_TYPE).click();
+        // Enter name
+        cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
+        cy.getByCy('nextStep').click();
+        // Same address
+        cy.getByCy('yes').click();
+        //Enter phone
+        cy.get('#phone').type(E2E_PHONE_NUMBER);
+        cy.getByCy('nextStep').click();
+        // Select indoor
+        cy.getByCy('indoorSelection').click();
+        cy.getByCy('selectIndoor').click();
+        cy.get('button[type=submit]').click();
+        // Select tables
+        cy.getByCy('no').click();
+        // Select automatic checkout
+        cy.getByCy('no').click();
+        // Submit
+        cy.getByCy('done').click();
+        cy.getByCy('yes').click();
+        cy.getByCy('done').click();
+        cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
+      });
+    });
+    describe('With tables', () => {
+      it('with tables', () => {
+        cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
+        cy.getByCy(RESTAURANT_TYPE).click();
+        cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
+        cy.getByCy('nextStep').click();
+        cy.getByCy('yes').click();
+        cy.get('#phone').type(E2E_PHONE_NUMBER);
+        cy.getByCy('nextStep').click();
+        // Select indoor
+        cy.getByCy('indoorSelection').click();
+        cy.getByCy('selectIndoor').click();
+        cy.get('button[type=submit]').click();
+        cy.getByCy('yes').click();
+        cy.get('#tableCount').type('10');
+        cy.getByCy('nextStep').click();
+        cy.getByCy('no').click();
+        cy.getByCy('done').click();
+        cy.getByCy('yes').click();
+        cy.getByCy('nextStep').click();
+        cy.getByCy('done').click();
+        cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
+      });
+    });
+
+    describe('With auto checkout', () => {
+      it('generate location with auto checkout', () => {
+        cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
+        cy.getByCy(RESTAURANT_TYPE).click();
+        cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
+        cy.getByCy('nextStep').click();
+        cy.getByCy('yes').click();
+        cy.get('#phone').type(E2E_PHONE_NUMBER);
+        cy.getByCy('nextStep').click();
+        // Select indoor
+        cy.getByCy('indoorSelection').click();
+        cy.getByCy('selectIndoor').click();
+        cy.get('button[type=submit]').click();
+        cy.getByCy('no').click();
+        cy.getByCy('yes').click();
+        // Invalid radius input: empty, under 50 or over 5000
+        checkRadiusInput();
+        // Valid radius input
+        cy.get('#radius').clear().type(100);
+        cy.getByCy('nextStep').click();
+        cy.getByCy('done').click();
+        cy.getByCy('yes').click();
+        cy.getByCy('done').click();
+        cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
+      });
     });
   });
 });

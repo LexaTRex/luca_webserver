@@ -1,4 +1,4 @@
-FROM nginx:1.19.9-alpine
+FROM nginx:1.20.1-alpine
 
 ## add permissions
 RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html && \

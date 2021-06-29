@@ -16,7 +16,6 @@ const {
   validateParametersSchema,
 } = require('../../middlewares/validateSchema');
 const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
-
 const {
   createSchema,
   userIdParametersSchema,

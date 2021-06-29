@@ -28,4 +28,5 @@ export const Logo = styled.img`
 
 export const MenuWrapper = styled.div`
   margin-top: 10px;
+  display: flex;
 `;

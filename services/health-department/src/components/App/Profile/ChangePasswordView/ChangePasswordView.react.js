@@ -4,8 +4,8 @@ import { Input, Button, Form, notification } from 'antd';
 import { changePassword } from 'network/api';
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 import { handleResponse } from './ChangePasswordView.helper';
-import { StyledHeadline } from './ChangePasswordView.styled';
-import { buttonStyle, inputStyle, StyledButtonRow } from '../Profile.styled';
+import { StyledHeadline, buttonStyle } from './ChangePasswordView.styled';
+import { inputStyle, StyledButtonRow } from '../Profile.styled';
 
 export const ChangePasswordView = () => {
   const intl = useIntl();

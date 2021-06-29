@@ -40,6 +40,7 @@ rules:
   unicorn/no-array-for-each: 0
   unicorn/number-literal-case: 0
   no-restricted-syntax: ["error", "LabeledStatement", "WithStatement"]
+  no-plusplus: ["error", { "allowForLoopAfterthoughts": true }]
 overrides:
   - files: ["src/setupTests.js", "src/testHelper/*.js", "*.test.js"]
     rules:

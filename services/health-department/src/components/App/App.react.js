@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
 import { Route, Switch, Redirect } from 'react-router';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 // Constants
 import {
@@ -28,23 +29,23 @@ import { AppWrapper } from './App.styled';
 export const App = () => {
   const intl = useIntl();
   const history = useHistory();
+  const currentRoute = useSelector(state => state.router.location.pathname);
+  const isProfileRoute = currentRoute === PROFILE_ROUTE;
 
   const title = intl.formatMessage({ id: 'main.site.title' });
   const meta = intl.formatMessage({ id: 'main.site.meta' });
-  const {
-    isLoading: isProfileLoading,
-    error: isProfileError,
-    data: profileData,
-  } = useQuery('me', () => getMe(), {
-    retry: false,
-  });
+  const { isLoading: isProfileLoading, data: profileData } = useQuery(
+    'me',
+    () => getMe(),
+    {
+      retry: false,
+      onError: () => {
+        history.push(LOGIN_ROUTE);
+      },
+    }
+  );
 
   if (isProfileLoading) return null;
-
-  if (isProfileError) {
-    history.push(LOGIN_ROUTE);
-    return null;
-  }
 
   return (
     <>
@@ -54,7 +55,7 @@ export const App = () => {
       </Helmet>
       <AppWrapper>
         <Header />
-        <Navigation />
+        {!isProfileRoute && <Navigation />}
         <ModalArea />
         <Switch>
           <Route path={PROFILE_ROUTE}>

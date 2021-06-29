@@ -1,3 +1,5 @@
+import { z } from 'zod';
+import sjson from 'secure-json-parse';
 import {
   base64ToHex,
   decodeUtf8,
@@ -11,16 +13,16 @@ import {
   int32ToHex,
   KDF_SHA256,
 } from '@lucaapp/crypto';
+
 import { getEncryptedUserContactData } from 'network/api';
 import { IncompleteDataError } from 'errors/incompleteDataError';
-import { z } from 'zod';
-import sjson from 'secure-json-parse';
-import { sanitizeObject, sanitizeForCSV } from './sanitizer';
+
 import {
   DECRYPT_DLIES_USING_HDEKP,
   getBadgePrivateKey,
   getDailyPrivateKey,
 } from './cryptoKeyOperations';
+import { sanitizeObject, sanitizeForCSV } from './sanitizer';
 
 const userDataSchema = z.object({
   fn: z.string().transform(sanitizeForCSV),
@@ -42,7 +44,7 @@ export const additionalDataSchema = z
 
 export const decryptUser = (encryptedUser, encKey) => {
   let userData;
-  let isInvalid = false;
+  let verificationSecret = null;
   if (!encryptedUser.data || !encryptedUser.iv) {
     throw new IncompleteDataError(encryptedUser.data, encryptedUser.iv);
   }
@@ -62,12 +64,12 @@ export const decryptUser = (encryptedUser, encKey) => {
 
   try {
     userData = sanitizeObject(userDataSchema.parse(sjson.parse(decryptedUser)));
+    verificationSecret = sjson.parse(decryptedUser)?.vs;
   } catch (error) {
     console.error(`invalid json`, error);
-    userData = null;
-    isInvalid = true;
+    return { userData: null, verificationSecret: null, isInvalid: true };
   }
-  return { userData, isInvalid };
+  return { userData, verificationSecret, isInvalid: false };
 };
 
 export async function decryptStaticDeviceTrace(encryptedTrace) {
@@ -89,19 +91,33 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
   const userDataKey = traceData.slice(32, 64);
 
   const encryptedUser = await getEncryptedUserContactData(userId);
-  const { userData, userDataInvalid } = decryptUser(encryptedUser, userDataKey);
-  if (userDataInvalid) {
-    return { userData, isInvalid: true, isDynamicDevice: false };
+  const { userData, verificationSecret, isInvalid } = decryptUser(
+    encryptedUser,
+    userDataKey
+  );
+
+  if (isInvalid) {
+    return { userData: null, isInvalid: true, isDynamicDevice: false };
   }
 
   const expectedMac = HMAC_SHA256(
     int32ToHex(encryptedTrace.checkin) + base64ToHex(encryptedTrace.data),
-    base64ToHex(userData.vs)
+    base64ToHex(verificationSecret)
   ).slice(0, 16);
 
   if (hexToBase64(expectedMac) !== encryptedTrace.verification) {
     console.error(`invalid verification (TraceId: ${encryptedTrace.traceId})`);
-    return { userData, isInvalid: true, isDynamicDevice: false };
+    return { userData: null, isInvalid: true, isDynamicDevice: false };
+  }
+
+  const userMacCheck = HMAC_SHA256(
+    base64ToHex(encryptedUser.data),
+    base64ToHex(verificationSecret)
+  );
+
+  if (userMacCheck !== base64ToHex(encryptedUser.mac)) {
+    console.error('MAC mismatch for decrypted user data');
+    return { userData: null, isInvalid: true, isDynamicDevice: false };
   }
 
   return { userData, isInvalid: false, isDynamicDevice: false };
@@ -109,7 +125,6 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
 
 export async function decryptDynamicDeviceTrace(encryptedTrace) {
   let privateKey;
-  let isInvalid = false;
   try {
     privateKey = await getDailyPrivateKey(encryptedTrace.keyId);
   } catch (error) {
@@ -147,13 +162,21 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
 
   if (hexToBase64(expectedMac) !== encryptedTrace.verification) {
     console.error(`invalid verification (TraceId: ${encryptedTrace.traceId})`);
-    isInvalid = true;
+    return { userData: null, isInvalid: true, isDynamicDevice: true };
+  }
+  const userMacCheck = HMAC_SHA256(base64ToHex(encryptedUser.data), authKey);
+  if (userMacCheck !== base64ToHex(encryptedUser.mac)) {
+    console.error('MAC mismatch for decrypted user data');
+    return { userData: null, isInvalid: true, isDynamicDevice: true };
   }
 
-  const { userData, userDataInvalid } = decryptUser(encryptedUser, encKey);
-  isInvalid = isInvalid || userDataInvalid;
+  const { userData, isInvalid } = decryptUser(encryptedUser, encKey);
 
-  return { userData, isInvalid, isDynamicDevice: true };
+  if (isInvalid) {
+    return { userData: null, isInvalid: true, isDynamicDevice: false };
+  }
+
+  return { userData, isInvalid: false, isDynamicDevice: true };
 }
 
 export function decryptAdditionalData(encryptedTrace, isInvalid) {

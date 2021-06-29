@@ -34,6 +34,12 @@ export const Settings = styled.div`
   align-self: flex-end;
 `;
 
+export const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 48px 0 0 0;
+`;
+
 export const HiddenImage = styled.img`
   display: none;
 `;

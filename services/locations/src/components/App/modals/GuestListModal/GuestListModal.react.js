@@ -39,7 +39,7 @@ function DeviceIcon({ deviceType }) {
       <Tooltip
         placement="top"
         title={intl.formatMessage({
-          id: 'modal.guestlist.deviceType.app',
+          id: 'modal.guestList.deviceType.app',
         })}
       >
         <MobileOutlined />
@@ -52,7 +52,7 @@ function DeviceIcon({ deviceType }) {
       <Tooltip
         placement="top"
         title={intl.formatMessage({
-          id: 'modal.guestlist.deviceType.badge',
+          id: 'modal.guestList.deviceType.badge',
         })}
       >
         <QrcodeOutlined />
@@ -64,7 +64,7 @@ function DeviceIcon({ deviceType }) {
     <Tooltip
       placement="top"
       title={intl.formatMessage({
-        id: 'modal.guestlist.deviceType.contactForm',
+        id: 'modal.guestList.deviceType.contactForm',
       })}
     >
       <ContainerOutlined />
@@ -81,10 +81,7 @@ export function GuestListModal({ location }) {
     error,
     data: traces,
   } = useQuery(`traces/${location.uuid}/${duration}`, () =>
-    getTraces(
-      location.accessId,
-      duration !== ALL_OPTION ? duration : null
-    ).then(response => response.json())
+    getTraces(location.accessId, duration !== ALL_OPTION ? duration : null)
   );
 
   const onCheckoutGuestSingle = traceId => {

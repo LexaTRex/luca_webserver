@@ -134,6 +134,8 @@ paths:
           description: The operator account has been deactivated
         '404':
           description: Location not found
+        '409':
+          description: Location name not unique inside group
       requestBody:
         content:
           application/json:

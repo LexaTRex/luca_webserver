@@ -1,14 +1,13 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input, Button, Form, notification } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
 
 import { requestTan } from 'network/api';
 
+import { requiresPhone, invalidPhone } from 'constants/errorMessages';
 import {
-  invalidPhone,
-  requiresPhone,
-  getPhoneRules,
   getRequiredRule,
+  getPhoneRules,
   getMaxLengthRule,
 } from 'utils/validatorRules';
 import { MAX_EMAIL_LENGTH, MAX_PHONE_LENGTH } from 'constants/valueLength';
@@ -18,6 +17,7 @@ import {
   ContentTitle,
   ContentWrapper,
 } from '../RegisterForm.styled';
+import { PhoneValidationError } from './errors';
 
 export const ContactInfo = ({
   title,
@@ -29,28 +29,41 @@ export const ContactInfo = ({
 }) => {
   const intl = useIntl();
 
-  const requestTanForUser = values =>
-    requestTan({ phone: values.phone })
-      .then(response => {
-        const { challengeId } = response;
-        const finalValues = { ...values, challengeId };
-        setValues(finalValues);
-        next();
-      })
-      .catch(() =>
-        notification.error({
-          message: intl.formatMessage({
-            id: 'notification.sendTan.error',
-          }),
-        })
-      );
+  function validateResponse(response) {
+    if (
+      response.errors &&
+      response.errors.some(error => (error.path ?? [''])[0] === 'phone')
+    ) {
+      throw new PhoneValidationError();
+    }
+    if (!response.challengeId) throw new Error('missing challengeId');
+  }
+
+  const requestTanForUser = async values => {
+    try {
+      const response = await requestTan({ phone: values.phone });
+      validateResponse(response);
+      const { challengeId } = response;
+      const finalValues = { ...values, challengeId };
+      setValues(finalValues);
+      next();
+    } catch (error) {
+      const id =
+        error instanceof PhoneValidationError
+          ? 'error.phone.valid'
+          : 'notification.sendTan.error';
+      notification.error({
+        message: intl.formatMessage({
+          id,
+        }),
+      });
+    }
+  };
 
   const handleNext = () => {
     form.current
       .validateFields()
-      .then(values => {
-        requestTanForUser(values);
-      })
+      .then(requestTanForUser)
       .catch(() => {
         notification.error({
           message: intl.formatMessage({

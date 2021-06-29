@@ -25,11 +25,11 @@ export const Header = ({ registrator }) => {
           })}
         </SubTitle>
       </Title>
-      {registrator && (
+      {registrator?.isTrusted && (
         <RegistratorTitle>
           {intl.formatMessage(
             { id: 'registerBadge.serialNumber.registrator' },
-            { name: registrator.name }
+            { name: `${registrator.firstName} ${registrator.lastName}` }
           )}
         </RegistratorTitle>
       )}

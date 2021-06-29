@@ -41,7 +41,6 @@ export const Header = ({ traces, location }) => {
         />
       ),
       closable: true,
-      blueModal: true,
     });
   };
 

@@ -44,16 +44,16 @@ const MAIL_TEMPLATE_TITLES = {
   },
 };
 
-const getMailId = (id, lang) => {
+const getMailId = (id, lang = 'de') => {
   if (!(id in MAIL_TEMPLATE_IDS)) {
     throw new Error('Invalid email template id');
   }
   return MAIL_TEMPLATE_IDS[`${id}`][`${lang}`];
 };
 
-const getMailTitle = (id, lang) => {
+const getMailTitle = (id, lang = 'de') => {
   if (!(id in MAIL_TEMPLATE_TITLES)) {
-    throw new Error('Invalid email temaplte title');
+    throw new Error('Invalid email template title');
   }
   return MAIL_TEMPLATE_TITLES[`${id}`][`${lang}`];
 };

@@ -7,6 +7,37 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
+class ApiError extends Error {
+  constructor(response) {
+    super();
+    this.response = response;
+    this.status = response.status;
+    this.message = `Request to ${response.url} failed with status ${response.status}`;
+  }
+}
+
+const getRequest = path => {
+  return fetch(path, {
+    method: 'GET',
+    headers,
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.text();
+      }
+
+      throw new ApiError(response);
+    })
+    .then(payload => {
+      try {
+        return JSON.parse(payload);
+      } catch {
+        // This is fine:
+        // Payload is just text like "OK"
+        return payload;
+      }
+    });
+};
 // AUTH
 export const login = data => {
   return fetch(`${API_PATH}${AUTH_PATH}/healthDepartmentEmployee/login`, {
@@ -24,10 +55,7 @@ export const logout = () => {
 };
 
 export const getMe = () => {
-  return fetch(`${API_PATH}${AUTH_PATH}/healthDepartmentEmployee/me`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}${AUTH_PATH}/healthDepartmentEmployee/me`);
 };
 
 // Health-Department
@@ -40,61 +68,38 @@ export const storeKeys = data => {
 };
 
 export const getKeys = () => {
-  return fetch(`${API_PATH}/v3/healthDepartments/keys`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/healthDepartments/keys`);
 };
 
 export const getHealthDepartment = departmentId => {
-  return fetch(`${API_PATH}/v3/healthDepartments/${departmentId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/healthDepartments/${departmentId}`);
 };
 
 export const getPrivateKeySecret = () =>
-  fetch(`${API_PATH}/v3/healthDepartments/privateKeySecret`)
-    .then(response => response.json())
-    .then(data =>
-      data && data.privateKeySecret ? base64ToHex(data.privateKeySecret) : null
-    );
+  getRequest(`${API_PATH}/v3/healthDepartments/privateKeySecret`).then(data =>
+    data && data.privateKeySecret ? base64ToHex(data.privateKeySecret) : null
+  );
 
 // TAN
 export const getUserTransferByTan = tan => {
-  return fetch(`${API_PATH}/v3/userTransfers/tan/${tan}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/userTransfers/tan/${tan}`);
 };
 
 export const getUserTransferById = userTransferId => {
-  return fetch(`${API_PATH}/v3/userTransfers/${userTransferId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/userTransfers/${userTransferId}`);
 };
 
 // PROCESSES
 export const getProcesses = () => {
-  return fetch(`${API_PATH}/v3/tracingProcesses/`, {
-    method: 'GET',
-    headers,
-  });
+  return getRequest(`${API_PATH}/v3/tracingProcesses/`);
 };
 
 export const getProcess = processId => {
-  return fetch(`${API_PATH}/v3/tracingProcesses/${processId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/tracingProcesses/${processId}`);
 };
 
 export const getEncryptedUserContactData = userId => {
-  return fetch(`${API_PATH}/v3/users/${userId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/users/${userId}`);
 };
 
 export const getUserTraces = data => {
@@ -114,50 +119,43 @@ export const updateProcess = (tracingProcessId, data) => {
 };
 
 export const getLocationTransfers = tracingProcessId => {
-  return fetch(
-    `${API_PATH}/v3/tracingProcesses/${tracingProcessId}/locationTransfers`,
-    {
-      method: 'GET',
-      headers,
-    }
-  ).then(async response => {
-    if (response.status === 401) {
-      console.error(
-        `error fetching tracingProcess ${tracingProcessId}`,
-        await response.json()
-      );
-      return [];
-    }
-    const transfers = await response.json();
-    const transferPromises = transfers.map(async transfer => {
-      const locationTransferResponse = await fetch(
-        `${API_PATH}/v3/healthDepartmentEmployees/locations/${transfer.locationId}`,
-        {
-          method: 'GET',
-          headers,
-        }
-      );
+  return getRequest(
+    `${API_PATH}/v3/tracingProcesses/${tracingProcessId}/locationTransfers`
+  )
+    .then(transfers => {
+      const transferPromises = transfers.map(async transfer => {
+        const locationTransferResponse = await fetch(
+          `${API_PATH}/v3/healthDepartmentEmployees/locations/${transfer.locationId}`,
+          {
+            method: 'GET',
+            headers,
+          }
+        );
 
-      const locationResponse = await locationTransferResponse.json();
+        const locationResponse = await locationTransferResponse.json();
 
-      return {
-        ...locationResponse,
-        time: transfer.time,
-        transferId: transfer.uuid,
-        isCompleted: transfer.isCompleted,
-        contactedAt: transfer.contactedAt,
-      };
+        return {
+          ...locationResponse,
+          time: transfer.time,
+          transferId: transfer.uuid,
+          isCompleted: transfer.isCompleted,
+          contactedAt: transfer.contactedAt,
+        };
+      });
+
+      return Promise.all(transferPromises);
+    })
+    .catch(error => {
+      if (error.status === 401) {
+        return [];
+      }
+
+      throw error;
     });
-
-    return Promise.all(transferPromises);
-  });
 };
 
 export const getContactPersons = transferId => {
-  return fetch(`${API_PATH}/v3/locationTransfers/${transferId}/traces`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/locationTransfers/${transferId}/traces`);
 };
 
 export const contactLocation = transferId => {
@@ -169,13 +167,12 @@ export const contactLocation = transferId => {
 
 // SEARCH
 export const findGroups = searchParameters => {
-  return fetch(
-    `${API_PATH}/v3/locationGroups/search/?name=${searchParameters.group}&&limit=${searchParameters.limit}`,
-    {
-      method: 'GET',
-      headers,
-    }
-  ).then(response => response.json());
+  const zipCodeParameter = searchParameters.zipCode
+    ? `&zipCode=${searchParameters.zipCode}`
+    : '';
+  return getRequest(
+    `${API_PATH}/v3/locationGroups/search/?name=${searchParameters.group}${zipCodeParameter}&limit=${searchParameters.limit}`
+  );
 };
 
 export const createLocationTransfer = data => {
@@ -189,10 +186,7 @@ export const createLocationTransfer = data => {
 // USER MANAGEMENT
 
 export const getEmployees = () => {
-  return fetch(`${API_PATH}/v3/healthDepartmentEmployees/`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/healthDepartmentEmployees/`);
 };
 
 export const renewEmployeePassword = data => {
@@ -239,32 +233,20 @@ export const changePassword = data => {
 
 // DAILY KEY
 export const getCurrentDailyKey = () => {
-  return fetch(`${API_PATH}/v3/keys/daily/current`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/daily/current`);
 };
 
 export const getAllDailyKeys = () => {
-  return fetch(`${API_PATH}/v3/keys/daily`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/daily`);
 };
 
 export const getDailyKeyedList = keyId => {
-  return fetch(`${API_PATH}/v3/keys/daily/encrypted/${keyId}/keyed`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/daily/encrypted/${keyId}/keyed`);
 };
 
 // BADGE KEY
 export const getBadgeTargetKeyId = () => {
-  return fetch(`${API_PATH}/v3/keys/badge/targetKeyId`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/badge/targetKeyId`);
 };
 
 export const getCurrentBadgeKey = () => {
@@ -275,10 +257,7 @@ export const getCurrentBadgeKey = () => {
 };
 
 export const getBadgeKeyedList = keyId => {
-  return fetch(`${API_PATH}/v3/keys/badge/encrypted/${keyId}/keyed`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/badge/encrypted/${keyId}/keyed`);
 };
 
 export const sendBadgeKeyRotation = payload => {
@@ -291,10 +270,7 @@ export const sendBadgeKeyRotation = payload => {
 
 // KEYS
 export const getIssuers = () => {
-  return fetch(`${API_PATH}/v3/keys/issuers/`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/issuers/`);
 };
 
 export const sendDailyKeyRotation = payload => {
@@ -322,17 +298,11 @@ export const sendRekeyBadgeKeys = payload => {
 };
 
 export const getEncryptedDailyPrivateKey = keyId => {
-  return fetch(`${API_PATH}/v3/keys/daily/encrypted/${keyId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/daily/encrypted/${keyId}`);
 };
 
 export const getEncryptedBadgePrivateKey = keyId => {
-  return fetch(`${API_PATH}/v3/keys/badge/encrypted/${keyId}`, {
-    method: 'GET',
-    headers,
-  }).then(response => response.json());
+  return getRequest(`${API_PATH}/v3/keys/badge/encrypted/${keyId}`);
 };
 
 export const createUserTransfer = payload => {

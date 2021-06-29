@@ -23,8 +23,8 @@ import { E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD } from '../helpers/users';
 
 const FORM_WORKFLOW_TESTING_GROUP_NAME = 'Form Workflow';
 
-const yesterday = moment().subtract(1, 'days').format('DD.MM.YYYY hh:mm');
-const tomorrow = moment().add(1, 'days').format('DD.MM.YYYY hh:mm');
+const yesterdayDate = moment().subtract(1, 'days').format('DD.MM.YYYY');
+const tomorrowDate = moment().add(1, 'days').format('DD.MM.YYYY');
 
 context('Workflow', () => {
   describe('when the Luca workflow will checked with contact form data', () => {
@@ -77,16 +77,28 @@ context('Workflow', () => {
       cy.getByCy('groupNameInput').type(FORM_WORKFLOW_TESTING_GROUP_NAME);
       cy.getByCy('startGroupSearch').click();
       cy.getByCy(`group_${FORM_WORKFLOW_TESTING_GROUP_NAME}`).click();
-      cy.get('input[id=date]').should('exist');
-      cy.get('input[id=date]').click();
-      cy.get('input[id=date]').type(yesterday);
+      cy.get('input[id=startDate]').should('exist');
+      cy.get('input[id=startDate]').click();
+      cy.get('input[id=startDate]').type(`${yesterdayDate}{enter}`);
+      cy.get('input[id=startTime]').should('exist');
+      cy.get('input[id=startTime]').click();
+      cy.get('.ant-picker-time-panel').should('exist');
+      cy.get('.ant-picker-time-panel').within(() => {
+        cy.get('.ant-picker-time-panel-cell').eq(0).click().type('{enter}');
+      });
 
-      cy.get('.ant-picker-footer').find('.ant-picker-ok').should('exist');
-      cy.get('.ant-picker-footer').find('.ant-picker-ok').click();
-      cy.focused().type(tomorrow);
+      cy.get('input[id=endDate]').should('exist');
+      cy.get('input[id=endDate]').click();
+      cy.get('input[id=endDate]').type(`${tomorrowDate}{enter}`);
+      cy.get('input[id=endTime]').should('exist');
+      cy.get('input[id=endTime]').click();
+      cy.get('.ant-picker-time-panel').should('exist');
+      cy.get('.ant-picker-time-panel')
+        .eq(1)
+        .within(() => {
+          cy.get('.ant-picker-time-panel-cell').eq(0).click().type('{enter}');
+        });
 
-      cy.get('.ant-picker-ok button').should('exist');
-      cy.get('.ant-picker-ok button').click();
       cy.getByCy('requestGroupData').click();
       cy.getByCy('processEntry').should('exist');
       cy.getByCy('processEntry').first().click();

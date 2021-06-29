@@ -17,12 +17,12 @@ const notificationsRouter = require('./v3/notifications');
 const healthDepartmentsRouter = require('./v3/healthDepartments');
 const userTransfersRouter = require('./v3/userTransfers');
 const locationTransfersRouter = require('./v3/locationTransfers');
-const badgeRegistratorsRouter = require('./v3/badgeRegistrators');
 const tracingProcessesRouter = require('./v3/tracingProcesses');
 const supportedZipCodesRouter = require('./v3/supportedZipCodes');
 const healthDepartmentEmployeesRouter = require('./v3/healthDepartmentEmployees');
 const badgesRouter = require('./v3/badges');
 const timesyncRouter = require('./v3/timesync');
+const testProvidersRouter = require('./v3/testProviders');
 const swaggerRouter = require('./v3/swagger');
 
 /**
@@ -147,13 +147,6 @@ router.use('/locationTransfers', locationTransfersRouter);
 /**
  * @openapi
  * tags:
- *   name: BadgeRegistrators
- *   description: Manage badge registrators.
- */
-router.use('/badgeRegistrators', badgeRegistratorsRouter);
-/**
- * @openapi
- * tags:
  *   name: TracingProcesses
  *   description: Manage tracing processes.
  */
@@ -187,6 +180,13 @@ router.use('/timesync', timesyncRouter);
  *   description: Gets required information to check in badges.
  */
 router.use('/badges', badgesRouter);
+
+/**
+ * @openapi
+ * tags:
+ *   name: TestProvider
+ */
+router.use('/testProviders', testProvidersRouter);
 
 router.use('/swagger', swaggerRouter);
 

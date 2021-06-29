@@ -33,16 +33,37 @@ router.get(
     const limit = Number.parseInt(request.query.limit, 10);
     const offset = Number.parseInt(request.query.offset, 10);
 
-    const groups = await database.LocationGroup.findAll({
+    const { name, zipCode } = request.query;
+
+    const matchedGroups = await database.LocationGroup.findAll({
       where: {
         name: {
-          [Op.iLike]: `%${request.query.name}%`,
+          [Op.iLike]: `%${name}%`,
         },
+      },
+      include: [
+        {
+          model: database.Location,
+          attributes: ['uuid'],
+          where: {
+            name: null,
+            ...(zipCode && { zipCode }),
+          },
+        },
+      ],
+      limit: limit || 10,
+      offset: offset || 0,
+    });
+
+    const groups = await database.LocationGroup.findAll({
+      where: {
+        uuid: matchedGroups.map(group => group.uuid),
       },
       include: [
         {
           model: database.Operator,
           attributes: ['uuid', 'email'],
+          required: true,
         },
         {
           model: database.Location,
@@ -54,18 +75,32 @@ router.get(
             'zipCode',
             'city',
           ],
+          where: { name: null },
+          as: 'BaseLocation',
+        },
+        {
+          model: database.Location,
+          attributes: ['uuid'],
         },
       ],
-      limit: limit || 10,
-      offset: offset || 0,
     });
 
     return response.send(
       groups.map(group => ({
         groupId: group.uuid,
         name: group.name,
-        operator: group.Operator,
-        baseLocation: group.Locations.find(location => !location.name),
+        operator: {
+          uuid: group.Operator.uuid,
+          email: group.Operator.email,
+        },
+        baseLocation: {
+          uuid: group.BaseLocation.uuid,
+          name: group.BaseLocation.name,
+          streetName: group.BaseLocation.streetName,
+          streetNr: group.BaseLocation.streetNr,
+          zipCode: group.BaseLocation.zipCode,
+          city: group.BaseLocation.city,
+        },
         locations: group.Locations.map(location => location.uuid),
       }))
     );

@@ -7,7 +7,6 @@ export const openModal = ({
   title,
   content,
   closable = true,
-  blueModal,
   wide = false,
 }) => {
   return {
@@ -16,7 +15,6 @@ export const openModal = ({
       title,
       content,
       closable,
-      blueModal,
       wide,
     },
   };

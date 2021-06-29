@@ -1,11 +1,10 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Button } from 'antd';
-
 import { useModal } from 'components/hooks/useModal';
 
 import { CheckInOptions } from 'components/App/modals/CheckInOptions';
-import { Wrapper, buttonStyles } from './StartScanner.styled';
+import { buttonStyles } from './StartScanner.styled';
 
 export const StartScanner = ({ location }) => {
   const intl = useIntl();
@@ -18,14 +17,12 @@ export const StartScanner = ({ location }) => {
     });
   };
   return (
-    <Wrapper>
-      <Button
-        onClick={openCheckInOptions}
-        style={buttonStyles}
-        data-cy="startScanner"
-      >
-        {intl.formatMessage({ id: 'scanner.startScanner' })}
-      </Button>
-    </Wrapper>
+    <Button
+      style={buttonStyles}
+      onClick={openCheckInOptions}
+      data-cy="startScanner"
+    >
+      {intl.formatMessage({ id: 'scanner.startScanner' })}
+    </Button>
   );
 };

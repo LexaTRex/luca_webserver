@@ -235,17 +235,13 @@ paths:
       operationId: patch-locationGroups-groupId
       responses:
         '204':
-<<<<<<< HEAD
           description: No Content
-        '403':
-          description: The operator account has been deactivated
-=======
-          description: Success
         '400':
           $ref: '#/components/schemas/BadRequest'
         '401':
           $ref: '#/components/schemas/RequiredUserOfTypeOperator'
->>>>>>> dev
+        '403':
+          description: The operator account has been deactivated
         '404':
           description: Group or Location not found
       requestBody:
@@ -268,17 +264,13 @@ paths:
       operationId: delete-locationGroups-groupId
       responses:
         '204':
-<<<<<<< HEAD
-          description: No Content
-        '403':
-          description: The operator account has been deactivated
-=======
           description: Success
         '400':
           $ref: '#/components/schemas/BadRequest'
         '401':
           $ref: '#/components/schemas/RequiredUserOfTypeOperator'
->>>>>>> dev
+        '403':
+          description: The operator account has been deactivated
         '404':
           description: Group  not found
       tags:

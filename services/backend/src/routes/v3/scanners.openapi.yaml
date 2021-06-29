@@ -17,6 +17,22 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  scannerId:
+                    type: string
+                  locationId:
+                    type: string
+                  publicKey:
+                    type: string
+                required:
+                  - scannerId
+                  - locationId
+                  - publicKey
         '400':
           $ref: '#/components/schemas/BadRequest'
         '404':

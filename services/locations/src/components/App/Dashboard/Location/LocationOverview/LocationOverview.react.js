@@ -26,23 +26,14 @@ export const LocationOverview = ({ location }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
 
-  const {
-    data: currentCount,
-    isLoading: isCurrentLoading,
-    isError: isCurrentError,
-  } = useQuery(
+  const { data: currentCount, isLoading: isCurrentLoading } = useQuery(
     `current/${location.scannerId}`,
-    () =>
-      getCurrentCount(location.scannerAccessId).then(response =>
-        response.json()
-      ),
+    () => getCurrentCount(location.scannerAccessId),
     {
       refetchInterval: moment.duration('5', 'minutes').as('ms'),
       onError: () => {
-        if (isCurrentError) {
-          const message = intl.formatMessage({ id: 'location.count.error' });
-          notification.error({ message });
-        }
+        const message = intl.formatMessage({ id: 'location.count.error' });
+        notification.error({ message });
       },
     }
   );

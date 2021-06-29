@@ -14,7 +14,7 @@ import {
   ButtonWrapper,
 } from '../../../generalOnboarding/Onboarding.styled';
 
-export const QRDownload = ({ done, location }) => {
+export const QRDownload = ({ done, location, group }) => {
   const intl = useIntl();
   const [downloadTableQRCodes, setDownloadTableQrCodes] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
@@ -123,6 +123,7 @@ export const QRDownload = ({ done, location }) => {
         isDownload={isDownload}
         setIsDownload={setIsDownload}
         location={location}
+        group={group}
         downloadTableQRCodes={downloadTableQRCodes}
       />
     </>

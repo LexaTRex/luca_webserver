@@ -41,8 +41,8 @@ export const ResetPassword = () => {
   const dispatch = useDispatch();
   const { requestId } = useParams();
 
-  const title = intl.formatMessage({ id: 'resetPassowrd.site.title' });
-  const meta = intl.formatMessage({ id: 'resetPassowrd.site.meta' });
+  const title = intl.formatMessage({ id: 'resetPassword.site.title' });
+  const meta = intl.formatMessage({ id: 'resetPassword.site.meta' });
 
   const {
     isLoading,
