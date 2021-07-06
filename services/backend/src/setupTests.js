@@ -8,6 +8,7 @@ const chaiAsPromised = require('chai-as-promised');
 const chaiArrays = require('chai-arrays');
 const database = require('./database');
 const { configureApp } = require('./app');
+const { gracefulShutdown } = require('./utils/lifecycle');
 
 chai.should();
 chai.use(chaiHttp);
@@ -17,4 +18,8 @@ chai.use(chaiArrays);
 before(async () => {
   await database.sync();
   configureApp(database);
+});
+
+after(async () => {
+  await gracefulShutdown(true);
 });

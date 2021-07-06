@@ -9,24 +9,26 @@ const state = {
 const SHUTDOWN_DELAY = moment.duration(15, 'seconds');
 const shutdownHandlers = [];
 
-const gracefulShutdown = async () => {
+const gracefulShutdown = async (isImmediate = false) => {
   if (state.isShuttingDown) return;
   state.isShuttingDown = true;
   logger.info(`shutting down in ${SHUTDOWN_DELAY.as('seconds')}s.`);
 
-  await sleep(SHUTDOWN_DELAY.as('milliseconds'));
+  if (!isImmediate) {
+    await sleep(SHUTDOWN_DELAY.as('milliseconds'));
+  }
 
   logger.info('starting shutdown');
   for (const shutdownHandler of shutdownHandlers) {
     await shutdownHandler();
   }
   logger.info('shutdown complete');
-  process.exit(0);
 };
 
 const sigtermHandler = () => {
   logger.info('SIGTERM received.');
   gracefulShutdown();
+  process.exit(0);
 };
 
 const unhandledRejectionHandler = error => {
@@ -43,11 +45,15 @@ const registerShutdownHandler = shutdownHandler => {
   shutdownHandlers.push(shutdownHandler);
 };
 
-process.on('SIGTERM', sigtermHandler);
-process.on('uncaughtException', uncaughtExceptionHandler);
-process.on('unhandledRejection', unhandledRejectionHandler);
+const registerHooks = () => {
+  process.on('SIGTERM', sigtermHandler);
+  process.on('uncaughtException', uncaughtExceptionHandler);
+  process.on('unhandledRejection', unhandledRejectionHandler);
+};
 
 module.exports = {
+  gracefulShutdown,
   registerShutdownHandler,
+  registerHooks,
   state,
 };

@@ -35,6 +35,8 @@ paths:
                           type: string
                         lastName:
                           type: string
+                    deletedAt:
+                      type: integer
                   required:
                     - uuid
                     - didRequestLocations
@@ -89,6 +91,8 @@ paths:
                       lastName:
                         type: string
                         minLength: 1
+                  deletedAt:
+                    type: integer
                   required:
                     - uuid
                     - status
@@ -131,6 +135,17 @@ paths:
       tags:
         - TracingProcesses
       description: Update tracing process information.
+    delete:
+      summary: Delete Tracing Process
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: '#/components/schemas/BadRequest'
+        401:
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        404:
+          description: Tracing Process not found
   '/tracingProcesses/{tracingProcessId}/locationTransfers':
     parameters:
       - schema:
@@ -155,6 +170,9 @@ paths:
                 items:
                   type: object
                   properties:
+                    uuid:
+                      type: string
+                      minLength: 1
                     locationId:
                       type: string
                       minLength: 1
@@ -166,9 +184,10 @@ paths:
                         type: integer
                     isCompleted:
                       type: boolean
-                    uuid:
-                      type: string
-                      minLength: 1
+                    contactedAt:
+                      type: integer
+                    deletedAt:
+                      type: integer
                   required:
                     - locationId
                     - time

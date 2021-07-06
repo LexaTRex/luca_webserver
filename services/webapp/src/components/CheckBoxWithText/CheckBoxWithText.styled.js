@@ -15,7 +15,6 @@ export const StyledContent = styled.div`
 export const StyledText = styled(Text)`
   font-size: 14px;
   font-weight: 500;
-  font-family: Montserrat-Medium, sans-serif;
 `;
 export const StyledCheckbox = styled(Checkbox)`
   display: flex;

@@ -7,13 +7,14 @@ import {
   base64ToHex,
   hexToBase64,
   DECRYPT_DLIES,
+  base64UrlToBytes,
   EC_KEYPAIR_GENERATE,
 } from '@lucaapp/crypto';
 
 import { indexDB } from 'db';
 import { API_PATH } from 'constants/environment';
+import { bytesToBase64Url } from 'utils/encodings';
 import { APPLICATION_JSON, CONTENT_TYPE } from 'constants/header';
-import { base64UrlToBytes, bytesToBase64Url } from 'utils/encodings';
 
 import { getLocation } from './locations';
 import { checkin as checkinToLocation } from './crypto';
@@ -130,10 +131,14 @@ export async function checkinToPrivateMeeting(scannerId, hash) {
   const { fn: firstName, ln: lastName } = JSON.parse(
     decodeUtf8(base64UrlToBytes(hash))
   );
-  await getLocation(scanner.locationId, {
-    isPrivate: true,
+  const location = await getLocation(scanner.locationId, {
     name: `${firstName} ${lastName}`,
   });
+
+  if (!location.isPrivate) {
+    throw new Error('Invalid private meeting');
+  }
+
   const [
     { lastName: userLastName, firstName: userFirstName },
   ] = await indexDB.users.toArray();

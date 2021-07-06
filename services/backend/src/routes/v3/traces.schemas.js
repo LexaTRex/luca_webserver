@@ -1,7 +1,9 @@
 const { z } = require('../../middlewares/validateSchema');
 
+const traceIdSchema = z.string().length(24);
+
 const checkinSchema = z.object({
-  traceId: z.string().length(24),
+  traceId: traceIdSchema,
   scannerId: z.string().uuid(),
   timestamp: z.number().int().positive(),
   data: z.string().max(128),
@@ -12,12 +14,12 @@ const checkinSchema = z.object({
 });
 
 const checkoutSchema = z.object({
-  traceId: z.string().length(24),
+  traceId: traceIdSchema,
   timestamp: z.number().int().positive(),
 });
 
 const additionalDataSchema = z.object({
-  traceId: z.string().length(24),
+  traceId: traceIdSchema,
   data: z.string().max(4096),
   iv: z.string().length(24),
   mac: z.string().length(44),
@@ -25,7 +27,7 @@ const additionalDataSchema = z.object({
 });
 
 const bulkSchema = z.object({
-  traceIds: z.array(z.string().length(24)).max(360),
+  traceIds: z.array(traceIdSchema).max(360),
 });
 
 const traceIdParametersSchema = z.object({
@@ -35,24 +37,11 @@ const traceIdParametersSchema = z.object({
     .length(32),
 });
 
-const traceSchema = z
-  .object({
-    userId: z.string().uuid(),
-    userTracingSecret: z.string().length(24).optional(),
-    userTracingSecrets: z
-      .array(
-        z.object({
-          s: z.string().length(24),
-          ts: z.number().int().positive(),
-        })
-      )
-      .max(28)
-      .optional(),
-  })
-  .refine(value => {
-    // either has to exist
-    return value.userTracingSecret || value.userTracingSecrets;
-  });
+const maxTracesPerDay = 1500; // rounded up from 60 [minutes] * 24 [hours]
+const numberOfDays = 14;
+const traceSchema = z.object({
+  traceIds: z.array(traceIdSchema).max(maxTracesPerDay * numberOfDays),
+});
 
 module.exports = {
   checkoutSchema,

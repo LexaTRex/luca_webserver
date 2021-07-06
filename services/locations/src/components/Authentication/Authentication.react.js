@@ -129,6 +129,7 @@ export const Authentication = () => {
       content: (
         <SetPasswordStep
           setPassword={setPassword}
+          previousSetPassword={password}
           back={previousStep}
           next={nextStep}
           navigation={getNavigation()}

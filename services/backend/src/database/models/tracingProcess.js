@@ -1,29 +1,35 @@
 module.exports = (Sequelize, DataTypes) => {
-  const TracingProcess = Sequelize.define('TracingProcess', {
-    uuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
+  const TracingProcess = Sequelize.define(
+    'TracingProcess',
+    {
+      uuid: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      departmentId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      userTransferId: {
+        type: DataTypes.UUID,
+      },
+      isCompleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      assigneeId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        defaultValue: null,
+      },
     },
-    departmentId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    userTransferId: {
-      type: DataTypes.UUID,
-    },
-    isCompleted: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    assigneeId: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      defaultValue: null,
-    },
-  });
+    {
+      paranoid: true,
+    }
+  );
 
   TracingProcess.associate = models => {
     TracingProcess.belongsTo(models.HealthDepartmentEmployee, {
@@ -32,6 +38,7 @@ module.exports = (Sequelize, DataTypes) => {
 
     TracingProcess.hasMany(models.LocationTransfer, {
       foreignKey: 'tracingProcessId',
+      onDelete: 'CASCADE',
     });
   };
 

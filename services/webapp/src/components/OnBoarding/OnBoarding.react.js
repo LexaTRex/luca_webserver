@@ -1,14 +1,14 @@
+import React, { useCallback, useState } from 'react';
+
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import { decodeUtf8 } from '@lucaapp/crypto';
-import React, { useCallback, useState } from 'react';
+import { decodeUtf8, base64UrlToBytes } from '@lucaapp/crypto';
 
 import { HOME_PATH } from 'constants/routes';
-import { getCheckOutPath } from 'helpers/routes';
-import { base64UrlToBytes } from 'utils/encodings';
+
 import { checkin, registerDevice } from 'helpers/crypto';
-import { checkinToPrivateMeeting } from 'helpers/privateMeeting';
+import { getCheckOutPath, getPrivateMeetingCheckInRoute } from 'helpers/routes';
 
 import { Helmet } from 'react-helmet';
 import { StyledContainer } from './OnBoarding.styled';
@@ -45,16 +45,9 @@ export function OnBoarding({
 
       if (parameters.scannerId) {
         if (JSON.parse(searchParameters.get('isPrivateMeeting'))) {
-          checkinToPrivateMeeting(
-            parameters.scannerId,
-            (hash || '').replace('#', '')
-          )
-            .then(traceId => {
-              history.push(getCheckOutPath(traceId));
-            })
-            .catch(() => {
-              history.push(HOME_PATH);
-            });
+          history.replace(
+            getPrivateMeetingCheckInRoute(parameters.scannerId, hash)
+          );
         } else {
           let decodedData;
           try {

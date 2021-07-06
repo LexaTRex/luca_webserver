@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const TestRedeem = Sequelize.define('TestRedeem', {
+  return Sequelize.define('TestRedeem', {
     hash: {
       type: DataTypes.STRING(44),
       allowNull: false,
@@ -13,8 +13,4 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DATE,
     },
   });
-
-  TestRedeem.associate = () => {};
-
-  return TestRedeem;
 };

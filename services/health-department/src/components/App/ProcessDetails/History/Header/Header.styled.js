@@ -14,7 +14,6 @@ export const StatisticWrapper = styled.div`
   display: flex;
 `;
 export const Statistics = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: 500;
   margin-right: 40px;

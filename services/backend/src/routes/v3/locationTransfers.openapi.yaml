@@ -101,6 +101,8 @@ paths:
                       type: boolean
                     createdAt:
                       type: integer
+                    deletedAt:
+                      type: integer
                   required:
                     - uuid
                     - groupName
@@ -208,6 +210,8 @@ paths:
                         - publicKey
                         - iv
                         - mac
+                  deletedAt:
+                    type: integer
                 required:
                   - transferId
                   - department

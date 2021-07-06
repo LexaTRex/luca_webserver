@@ -47,7 +47,6 @@ export const Header = styled.div`
 
 export const Description = styled.div`
   color: rgba(0, 0, 0, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 40px;

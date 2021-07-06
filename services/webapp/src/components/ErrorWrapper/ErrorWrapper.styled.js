@@ -45,7 +45,6 @@ export const ErrorDescription = styled.div`
   text-align: center;
   margin-bottom: 30px;
   color: rgba(0, 0, 0, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
 `;
 
 export const ErrorGraphic = styled.img`

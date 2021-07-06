@@ -47,7 +47,7 @@
     "modal.dataRequest.confirmButton": "Request data",
     "modal.dataRequest.declineButton": "Cancel",
     "modal.trackInfection.title": "Track new infection",
-    "modal.trackInfection.info": "luca users can share their histrory with your health department. Therefore you need to the tan of that user which is displayed in the history of the luca app.",
+    "modal.trackInfection.info": "luca users can share their histrory with your health department. Therefore you need the tan of that user which is displayed in the history of the luca app.",
     "modal.trackInfection.button": "Track",
     "modal.trackInfection.tan.error.required": "Please enter the users TAN",
     "modal.trackInfection.tan.error.min": "This part of the user TAN can't be under 4 character",
@@ -320,5 +320,9 @@
     "notification.deleteProcess.error": "Server error, please try again later. {error}",
     "notification.network.error": "Network error",
     "verificationTag.info": "The public keys of your luca Health Department are signed.",
-    "login.keyFileSize.error.description": "The uploaded file was too big."
+    "login.keyFileSize.error.description": "The uploaded file was too big.",
+    "profile.signingTool.download.title": "Safety precautions necessary",
+    "profile.signingTool.download.info": "The public keys of luca Health Department have not been signed for your health department yet. Please sign your keys by using the luca Signature Tool. This step ensures that other components within the luca system can check the authenticity of your health department's request and therefore strengthens the whole system's security. {br} This process can only be done by luca Health Department admins and only needs to be performed once for each health department.",
+    "profile.signingTool.download.button": "Download luca Signature Tool",
+    "profile.signingTool.download.version": "luca health department ({version})"
 }

@@ -55,7 +55,6 @@ export const StyledLabel = styled.label`
   position: absolute;
   letter-spacing: 0.4px;
   color: white;
-  font-family: Montserrat-Medium, sans-serif;
   background-color: ${({ bgColor }) => bgColor};
 `;
 export const StyledInput = styled.input`
@@ -73,7 +72,6 @@ export const StyledInput = styled.input`
   border: 1px solid #b8c0ca;
   transition: border-color 0.2s;
   color: rgba(255, 255, 255, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
 
   &::placeholder {
     color: transparent;

@@ -7,8 +7,9 @@ import { useHistory } from 'react-router-dom';
 import menu from 'assets/menu.svg';
 import {
   HOME_PATH,
-  EDIT_CONTACT_INFORMATION_SETTING,
   LICENSES_ROUTE,
+  REPOSITORY_URL,
+  EDIT_CONTACT_INFORMATION_SETTING,
 } from 'constants/routes';
 import { AppContent, AppHeadline, AppLayout } from 'components/AppLayout';
 
@@ -89,6 +90,12 @@ export function Settings() {
             }
           >
             {formatMessage({ id: 'Settings.TermsOfService' })}
+          </StyledSettingsButton>
+          <StyledSettingsButton
+            id="repository"
+            onClick={() => window.open(REPOSITORY_URL, '_blank')}
+          >
+            {formatMessage({ id: 'Settings.Repository' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="licenses"

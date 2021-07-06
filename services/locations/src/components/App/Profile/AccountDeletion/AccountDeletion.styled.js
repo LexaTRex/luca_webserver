@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Heading = styled.div`
   color: ${properties =>
     properties.deletionInProgress ? '#e16f2d' : 'rgba(0, 0, 0, 0.87);'};
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 16px;

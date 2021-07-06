@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const IPAddressDenyList = Sequelize.define(
+  return Sequelize.define(
     'IPAddressDenyList',
     {
       ipStart: {
@@ -18,8 +18,4 @@ module.exports = (Sequelize, DataTypes) => {
       timestamps: false,
     }
   );
-
-  IPAddressDenyList.associate = () => {};
-
-  return IPAddressDenyList;
 };

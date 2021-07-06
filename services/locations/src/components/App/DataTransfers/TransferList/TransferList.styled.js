@@ -13,7 +13,6 @@ export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   color: rgba(0, 0, 0, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: 500;
 `;

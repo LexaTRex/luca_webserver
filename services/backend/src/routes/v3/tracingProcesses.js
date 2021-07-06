@@ -85,90 +85,121 @@ router.get('/', requireHealthDepartmentEmployee, async (request, response) => {
         assignee: assignee
           ? pick(assignee, ['uuid', 'firstName', 'lastName'])
           : null,
+        deletedAt:
+          tracingProcess.deletedAt && moment(tracingProcess.deletedAt).unix(),
       };
     })
   );
 });
 
-/**
- * Gets a tracing process by its Id.
- */
-router.get(
-  '/:tracingProcessId',
-  validateParametersSchema(tracingProcessIdParametersSchema),
-  requireHealthDepartmentEmployee,
-  async (request, response) => {
-    const tracingProcess = await database.TracingProcess.findOne({
-      where: {
-        departmentId: request.user.departmentId,
-        uuid: request.params.tracingProcessId,
-      },
-      include: [
-        {
-          model: database.LocationTransfer,
-          attributes: ['tracingProcessId', 'isCompleted', 'contactedAt'],
-        },
-        {
-          model: database.HealthDepartmentEmployee,
-          attributes: ['uuid', 'firstName', 'lastName'],
-        },
-      ],
-    });
-
-    if (!tracingProcess) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
-
-    return response.send({
-      uuid: tracingProcess.uuid,
-      status: getTraceProcessStatus(tracingProcess),
-      userTransferId: tracingProcess.userTransferId,
-      didRequestLocations: tracingProcess.didRequestLocations,
-      isCompleted: tracingProcess.isCompleted,
-      createdAt: moment(tracingProcess.createdAt).unix(),
-      assignee: tracingProcess.HealthDepartmentEmployee,
-    });
-  }
-);
-
-/**
- * Updates the status of a tracing process.
- */
-router.patch(
-  '/:tracingProcessId',
-  requireHealthDepartmentEmployee,
-  validateParametersSchema(tracingProcessIdParametersSchema),
-  validateSchema(patchSchema),
-  async (request, response) => {
-    const tracingProcess = await database.TracingProcess.findOne({
-      where: {
-        uuid: request.params.tracingProcessId,
-        departmentId: request.user.departmentId,
-      },
-    });
-    if (!tracingProcess) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
-
-    if (request.body.assigneeId) {
-      const assignee = await database.HealthDepartmentEmployee.findOne({
+router
+  .route('/:tracingProcessId')
+  /**
+   * Gets a tracing process by its Id.
+   */
+  .get(
+    validateParametersSchema(tracingProcessIdParametersSchema),
+    requireHealthDepartmentEmployee,
+    async (request, response) => {
+      const tracingProcess = await database.TracingProcess.findOne({
         where: {
-          uuid: request.body.assigneeId,
+          departmentId: request.user.departmentId,
+          uuid: request.params.tracingProcessId,
+        },
+        include: [
+          {
+            model: database.LocationTransfer,
+            attributes: ['tracingProcessId', 'isCompleted', 'contactedAt'],
+          },
+          {
+            model: database.HealthDepartmentEmployee,
+            attributes: ['uuid', 'firstName', 'lastName'],
+          },
+        ],
+      });
+
+      if (!tracingProcess) {
+        return response.sendStatus(status.NOT_FOUND);
+      }
+
+      return response.send({
+        uuid: tracingProcess.uuid,
+        status: getTraceProcessStatus(tracingProcess),
+        userTransferId: tracingProcess.userTransferId,
+        didRequestLocations: tracingProcess.didRequestLocations,
+        isCompleted: tracingProcess.isCompleted,
+        createdAt: moment(tracingProcess.createdAt).unix(),
+        assignee: tracingProcess.HealthDepartmentEmployee,
+        deletedAt:
+          tracingProcess.deletedAt && moment(tracingProcess.deletedAt).unix(),
+      });
+    }
+  )
+  /**
+   * Updates the status of a tracing process.
+   */
+  .patch(
+    requireHealthDepartmentEmployee,
+    validateParametersSchema(tracingProcessIdParametersSchema),
+    validateSchema(patchSchema),
+    async (request, response) => {
+      const tracingProcess = await database.TracingProcess.findOne({
+        where: {
+          uuid: request.params.tracingProcessId,
           departmentId: request.user.departmentId,
         },
       });
-      if (!assignee) {
+      if (!tracingProcess) {
         return response.sendStatus(status.NOT_FOUND);
       }
+
+      if (request.body.assigneeId) {
+        const assignee = await database.HealthDepartmentEmployee.findOne({
+          where: {
+            uuid: request.body.assigneeId,
+            departmentId: request.user.departmentId,
+          },
+        });
+        if (!assignee) {
+          return response.sendStatus(status.NOT_FOUND);
+        }
+      }
+      await tracingProcess.update({
+        didRequestLocations: request.body.didRequestLocations,
+        isCompleted: request.body.isCompleted,
+        assigneeId: request.body.assigneeId,
+      });
+      return response.sendStatus(status.NO_CONTENT);
     }
-    await tracingProcess.update({
-      didRequestLocations: request.body.didRequestLocations,
-      isCompleted: request.body.isCompleted,
-      assigneeId: request.body.assigneeId,
-    });
-    return response.sendStatus(status.NO_CONTENT);
-  }
-);
+  )
+  /**
+   * Soft deletes a tracing process
+   */
+  .delete(
+    requireHealthDepartmentEmployee,
+    validateParametersSchema(tracingProcessIdParametersSchema),
+    async (request, response) => {
+      const {
+        params: { tracingProcessId },
+        user: { departmentId },
+      } = request;
+
+      const tracingProcess = await database.TracingProcess.findOne({
+        where: {
+          uuid: tracingProcessId,
+          departmentId,
+        },
+      });
+
+      if (!tracingProcess) {
+        return response.sendStatus(status.NOT_FOUND);
+      }
+
+      await tracingProcess.destroy();
+
+      return response.send(status.NO_CONTENT);
+    }
+  );
 
 /**
  * Retrieves all location transfers of a tracing process, showing which
@@ -199,6 +230,7 @@ router.get(
         isCompleted: transfer.isCompleted,
         uuid: transfer.uuid,
         contactedAt: transfer.contactedAt,
+        deletedAt: moment(transfer.deletedAt).unix(),
       }))
     );
   }

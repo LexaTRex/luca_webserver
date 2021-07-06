@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { getHealthDepartment } from 'network/api';
 
 // Components
+import { VerificationTag } from 'components/App/VerificationTag';
 import { BackButton } from './BackButton';
 import { ProfileOverview } from './ProfileOverview';
 import { ChangePasswordView } from './ChangePasswordView';
@@ -12,6 +13,7 @@ import {
   ProfileWrapper,
   StyledChildWrapper,
   ProfileHeader,
+  VerificationTagWrapper,
 } from './Profile.styled';
 
 export const Profile = ({ profileData }) => {
@@ -36,6 +38,9 @@ export const Profile = ({ profileData }) => {
           <BackButton />
           <ProfileHeader>
             {intl.formatMessage({ id: 'navigation.profile' })}
+            <VerificationTagWrapper>
+              <VerificationTag />
+            </VerificationTagWrapper>
           </ProfileHeader>
           <ProfileOverview me={profileData} department={department} />
         </StyledChildWrapper>

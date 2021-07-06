@@ -85,7 +85,6 @@ describe('a deactivated account', () => {
       cy.visit(APP_ROUTE);
       cy.getByCy('locationDisplayName');
       cy.getByCy('location-General');
-      cy.getByCy('startScanner');
     });
   });
 });

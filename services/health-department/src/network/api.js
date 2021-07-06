@@ -72,7 +72,7 @@ export const getKeys = () => {
 };
 
 export const getHealthDepartment = departmentId => {
-  return getRequest(`${API_PATH}/v3/healthDepartments/${departmentId}`);
+  return getRequest(`${API_PATH}/v4/healthDepartments/${departmentId}`);
 };
 
 export const getPrivateKeySecret = () =>

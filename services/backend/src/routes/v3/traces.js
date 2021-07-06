@@ -4,10 +4,9 @@ const router = require('express').Router();
 const status = require('http-status');
 const { Op, UniqueConstraintError } = require('sequelize');
 const moment = require('moment');
-const { hexToBase64, base64ToHex } = require('@lucaapp/crypto');
+const { hexToBase64 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
-const { calculateTraceIds } = require('../../utils/crypto');
 const {
   validateSchema,
   validateParametersSchema,
@@ -264,24 +263,11 @@ router.post(
 router.post(
   '/trace',
   requireHealthDepartmentEmployee,
-  validateSchema(traceSchema),
+  validateSchema(traceSchema, '600kb'),
   async (request, response) => {
-    const userId = request.body.userId.replace(/-/g, '');
-    let traceIds = [];
-
-    if (request.body.userTracingSecret) {
-      const start = moment().seconds(0).subtract(14, 'days').unix();
-      const userTracingSecret = base64ToHex(request.body.userTracingSecret);
-      traceIds = calculateTraceIds(userId, userTracingSecret, start, 14);
-    } else if (request.body.userTracingSecrets) {
-      traceIds = request.body.userTracingSecrets.flatMap(({ ts, s }) =>
-        calculateTraceIds(userId, base64ToHex(s), ts, 1)
-      );
-    }
-
     const traces = await database.Trace.findAll({
       where: {
-        traceId: traceIds,
+        traceId: request.body.traceIds,
       },
       include: {
         model: database.Location,

@@ -41,13 +41,11 @@ export const Entry = styled.td`
 `;
 
 export const ActiveTableCount = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: 500;
 `;
 
 export const RefreshTime = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
 `;

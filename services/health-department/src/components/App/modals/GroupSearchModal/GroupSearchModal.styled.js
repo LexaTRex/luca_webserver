@@ -6,7 +6,6 @@ export const StyledSearchOutlined = styled(SearchOutlined)`
   color: gray;
 `;
 export const DescriptionText = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: bold;
   padding-bottom: 24px;
@@ -27,7 +26,6 @@ export const ZipCodeInput = styled(Input)`
 `;
 
 export const SubmitButton = styled(Button)`
-  font-family: Montserrat-Medium, sans-serif;
   color: rgba(0, 0, 0, 0.87);
   background-color: rgb(195, 206, 217);
   font-weight: bold;

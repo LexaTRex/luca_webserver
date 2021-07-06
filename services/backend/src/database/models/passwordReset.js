@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const PasswordReset = Sequelize.define('PasswordReset', {
+  return Sequelize.define('PasswordReset', {
     uuid: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -21,8 +21,4 @@ module.exports = (Sequelize, DataTypes) => {
       defaultValue: false,
     },
   });
-
-  PasswordReset.associate = () => {};
-
-  return PasswordReset;
 };

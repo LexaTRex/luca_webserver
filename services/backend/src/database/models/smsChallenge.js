@@ -1,5 +1,8 @@
+const config = require('config');
+const moment = require('moment');
+
 module.exports = (Sequelize, DataTypes) => {
-  const SMSChallenge = Sequelize.define('SMSChallenge', {
+  return Sequelize.define('SMSChallenge', {
     uuid: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -21,9 +24,13 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'mm',
     },
+    isExpired: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return moment().isAfter(
+          moment(this.createdAt).add(config.get('sms.expiry'), 'hour')
+        );
+      },
+    },
   });
-
-  SMSChallenge.associate = () => {};
-
-  return SMSChallenge;
 };

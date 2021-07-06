@@ -170,8 +170,8 @@ router.get(
  */
 router.post(
   '/rotate',
-  validateSchema(rotateSchema),
   requireHealthDepartmentEmployee,
+  validateSchema(rotateSchema, '600kb'),
   // eslint-disable-next-line sonarjs/cognitive-complexity
   async (request, response) => {
     const healthDepartment = await database.HealthDepartment.findByPk(
@@ -319,8 +319,8 @@ router.post(
  */
 router.post(
   '/rekey',
-  validateSchema(rekeySchema),
   requireHealthDepartmentEmployee,
+  validateSchema(rekeySchema, '600kb'),
   async (request, response) => {
     const healthDepartment = await database.HealthDepartment.findByPk(
       request.user.departmentId

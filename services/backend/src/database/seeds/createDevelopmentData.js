@@ -57,5 +57,7 @@ module.exports = {
     await queryInterface.bulkInsert('HealthDepartments', departments);
     await queryInterface.bulkInsert('HealthDepartmentEmployees', employees);
   },
-  down: () => {},
+  down: () => {
+    console.warn('Not implemented.');
+  },
 };

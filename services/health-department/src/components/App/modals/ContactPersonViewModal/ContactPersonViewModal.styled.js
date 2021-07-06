@@ -20,7 +20,6 @@ export const Title = styled.div`
 export const HistoryOverviewHeadline = styled.div`
   display: flex;
   justify-content: space-between;
-  font-family: Montserrat-Medium, sans-serif;
   font-weight: 500;
 `;
 

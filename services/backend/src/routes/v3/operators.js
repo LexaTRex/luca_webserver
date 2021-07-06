@@ -7,7 +7,7 @@ const moment = require('moment');
 const config = require('config');
 
 const database = require('../../database');
-const mailjet = require('../../utils/mailjet');
+const mailClient = require('../../utils/mailClient');
 const { generateSupportCode } = require('../../utils/generators');
 const { validateSchema } = require('../../middlewares/validateSchema');
 const {
@@ -77,7 +77,7 @@ router.post(
       );
     });
 
-    mailjet.sendActivationMail(
+    mailClient.sendActivationMail(
       activationMail.email,
       operator.fullName,
       request.body.lang,
@@ -147,7 +147,7 @@ router.post(
       ]);
     });
 
-    mailjet.sendRegistrationConfirmation(
+    mailClient.sendRegistrationConfirmation(
       activationMail.email,
       operator.fullName,
       lang,

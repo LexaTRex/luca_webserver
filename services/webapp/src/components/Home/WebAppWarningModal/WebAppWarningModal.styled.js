@@ -44,7 +44,6 @@ export const StyledInfoText = styled(Text)`
   font-size: 14px;
   font-weight: 500;
   color: rgb(0, 0, 0);
-  font-family: Montserrat-Medium, sans-serif;
 `;
 export const StyledDownloadImage = styled.img`
   height: 100px;

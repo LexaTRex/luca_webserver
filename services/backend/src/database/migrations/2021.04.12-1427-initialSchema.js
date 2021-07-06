@@ -14,7 +14,8 @@ module.exports = {
         await queryInterface.sequelize.query(query, { transaction });
       }
     });
-    console.log('done');
   },
-  down: () => {},
+  down: () => {
+    console.warn('Not implemented.');
+  },
 };

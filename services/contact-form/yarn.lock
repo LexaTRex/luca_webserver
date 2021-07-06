@@ -1587,10 +1587,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@lucaapp/crypto@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@lucaapp/crypto/-/crypto-2.0.1.tgz#2ab4cc9880d3769f45bf6a6faf7a40606e04ba2d"
-  integrity sha512-/UfeyQR2l1ciXlN0SFi+dIv4FgMVEfyvvpGjpndxKLWuSpvZoz0I15WrlDLyv+tQB+0nKxNuPm8Niq3OlENpKA==
+"@lucaapp/crypto@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@lucaapp/crypto/-/crypto-2.0.3.tgz#93327ef234fa8e29b4d568ff23bcce58ac7ea1fd"
+  integrity sha512-0UnFfVmohCuPKnd0vbr1bVsrp4KDFo1hYsMo3uoOrIGz0mpJiePrswdTIuoj7GLdry1Vy8HHEQWGq1VtJ1M1dw==
   dependencies:
     ascii85 "1.0.2"
     base32-decode "1.0.0"

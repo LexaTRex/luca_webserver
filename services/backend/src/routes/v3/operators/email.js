@@ -10,7 +10,7 @@ const config = require('config');
 const { Op } = require('sequelize');
 
 const database = require('../../../database');
-const mailjet = require('../../../utils/mailjet');
+const mailClient = require('../../../utils/mailClient');
 const {
   validateSchema,
   validateParametersSchema,
@@ -52,7 +52,7 @@ router.patch(
       type: 'EmailChange',
     });
 
-    mailjet.updateEmail(email, `${operator.fullName}`, lang, {
+    mailClient.updateEmail(email, `${operator.fullName}`, lang, {
       firstName: operator.firstName,
       activationLink: `https://${config.get('hostname')}/activateEmail/${
         activationMail.uuid

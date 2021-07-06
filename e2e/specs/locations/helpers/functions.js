@@ -30,7 +30,10 @@ export const basicLocationLogin = (
       origin: 'https://localhost',
     },
   });
+  cy.server();
+  cy.intercept({ method: 'GET', url: '**/me' }).as('me');
   cy.visit(APP_ROUTE);
+  cy.wait('@me');
   cy.window().then(window => {
     window.sessionStorage.setItem('PRIVATE_KEY_MODAL_SEEN', 'true');
   });

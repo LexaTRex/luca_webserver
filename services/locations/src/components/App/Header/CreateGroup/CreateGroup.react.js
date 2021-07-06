@@ -1,15 +1,18 @@
 import React from 'react';
-import { useIntl } from 'react-intl';
-import { Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import Icon from '@ant-design/icons';
+
+import { ReactComponent as CreateGroupSvg } from 'assets/CreateGroup.svg';
 
 import { useModal } from 'components/hooks/useModal';
 import { CreateGroupModal } from 'components/App/modals/CreateGroupModal';
 
-import { buttonStyle, iconStyle } from '../SelectGroup/SelectGroup.styled';
+import { CreateGroupComp } from './CreateGroup.styled';
+
+const CreateGroupIcon = () => (
+  <Icon component={CreateGroupSvg} style={{ fontSize: 32 }} />
+);
 
 export const CreateGroup = () => {
-  const intl = useIntl();
   const [openModal] = useModal();
 
   const onCreate = () => {
@@ -19,9 +22,8 @@ export const CreateGroup = () => {
     });
   };
   return (
-    <Button style={buttonStyle} data-cy="createGroup" onClick={onCreate}>
-      <PlusOutlined style={iconStyle} />
-      {intl.formatMessage({ id: 'header.createGroup' })}
-    </Button>
+    <CreateGroupComp data-cy="createGroup" onClick={onCreate}>
+      <CreateGroupIcon />
+    </CreateGroupComp>
   );
 };

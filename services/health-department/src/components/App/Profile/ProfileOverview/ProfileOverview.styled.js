@@ -14,7 +14,6 @@ export const InformationValue = styled.div`
   margin-right: 16px;
   text-align: left;
   color: rgb(0, 0, 0);
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: 500;
 `;

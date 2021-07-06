@@ -1,13 +1,12 @@
-export const iconStyles = {
-  fontSize: 12,
-  borderRadius: '50%',
-  padding: 8,
-  color: 'rgb(255, 255, 255)',
-  border: '1px solid rgb(255, 255, 255)',
-  marginRight: 24,
-  cursor: 'pointer',
-};
+import styled from 'styled-components';
+
+export const DataRequestsComp = styled.div`
+  margin-right: 24px;
+  cursor: pointer;
+  display: inline-block;
+`;
 
 export const badgeStyle = {
   right: 24,
+  backgroundColor: 'rgb(239, 92, 5)',
 };

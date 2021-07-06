@@ -60,11 +60,6 @@ module.exports = {
 
   down: async (queryInterface, DataTypes) => {
     await queryInterface.sequelize.transaction(async transaction => {
-      await queryInterface.sequelize.query(
-        `DROP EXTENSION IF NOT EXISTS citext;`,
-        { transaction }
-      );
-
       await Promise.all([
         await queryInterface.changeColumn(
           'HealthDepartmentEmployees',
@@ -114,6 +109,10 @@ module.exports = {
           { transaction }
         ),
       ]);
+
+      await queryInterface.sequelize.query(`DROP EXTENSION IF EXISTS citext;`, {
+        transaction,
+      });
     });
   },
 };

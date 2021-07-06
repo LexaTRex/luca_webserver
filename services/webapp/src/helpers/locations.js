@@ -11,7 +11,7 @@ export async function getLocation(locationId, override = {}) {
       `${API_PATH}/v3/locations/${locationId}`
     ).then(response => response.json());
 
-    indexDB.locations.add({ ...location, isPrivate: false, ...override });
+    indexDB.locations.add({ ...location, ...override });
     return location;
   }
 

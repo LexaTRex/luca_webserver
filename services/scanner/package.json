@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/scanner",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -17,7 +17,7 @@
   "dependencies": {
     "@ant-design/icons": "4.5.0",
     "@craco/craco": "6.1.1",
-    "@lucaapp/crypto": "2.0.1",
+    "@lucaapp/crypto": "2.0.3",
     "antd": "4.12.3",
     "connected-react-router": "6.9.1",
     "craco-less": "1.17.1",

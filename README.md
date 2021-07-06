@@ -49,7 +49,7 @@ The services will be available on:
    5.2 Cam - https://localhost/scanner/cam/`:locationScannerId`
 6. luca Web App - https://localhost/webapp
 
-We use https always. To not get annoyed by the browser warning of unsecure ssl certificate please trust the root.crt in the ca folder.
+We always use https. Disable the browser's unsecure ssl certificate warning by trusting the root.crt in the ca folder.
 
 Make sure to allocate enough Docker memory, the 2GB default might be insufficient to run all containers at once.
 

@@ -54,8 +54,6 @@ context('Workflow', () => {
 
       // Checkin with contact form
       cy.log('Checkin with in testing Location with Contact Form');
-      cy.getByCy('startScanner').click();
-      cy.get('.ant-modal').should('exist');
       cy.window().then(win => {
         cy.stub(win, 'open', link => {
           win.location.href = link;

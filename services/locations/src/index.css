@@ -3,7 +3,9 @@ body {
   margin: 0;
   height: 100%;
   color: black;
-  font-family: Montserrat-Medium;
+  font-family: Montserrat-Medium, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {

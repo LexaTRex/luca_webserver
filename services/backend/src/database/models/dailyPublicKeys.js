@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const DailyPublicKey = Sequelize.define('DailyPublicKey', {
+  return Sequelize.define('DailyPublicKey', {
     keyId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -19,8 +19,4 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: false,
     },
   });
-
-  DailyPublicKey.associate = () => {};
-
-  return DailyPublicKey;
 };

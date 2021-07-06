@@ -21,10 +21,10 @@ module.exports = {
     hostname: 'REDIS_HOSTNAME',
     password: 'REDIS_PASSWORD',
   },
-  mailjet: {
-    apiKey: 'MJ_APIKEY_PUBLIC',
-    secretKey: 'MJ_APIKEY_PRIVATE',
-    token: 'MJ_TOKEN',
+  mailer: {
+    apiUrl: 'MAILER_API_URL',
+    apiKey: 'MAILER_API_KEY',
+    apiSecret: 'MAILER_API_KEY_SECRET',
   },
   messagemobile: {
     accessKey: 'MM_ACCESS_KEY',
@@ -35,6 +35,10 @@ module.exports = {
     password: 'SINCH_PASSWORD',
     gateway1: 'SINCH_GATEWAY1',
     gateway2: 'SINCH_GATEWAY2',
+  },
+  gtx: {
+    authKey: 'GTX_AUTH_KEY',
+    gateway: 'GTX_GATEWAY',
   },
   keys: {
     badge: {

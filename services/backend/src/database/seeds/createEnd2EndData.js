@@ -165,5 +165,7 @@ module.exports = {
     await queryInterface.bulkInsert('LocationGroups', groups);
     await queryInterface.bulkInsert('Locations', locations);
   },
-  down: () => {},
+  down: () => {
+    console.warn('Not implemented.');
+  },
 };

@@ -1,12 +1,19 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
+import Icon from '@ant-design/icons';
+
+import { ReactComponent as RefreshSvg } from 'assets/Refresh.svg';
 
 import { COUNTER_REFETCH_INTERVAL_MS } from 'constants/timings';
 
 import { getCurrentCount } from 'network/api';
 
 import { Counter, Wrapper, Refresh } from './Count.styled';
+
+const RefreshIcon = () => (
+  <Icon component={RefreshSvg} style={{ fontSize: 16 }} />
+);
 
 export const Count = ({ location }) => {
   const intl = useIntl();
@@ -38,7 +45,7 @@ export const Count = ({ location }) => {
     <Wrapper>
       <Counter data-cy="guestCount">{getCount()}</Counter>
       <Refresh onClick={refetch}>
-        {intl.formatMessage({ id: 'location.count.refresh' })}
+        <RefreshIcon />
       </Refresh>
     </Wrapper>
   );

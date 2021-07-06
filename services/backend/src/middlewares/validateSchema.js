@@ -1,18 +1,40 @@
 const z = require('zod');
+const express = require('express');
 const status = require('http-status');
 const parsePhoneNumber = require('libphonenumber-js/max');
 const logger = require('../utils/logger');
 const passwordCheck = require('../utils/passwordCheck');
 
-const validateSchema = schema => async (request, response, next) => {
-  try {
-    request.body = schema.parse(request.body);
-    return next();
-  } catch (error) {
-    logger.warn('validateSchema', error);
-    response.status(status.BAD_REQUEST);
-    return response.send(error);
-  }
+const defaultJsonMiddleware = express.json();
+
+const waitForMiddleware = (middleware, request, response) =>
+  new Promise((resolve, reject) => {
+    try {
+      middleware(request, response, () => {
+        resolve();
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+const validateSchema = (schema, limit) => {
+  const jsonMiddleware = limit
+    ? express.json({ limit })
+    : defaultJsonMiddleware;
+
+  return async (request, response, next) => {
+    await waitForMiddleware(jsonMiddleware, request, response);
+
+    try {
+      request.body = schema.parse(request.body);
+      return next();
+    } catch (error) {
+      logger.warn('validateSchema', error);
+      response.status(status.BAD_REQUEST);
+      return response.send(error);
+    }
+  };
 };
 
 const validateQuerySchema = schema => async (request, response, next) => {

@@ -1,14 +1,45 @@
 {
-  "name": "@lucaapp/web",
-  "version": "1.4.0",
-  "private": true,
-  "license": "Apache-2.0",
-  "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
-  "scripts": {
-    "latest": ". ./scripts/getGITEnvironmentVariables.sh && docker-compose -f docker-compose.yml",
-    "prod": ". ./scripts/getGITEnvironmentVariables.sh && IMAGE_TAG=prod docker-compose -f docker-compose.yml",
-    "dev": ". ./scripts/getGITEnvironmentVariables.sh && IMAGE_TAG=dev docker-compose -f docker-compose.yml -f docker-compose.dev.yml",
-    "test": ". ./scripts/getGITEnvironmentVariables.sh && IMAGE_TAG=test docker-compose -f docker-compose.yml -f docker-compose.test.yml",
-    "all": ". ./scripts/yarnAll.sh"
-  }
+    "name": "@lucaapp/web",
+    "version": "1.5.0",
+    "private": true,
+    "license": "Apache-2.0",
+    "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
+    "scripts": {
+        "latest": ". ./scripts/getGITEnvironmentVariables.sh && docker-compose -f docker-compose.yml",
+        "prod": ". ./scripts/getGITEnvironmentVariables.sh && IMAGE_TAG=prod docker-compose -f docker-compose.yml",
+        "dev": ". ./scripts/getGITEnvironmentVariables.sh && IMAGE_TAG=dev docker-compose -f docker-compose.yml -f docker-compose.dev.yml",
+        "test": ". ./scripts/getGITEnvironmentVariables.sh && IMAGE_TAG=test docker-compose -f docker-compose.yml -f docker-compose.test.yml",
+        "all": ". ./scripts/yarnAll.sh",
+        "prepare": "husky install",
+        "lint:backend": "npm run lint --prefix services/backend",
+        "lint:contact-form": "npm run lint --prefix services/contact-form",
+        "lint:health-department": "npm run lint --prefix services/health-department",
+        "lint:locations": "npm run lint --prefix services/locations",
+        "lint:scanner": "npm run lint --prefix services/scanner",
+        "lint:webapp": "npm run lint --prefix services/webapp"
+    },
+    "lint-staged": {
+        "services/backend/**/*.{js,jsx}": [
+            "npm run --silent lint:backend"
+        ],
+        "services/contact-form/**/*.{js,jsx}": [
+            "npm run --silent lint:contact-form"
+        ],
+        "services/health-department/**/*.{js,jsx}": [
+            "npm run --silent lint:health-department"
+        ],
+        "services/locations/**/*.{js,jsx}": [
+            "npm run --silent lint:locations"
+        ],
+        "services/scanner/**/*.{js,jsx}": [
+            "npm run --silent lint:scanner"
+        ],
+        "services/webapp/**/*.{js,jsx}": [
+            "npm run --silent lint:webapp"
+        ]
+    },
+    "devDependencies": {
+        "husky": "6.0.0",
+        "lint-staged": "11.0.0"
+    }
 }

@@ -6,7 +6,7 @@ export const messageForResponse = statusCode => {
       message: 'notification.forgotPassword.invalidUser',
       route: FORGOT_PASSWORD_ROUTE,
     },
-    412: {
+    423: {
       message: 'notification.forgotPassword.inactiveUser',
       route: FORGOT_PASSWORD_ROUTE,
     },

@@ -25,7 +25,6 @@ export const Headline = styled.div`
 
 export const Content = styled.div`
   color: rgba(255, 255, 255, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
   width: 90%;

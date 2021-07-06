@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const FeatureFlag = Sequelize.define('FeatureFlag', {
+  return Sequelize.define('FeatureFlag', {
     key: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -9,8 +9,4 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
   });
-
-  FeatureFlag.associate = () => {};
-
-  return FeatureFlag;
 };

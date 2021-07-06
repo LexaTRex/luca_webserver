@@ -1,4 +1,4 @@
-FROM node:14.17.0-alpine3.13
+FROM node:14.17.1-alpine3.13
 WORKDIR /app
 
 ARG GIT_COMMIT
@@ -10,6 +10,9 @@ COPY package.json yarn.lock .npmrc .yarnrc ./
 RUN yarn install --production --check-files && yarn cache clean
 RUN yarn licenses generate-disclaimer > ./licenses-full.txt
 RUN echo "{\"commit\":\"$GIT_COMMIT\", \"version\":\"$GIT_VERSION\"}" >> version.json
+
+# install security patches
+RUN apk --no-cache add musl=1.2.2-r1
 
 RUN adduser -D worker
 USER worker

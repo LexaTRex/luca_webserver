@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import { Menu, Dropdown } from 'antd';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import Icon from '@ant-design/icons';
+
+import { ReactComponent as MenuDefaultSvg } from 'assets/MenuDefault.svg';
+import { ReactComponent as MenuActiveSvg } from 'assets/MenuActive.svg';
 
 import { Logout } from './Logout';
 import { Profile } from './Profile';
 
-import { linkStyles, logoutStyles, iconStyles } from './LinkMenu.styled';
+import { linkStyles, logoutStyles } from './LinkMenu.styled';
+
+const MenuIcon = dropdownVisibility => (
+  <Icon
+    component={dropdownVisibility ? MenuActiveSvg : MenuDefaultSvg}
+    style={{ fontSize: 32 }}
+    data-cy="dropdownMenuTrigger"
+  />
+);
 
 export const LinkMenu = () => {
   const [dropdownVisibility, setDropdownVisibility] = useState(false);
@@ -26,11 +37,7 @@ export const LinkMenu = () => {
       placement="bottomRight"
       onVisibleChange={setDropdownVisibility}
     >
-      {dropdownVisibility ? (
-        <UpOutlined style={iconStyles} />
-      ) : (
-        <DownOutlined style={iconStyles} data-cy="dropdownMenuTrigger" />
-      )}
+      {MenuIcon(dropdownVisibility)}
     </Dropdown>
   );
 };

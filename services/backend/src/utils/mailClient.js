@@ -1,24 +1,33 @@
 const config = require('config');
+const axios = require('axios');
+const HttpsProxyAgent = require('https-proxy-agent');
 const escape = require('escape-html');
-const mailjet = require('node-mailjet').connect(
-  config.get('mailjet.apiKey'),
-  config.get('mailjet.secretKey'),
-  { proxyUrl: config.get('proxy.https') }
-);
 
-const mailjetSMS = require('node-mailjet').connect(
-  config.get('mailjet.token'),
-  { proxyUrl: config.get('proxy.https') }
-);
-const { getMailId, getMailTitle } = require('./mailjet.helper');
+const httpsProxy = config.get('proxy.https');
+
+const mailClient = axios.create({
+  httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined,
+  baseURL: config.get('mailer.apiUrl'),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  proxy: false,
+  keepAlive: true,
+  timeout: 60000,
+  maxSockets: 1,
+  auth: {
+    username: config.get('mailer.apiKey'),
+    password: config.get('mailer.apiSecret'),
+  },
+});
+
+const { getMailId, getMailTitle } = require('./mailClient.helper');
 const logger = require('./logger');
 
 const FROM_HELLO_LUCA = {
   Email: 'hello@luca-app.de',
   Name: 'luca',
 };
-
-const FROM_LUCA_SMS = 'luca';
 
 const escapeVariables = variables => {
   const escapedVariables = {};
@@ -31,33 +40,42 @@ const escapeVariables = variables => {
 };
 
 const sendTemplate = (templateId, subject, toEmail, toName, variables) => {
-  if (!config.get('mailjet.token')) {
+  if (!config.get('mailer.apiKey' || !config.get('mailer.apiSecret'))) {
     logger.warn('email not sent', {
       templateId,
       subject,
-      toEmail,
-      toName,
       variables,
     });
     return Promise.resolve();
   }
-  return mailjet.post('send', { version: 'v3.1' }).request({
-    Messages: [
-      {
-        From: FROM_HELLO_LUCA,
-        To: [
-          {
-            Email: toEmail,
-            Name: escape(toName),
-          },
-        ],
-        TemplateID: templateId,
-        TemplateLanguage: true,
-        Subject: subject,
-        Variables: escapeVariables(variables),
-      },
-    ],
-  });
+
+  try {
+    return mailClient.post('/v3.1/send', {
+      Messages: [
+        {
+          From: FROM_HELLO_LUCA,
+          To: [
+            {
+              Email: toEmail,
+              Name: escape(toName),
+            },
+          ],
+          TemplateID: templateId,
+          TemplateLanguage: true,
+          Subject: subject,
+          Variables: escapeVariables(variables),
+        },
+      ],
+    });
+  } catch (error) {
+    logger.warn('email not sent', {
+      error,
+      templateId,
+      subject,
+      variables,
+    });
+    return Promise.resolve();
+  }
 };
 
 const sendShareDataRequestNotification = (toEmail, toName, lang, variables) => {
@@ -110,19 +128,10 @@ const updateEmail = (toEmail, toName, lang, variables) => {
   );
 };
 
-const sendSMSTan = (phone, tan) => {
-  return mailjetSMS.post('sms-send', { version: 'v4' }).request({
-    Text: `Your TAN: ${tan}`,
-    To: phone,
-    From: FROM_LUCA_SMS,
-  });
-};
-
 module.exports = {
   sendShareDataRequestNotification,
   sendRegistrationConfirmation,
   sendForgotPasswordMail,
   sendActivationMail,
-  sendSMSTan,
   updateEmail,
 };

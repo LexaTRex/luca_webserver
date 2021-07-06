@@ -11,6 +11,7 @@ const NONEXISTENT_EMAIL = 'non-existant-user@nexenio.com';
 
 describe('Forgot password', () => {
   beforeEach(() => cy.visit('/'));
+  afterEach(() => cy.wait(2000));
 
   it('can send the reset password email and redirect the user back to the login page', () => {
     enterEmail(E2E_EMAIL);

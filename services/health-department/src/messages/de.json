@@ -319,6 +319,10 @@
     "notification.deleteProcess.success": "Prozess gelöscht",
     "notification.deleteProcess.error": "Serverfehler, bitte versuchen Sie es später noch einmal. {error}",
     "notification.network.error": "Netzwerkfehler",
-    "verificationTag.info": "Die öffentlichen Schlüssel Ihres luca Gesundheitsamts sind signiert. ",
-    "login.keyFileSize.error.description": "Die hochgeladene Datei war zu groß."
+    "verificationTag.info": "Die öffentlichen Schlüssel Ihres luca Gesundheitsamts sind signiert.",
+    "login.keyFileSize.error.description": "Die hochgeladene Datei war zu groß.",
+    "profile.signingTool.download.title": "Sicherheitsvorkehrungen erforderlich",
+    "profile.signingTool.download.info": "Die öffentlichen Schlüssel Ihres luca Gesundheitsamt-Zugangs sind noch nicht signiert. Bitte signieren Sie Ihre Schlüssel mit dem luca Signatur Tool. Dieser Schritt stellt sicher, dass die anderen Komponenten im luca-System die Anfragen Ihres Gesundheitsamts überprüfen können und so die Sicherheit des gesamten Systems noch einmal gestärkt wird. {br} Der Signierungsprozess kann nur durch Adminstrator:innen von luca Gesundheitsamt durchgeführt werden und muss pro Gesundheitsamt nur einmalig durchgeführt werden. ",
+    "profile.signingTool.download.button": "luca Signatur Tool herunterladen",
+    "profile.signingTool.download.version": "luca Gesundheitsamt ({version})"
 }

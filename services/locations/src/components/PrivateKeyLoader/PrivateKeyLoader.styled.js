@@ -21,7 +21,6 @@ export const Content = styled.div`
 `;
 
 export const InfoBlock = styled.p`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 21px;
@@ -39,7 +38,6 @@ export const FinishButtonWrapper = styled.div`
 `;
 
 export const UploadMessage = styled.p`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
   text-align: center;

@@ -51,6 +51,7 @@ overrides:
       import/no-extraneous-dependencies: 0
       unicorn/no-useless-undefined: 0
       sonarjs/no-duplicate-string: 0
+      no-unused-expressions: 0
   - files: ["*.test.js", "src/database/seeds/*.js"]
     rules:
       max-lines: 0

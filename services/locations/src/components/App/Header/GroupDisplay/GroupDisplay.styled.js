@@ -17,11 +17,10 @@ export const GroupName = styled.span`
   font-size: 20px;
   font-weight: 600;
   margin-left: 77px;
-  margin-bottom: -6px;
 `;
 
 export const HomeIcon = styled.img`
   margin-left: 24px;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
   width: 16px;
 `;

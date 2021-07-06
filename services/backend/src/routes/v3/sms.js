@@ -2,15 +2,14 @@ const router = require('express').Router();
 const status = require('http-status');
 const crypto = require('crypto');
 const config = require('config');
-const moment = require('moment');
 const parsePhoneNumber = require('libphonenumber-js');
-const { Op } = require('sequelize');
 
 const database = require('../../database');
 const logger = require('../../utils/logger');
 const featureFlag = require('../../utils/featureFlag');
 const { sendSMSTan: sendMMSMSTan } = require('../../utils/messagemobile');
 const { sendSMSTan: sendSinchTan } = require('../../utils/sinch');
+const { sendSMSTan: sendGTXTan } = require('../../utils/gtx');
 const {
   requireNonBlockedIp,
 } = require('../../middlewares/requireNonBlockedIp');
@@ -30,10 +29,12 @@ const {
 } = require('./sms.schemas');
 
 let requestCount = 0;
+
 const getProvider = async () => {
   const providerList = [];
   const mmRate = await featureFlag.get('sms_rate_mm');
   const sinchRate = await featureFlag.get('sms_rate_sinch');
+  const gtxRate = await featureFlag.get('sms_rate_gtx');
 
   for (let count = 0; count < mmRate; count += 1) {
     providerList.push('mm');
@@ -41,6 +42,10 @@ const getProvider = async () => {
 
   for (let count = 0; count < sinchRate; count += 1) {
     providerList.push('sinch');
+  }
+
+  for (let count = 0; count < gtxRate; count += 1) {
+    providerList.push('gtx');
   }
 
   requestCount = (requestCount + 1) % providerList.length;
@@ -79,6 +84,9 @@ router.post(
         case 'sinch':
           messageId = await sendSinchTan(phoneNumber.number, tan);
           break;
+        case 'gtx':
+          messageId = await sendGTXTan(phoneNumber.number, tan);
+          break;
         default:
           break;
       }
@@ -116,7 +124,6 @@ router.post(
       where: {
         uuid: request.body.challengeId,
         tan: request.body.tan,
-        createdAt: { [Op.gt]: moment().subtract(1, 'hour') },
       },
     });
 
@@ -126,6 +133,10 @@ router.post(
 
     if (challenge.verified) {
       return response.sendStatus(status.NO_CONTENT);
+    }
+
+    if (challenge.isExpired) {
+      return response.sendStatus(status.GONE);
     }
 
     await challenge.update({
@@ -148,14 +159,18 @@ router.post(
           where: { uuid: request.body.challengeIds },
         }
       );
-      return response.send({ challengeId: request.body.challengeIds[0] });
+      const challenge = await database.SMSChallenge.findOne({
+        where: {
+          uuid: request.body.challengeIds,
+        },
+      });
+      return response.send({ challengeId: challenge.uuid });
     }
 
     const challenge = await database.SMSChallenge.findOne({
       where: {
         uuid: request.body.challengeIds,
         tan: request.body.tan,
-        createdAt: { [Op.gt]: moment().subtract(1, 'hour') },
       },
     });
 
@@ -165,6 +180,10 @@ router.post(
 
     if (challenge.verified) {
       return response.send({ challengeId: challenge.uuid });
+    }
+
+    if (challenge.isExpired) {
+      return response.sendStatus(status.GONE);
     }
 
     await challenge.update({

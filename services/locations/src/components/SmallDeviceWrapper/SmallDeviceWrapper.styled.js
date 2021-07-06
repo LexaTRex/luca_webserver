@@ -68,5 +68,4 @@ export const Description = styled.div`
   letter-spacing: 0;
   text-align: center;
   color: rgba(0, 0, 0, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
 `;

@@ -6,6 +6,7 @@ import { notification, Progress, Spin, Upload } from 'antd';
 import { base64ToHex, EC_KEYPAIR_FROM_PRIVATE_KEY } from '@lucaapp/crypto';
 
 import { getPrivateKeySecret } from 'network/api';
+import { MAX_PRIVATE_KEY_FILE_SIZE } from 'constants/valueLength';
 import { parsePrivateKeyFile, usePrivateKey } from 'utils/privateKey';
 
 import {
@@ -75,6 +76,15 @@ export const PrivateKeyLoader = ({
   const onFile = ({ file }) => {
     if (!file) return;
 
+    if (file.size > MAX_PRIVATE_KEY_FILE_SIZE) {
+      notification.error({
+        message: intl.formatMessage({
+          id: 'notification.shareData.keySize.error',
+        }),
+      });
+      return;
+    }
+
     const reader = new FileReader();
     reader.addEventListener('load', event => {
       const stringValue = event.target.result;
@@ -107,8 +117,8 @@ export const PrivateKeyLoader = ({
         <InfoBlock>{intl.formatMessage({ id: infoTextId })}</InfoBlock>
         <Upload
           type="file"
-          customRequest={onFile}
           accept=".luca"
+          customRequest={onFile}
           showUploadList={false}
         >
           <UploadMessage>

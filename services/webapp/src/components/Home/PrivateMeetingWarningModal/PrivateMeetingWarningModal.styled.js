@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { Headline, Text } from '../../../Text';
-import { PrimaryButton, SecondaryButton } from '../../../Buttons';
+import { Headline, Text } from 'components/Text';
+import { PrimaryButton, SecondaryButton } from 'components/Buttons';
 
 export const StyledModalContainer = styled.div`
   top: 0;

@@ -45,7 +45,6 @@ export const CardSectionTitle = styled.div`
 export const CardSectionSubTitle = styled(CardSectionTitle)`
   width: auto;
   font-weight: 400;
-  font-family: Montserrat-Medium, sans-serif;
 `;
 
 export const CardSectionDescription = styled.div`
@@ -54,5 +53,4 @@ export const CardSectionDescription = styled.div`
   margin: 16px 0;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
 `;

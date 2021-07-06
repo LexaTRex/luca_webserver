@@ -27,10 +27,10 @@ module.exports = {
       // DEV ONLY TOKEN
       'ConqsCqWd]eaR82wv%C.iDdRybor8Ms2bM*h=m?V3@x2w^UxKA9pEjMjHn^y7?78',
   },
-  mailjet: {
-    secretKey: '',
+  mailer: {
+    apiUrl: '',
     apiKey: '',
-    token: '',
+    apiSecret: '',
   },
   messagemobile: {
     accessKey: '',
@@ -41,6 +41,10 @@ module.exports = {
     password: '',
     gateway1: '',
     gateway2: '',
+  },
+  gtx: {
+    authKey: '',
+    gateway: '',
   },
   luca: {
     traces: {
@@ -54,9 +58,6 @@ module.exports = {
     userTransfers: {
       maxAge: moment.duration(1, 'hours').as('hours'),
     },
-    locationTransferTraces: {
-      maxAge: moment.duration(28, 'days').as('hours'),
-    },
     locations: {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
@@ -68,6 +69,9 @@ module.exports = {
     users: {
       maxAge: moment.duration(28, 'days').as('hours'),
     },
+    tracingProcess: {
+      maxAge: moment.duration(28, 'days').as('hours'),
+    },
     testRedeems: {
       defaultMaxAge: moment.duration(72, 'hours').as('hours'),
       maxAge: moment.duration(1, 'years').as('hours'),
@@ -75,6 +79,9 @@ module.exports = {
   },
   emails: {
     expiry: moment.duration(24, 'hours').as('hours'),
+  },
+  sms: {
+    expiry: moment.duration(1, 'hours').as('hours'),
   },
   proxy: {
     http: null,

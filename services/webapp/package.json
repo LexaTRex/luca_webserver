@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/webapp",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -13,12 +13,13 @@
     "lint": "yarn eslint && yarn stylelint",
     "eslint": "eslint src",
     "stylelint": "stylelint 'src/**/*.js'",
+    "update:locales": "./scripts/updateLocales.sh",
     "test": "jest"
   },
   "dependencies": {
     "@ant-design/icons": "4.5.0",
     "@craco/craco": "6.1.1",
-    "@lucaapp/crypto": "2.0.1",
+    "@lucaapp/crypto": "2.0.3",
     "@use-it/interval": "1.0.0",
     "antd": "4.12.3",
     "connected-react-router": "6.9.1",

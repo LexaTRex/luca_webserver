@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { Form, Input, Button } from 'antd';
-import { MinusOutlined, CheckOutlined } from '@ant-design/icons';
-
-import { IS_MOBILE } from 'constants/environment';
 
 import {
   passwordMeetsCriteria,
@@ -23,16 +20,18 @@ import {
   Step,
 } from 'components/Authentication/Authentication.styled';
 
-import {
-  Criteria,
-  CriteriaIcon,
-  CriteriaText,
-  inputStyle,
-} from './SetPasswordStep.styled';
-import { useCriteria } from './SetPasswordStep.helper';
+import { CriteriaCheck } from './CriteriaCheck';
+import { inputStyle } from './SetPasswordStep.styled';
 
-export const SetPasswordStep = ({ setPassword, next, back, navigation }) => {
+export const SetPasswordStep = ({
+  setPassword,
+  previousSetPassword,
+  next,
+  back,
+  navigation,
+}) => {
   const intl = useIntl();
+  const formReference = useRef(null);
   const defaultCriteria = {
     length: false,
     number: false,
@@ -42,14 +41,14 @@ export const SetPasswordStep = ({ setPassword, next, back, navigation }) => {
   };
   const [criteriaCheck, setCriteriaCheck] = useState(defaultCriteria);
 
-  const onFinish = values => {
-    setPassword(values.password);
-    next();
-  };
+  const onChange = () => {
+    const { password } = formReference.current.getFieldsValue();
 
-  const onChange = values => {
-    const { password } = values;
-    if (password) {
+    if (!password || password.length === 0) {
+      setCriteriaCheck(defaultCriteria);
+    }
+
+    if (password.length > 0) {
       setCriteriaCheck({
         length: hasSufficientLength(password),
         number: hasNumber(password),
@@ -57,12 +56,19 @@ export const SetPasswordStep = ({ setPassword, next, back, navigation }) => {
         lowerCase: hasLowerCase(password),
         specialChar: hasSpecialCharacter(password),
       });
-    } else {
-      setCriteriaCheck(defaultCriteria);
     }
   };
 
-  const criterion = useCriteria(criteriaCheck);
+  useEffect(() => {
+    if (previousSetPassword) {
+      onChange();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const onFinish = values => {
+    setPassword(values.password);
+    next();
+  };
 
   return (
     <>
@@ -82,19 +88,13 @@ export const SetPasswordStep = ({ setPassword, next, back, navigation }) => {
           id: 'authentication.setPassword.criteria',
         })}
       </CardSubTitle>
-      {!IS_MOBILE &&
-        criterion.map(criteria => (
-          <Criteria
-            key={criteria.type}
-            style={criteria.ok ? { color: 'rgb(108, 132, 72)' } : {}}
-          >
-            <CriteriaIcon>
-              {criteria.ok ? <CheckOutlined /> : <MinusOutlined />}
-            </CriteriaIcon>
-            <CriteriaText>{criteria.intl}</CriteriaText>
-          </Criteria>
-        ))}
-      <Form onFinish={onFinish} onValuesChange={onChange}>
+      <CriteriaCheck check={criteriaCheck} />
+      <Form
+        onFinish={onFinish}
+        initialValues={{ password: previousSetPassword || '' }}
+        onValuesChange={onChange}
+        ref={formReference}
+      >
         <Form.Item
           colon={false}
           name="password"

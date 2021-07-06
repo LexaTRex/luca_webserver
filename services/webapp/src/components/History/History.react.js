@@ -29,14 +29,18 @@ import {
   StyledHistoryInfoContainer,
   StyledHistoryStepContainer,
 } from './History.styled';
-import { HistoryShareModal } from './HistoryShareModal/HistoryShareModal.react';
-import { HistoryPrivateMeetingInfoModal } from './HistoryPrivateMeetingInfoModal/HistoryPrivateMeetingInfoModal.react';
+import { HistoryShareModal } from './HistoryShareModal';
+import { HistoryShareConsentModal } from './HistoryShareConsentModal';
+import { HistoryPrivateMeetingInfoModal } from './HistoryPrivateMeetingInfoModal';
 
 const { Step } = Steps;
 
 const CHECKIN_TYPE = 'CHECK_IN';
 const PRIVATE_MEETING_HOST_TYPE = 'PRIVATE_MEETING_HOST';
 const PRIVATE_MEETING_CHECK_IN_TYPE = 'PRIVATE_MEETING_CHECK_IN';
+
+const SHARE_CONSENT_MODAL_STEP = 0;
+const SHARE_TAN_MODAL_STEP = 1;
 
 export function History() {
   const history = useHistory();
@@ -48,6 +52,24 @@ export function History() {
   const [privateMeetings, setPrivateMeetings] = useState([]);
   const [showShareModal, setShowShareModal] = useState(false);
   const [activePrivateMeeting, setActivePrivateMeeting] = useState(null);
+  const [currentHistoryShareStep, setCurrentHistoryShareStep] = useState(
+    SHARE_CONSENT_MODAL_STEP
+  );
+
+  const closeModal = () => {
+    setShowShareModal(false);
+    setCurrentHistoryShareStep(0);
+  };
+
+  const showShareTAN = () => setCurrentHistoryShareStep(SHARE_TAN_MODAL_STEP);
+  const historyShareSteps = [
+    <HistoryShareConsentModal
+      next={showShareTAN}
+      key="share-consent"
+      onClose={closeModal}
+    />,
+    <HistoryShareModal key="share-tan" tan={shareTAN} onClose={closeModal} />,
+  ];
 
   const internalIndexedDBError = useCallback(() => {
     notification.error({
@@ -246,12 +268,7 @@ export function History() {
           </StyledSecondaryButton>
         </StyledFooter>
       </AppLayout>
-      {showShareModal && shareTAN && (
-        <HistoryShareModal
-          tan={shareTAN}
-          onClose={() => setShowShareModal(false)}
-        />
-      )}
+      {showShareModal && shareTAN && historyShareSteps[currentHistoryShareStep]}
       {activePrivateMeeting && (
         <HistoryPrivateMeetingInfoModal
           locationId={activePrivateMeeting}

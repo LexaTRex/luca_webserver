@@ -3,6 +3,7 @@ const lifecycle = require('./utils/lifecycle');
 const http = require('http');
 const config = require('config');
 const logger = require('./utils/logger');
+const metrics = require('./utils/metrics');
 const { configureApp } = require('./app');
 
 const database = require('./database');
@@ -43,7 +44,8 @@ const main = async () => {
   logger.info(
     `running with PID ${process.pid} in ${process.env.NODE_ENV} mode`
   );
-
+  lifecycle.registerHooks();
+  metrics.client.collectDefaultMetrics();
   await connectDatabase();
   await startHTTPServer();
   lifecycle.registerShutdownHandler(stopHTTPServer);

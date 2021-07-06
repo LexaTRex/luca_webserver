@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const EmailActivation = Sequelize.define('EmailActivation', {
+  return Sequelize.define('EmailActivation', {
     uuid: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -25,8 +25,4 @@ module.exports = (Sequelize, DataTypes) => {
       defaultValue: false,
     },
   });
-
-  EmailActivation.associate = () => {};
-
-  return EmailActivation;
 };

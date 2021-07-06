@@ -220,17 +220,13 @@ router.delete(
       return response.sendStatus(status.GONE);
     }
 
-    try {
-      const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
-        base64ToHex(user.publicKey),
-        bytesToHex('DELETE_USER') + uuidToHex(user.uuid),
-        base64ToHex(request.body.signature)
-      );
+    const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
+      base64ToHex(user.publicKey),
+      bytesToHex('DELETE_USER') + uuidToHex(user.uuid),
+      base64ToHex(request.body.signature)
+    );
 
-      if (!isValidSignature) {
-        return response.sendStatus(status.FORBIDDEN);
-      }
-    } catch {
+    if (!isValidSignature) {
       return response.sendStatus(status.FORBIDDEN);
     }
 

@@ -53,7 +53,10 @@ const generateNotifications = async () => {
         },
       },
     ],
-    where: { createdAt: { [Op.gt]: twoWeeksAgo } },
+    where: {
+      createdAt: { [Op.gt]: twoWeeksAgo },
+      isCompleted: true,
+    },
   });
 
   const dummyTraces = await database.DummyTrace.findAll({

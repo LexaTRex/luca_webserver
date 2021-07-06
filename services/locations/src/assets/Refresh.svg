@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon / Refresh / 16px</title>
+    <g id="Icon-/-Refresh-/-16px" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M8,16 C4.2724501,16 1.14033727,13.4506308 0.252127147,10.0003581 L2.34165389,10.0006859 C3.16552033,12.3307123 5.38781865,14 8,14 C10.6121813,14 12.8344797,12.3307123 13.6583461,10.0006859 L15.7478729,10.0003581 C14.8596627,13.4506308 11.7275499,16 8,16 Z M8,0 C11.7279108,0 14.8602692,2.54986283 15.7481308,6.00064404 L13.6587023,6.00032181 C12.8351204,3.66976896 10.6125579,2 8,2 C5.38744209,2 3.16487963,3.66976896 2.34129768,6.00032181 L0.251869235,6.00064404 C1.13973081,2.54986283 4.27208922,0 8,0 Z" id="Combined-Shape" fill="#000000" fill-rule="nonzero"></path>
+        <polyline id="Path-10" stroke="#000000" stroke-width="2" stroke-linecap="round" points="15 1 15 5 11 5"></polyline>
+        <polyline id="Path-10-Copy" stroke="#000000" stroke-width="2" stroke-linecap="round" transform="translate(3.000000, 13.000000) rotate(-180.000000) translate(-3.000000, -13.000000) " points="5 11 5 15 1 15"></polyline>
+    </g>
+</svg>

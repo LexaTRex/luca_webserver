@@ -12,11 +12,16 @@ export const ProfileHeader = styled.div`
   font-size: 34px;
   font-weight: 600;
   margin-bottom: 36px;
+  display: flex;
 `;
 
 export const StyledChildWrapper = styled.div`
   width: 50%;
   margin-bottom: 24px;
+`;
+
+export const VerificationTagWrapper = styled.div`
+  margin-left: 16px;
 `;
 
 export const inputStyle = {

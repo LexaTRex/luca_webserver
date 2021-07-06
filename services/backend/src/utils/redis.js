@@ -19,6 +19,10 @@ const client = redis.createClient({
   retry_strategy: retryStrategy,
 });
 
+client.on('error', error => {
+  logger.error(error);
+});
+
 const promiseClient = {
   client,
   quit: promisify(client.quit).bind(client),

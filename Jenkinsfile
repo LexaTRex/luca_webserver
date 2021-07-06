@@ -1,17 +1,17 @@
 #!groovy
 
 services = [
-  "backend",
-  "contact-form",
-  "health-department",
-  "locations",
-  "scanner",
-  "webapp",
+  'backend',
+  'contact-form',
+  'health-department',
+  'locations',
+  'scanner',
+  'webapp',
 ]
 
 BRANCH_NAME = env.BRANCH_NAME
 BUILD_NUMBER = env.BUILD_NUMBER
-BRANCH_NAME_ESCAPED = BRANCH_NAME.replaceAll("/", "-")
+BRANCH_NAME_ESCAPED = BRANCH_NAME.replaceAll('/', '-')
 UNIQUE_TAG = "${BRANCH_NAME_ESCAPED}_build-${BUILD_NUMBER}"
 
 node {
@@ -32,19 +32,19 @@ node {
       e2eTest()
     }
 
-    if (env.BRANCH_NAME == "dev") {
+    if (env.BRANCH_NAME == 'dev') {
       triggerDeploy('dev', GIT_VERSION)
     }
 
-    if (env.BRANCH_NAME.startsWith("release/")) {
+    if (env.BRANCH_NAME.startsWith('release/')) {
       triggerDeploy('release', GIT_VERSION)
     }
 
-    if (env.BRANCH_NAME.startsWith("hotfix/")) {
+    if (env.BRANCH_NAME.startsWith('hotfix/')) {
       triggerDeploy('hotfix', GIT_VERSION)
     }
 
-    if (env.BRANCH_NAME == "master") {
+    if (env.BRANCH_NAME == 'master') {
       triggerDeploy('preprod', GIT_VERSION)
     }
 
@@ -61,19 +61,19 @@ node {
 }
 
 void updateSourceCode() {
-    cleanWs()
-    checkout scm
-    // replace public registry references with private registries
-    withCredentials([
+  cleanWs()
+  checkout scm
+  // replace public registry references with private registries
+  withCredentials([
       string(credentialsId: 'luca-docker-repository', variable: 'DOCKER_REPOSITORY'),
       string(credentialsId: 'luca-npm-registry', variable: 'NPM_REGISTRY')
     ]) {
-      sh("./scripts/usePrivateRegistries.sh")
+      sh('./scripts/usePrivateRegistries.sh')
     }
 }
 
 void abortPreviousRunningBuilds() {
-  echo "Aborting previous builds"
+  echo 'Aborting previous builds'
   def jobname = env.JOB_NAME
   def buildnum = env.BUILD_NUMBER.toInteger()
 
@@ -86,7 +86,7 @@ void abortPreviousRunningBuilds() {
     }
     //check if the same number as currentBuild, if so skip
     if (buildnum == build.getNumber().toInteger()) {
-      continue; println "equals"
+      continue; println 'equals'
     }
     echo "Aborting previous build = ${build}"
     build.doStop()
@@ -105,10 +105,10 @@ void triggerDeploy(String env, String image_tag) {
   stage('Deploy') {
     echo("deploying ${image_tag} to ${env}")
     build(
-      job: "luca/luca-web-deploy",
+      job: 'luca/luca-web-deploy',
       parameters: [
-        text(name: "ENV", value: env),
-        text(name: "IMAGE_TAG", value: image_tag)
+        text(name: 'ENV', value: env),
+        text(name: 'IMAGE_TAG', value: image_tag)
       ]
     )
   }
@@ -116,21 +116,29 @@ void triggerDeploy(String env, String image_tag) {
 
 Closure buildAndPushContainer(String service, String tag) {
   return {
-    node("docker") {
+    node('docker') {
       try {
         updateSourceCode()
         GIT_VERSION = sh(script: 'git describe --long --tags', returnStdout: true).trim()
         GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
 
         withCredentials([
-          usernamePassword(credentialsId: 'luca-docker-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD'),
+          usernamePassword(credentialsId: 'luca-docker-auth',
+                            usernameVariable: 'DOCKER_USERNAME',
+                            passwordVariable: 'DOCKER_PASSWORD'),
           string(credentialsId: 'luca-docker-registry', variable: 'DOCKER_REGISTRY'),
+          usernamePassword( credentialsId: 'jenkins-docker-public-registry',
+                            usernameVariable:'DOCKER_PUBLIC_USERNAME',
+                            passwordVariable:'DOCKER_PUBLIC_PASSWORD'),
+          string(credentialsId: 'luca-docker-public-registry', variable: 'DOCKER_PUBLIC_REGISTRY'),
           string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
         ]) {
+
           sh('docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD $DOCKER_REGISTRY')
+          sh('docker login -u=$DOCKER_PUBLIC_USERNAME -p=$DOCKER_PUBLIC_PASSWORD $DOCKER_PUBLIC_REGISTRY')
           sh("IMAGE_TAG=${tag} GIT_VERSION=${GIT_VERSION} GIT_COMMIT=${GIT_COMMIT} docker-compose -f docker-compose.yml build ${service}")
           sh("IMAGE_TAG=${tag} docker-compose -f docker-compose.yml push ${service}")
-          sh("docker logout")
+          sh('docker logout')
         }
       } finally {
         cleanWs()
@@ -141,12 +149,17 @@ Closure buildAndPushContainer(String service, String tag) {
 
 Closure executeTestScriptForService(String script, String service) {
   return {
-    node("docker") {
+    node('docker') {
       try {
         updateSourceCode()
         withCredentials([
+          usernamePassword( credentialsId: 'jenkins-docker-public-registry',
+                  usernameVariable:'DOCKER_PUBLIC_USERNAME',
+                  passwordVariable:'DOCKER_PUBLIC_PASSWORD'),
+          string(credentialsId: 'luca-docker-public-registry', variable: 'DOCKER_PUBLIC_REGISTRY'),
           string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
         ]) {
+          sh('docker login -u=$DOCKER_PUBLIC_USERNAME -p=$DOCKER_PUBLIC_PASSWORD $DOCKER_PUBLIC_REGISTRY')
           sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml build ${service}")
           sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm ${service} ${script}")
         }
@@ -166,9 +179,14 @@ void e2eTest() {
 
         withCredentials([
           string(credentialsId: 'luca-npm-auth', variable: 'NPM_CONFIG__AUTH'),
-          string(credentialsId: 'luca-google-maps-api-key', variable: 'REACT_APP_GOOGLE_MAPS_API_KEY')
+          string(credentialsId: 'luca-google-maps-api-key', variable: 'REACT_APP_GOOGLE_MAPS_API_KEY'),
+          usernamePassword( credentialsId: 'jenkins-docker-public-registry',
+                  usernameVariable:'DOCKER_PUBLIC_USERNAME',
+                  passwordVariable:'DOCKER_PUBLIC_PASSWORD'),
+          string(credentialsId: 'luca-docker-public-registry', variable: 'DOCKER_PUBLIC_REGISTRY'),
         ]) {
-          sh("IMAGE_TAG=e2e docker-compose -f docker-compose.yml build --parallel")
+          sh('docker login -u=$DOCKER_PUBLIC_USERNAME -p=$DOCKER_PUBLIC_PASSWORD $DOCKER_PUBLIC_REGISTRY')
+          sh('IMAGE_TAG=e2e docker-compose -f docker-compose.yml build --parallel')
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml up -d database")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn migrate")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn seed")

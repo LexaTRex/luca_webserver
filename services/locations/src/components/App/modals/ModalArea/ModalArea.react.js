@@ -42,7 +42,6 @@ const GlobalModalStyle = createGlobalStyle`
 
   .lightHeader .ant-modal-title {
     color: rgba(255, 255, 255, 0.87);
-    font-family: Montserrat-Medium, sans-serif;
     font-size: 16px;
     font-weight: 500;
   }

@@ -15,7 +15,7 @@ export const StyledLink = styled(Link)`
 
 export const buttonStyle = {
   borderRadius: 24,
-  border: '1px solid rgb(255, 255, 255)',
+  border: '2px solid rgb(255, 255, 255)',
   color: 'rgb(255, 255, 255)',
   background: 'transparent',
   marginRight: 24,

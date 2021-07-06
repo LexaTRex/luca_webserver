@@ -1,5 +1,35 @@
 # Changelog
 
+### 1.5.0 (2021-07-06)
+* **backend:** feat: replace node-mailjet with axios
+* **backend:** feat: move some error handling to cryto package
+* **backend:** feat: add GTX SMS provider
+* **backend** feat: add route to provide download url for signing tool
+* **backend:** feat: return a different status code for expired SMS challenges
+* **backend:** feat: moved traceId calculation to backend
+* **backend:** feat: completely delete tracing processes after 28 days
+* **backend:** ref: move json parse middleware into validateSchema middleware
+* **backend:** chore: colorize and improve dev logging output
+* **backend:** chore: publish traceIds for notifications when data was shared
+* **health-department:** fix: add missing mac check
+* **health-department** chore: add limit for private key file size
+* **health-department:** feat: visualise signed public keys
+* **health-department:** feat: set main font and remove duplicate definitions
+* **locations:** fix: "forgot password" displaying incorrect error message for not activated users
+* **locations:** fix: typos in registration email step
+* **locations** fix: private key modal issue
+* **locations** chore: add limit for private key file size
+* **location** feat: redesign header
+* **location** feat: checkin options for guests are directly accessible via location view
+* **location** feat: provide link to checkin options via qr code
+* **webapp:** chore: fix typos
+* **webapp** feat: add gitlab link
+* **webapp:** feat: validate that private meeting is not spoofing a location
+* **webapp** feat: add a consent modal for data sharing with the health department
+* security: update container base images and install security patches
+* feat: add husky for git hooks
+
+
 ### 1.4.0 (2021-06-29)
 * **backend:** feat: add test provider key route
 * **backend:** feat: add isTrusted to Operators
@@ -30,8 +60,11 @@
 * **backend:** feat: add expireAt functionality to test redeems
 * **contact-form:** fix: handle input starting with mutated vowels
 * **contact-form:** feat: improved input validation
+* **health-department:** fix: use secure-json-parse to prevent prototype pollution
+* **health-department:** fix: replace react-csv with papaparse and improve csv output encoding
 * **health-department:** fix: typo in error notification
 * **health-department:** fix: status names in process table and filter were not identical
+* **health-department:** feat: validate object schema directly after decryption and apply sanitization
 * **health-department:** feat: new designs for process details
 * **locations:** fix: input fields for manual input are disabled under certain conditions
 * **locations:** fix: password not persisted after back action in registration

@@ -6,8 +6,7 @@ const status = require('http-status');
 const { Op } = require('sequelize');
 
 const database = require('../../database');
-const { z } = require('../../middlewares/validateSchema');
-const { sendShareDataRequestNotification } = require('../../utils/mailjet');
+const { sendShareDataRequestNotification } = require('../../utils/mailClient');
 const {
   validateSchema,
   validateParametersSchema,
@@ -20,7 +19,11 @@ const {
 const logger = require('../../utils/logger');
 const { formatLocationName } = require('../../utils/format');
 
-const { createSchema, sendSchema } = require('./locationTransfers.schemas');
+const {
+  createSchema,
+  sendSchema,
+  transferIdParametersSchema,
+} = require('./locationTransfers.schemas');
 
 /**
  * Create a transfer request for venues traced by an infected guest. Preceded
@@ -188,6 +191,7 @@ router.get('/', requireOperator, async (request, response) => {
       isCompleted: transfer.isCompleted,
       contactedAt: transfer.contactedAt,
       createdAt: moment(transfer.createdAt).unix(),
+      deletedAt: transfer.deletedAt && moment(transfer.deletedAt).unix(),
     }))
   );
 });
@@ -279,12 +283,9 @@ router.get('/uncompleted', requireOperator, async (request, response) => {
             }
           : null,
       })),
+      deletedAt: moment(transfer.deletedAt).unix(),
     }))
   );
-});
-
-const transferIdParametersSchema = z.object({
-  transferId: z.string().uuid(),
 });
 
 /**
@@ -376,6 +377,7 @@ router.get(
             }
           : null,
       })),
+      deletedAt: moment(transfer.deletedAt).unix(),
     });
   }
 );
@@ -461,6 +463,7 @@ router.get(
       where: {
         uuid: request.params.transferId,
         departmentId: request.user.departmentId,
+        isCompleted: true,
       },
     });
     if (!transfer) {
@@ -498,6 +501,23 @@ router.get(
 );
 
 /**
+ * Express middleware to validate a transferId before potentially accepting
+ * large JSON payloads
+ */
+const validateTransferId = async (request, response, next) => {
+  const transfer = await database.LocationTransfer.findByPk(
+    request.params.transferId
+  );
+
+  if (!transfer) {
+    return response.sendStatus(status.NOT_FOUND);
+  }
+
+  request.transfer = transfer;
+  return next();
+};
+
+/**
  * Upload trace data associated with the given transfer request. This is done by a venue fulfilling the location transfer
  * request by a health department. The venue will remove its layer of encryption of the contact data references and upload
  * the resulting data to the luca server. Health departments still need to decrypt the references using their private key.
@@ -507,15 +527,11 @@ router.get(
 router.post(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),
-  validateSchema(sendSchema),
+  validateTransferId,
+  validateSchema(sendSchema, '20mb'),
   async (request, response) => {
-    const transfer = await database.LocationTransfer.findByPk(
-      request.params.transferId
-    );
-
-    if (!transfer) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
+    const { transfer, body } = request;
+    const { traces } = body;
 
     const transferTraces = await database.LocationTransferTrace.findAll({
       where: {
@@ -524,17 +540,13 @@ router.post(
     });
 
     const requestTracesById = new Map(
-      request.body.traces.map(trace => [trace.traceId, trace])
+      traces.map(trace => [trace.traceId, trace])
     );
     const locationTransferTraceIds = new Set(
       transferTraces.map(trace => trace.traceId)
     );
     // reject request if invalid trace IDs are contained
-    if (
-      !request.body.traces.every(trace =>
-        locationTransferTraceIds.has(trace.traceId)
-      )
-    ) {
+    if (!traces.every(trace => locationTransferTraceIds.has(trace.traceId))) {
       return response.sendStatus(status.BAD_REQUEST);
     }
 

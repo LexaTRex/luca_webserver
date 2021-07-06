@@ -8,7 +8,6 @@ export const Wrapper = styled.div`
 
 export const CreateText = styled.div`
   color: rgb(0, 0, 0);
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
   margin-left: 8px;

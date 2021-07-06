@@ -12,7 +12,6 @@ export const Row = styled.div`
   padding: 24px;
   justify-content: space-between;
   cursor: pointer;
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
 
   &:hover {

@@ -11,5 +11,4 @@ export const Text = styled.p`
   user-select: none;
   color: rgb(0, 0, 0);
   letter-spacing: 0.25px;
-  font-family: Montserrat-Medium, sans-serif;
 `;

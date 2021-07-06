@@ -13,7 +13,6 @@ export const ButtonRow = styled.div`
 `;
 
 export const BackButton = styled(Button)`
-  font-family: Montserrat-Medium, sans-serif;
   border: 2px solid rgb(80, 102, 124);
   color: rgba(0, 0, 0, 0.87);
   background: transparent;
@@ -24,7 +23,6 @@ export const BackButton = styled(Button)`
 `;
 
 export const OpenProcessButton = styled(Button)`
-  font-family: Montserrat-Medium, sans-serif;
   color: rgba(0, 0, 0, 0.87);
   background-color: rgb(195, 206, 217);
   font-weight: bold;
@@ -34,28 +32,24 @@ export const OpenProcessButton = styled(Button)`
 `;
 
 export const GroupText = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   margin-bottom: 8px;
   font-size: 16px;
   font-weight: bold;
 `;
 
 export const InfoText = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   margin-bottom: 24px;
   font-size: 16px;
   font-weight: bold;
 `;
 
 export const AddressText = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   margin-bottom: 24px;
   font-size: 14px;
   color: gray;
 `;
 
 export const DateText = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   color: black;
   font-size: 16px;
   font-style: normal;

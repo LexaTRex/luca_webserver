@@ -27,6 +27,25 @@ router.post('/deleteOldTraces', async (request, response) => {
   response.send({ affectedRows, time: performance.now() - t0 });
 });
 
+router.post('/deleteOldTracingProcesses', async (_, response) => {
+  const t0 = performance.now();
+
+  const affectedRows = await database.TracingProcess.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: moment().subtract(
+          config.get('luca.tracingProcess.maxAge'),
+          'hours'
+        ),
+      },
+    },
+    paranoid: false,
+    force: true,
+  });
+
+  response.send({ affectedRows, time: performance.now() - t0 });
+});
+
 router.post('/checkoutOldTraces', async (request, response) => {
   const t0 = performance.now();
   const [affectedRows] = await database.Trace.update(
@@ -96,41 +115,6 @@ router.post('/deleteUnusedUserTransfers', async (request, response) => {
   });
   response.send({ affectedRows, time: performance.now() - t0 });
 });
-
-router.post(
-  '/deleteOldLocationTransferTraceData',
-  async (request, response) => {
-    const t0 = performance.now();
-
-    const earliestCreationTimeToKeep = moment().subtract(
-      config.get('luca.locationTransferTraces.maxAge'),
-      'hours'
-    );
-
-    const eraseFields = {
-      data: null,
-      additionalData: null,
-      additionalDataPublicKey: null,
-      additionalDataMAC: null,
-      additionalDataIV: null,
-    };
-    const [affectedRows] = await database.LocationTransferTrace.update(
-      eraseFields,
-      {
-        where: {
-          createdAt: {
-            [Op.lt]: earliestCreationTimeToKeep,
-          },
-        },
-      }
-    );
-
-    response.send({
-      affectedRows,
-      time: performance.now() - t0,
-    });
-  }
-);
 
 router.post('/cleanUpLocations', async (request, response) => {
   const t0 = performance.now();

@@ -30,7 +30,6 @@ export const StyledDescription = styled.div`
   line-height: 20px;
   text-align: center;
   color: rgb(255, 255, 255);
-  font-family: Montserrat-Medium, sans-serif;
 `;
 export const StyledFooter = styled.div`
   height: 70px;

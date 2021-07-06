@@ -7,9 +7,10 @@ import { base64ToHex, EC_KEYPAIR_FROM_PRIVATE_KEY } from '@lucaapp/crypto';
 
 import { useModal } from 'components/hooks/useModal';
 
-import { parsePrivateKeyFile } from 'utils/privateKey';
 import { getPrivateKeySecret } from 'network/api';
+import { parsePrivateKeyFile } from 'utils/privateKey';
 
+import { MAX_PRIVATE_KEY_FILE_SIZE } from 'constants/valueLength';
 import { storeHealthDepartmentPrivateKeys } from 'utils/cryptoKeyOperations';
 import {
   UploadButton,
@@ -57,6 +58,15 @@ export const UploadKeyFileModal = ({ keysData, onFinish }) => {
       return;
     }
 
+    if (keyFile.size > MAX_PRIVATE_KEY_FILE_SIZE) {
+      notification.error({
+        message: intl.formatMessage({
+          id: 'login.keyFileSize.error.description',
+        }),
+      });
+      return;
+    }
+
     reader.current.addEventListener('load', addEventListenerEvent => {
       loadKeyFile(
         parsePrivateKeyFile(
@@ -80,7 +90,12 @@ export const UploadKeyFileModal = ({ keysData, onFinish }) => {
           id: 'modal.uploadKeyModal.info',
         })}
       </Info>
-      <HiddenUpload type="file" onChange={onFile} accept=".luca" />
+      <HiddenUpload
+        type="file"
+        accept=".luca"
+        onChange={onFile}
+        data-testid="fileUpload"
+      />
       <ButtonRow>
         <Button
           style={{

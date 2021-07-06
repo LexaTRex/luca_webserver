@@ -11,7 +11,7 @@ const config = require('config');
 const moment = require('moment');
 const { Op } = require('sequelize');
 const database = require('../../../database');
-const mailjet = require('../../../utils/mailjet');
+const mailClient = require('../../../utils/mailClient');
 const {
   validateParametersSchema,
   validateSchema,
@@ -86,7 +86,7 @@ router.post(
       email: operator.email,
     });
 
-    mailjet.sendForgotPasswordMail(
+    mailClient.sendForgotPasswordMail(
       forgotPasswordRequest.email,
       operator.fullName,
       request.body.lang,

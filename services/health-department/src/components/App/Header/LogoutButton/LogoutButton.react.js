@@ -12,7 +12,7 @@ import { logout } from 'network/api';
 import { LOGIN_ROUTE } from 'constants/routes';
 import { clearPrivateKeys } from 'utils/cryptoKeyOperations';
 
-import { LogoutButtonStyled } from './LogoutButtom.styled';
+import { LogoutButtonStyled } from './LogoutButton.styled';
 
 export const LogoutButton = () => {
   const intl = useIntl();

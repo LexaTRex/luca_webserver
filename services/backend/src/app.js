@@ -76,8 +76,6 @@ const configureApp = () => {
     app.use(helmet.hsts());
   }
   app.use(cookieParser());
-  app.use(express.json({ limit: '500kb' }));
-  app.use(express.urlencoded({ extended: false }));
   app.use(
     session({
       secret: config.get('cookies.secret'),
@@ -97,6 +95,7 @@ const configureApp = () => {
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(noCache);
+
   app.use('/api', router);
   app.use(errorLogger);
   app.use(error.handle404);

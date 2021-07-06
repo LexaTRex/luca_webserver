@@ -13,7 +13,6 @@ describe('Start scanner', () => {
         win.location.href = E2E_DEFAULT_CONTACT_FORM_LINK;
       }).as('contactForm');
     });
-    cy.getByCy('startScanner').click();
     cy.getByCy('contactForm').click();
     cy.get('@contactForm').should('be.called');
   });
@@ -23,7 +22,6 @@ describe('Start scanner', () => {
         win.location.href = E2E_DEFAULT_SCANNER_LINK;
       }).as('scanner');
     });
-    cy.getByCy('startScanner').click();
     cy.getByCy('scanner').click();
     cy.get('@scanner').should('be.called');
   });
@@ -33,7 +31,6 @@ describe('Start scanner', () => {
         win.location.href = E2E_DEFAULT_CAM_SCANNER_LINK;
       }).as('camScanner');
     });
-    cy.getByCy('startScanner').click();
     cy.getByCy('camScanner').click();
     cy.get('@camScanner').should('be.called');
   });

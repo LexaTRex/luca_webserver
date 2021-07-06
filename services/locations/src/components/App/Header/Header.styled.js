@@ -15,7 +15,6 @@ export const SubTitle = styled.div`
   margin-left: 16px;
   margin-bottom: -6px;
   color: rgb(255, 255, 255);
-  font-family: Montserrat, sans-serif;
   font-size: 16px;
 
   ${Media.mobile`
@@ -38,4 +37,5 @@ export const Logo = styled.img`
 
 export const MenuWrapper = styled.div`
   margin-top: 10px;
+  display: flex;
 `;

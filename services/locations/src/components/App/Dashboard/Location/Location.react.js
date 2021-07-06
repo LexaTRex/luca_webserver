@@ -14,7 +14,7 @@ import LucaLogo from 'assets/luca_logo_padding.svg';
 
 import { Checkout } from './Checkout';
 import { CheckInQuery } from './CheckInQuery';
-import { StartScanner } from './StartScanner';
+import { ScannerSelection } from './ScannerSelection';
 import { IndoorSelection } from './IndoorSelection';
 import { GenerateQRCodes } from './GenerateQRCodes';
 import { TableSubdivision } from './TableSubdivision';
@@ -65,10 +65,12 @@ export const Location = ({ isOperatorTrusted }) => {
           </Settings>
         </NameWrapper>
       </HeaderWrapper>
-      <ButtonWrapper>
-        {isOperatorTrusted && <RegisterBadges />}
-        <StartScanner location={location} />
-      </ButtonWrapper>
+      {isOperatorTrusted && (
+        <ButtonWrapper>
+          <RegisterBadges />
+        </ButtonWrapper>
+      )}
+      <ScannerSelection location={location} />
       <LocationOverview location={location} />
       <CheckInQuery location={location} />
       <IndoorSelection location={location} />

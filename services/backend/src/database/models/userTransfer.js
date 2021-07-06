@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const UserTransfer = Sequelize.define('UserTransfer', {
+  return Sequelize.define('UserTransfer', {
     uuid: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -28,8 +28,4 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
   });
-
-  UserTransfer.associate = () => {};
-
-  return UserTransfer;
 };

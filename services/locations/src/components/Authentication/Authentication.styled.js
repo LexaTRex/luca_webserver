@@ -92,7 +92,6 @@ export const CardTitle = styled.div`
 `;
 
 export const CardSubTitle = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 24px;
@@ -102,7 +101,6 @@ export const CardSubTitle = styled.div`
 `;
 
 export const Step = styled.div`
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 8px;

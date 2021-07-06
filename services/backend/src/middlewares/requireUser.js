@@ -1,5 +1,9 @@
 const status = require('http-status');
 
+const isUserOfType = type => request => {
+  return request.user && request.user.type === type;
+};
+
 const requireUserOfType = type => (request, response, next) => {
   if (request.user && request.user.type === type) {
     return next();
@@ -34,4 +38,5 @@ module.exports = {
   ),
   requireHealthDepartmentAdmin: requireAdminOfType('HealthDepartmentEmployee'),
   requireNonDeletedUser,
+  isHealthDepartmentEmployee: isUserOfType('HealthDepartmentEmployee'),
 };

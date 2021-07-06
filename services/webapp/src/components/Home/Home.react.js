@@ -1,29 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import QRCode from 'qrcode.react';
-import { notification } from 'antd';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
-import useInterval from '@use-it/interval';
-import { decodeUtf8 } from '@lucaapp/crypto';
 import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';
-import { checkin, generateQRCode } from 'helpers/crypto';
 import {
   HISTORY_PATH,
   SETTINGS_PATH,
   BASE_PRIVATE_MEETING_PATH,
 } from 'constants/routes';
-import { getCheckOutPath } from 'helpers/routes';
-import { isLocalTimeCorrect } from 'helpers/time';
 import { createMeeting } from 'helpers/privateMeeting';
-import { base64UrlToBytes } from 'utils/encodings';
 
 import menu from 'assets/menu.svg';
 import lucaLogo from 'assets/LucaLogoWhite.svg';
-
-import { WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY } from 'constants/storage';
 
 import { CheckinIcon, HistoryIcon } from 'components/Icons';
 import { AppContent, AppHeadline, AppLayout } from 'components/AppLayout';
@@ -44,6 +35,10 @@ import { SelfCheckin } from './SelfCheckin';
 import { WebAppWarningModal } from './WebAppWarningModal';
 import { HostPrivateMeetingWarningModal } from './HostPrivateMeetingWarningModal';
 
+import { useTraceQRCode } from './useTraceQRCode';
+import { useCheckInCheck } from './useCheckInCheck';
+import { PrivateMeetingWarningModal } from './PrivateMeetingWarningModal';
+
 export function Home({ match: { params: parameters }, location: { hash } }) {
   const intl = useIntl();
   const history = useHistory();
@@ -53,94 +48,30 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
     showPrivateMeetingWarningModal,
     setShowPrivateMeetingWarningModal,
   ] = useState(false);
-  const [qrCode, setQRCode] = useState('');
+  const [
+    showPrivateMeetingCheckInWarningModal,
+    setShowPrivateMeetingCheckInWarningModal,
+  ] = useState(false);
 
   const [users, setUsers] = useState();
+  const qrCode = useTraceQRCode(users);
+  const {
+    checkinToPrivateMeeting,
+    cancelCheckinToPrivateMeeting,
+  } = useCheckInCheck({
+    users,
+    hash,
+    parameters,
+    setShowWebAppWarningModal,
+    setShowPrivateMeetingCheckInWarningModal,
+  });
+
   useEffect(() => {
     indexDB.users
       .toArray()
       .then(result => setUsers(result))
       .catch(() => {});
   }, []);
-
-  useEffect(() => {
-    isLocalTimeCorrect()
-      .then(isTimeCorrect => {
-        if (isTimeCorrect) return;
-        notification.error({
-          message: intl.formatMessage({
-            id: 'error.systemTime',
-          }),
-        });
-      })
-      .catch(console.error);
-  }, [intl]);
-
-  const generateTraceQRCode = useMemo(() => {
-    return async () => {
-      try {
-        if (users && users[0]?.userId) {
-          const [{ userId }] = users;
-          setQRCode(await generateQRCode(userId));
-        }
-      } catch (error) {
-        const descriptionId =
-          error.descriptionId ?? 'QRCodeGenerator.error.unknown';
-        notification.error({
-          message: intl.formatMessage({
-            id: 'QRCodeGenerator.error.headline',
-          }),
-          description: intl.formatMessage({
-            id: descriptionId,
-          }),
-        });
-      }
-    };
-  }, [intl, users]);
-
-  /**
-   * Refreshes the current check-in qr code every minute.
-   * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#scanner-check-in
-   */
-  useInterval(generateTraceQRCode, 60000);
-
-  useEffect(() => {
-    if (parameters.scannerId && users?.[0]?.userId) {
-      let decodedData;
-      try {
-        decodedData = JSON.parse(
-          decodeUtf8(base64UrlToBytes((hash || '').replace('#', '')))
-        );
-      } catch {
-        decodedData = null;
-      }
-
-      checkin(parameters.scannerId, decodedData)
-        .then(traceId => {
-          history.push(getCheckOutPath(traceId));
-        })
-        .catch(() => {
-          notification.error({
-            message: intl.formatMessage({
-              id: 'error.headline',
-            }),
-            description: intl.formatMessage({
-              id: 'error.description',
-            }),
-          });
-        });
-    } else if (
-      users?.[0]?.useWebApp === false &&
-      sessionStorage.getItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY) !== 'true'
-    ) {
-      setShowWebAppWarningModal(true);
-      sessionStorage.setItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY, 'true');
-    }
-  }, [intl, hash, history, parameters, users]);
-
-  useEffect(() => {
-    generateTraceQRCode();
-  }, [generateTraceQRCode]);
 
   return (
     <>
@@ -247,6 +178,12 @@ export function Home({ match: { params: parameters }, location: { hash } }) {
             setShowPrivateMeetingWarningModal(false);
           }}
           onCancel={() => setShowPrivateMeetingWarningModal(false)}
+        />
+      )}
+      {showPrivateMeetingCheckInWarningModal && (
+        <PrivateMeetingWarningModal
+          onCheck={checkinToPrivateMeeting}
+          onCancel={cancelCheckinToPrivateMeeting}
         />
       )}
     </>

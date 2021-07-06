@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const User = Sequelize.define(
+  return Sequelize.define(
     'User',
     {
       uuid: {
@@ -32,8 +32,4 @@ module.exports = (Sequelize, DataTypes) => {
       paranoid: true,
     }
   );
-
-  User.associate = () => {};
-
-  return User;
 };

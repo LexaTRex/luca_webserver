@@ -7,25 +7,6 @@ export const HeaderWrapper = styled.div`
   margin: 0 40px;
 `;
 
-export const SubTitle = styled.div`
-  display: flex;
-  align-items: flex-end;
-  margin-left: 24px;
-  margin-bottom: -4px;
-  font-family: Montserrat-SemiBold, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-`;
-
-export const Title = styled.div`
-  display: flex;
-`;
-
-export const Logo = styled.img`
-  height: 48px;
-  color: black;
-`;
-
 export const MenuWrapper = styled.div`
   margin-top: 10px;
   display: flex;

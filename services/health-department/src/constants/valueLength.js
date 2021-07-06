@@ -1,0 +1,1 @@
+export const MAX_PRIVATE_KEY_FILE_SIZE = 2000;

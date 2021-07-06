@@ -1,7 +1,7 @@
 const { z } = require('../../../middlewares/validateSchema');
 
 const keyIdParametersSchema = z.object({
-  keyId: z.string(),
+  keyId: z.string().max(255),
 });
 
 const rotateSchema = z.object({

@@ -42,6 +42,8 @@ paths:
           $ref: '#/components/schemas/BadRequest'
         '403':
           description: Challenge not found
+        '410':
+          description: Challenge expired
         '429':
           $ref: '#/components/schemas/TooManyRequestsDay'
       operationId: post-sms-verify
@@ -77,6 +79,8 @@ paths:
           $ref: '#/components/schemas/BadRequest'
         '403':
           description: Challenge not found
+        '410':
+          description: Challenge expired
       operationId: post-sms-verify-bulk
       requestBody:
         content:

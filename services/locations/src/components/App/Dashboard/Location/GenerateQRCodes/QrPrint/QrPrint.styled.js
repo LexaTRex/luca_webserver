@@ -27,7 +27,6 @@ export const LinkWrapper = styled.a`
 
 export const QrPrintText = styled.div`
   margin: 16px 0 24px 32px;
-  font-family: Montserrat-Medium, sans-serif;
   font-size: 14px;
   font-weight: 500;
 `;

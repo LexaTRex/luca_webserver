@@ -6,7 +6,6 @@ export const StyledInfo = styled.div`
   text-align: right;
   padding-right: 8px;
   color: rgba(0, 0, 0, 0.87);
-  font-family: Montserrat-Medium, sans-serif;
 `;
 export const StyledContainer = styled.div`
   display: flex;

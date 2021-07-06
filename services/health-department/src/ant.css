@@ -94,7 +94,6 @@ input:-webkit-autofill:active {
   font-weight: 500;
   line-height: 18px;
   background-color: transparent;
-  font-family: Montserrat-Medium, sans-serif;
   border-bottom: 1px solid rgb(151, 151, 151) !important;
 }
 
@@ -157,7 +156,6 @@ input:-webkit-autofill:active {
   font-weight: 500;
   line-height: 18px;
   background-color: transparent;
-  font-family: Montserrat-Medium, sans-serif;
   border-bottom: 1px solid rgb(151, 151, 151) !important;
 }
 
@@ -295,7 +293,6 @@ input:-webkit-autofill:active {
 .ant-popover-message-title {
   color: rgba(0, 0, 0, 0.87);
   font-size: 14px;
-  font-family: Montserrat-Medium, sans-serif;
   font-weight: 500;
   display: flex;
   justify-content: flex-start;

@@ -2,22 +2,21 @@ import React, { useCallback, useState } from 'react';
 
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import { decodeUtf8 } from '@lucaapp/crypto';
 import { useHistory } from 'react-router-dom';
+import { decodeUtf8, base64UrlToBytes } from '@lucaapp/crypto';
 
-import { base64UrlToBytes } from 'utils/encodings';
 import { BASE_PRIVATE_MEETING_PATH } from 'constants/routes';
 import { CWA_URL_SPLIT } from 'constants/cwa';
 
 import { checkin } from 'helpers/crypto';
 import { getCheckOutPath } from 'helpers/routes';
-import { checkinToPrivateMeeting } from 'helpers/privateMeeting';
 import { AccountDeletedError } from 'network/api';
+import { checkinToPrivateMeeting } from 'helpers/privateMeeting';
 
-import { AppContent } from '../../AppLayout';
-import { QRCodeScanner } from '../../QRCodeScanner/QRCodeScanner.react';
+import { AppContent } from 'components/AppLayout';
+import { QRCodeScanner } from 'components/QRCodeScanner/QRCodeScanner.react';
 
-import { PrivateMeetingWarningModal } from './PrivateMeetingWarningModal';
+import { PrivateMeetingWarningModal } from '../PrivateMeetingWarningModal';
 
 export function SelfCheckin({ onClose }) {
   const history = useHistory();

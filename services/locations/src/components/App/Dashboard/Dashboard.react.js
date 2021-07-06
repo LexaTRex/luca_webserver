@@ -33,7 +33,7 @@ export const Dashboard = ({ operator }) => {
   const intl = useIntl();
   const history = useHistory();
   const [openModal, closeModal] = useModal();
-  const { avvAccepted, isActiveVersion } = useWhatsNew(operator);
+  const { avvAccepted } = useWhatsNew(operator);
 
   const { data: privateKeySecret, isLoading: isPrivateKeyLoading } = useQuery(
     'privateKeySecret',
@@ -61,7 +61,6 @@ export const Dashboard = ({ operator }) => {
     } else if (
       !privateKey &&
       avvAccepted &&
-      isActiveVersion &&
       !isPrivateKeyLoading &&
       !hasSeenPrivateKeyModal()
     ) {
@@ -89,7 +88,7 @@ export const Dashboard = ({ operator }) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPrivateKeyLoading, avvAccepted, isActiveVersion]);
+  }, [isPrivateKeyLoading, avvAccepted]);
 
   if (operator.deletedAt) {
     return <DeletionMessageLayout operator={operator} />;

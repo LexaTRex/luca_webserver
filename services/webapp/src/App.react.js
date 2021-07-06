@@ -22,6 +22,7 @@ import {
   COVID_TEST_PATH,
   ON_BOARDING_PATH,
   BASE_PRIVATE_MEETING_PATH,
+  CHECKIN_TO_PRIVATE_MEETING_PATH,
   EDIT_CONTACT_INFORMATION_SETTING,
 } from 'constants/routes';
 
@@ -91,16 +92,16 @@ export const Main = () => {
                         component={FeatureNotImplemented}
                       />
                       <Route
-                        component={PrivateMeeting}
-                        path={`${BASE_PRIVATE_MEETING_PATH}/:scannerId`}
+                        component={Home}
+                        path={CHECKIN_TO_PRIVATE_MEETING_PATH}
                       />
                       <Route
                         path={BASE_PRIVATE_MEETING_PATH}
                         component={PrivateMeeting}
                       />
                       <Route
-                        path={`${HOME_PATH}/:scannerId`}
                         component={Home}
+                        path={`${HOME_PATH}/:scannerId`}
                       />
                       <Route path={HOME_PATH} component={Home} />
                     </Switch>

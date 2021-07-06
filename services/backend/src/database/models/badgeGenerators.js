@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const BadgeGenerator = Sequelize.define('BadgeGenerator', {
+  return Sequelize.define('BadgeGenerator', {
     token: {
       type: DataTypes.STRING(44),
       primaryKey: true,
@@ -9,8 +9,4 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
   });
-
-  BadgeGenerator.associate = () => {};
-
-  return BadgeGenerator;
 };

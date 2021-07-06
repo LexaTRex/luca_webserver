@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const BadgePublicKey = Sequelize.define('BadgePublicKey', {
+  return Sequelize.define('BadgePublicKey', {
     keyId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -19,8 +19,4 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: false,
     },
   });
-
-  BadgePublicKey.associate = () => {};
-
-  return BadgePublicKey;
 };
