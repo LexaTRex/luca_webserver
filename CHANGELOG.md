@@ -1,10 +1,14 @@
 # Changelog
 
+### 1.5.1 (2021-07-13)
+* **backend:** ref: refactor input validations
+* **health-department:** fix: SORMAS import file
+
 ### 1.5.0 (2021-07-06)
 * **backend:** feat: replace node-mailjet with axios
 * **backend:** feat: move some error handling to cryto package
 * **backend:** feat: add GTX SMS provider
-* **backend** feat: add route to provide download url for signing tool
+* **backend:** feat: add route to provide download url for signing tool
 * **backend:** feat: return a different status code for expired SMS challenges
 * **backend:** feat: moved traceId calculation to backend
 * **backend:** feat: completely delete tracing processes after 28 days
@@ -12,23 +16,22 @@
 * **backend:** chore: colorize and improve dev logging output
 * **backend:** chore: publish traceIds for notifications when data was shared
 * **health-department:** fix: add missing mac check
-* **health-department** chore: add limit for private key file size
+* **health-department:** chore: add limit for private key file size
 * **health-department:** feat: visualise signed public keys
 * **health-department:** feat: set main font and remove duplicate definitions
 * **locations:** fix: "forgot password" displaying incorrect error message for not activated users
 * **locations:** fix: typos in registration email step
-* **locations** fix: private key modal issue
-* **locations** chore: add limit for private key file size
-* **location** feat: redesign header
-* **location** feat: checkin options for guests are directly accessible via location view
-* **location** feat: provide link to checkin options via qr code
+* **locations:** fix: private key modal issue
+* **locations:** chore: add limit for private key file size
+* **locations:** feat: redesign header
+* **locations:** feat: checkin options for guests are directly accessible via location view
+* **locations:** feat: provide link to checkin options via qr code
 * **webapp:** chore: fix typos
-* **webapp** feat: add gitlab link
+* **webapp:** feat: add gitlab link
 * **webapp:** feat: validate that private meeting is not spoofing a location
-* **webapp** feat: add a consent modal for data sharing with the health department
+* **webapp:** feat: add a consent modal for data sharing with the health department
 * security: update container base images and install security patches
 * feat: add husky for git hooks
-
 
 ### 1.4.0 (2021-06-29)
 * **backend:** feat: add test provider key route
@@ -50,7 +53,6 @@
 * **locations:** feat: updated DPA document
 * **locations:** feat: updated terms and conditions links for venues
 * **locations:** feat: trusted venues can register badges without phone validation
-
 
 ### 1.3.0 (2021-06-20)
 * **backend:** feat: improve IP blocks

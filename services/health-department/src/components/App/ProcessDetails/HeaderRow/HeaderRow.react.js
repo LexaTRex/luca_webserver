@@ -21,8 +21,11 @@ export const HeaderRow = ({ process }) => {
     isLoading: isUserLoading,
     error: userError,
     data: userData,
-  } = useQuery(`userTransfer${process.userTransferId}`, () =>
-    process.userTransferId ? decryptUserTransfer(process.userTransferId) : {}
+  } = useQuery(
+    `userTransfer${process.userTransferId}`,
+    () =>
+      process.userTransferId ? decryptUserTransfer(process.userTransferId) : {},
+    { retry: false }
   );
 
   if (isLoading || error || isUserLoading) return null;

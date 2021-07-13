@@ -1,19 +1,19 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const createSchema = z.object({
-  data: z.string().max(2048),
-  iv: z.string().length(24),
-  mac: z.string().length(44),
-  publicKey: z.string().length(88),
-  keyId: z.number().int().min(0).max(255),
+  data: z.base64({ max: 2048 }),
+  iv: z.iv(),
+  mac: z.mac(),
+  publicKey: z.ecPublicKey(),
+  keyId: z.dailyKeyId(),
 });
 
 const tanParametersSchema = z.object({
-  tan: z.string(),
+  tan: z.string().max(12),
 });
 
 const userTransferIdParametersSchema = z.object({
-  userTransferId: z.string().uuid(),
+  userTransferId: z.uuid(),
 });
 
 module.exports = {

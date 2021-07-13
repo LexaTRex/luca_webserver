@@ -7,7 +7,11 @@ import { useIntl } from 'react-intl';
 import sanitize from 'sanitize-filename';
 import ReactExport from 'react-data-export';
 import { sanitizeForCSV } from 'utils/sanitizer';
-import { getFormattedDate, getFormattedTime } from 'utils/time';
+import {
+  getFormattedDate,
+  getFormattedTime,
+  getFormattedDateTime,
+} from 'utils/time';
 import { createCSV } from 'utils/exports/csv';
 
 import { DownloadButton } from './ContactPersonView.styled';
@@ -433,7 +437,7 @@ const getSormasDownloadDataFromTraces = (traces, location, intl) => [
     'returningTraveler',
   ],
   ...traces
-    .map(({ userData, checkin, additionalData }) => {
+    .map(({ userData, checkin, checkout, additionalData }) => {
       try {
         const entry = new Array(134);
         entry[2] = 'CORONAVIRUS';
@@ -446,13 +450,20 @@ const getSormasDownloadDataFromTraces = (traces, location, intl) => [
         entry[19] = 'UNCONFIRMED';
         entry[20] = 'ACTIVE';
         entry[21] = 'FOLLOW_UP';
-        entry[25] = `${location.name} / ${location.streetName} ${
+        entry[25] = `${location.name} - ${location.streetName} ${
           location.streetNr
-        } / ${location.zipCode} ${location.state} / ${formatAdditionalData(
-          additionalData,
-          intl
-        )}`;
-        entry[37] = userData?.fn;
+        } - ${location.zipCode} ${location.state} - ${getFormattedDateTime(
+          checkin
+        )} ${intl.formatMessage({
+          id: 'sormas.to',
+        })} ${
+          checkout
+            ? getFormattedDateTime(checkout)
+            : intl.formatMessage({
+                id: 'sormas.unknown',
+              })
+        } - ${formatAdditionalData(additionalData, intl)} `;
+        entry[37] = userData?.fn ?? setUnregistredBadgeUser(intl);
         entry[38] = userData?.ln ?? setUnregistredBadgeUser(intl);
         entry[43] = 'UNKNOWN';
         entry[68] = userData?.pn;
@@ -477,7 +488,8 @@ export const SormasDownload = ({ traces, location }) => {
   const download = () => {
     try {
       const data = createCSV(
-        getSormasDownloadDataFromTraces(traces, location, intl)
+        getSormasDownloadDataFromTraces(traces, location, intl),
+        true
       );
       const filename = sanitize(
         `${location.groupName} - ${location.name}_sormas.csv`

@@ -1,4 +1,4 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const storeSignedKeysSchema = z.object({
   publicCertificate: z.string().max(8192),
@@ -7,7 +7,7 @@ const storeSignedKeysSchema = z.object({
 });
 
 const departmentIdParametersSchema = z.object({
-  departmentId: z.string().uuid(),
+  departmentId: z.uuid(),
 });
 
 module.exports = {

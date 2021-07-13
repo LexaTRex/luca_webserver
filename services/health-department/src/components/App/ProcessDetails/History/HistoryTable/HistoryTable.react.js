@@ -36,9 +36,6 @@ export const HistoryTable = ({ process, refetch }) => {
   const handleAction = location => {
     if (location.isCompleted) {
       openModal({
-        title: intl.formatMessage({
-          id: 'modal.registerHealthDepartment.title',
-        }),
         content: (
           <ContactPersonViewModal location={location} process={process} />
         ),

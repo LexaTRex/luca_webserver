@@ -18,7 +18,7 @@ const assertCSVtoData = (csv, data) => {
  * sanitizes each cell
  * uses papaparse with enable esacaping
 x */
-export const createCSV = rows => {
+export const createCSV = (rows, sormasDelimiter = false) => {
   assert(rows && rows.length > 1);
 
   const headerLength = rows[0].length;
@@ -32,6 +32,7 @@ export const createCSV = rows => {
   let csv;
   try {
     csv = Papa.unparse(sanitizedRows, {
+      ...(sormasDelimiter && { delimiter: ';' }),
       quotes: true,
       escapeFormulae: true,
     });

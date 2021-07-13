@@ -1,15 +1,12 @@
-const {
-  z,
-  passwordMeetsCriteria,
-} = require('../../../middlewares/validateSchema');
+const { z } = require('../../../utils/validation');
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().max(255),
-  newPassword: z.string().refine(password => passwordMeetsCriteria(password)),
+  newPassword: z.strongPassword(),
 });
 
 const renewSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.uuid(),
 });
 
 module.exports = {

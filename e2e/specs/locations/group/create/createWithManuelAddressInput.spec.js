@@ -1,6 +1,6 @@
 import { login } from '../../helpers/functions';
 
-const HOTEL_PHONE = '0123456789';
+const HOTEL_PHONE = '017612345678';
 
 const BASE_NAME = 'Test Group';
 const BASE_AREA = 'Some area';

@@ -3,7 +3,7 @@ import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const RESTAURANT_NAME = 'Test Restaurant';
 const RESTAURANT_ADDRESS = 'Nexenio';
-const RESTAURANT_PHONE = '0123456789';
+const RESTAURANT_PHONE = '017612345678';
 const RESTAURANT_TABLE_COUNT = '12';
 const RESTAURANT_RADIUS = '100';
 describe('Group creation', () => {

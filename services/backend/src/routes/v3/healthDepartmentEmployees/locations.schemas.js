@@ -1,7 +1,7 @@
-const { z } = require('../../../middlewares/validateSchema');
+const { z } = require('../../../utils/validation');
 
 const locationIdParametersSchema = z.object({
-  locationId: z.string().uuid(),
+  locationId: z.uuid(),
 });
 
 module.exports = {

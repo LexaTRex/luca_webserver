@@ -1,7 +1,7 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const authSchema = z.object({
-  username: z.string().email(),
+  username: z.email(),
   password: z.string().max(255),
 });
 

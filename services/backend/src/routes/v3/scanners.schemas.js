@@ -1,11 +1,11 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const scannerIdParametersSchema = z.object({
-  scannerId: z.string().uuid(),
+  scannerId: z.uuid(),
 });
 
 const scannerAccessIdParametersSchema = z.object({
-  scannerAccessId: z.string().uuid(),
+  scannerAccessId: z.uuid(),
 });
 
 module.exports = {

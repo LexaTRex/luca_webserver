@@ -3,7 +3,7 @@ import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const HOTEL_NAME = 'Test Hotel';
 const HOTEL_ADDRESS = 'Nexenio';
-const HOTEL_PHONE = '0123456789';
+const HOTEL_PHONE = '017612345678';
 const HOTEL_AREA = 'Restaurant';
 const HOTEL_RADIUS = '100';
 

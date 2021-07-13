@@ -2,7 +2,7 @@ const forge = require('node-forge');
 const jwt = require('jsonwebtoken');
 const assert = require('assert');
 const config = require('config');
-const z = require('zod');
+const { z } = require('./validation');
 
 const D_TRUST_ROOT_CA = forge.pki.certificateFromPem(
   config.get('certs.dtrust.root')
@@ -15,12 +15,12 @@ const D_TRUST_BASIC_CA = forge.pki.certificateFromPem(
 const ROOT_CA_STORE = forge.pki.createCaStore([D_TRUST_ROOT_CA]);
 
 const jwtSchema = z.object({
-  sub: z.string().uuid().length(36),
+  sub: z.uuid(),
   iss: z.string().length(40),
   name: z.string().max(255),
-  key: z.string().length(88),
+  key: z.ecPublicKey(),
   type: z.enum(['publicHDEKP', 'publicHDSKP']),
-  iat: z.number(),
+  iat: z.unixTimestamp(),
 });
 
 const getFingerprint = certificate => {

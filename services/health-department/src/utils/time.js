@@ -1,12 +1,13 @@
 import moment from 'moment';
 
-export const getFormattedDate = timestamp => {
-  return moment.unix(timestamp).format('DD.MM.YYYY');
-};
+export const getFormattedDate = timestamp =>
+  moment.unix(timestamp).format('DD.MM.YYYY');
 
-export const getFormattedTime = timestamp => {
-  return moment.unix(timestamp).format('HH:mm');
-};
+export const getFormattedTime = timestamp =>
+  moment.unix(timestamp).format('HH:mm');
+
+export const getFormattedDateTime = timestamp =>
+  `${getFormattedDate(timestamp)} ${getFormattedTime(timestamp)}`;
 
 export const sortByTimeAsc = locations =>
   locations.sort((a, b) => {

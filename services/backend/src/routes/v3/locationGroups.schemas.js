@@ -1,16 +1,16 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const createSchema = z.object({
-  type: z.string().max(128),
-  name: z.string().max(255),
-  firstName: z.string().max(255).optional(),
-  lastName: z.string().max(255).optional(),
-  phone: z.string().max(255),
-  streetName: z.string().max(255),
-  streetNr: z.string().max(255),
-  zipCode: z.string().max(255),
-  city: z.string().max(255),
-  state: z.string().max(255).optional().nullable(),
+  type: z.safeString().max(128),
+  name: z.safeString().max(255),
+  firstName: z.safeString().max(255).optional(),
+  lastName: z.safeString().max(255).optional(),
+  phone: z.phoneNumber(),
+  streetName: z.safeString().max(255),
+  streetNr: z.safeString().max(255),
+  zipCode: z.zipCode(),
+  city: z.safeString().max(255),
+  state: z.safeString().max(255).optional().nullable(),
   lat: z.number().optional().nullable(),
   lng: z.number().optional().nullable(),
   radius: z.number().int().nonnegative().optional().nullable(),
@@ -18,8 +18,8 @@ const createSchema = z.object({
   additionalData: z
     .array(
       z.object({
-        key: z.string(),
-        label: z.string().optional(),
+        key: z.safeString().max(255),
+        label: z.safeString().max(255).optional(),
         isRequired: z.boolean().optional(),
       })
     )
@@ -27,34 +27,29 @@ const createSchema = z.object({
   areas: z
     .array(
       z.object({
-        name: z.string(),
+        name: z.safeString().max(255),
         isIndoor: z.boolean(),
       })
     )
+    .max(20)
     .optional(),
   isIndoor: z.boolean(),
 });
 
 const searchSchema = z.object({
   name: z.string().min(3).max(128),
-  zipCode: z.string().length(5).optional(),
-  limit: z
-    .string()
-    .regex(/^\d{1,4}$/)
-    .optional(),
-  offset: z
-    .string()
-    .regex(/^\d{1,9}$/)
-    .optional(),
+  zipCode: z.zipCode().optional(),
+  limit: z.integerString().optional(),
+  offset: z.integerString().optional(),
 });
 
 const groupIdSchema = z.object({
-  groupId: z.string().uuid(),
+  groupId: z.uuid(),
 });
 
 const updateSchema = z.object({
-  name: z.string().max(255).optional(),
-  phone: z.string().max(255).optional(),
+  name: z.safeString().max(255).optional(),
+  phone: z.phoneNumber().optional(),
 });
 
 module.exports = {

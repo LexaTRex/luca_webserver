@@ -1,10 +1,10 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const badgeCreateSchema = z.object({
-  userId: z.string().uuid(),
-  publicKey: z.string().max(88),
-  data: z.string().length(44),
-  signature: z.string().max(96),
+  userId: z.uuid(),
+  publicKey: z.ecPublicKey(),
+  data: z.base64({ rawLength: 32 }),
+  signature: z.ecSignature(),
 });
 
 module.exports = { badgeCreateSchema };

@@ -1,12 +1,12 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const storeKeysSchema = z.object({
-  publicHDEKP: z.string().length(88),
-  publicHDSKP: z.string().length(88),
+  publicHDEKP: z.ecPublicKey(),
+  publicHDSKP: z.ecPublicKey(),
 });
 
 const departmentIdParametersSchema = z.object({
-  departmentId: z.string().uuid(),
+  departmentId: z.uuid(),
 });
 
 module.exports = {

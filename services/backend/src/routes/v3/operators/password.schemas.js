@@ -1,26 +1,22 @@
-const {
-  passwordMeetsCriteria,
-  supportedLanguagesEnum,
-  z,
-} = require('../../../middlewares/validateSchema');
+const { z } = require('../../../utils/validation');
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().max(255),
-  newPassword: z.string().refine(password => passwordMeetsCriteria(password)),
+  newPassword: z.strongPassword(),
 });
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email().max(255),
-  lang: supportedLanguagesEnum,
+  email: z.email(),
+  lang: z.supportedLanguage(),
 });
 
 const resetPasswordSchema = z.object({
-  resetId: z.string().uuid(),
-  newPassword: z.string().refine(password => passwordMeetsCriteria(password)),
+  resetId: z.uuid(),
+  newPassword: z.strongPassword(),
 });
 
 const resetRequestSchema = z.object({
-  resetId: z.string().uuid(),
+  resetId: z.uuid(),
 });
 
 module.exports = {

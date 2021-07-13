@@ -1,9 +1,6 @@
-const z = require('zod');
 const express = require('express');
 const status = require('http-status');
-const parsePhoneNumber = require('libphonenumber-js/max');
 const logger = require('../utils/logger');
-const passwordCheck = require('../utils/passwordCheck');
 
 const defaultJsonMiddleware = express.json();
 
@@ -59,24 +56,8 @@ const validateParametersSchema = schema => async (request, response, next) => {
   }
 };
 
-const supportedLanguagesEnum = z.union([z.literal('de'), z.literal('en')]);
-
-z.telephoneNumber = () =>
-  z.string(32).refine(
-    value => {
-      const number = parsePhoneNumber(value, 'DE');
-      return !!number && number.isValid();
-    },
-    {
-      message: 'invalid phonenumber',
-    }
-  );
-
 module.exports = {
-  z,
   validateSchema,
   validateQuerySchema,
   validateParametersSchema,
-  supportedLanguagesEnum,
-  passwordMeetsCriteria: passwordCheck,
 };

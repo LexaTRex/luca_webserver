@@ -20,18 +20,19 @@ router.post('/clean', async (request, response) => {
   ]);
 
   await Promise.all([
-    workflowOperator.update({
+    workflowOperator?.update({
       publicKey: null,
       password: 'workflowTesting!',
     }),
-    healthDepartmentEmployee.update({
+    healthDepartmentEmployee?.update({
       password: 'testing',
     }),
-    database.LocationGroup.destroy({
-      where: {
-        operatorId: workflowOperator.uuid,
-      },
-    }),
+    workflowOperator &&
+      database.LocationGroup.destroy({
+        where: {
+          operatorId: workflowOperator.uuid,
+        },
+      }),
     database.HealthDepartment.update(
       {
         publicHDEKP: null,

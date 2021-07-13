@@ -1,33 +1,31 @@
-const { z } = require('../../middlewares/validateSchema');
-
-const traceIdSchema = z.string().length(24);
+const { z } = require('../../utils/validation');
 
 const checkinSchema = z.object({
-  traceId: traceIdSchema,
-  scannerId: z.string().uuid(),
-  timestamp: z.number().int().positive(),
-  data: z.string().max(128),
-  iv: z.string().length(24),
-  mac: z.string().length(44),
-  publicKey: z.string().length(88),
+  traceId: z.traceId(),
+  scannerId: z.uuid(),
+  timestamp: z.unixTimestamp(),
+  data: z.base64({ max: 128 }),
+  iv: z.iv(),
+  mac: z.mac(),
+  publicKey: z.ecPublicKey(),
   deviceType: z.number().int().min(0),
 });
 
 const checkoutSchema = z.object({
-  traceId: traceIdSchema,
-  timestamp: z.number().int().positive(),
+  traceId: z.traceId(),
+  timestamp: z.unixTimestamp(),
 });
 
 const additionalDataSchema = z.object({
-  traceId: traceIdSchema,
-  data: z.string().max(4096),
-  iv: z.string().length(24),
-  mac: z.string().length(44),
-  publicKey: z.string().length(88),
+  traceId: z.traceId(),
+  data: z.base64({ max: 4096 }),
+  iv: z.iv(),
+  mac: z.mac(),
+  publicKey: z.ecPublicKey(),
 });
 
 const bulkSchema = z.object({
-  traceIds: z.array(traceIdSchema).max(360),
+  traceIds: z.array(z.traceId()).max(360),
 });
 
 const traceIdParametersSchema = z.object({
@@ -40,7 +38,7 @@ const traceIdParametersSchema = z.object({
 const maxTracesPerDay = 1500; // rounded up from 60 [minutes] * 24 [hours]
 const numberOfDays = 14;
 const traceSchema = z.object({
-  traceIds: z.array(traceIdSchema).max(maxTracesPerDay * numberOfDays),
+  traceIds: z.array(z.traceId()).max(maxTracesPerDay * numberOfDays),
 });
 
 module.exports = {

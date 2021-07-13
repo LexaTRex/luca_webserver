@@ -73,7 +73,7 @@ const customFormat = format(info => {
     ] = `${info.level}${padding} ${statusCodeMessage}${info.message} ${stringifiedRest}`;
   } else {
     // eslint-disable-next-line no-param-reassign
-    info[MESSAGE] = `${info.level}${padding} ${info.message}`;
+    info[String(MESSAGE)] = `${info.level}${padding} ${info.message}`;
   }
 
   return info;

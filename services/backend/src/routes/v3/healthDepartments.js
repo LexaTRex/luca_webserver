@@ -63,7 +63,7 @@ router.post(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    if (department.publicHDEKP) {
+    if (department.publicHDEKP || department.publicHDSKP) {
       return response.sendStatus(status.FORBIDDEN);
     }
 

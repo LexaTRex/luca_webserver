@@ -1,16 +1,16 @@
-const { z } = require('../../../middlewares/validateSchema');
+const { z } = require('../../../utils/validation');
 
 const createSchema = z.object({
-  groupId: z.string().uuid(),
-  locationName: z.string().max(255),
-  firstName: z.string().max(255).optional(),
-  lastName: z.string().max(255).optional(),
-  phone: z.string().max(255),
-  streetName: z.string().max(255),
-  streetNr: z.string().max(255),
-  zipCode: z.string().max(255),
-  city: z.string().max(255),
-  state: z.string().max(255).optional().nullable(),
+  groupId: z.uuid(),
+  locationName: z.safeString().max(255),
+  firstName: z.safeString().max(255).optional(),
+  lastName: z.safeString().max(255).optional(),
+  phone: z.phoneNumber(),
+  streetName: z.safeString().max(255),
+  streetNr: z.safeString().max(255),
+  zipCode: z.zipCode(),
+  city: z.safeString().max(255),
+  state: z.safeString().max(255).optional().nullable(),
   lat: z.number().optional().nullable(),
   lng: z.number().optional().nullable(),
   radius: z.number().int().nonnegative().max(5000).optional().nullable(),
@@ -18,21 +18,21 @@ const createSchema = z.object({
   additionalData: z
     .array(
       z.object({
-        key: z.string(),
-        label: z.string().optional(),
+        key: z.safeString().max(255),
+        label: z.safeString().max(255).optional(),
         isRequired: z.boolean().optional(),
       })
     )
     .optional(),
   isIndoor: z.boolean().optional(),
-  type: z.string().max(128),
+  type: z.safeString().max(128),
 });
 
 const updateSchema = z.object({
-  locationName: z.string().max(255).optional(),
-  firstName: z.string().max(255).optional(),
-  lastName: z.string().max(255).optional(),
-  phone: z.string().max(255).optional(),
+  locationName: z.safeString().max(255).optional(),
+  firstName: z.safeString().max(255).optional(),
+  lastName: z.safeString().max(255).optional(),
+  phone: z.phoneNumber().optional(),
   tableCount: z.number().int().positive().optional().nullable(),
   shouldProvideGeoLocation: z.boolean().optional(),
   radius: z.number().int().nonnegative().max(5000).optional().nullable(),
@@ -40,7 +40,7 @@ const updateSchema = z.object({
 });
 
 const locationIdParametersSchema = z.object({
-  locationId: z.string().uuid(),
+  locationId: z.uuid(),
 });
 
 module.exports = {

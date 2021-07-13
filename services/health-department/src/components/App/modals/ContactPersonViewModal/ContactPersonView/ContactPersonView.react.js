@@ -76,7 +76,7 @@ const ContactPersonViewRaw = ({
   }, [isLoading, contactPersons, intl]);
 
   useEffect(() => {
-    if (!traces) return;
+    if (traces === null) return;
     if (!contactFromIndexPerson) {
       setFilteredTraces(traces);
       return;

@@ -1,19 +1,16 @@
-const {
-  z,
-  supportedLanguagesEnum,
-} = require('../../../middlewares/validateSchema');
+const { z } = require('../../../utils/validation');
 
 const updateMailSchema = z.object({
-  email: z.string().email().max(255),
-  lang: supportedLanguagesEnum,
+  email: z.email(),
+  lang: z.supportedLanguage(),
 });
 
 const activationSchema = z.object({
-  activationId: z.string().uuid(),
+  activationId: z.uuid(),
 });
 
 const emailParametersSchema = z.object({
-  email: z.string().email().max(255),
+  email: z.email(),
 });
 
 module.exports = {

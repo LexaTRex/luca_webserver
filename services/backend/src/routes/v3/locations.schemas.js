@@ -1,11 +1,11 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const locationIdParametersSchema = z.object({
-  locationId: z.string().uuid(),
+  locationId: z.uuid(),
 });
 
 const privateEventCreateSchema = z.object({
-  publicKey: z.string().length(88),
+  publicKey: z.ecPublicKey(),
 });
 
 const locationTracesQuerySchema = z.object({
@@ -13,7 +13,7 @@ const locationTracesQuerySchema = z.object({
 });
 
 const accessIdParametersSchema = z.object({
-  accessId: z.string().uuid(),
+  accessId: z.uuid(),
 });
 
 module.exports = {

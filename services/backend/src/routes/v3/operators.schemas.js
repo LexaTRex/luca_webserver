@@ -1,32 +1,28 @@
-const {
-  z,
-  passwordMeetsCriteria,
-  supportedLanguagesEnum,
-} = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const createSchema = z.object({
-  firstName: z.string().max(255),
-  lastName: z.string().max(255),
-  email: z.string().email().max(255),
-  password: z.string().refine(value => passwordMeetsCriteria(value)),
+  firstName: z.safeString().max(255),
+  lastName: z.safeString().max(255),
+  email: z.email(),
+  password: z.strongPassword(),
   agreement: z.boolean(),
   avvAccepted: z.literal(true),
   lastVersionSeen: z.string().max(32).optional(),
-  lang: supportedLanguagesEnum,
+  lang: z.supportedLanguage(),
 });
 
 const activationSchema = z.object({
-  activationId: z.string().uuid(),
-  lang: supportedLanguagesEnum,
+  activationId: z.uuid(),
+  lang: z.supportedLanguage(),
 });
 
 const storePublicKeySchema = z.object({
-  publicKey: z.string().length(88),
+  publicKey: z.ecPublicKey(),
 });
 
 const updateOperatorSchema = z.object({
-  firstName: z.string().max(255).optional(),
-  lastName: z.string().max(255).optional(),
+  firstName: z.safeString().max(255).optional(),
+  lastName: z.safeString().max(255).optional(),
   avvAccepted: z.boolean().optional(),
   lastVersionSeen: z.string().max(32).optional(),
 });

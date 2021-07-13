@@ -1,46 +1,37 @@
-const config = require('config');
-const { z } = require('../../../middlewares/validateSchema');
+const { z } = require('../../../utils/validation');
 
 const keyIdParametersSchema = z.object({
-  keyId: z.string(),
+  keyId: z.integerString(),
 });
 
 const rotateSchema = z.object({
-  publicKey: z.string().length(88),
-  signature: z.string().max(120),
-  createdAt: z.number().int().positive(),
-  keyId: z
-    .number()
-    .int()
-    .min(0)
-    .max(config.get('keys.daily.max') - 1),
+  publicKey: z.ecPublicKey(),
+  signature: z.ecSignature(),
+  createdAt: z.unixTimestamp(),
+  keyId: z.dailyKeyId(),
   encryptedDailyPrivateKeys: z.array(
     z.object({
-      healthDepartmentId: z.string().uuid(),
-      data: z.string().length(44),
-      iv: z.string().length(24),
-      mac: z.string().length(44),
-      publicKey: z.string().length(88),
-      signature: z.string().max(120),
+      healthDepartmentId: z.uuid(),
+      data: z.base64({ rawLength: 32 }),
+      iv: z.iv(),
+      mac: z.mac(),
+      publicKey: z.ecPublicKey(),
+      signature: z.ecSignature(),
     })
   ),
 });
 
 const rekeySchema = z.object({
-  keyId: z
-    .number()
-    .int()
-    .min(0)
-    .max(config.get('keys.daily.max') - 1),
-  createdAt: z.number().int().positive(),
+  keyId: z.dailyKeyId(),
+  createdAt: z.unixTimestamp(),
   encryptedDailyPrivateKeys: z.array(
     z.object({
-      healthDepartmentId: z.string().uuid(),
-      data: z.string().length(44),
-      iv: z.string().length(24),
-      mac: z.string().length(44),
-      publicKey: z.string().length(88),
-      signature: z.string().max(120),
+      healthDepartmentId: z.uuid(),
+      data: z.base64({ rawLength: 32 }),
+      iv: z.iv(),
+      mac: z.mac(),
+      publicKey: z.ecPublicKey(),
+      signature: z.ecSignature(),
     })
   ),
 });

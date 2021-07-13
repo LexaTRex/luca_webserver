@@ -9,7 +9,7 @@ export function fillForm({
   houseNumber = faker.address.streetAddress(),
   zip = faker.address.zipCode(),
   city = faker.address.city(),
-  phoneNumber = faker.phone.phoneNumber('0049165#######'),
+  phoneNumber = faker.phone.phoneNumber('0049176#######'),
   email = faker.internet.email(),
 } = {}) {
   cy.getByCy('firstName').type(firstName);

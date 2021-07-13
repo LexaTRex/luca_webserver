@@ -1,7 +1,7 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const formIdParametersSchema = z.object({
-  formId: z.string().uuid(),
+  formId: z.uuid(),
 });
 
 module.exports = {

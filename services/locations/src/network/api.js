@@ -104,7 +104,7 @@ export const updateGroup = parameters => {
     method: 'PATCH',
     headers,
     body: JSON.stringify(parameters.data),
-  });
+  }).then(checkResponse);
 };
 
 export const deleteGroup = groupId => {
@@ -119,7 +119,9 @@ export const createGroup = data => {
     method: 'POST',
     headers,
     body: JSON.stringify(data),
-  }).then(response => response.json());
+  })
+    .then(checkResponse)
+    .then(response => response.json());
 };
 
 // OPERATOR

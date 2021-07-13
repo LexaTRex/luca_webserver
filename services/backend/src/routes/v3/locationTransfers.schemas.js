@@ -1,45 +1,41 @@
-const {
-  z,
-  supportedLanguagesEnum,
-} = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const createSchema = z.object({
   locations: z
     .array(
       z.object({
-        time: z.array(z.number().int().positive()).length(2),
-        locationId: z.string().uuid(),
+        time: z.array(z.unixTimestamp()).length(2),
+        locationId: z.uuid(),
       })
     )
     .nonempty(),
-  userTransferId: z.string().uuid().optional(),
-  lang: supportedLanguagesEnum,
+  userTransferId: z.uuid().optional(),
+  lang: z.supportedLanguage(),
 });
 
 const sendSchema = z.object({
-  traces: [
-    {
-      traceId: z.string().length(24),
-      data: z.string().length(44),
-      publicKey: z.string().length(88),
-      keyId: z.number().int().min(0),
+  traces: z.array(
+    z.object({
+      traceId: z.traceId(),
+      data: z.base64({ rawLength: 32 }),
+      publicKey: z.ecCompressedPublicKey(),
+      keyId: z.dailyKeyId(),
       version: z.number().int().optional(),
-      verification: z.string().length(24),
-      deviceType: z.number().int().min(0),
+      verification: z.base64({ rawLength: 8 }),
       additionalData: z
         .object({
-          data: z.string().max(1024),
-          publicKey: z.string().length(88),
-          mac: z.string().length(44),
-          iv: z.string().length(24),
+          data: z.base64({ max: 1024 }),
+          publicKey: z.ecPublicKey(),
+          mac: z.mac(),
+          iv: z.iv(),
         })
         .optional(),
-    },
-  ],
+    })
+  ),
 });
 
 const transferIdParametersSchema = z.object({
-  transferId: z.string().uuid(),
+  transferId: z.uuid(),
 });
 
 module.exports = {

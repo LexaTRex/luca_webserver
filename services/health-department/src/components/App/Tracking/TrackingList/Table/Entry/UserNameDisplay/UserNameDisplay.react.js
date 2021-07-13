@@ -13,7 +13,8 @@ export const UserNameDisplay = ({ userTransferId, onProcessName }) => {
       decryptUserTransfer(userTransferId).then(processData => {
         onProcessName(userTransferId, processData?.fn + processData?.ln);
         return processData;
-      })
+      }),
+    { retry: false }
   );
 
   if (error instanceof IncompleteDataError) {

@@ -1,16 +1,16 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const requestSchema = z.object({
-  phone: z.telephoneNumber(),
+  phone: z.phoneNumber(),
 });
 
 const verifySchema = z.object({
-  challengeId: z.string().uuid(),
+  challengeId: z.uuid(),
   tan: z.string().max(6),
 });
 
 const bulkVerifySchema = z.object({
-  challengeIds: z.array(z.string().uuid()).min(1).max(10),
+  challengeIds: z.array(z.uuid()).min(1).max(10),
   tan: z.string().max(6),
 });
 

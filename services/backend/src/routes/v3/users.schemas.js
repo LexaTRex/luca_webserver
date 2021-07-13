@@ -1,26 +1,26 @@
-const { z } = require('../../middlewares/validateSchema');
+const { z } = require('../../utils/validation');
 
 const createSchema = z.object({
-  data: z.string().max(1024),
-  iv: z.string().length(24),
-  mac: z.string().length(44),
-  signature: z.string().max(96),
-  publicKey: z.string().length(88),
+  data: z.base64({ max: 1024 }),
+  iv: z.iv(),
+  mac: z.mac(),
+  signature: z.ecSignature(),
+  publicKey: z.ecPublicKey(),
 });
 
 const userIdParametersSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
 });
 
 const patchSchema = z.object({
-  data: z.string().max(1024),
-  iv: z.string().length(24),
-  mac: z.string().length(44),
-  signature: z.string().max(96),
+  data: z.base64({ max: 1024 }),
+  iv: z.iv(),
+  mac: z.mac(),
+  signature: z.ecSignature(),
 });
 
 const deleteSchema = z.object({
-  signature: z.string().max(96),
+  signature: z.ecSignature(),
 });
 
 module.exports = {
