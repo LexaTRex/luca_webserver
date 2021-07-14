@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.5.2 (2021-07-14)
+* **backend:** fix: mark expireAt as optional for test redeem request
+
 ### 1.5.1 (2021-07-13)
 * **backend:** ref: refactor input validations
 * **health-department:** fix: SORMAS import file
