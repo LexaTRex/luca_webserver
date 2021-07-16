@@ -284,7 +284,15 @@ export const CSVDownload = ({ traces, location }) => {
         getCSVDownloadDataFromTraces(traces, location, intl)
       );
       const filename = sanitize(`${location.name}_luca.csv`);
-      const blob = new Blob([data], { type: 'text/csv;charset=utf-8' });
+      const blob = new Blob(
+        [
+          new Uint8Array([0xef, 0xbb, 0xbf]), // UTF-8 BOM
+          data,
+        ],
+        {
+          type: 'text/csv;charset=utf-8',
+        }
+      );
       FileSaver.saveAs(blob, filename);
     } catch (error) {
       console.error(error);
@@ -494,7 +502,13 @@ export const SormasDownload = ({ traces, location }) => {
       const filename = sanitize(
         `${location.groupName} - ${location.name}_sormas.csv`
       );
-      const blob = new Blob([data], { type: 'text/csv;charset=utf-8' });
+      const blob = new Blob(
+        [
+          new Uint8Array([0xef, 0xbb, 0xbf]), // UTF-8 BOM
+          data,
+        ],
+        { type: 'text/csv;charset=utf-8' }
+      );
       FileSaver.saveAs(blob, filename);
     } catch {
       showErrorNotification(intl);

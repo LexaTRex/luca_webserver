@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.5.3 (2021-07-16)
+* **health-department:** feat: add utf-8 BOM for better excel compatibility
+
 ### 1.5.2 (2021-07-14)
 * **backend:** fix: mark expireAt as optional for test redeem request
 
