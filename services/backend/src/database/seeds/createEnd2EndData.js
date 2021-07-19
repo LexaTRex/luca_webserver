@@ -159,11 +159,35 @@ const groups = [
   },
 ];
 
+// This is junk data and is only used for the bloom filter test
+const badges = [
+  {
+    uuid: 'c7258950-2fda-4ac5-b49c-68fb123a3bfa',
+    data: '',
+    deviceType: 'static',
+    publicKey: 'AiCjeREjiUOUqDcxtz/SfCIm7mvCZfKP1Tdr+TKUJ3a7',
+  },
+  {
+    uuid: '9184336d-930e-4b85-a2b3-4d303111fcba',
+    data: 'zgjnCzccRasREjLx1dnuex56mTN5QFvUGYGZOLWdzrib',
+    deviceType: 'static',
+    publicKey: 'A47A5rTlfYRcMdwFrAy8cJBBvH4V/ldVeUC/lofAca/u',
+  },
+  {
+    uuid: '2a4c47e3-834d-4c85-9335-2628cbbfca0f',
+    data: 'rM9pFtUU3dGyMjDCP1EonYHoVngdmafdIb8ThWPjHFJS',
+    deviceType: 'static',
+    publicKey: 'ArZP4Xyzg46XviignaTiOkufUPDRPd4Z08TuJ6BZNB8p',
+    deletedAt: '2021-06-09 12:27:26.056+00',
+  },
+];
+
 module.exports = {
   up: async queryInterface => {
     await queryInterface.bulkInsert('Operators', operators);
     await queryInterface.bulkInsert('LocationGroups', groups);
     await queryInterface.bulkInsert('Locations', locations);
+    await queryInterface.bulkInsert('Users', badges);
   },
   down: () => {
     console.warn('Not implemented.');

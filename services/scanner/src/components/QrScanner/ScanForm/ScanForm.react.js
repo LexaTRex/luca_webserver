@@ -14,6 +14,8 @@ import { useModal } from 'components/hooks/useModal';
 import { AdditionalDataModal } from 'components/modals/AdditionalDataModal';
 import { Update } from 'components/Update';
 
+import { reloadFilter } from 'utils/bloomFilter';
+
 import {
   FormWrapper,
   Wrapper,
@@ -141,6 +143,10 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
     triggerFocus();
   }, [outerFocus, triggerFocus, setOuterFocus]);
 
+  useEffect(() => {
+    reloadFilter();
+  }, []);
+
   return (
     <>
       <Update latestUpdate={latestUpdate} callback={refetch} cam={false} />
@@ -159,7 +165,7 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
             </Count>
           </Content>
           {isSuccess ? (
-            <SuccessOverlay />
+            <SuccessOverlay data-cy="badgeCheckInSuccess" />
           ) : (
             <form onSubmit={onSubmit}>
               <HiddenInput

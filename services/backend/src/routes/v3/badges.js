@@ -14,6 +14,11 @@ const {
 const { validateSchema } = require('../../middlewares/validateSchema');
 const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
+const {
+  getBloomFilter,
+  getBloomFilterEtag,
+} = require('../../utils/bloomFilter');
+
 const database = require('../../database');
 const { badgeCreateSchema } = require('./badges.schemas');
 
@@ -69,5 +74,20 @@ router.post(
     });
   }
 );
+
+router.get('/bloomFilter', async (request, response) => {
+  const bloomFilterEtag = await getBloomFilterEtag();
+  if (bloomFilterEtag === request.headers['If-None-Match']) {
+    return response.sendStatus(status.NOT_MODIFIED);
+  }
+
+  const bloomFilter = await getBloomFilter();
+  if (!bloomFilter) {
+    return response.sendStatus(status.NOT_FOUND);
+  }
+
+  response.setHeader('ETag', bloomFilterEtag);
+  return response.send(bloomFilter);
+});
 
 module.exports = router;

@@ -30,7 +30,7 @@ export const de = {
   'error.genericScanner':
     'Der Scanner hatte ein Problem. Bitte versuche es erneut.',
   'error.noUserData':
-    'Es scheint als ob du noch keine Kontaktdaten hinterlegt hast. Wenn du dies erst kürzlich getan hast, warte bitte einige Minuten und versuche es nocheinmal.',
+    'Es scheint, als ob du noch keine Kontaktdaten hinterlegt hast. Wenn du dies erst kürzlich getan hast, warte bitte einige Minuten und versuche es noch einmal.',
   'error.noBloomFilter':
     'Es kann nicht überprüft werden, ob schon Kontaktdaten hinterlegt wurden.',
   'error.wrongLocalTime':

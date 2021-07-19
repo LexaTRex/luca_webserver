@@ -105,6 +105,10 @@ module.exports = {
       },
     },
   },
+  bloomFilter: {
+    // One in 100 million badge users
+    falsePositiveRate: 0.00000001,
+  },
   certs: {
     dtrust: {
       root: `-----BEGIN CERTIFICATE-----

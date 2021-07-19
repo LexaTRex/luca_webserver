@@ -5,6 +5,7 @@ export const TIMESTAMP_OUTDATED = 'TIMESTAMP_OUTDATED';
 export const VERSION_NOT_SUPPORTED = 'VERSION_NOT_SUPPORTED';
 export const DUPLICATE_CHECKIN = 'DUPLICATE_CHECKIN';
 export const WRONG_LOCAL_TIME = 'WRONG_LOCAL_TIME';
+export const NO_USER_DATA = 'NO_USER_DATA';
 
 export const notifyScanError = (error, intl, onClose = () => {}) => {
   switch (error) {
@@ -43,6 +44,15 @@ export const notifyScanError = (error, intl, onClose = () => {}) => {
     case WRONG_LOCAL_TIME:
       notification.error({
         message: intl.formatMessage({ id: 'error.wrongLocalTime' }),
+        onClose: () => onClose(),
+      });
+      break;
+    case NO_USER_DATA:
+      notification.error({
+        className: 'noBadgeUserDataError',
+        message: intl.formatMessage({
+          id: 'error.noUserData',
+        }),
         onClose: () => onClose(),
       });
       break;

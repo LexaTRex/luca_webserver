@@ -82,3 +82,13 @@ export const getBadgeAttestationPublicKeys = async () => {
   }
   return response.json();
 };
+
+// BLOOM FILTER
+export const getBloomFilter = () => {
+  return fetch(`${API_PATH}v3/badges/bloomFilter`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/octet-stream',
+    },
+  });
+};

@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/backend",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -24,12 +24,14 @@
   "dependencies": {
     "@lucaapp/crypto": "2.0.3",
     "axios": "0.21.1",
+    "bloomit": "1.1.1",
     "colors": "1.4.0",
     "config": "3.3.6",
     "connect-session-sequelize": "7.1.1",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "escape-html": "1.0.3",
+    "etag": "1.8.1",
     "express": "4.17.1",
     "express-async-errors": "3.1.1",
     "express-rate-limit": "5.2.6",

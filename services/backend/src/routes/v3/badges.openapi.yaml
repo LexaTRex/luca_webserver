@@ -1,4 +1,28 @@
 paths:
+  /badges/bloomFilter:
+    get:
+      tags:
+        - Badges
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '304':
+          description: Not Modified
+        '404':
+          description: Not Found
+      operationId: get-bloomFilter
+      description: Get a bloom filter that holds all unregistered badge UUIDs
+    parameters:
+      - schema:
+          type: string
+        name: If-None-Match
+        in: header
+        required: true
   /badges/:
     post:
       summary: Create badge user

@@ -5,12 +5,14 @@ const router = require('express').Router();
 const moment = require('moment');
 const crypto = require('crypto');
 const { Op, fn, col } = require('sequelize');
+const status = require('http-status');
 
 const { GET_RANDOM_BYTES, hexToBase64 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
 const featureFlag = require('../../utils/featureFlag');
 const { generateNotifications } = require('../../utils/notifications.js');
+const { updateBloomFilter } = require('../../utils/bloomFilter.js');
 
 router.post('/deleteOldTraces', async (request, response) => {
   const t0 = performance.now();
@@ -259,6 +261,11 @@ router.post('/regenerateNotifications', async (request, response) => {
   response.send({
     time: performance.now() - t0,
   });
+});
+
+router.post('/regenerateBloomFilter', async (request, response) => {
+  updateBloomFilter();
+  response.sendStatus(status.NO_CONTENT);
 });
 
 module.exports = router;

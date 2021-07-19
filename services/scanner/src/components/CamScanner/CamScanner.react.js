@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Tick } from 'react-crude-animated-tick';
 
 import { useIntl } from 'react-intl';
@@ -22,6 +22,7 @@ import { getCurrentCount, getTotalCount, getAdditionalData } from 'network/api';
 import { Header } from 'components/Header';
 import { isMobile } from 'utils/environment';
 import { notifyScanError, handleScanData } from 'helpers';
+import { reloadFilter } from 'utils/bloomFilter';
 
 import { AdditionalDataModal } from 'components/modals/AdditionalDataModal';
 import { Update } from 'components/Update';
@@ -115,6 +116,10 @@ export const CamScanner = ({ scanner }) => {
       refetch,
     });
   };
+
+  useEffect(() => {
+    reloadFilter();
+  }, []);
 
   return (
     <>

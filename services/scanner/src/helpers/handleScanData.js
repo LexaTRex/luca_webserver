@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { hexToUuid4 } from '@lucaapp/crypto';
 
 import { SCAN_TIMEOUT } from 'constants/timeouts';
 import { MINIMAL_SUPPORT_VERION } from 'constants/versionSupport';
@@ -7,8 +8,11 @@ import { createCheckinV3 } from 'network/api';
 
 import { isLocalTimeCorrect } from 'helpers/time';
 import { decode, STATIC_DEVICE_TYPE } from 'utils/qr';
+import { reloadFilter, bloomFilterContainsUUID } from 'utils/bloomFilter';
 
 import {
+  getV3BadgeRawUserId,
+  getV4BadgeRawUserId,
   getV3BadgeCheckinPayload,
   getV4BadgeCheckinPayload,
   getV3AppCheckinPayload,
@@ -19,6 +23,7 @@ import {
   DUPLICATE_CHECKIN,
   TIMESTAMP_OUTDATED,
   VERSION_NOT_SUPPORTED,
+  NO_USER_DATA,
   WRONG_LOCAL_TIME,
   notifyScanError,
 } from './errorHandling';
@@ -37,6 +42,13 @@ const handleV3StaticData = parameters => {
     qrData,
     refetch,
   } = parameters;
+
+  const uuid = hexToUuid4(getV3BadgeRawUserId(qrData));
+  if (bloomFilterContainsUUID(uuid)) {
+    notifyScanError(NO_USER_DATA, intl);
+    reloadFilter(true);
+    return;
+  }
 
   const v3BagdePayload = getV3BadgeCheckinPayload(qrData, scanner);
 
@@ -120,6 +132,13 @@ const handleV4StaticData = async parameters => {
     qrData,
     refetch,
   } = parameters;
+
+  const uuid = hexToUuid4(await getV4BadgeRawUserId(qrData));
+  if (bloomFilterContainsUUID(uuid)) {
+    notifyScanError(NO_USER_DATA, intl);
+    reloadFilter(true);
+    return;
+  }
 
   const v4BadgePayload = await getV4BadgeCheckinPayload(qrData, scanner);
   createCheckinV3(v4BadgePayload)

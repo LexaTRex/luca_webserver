@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.5.4 (2021-07-21)
+* **scanner:** feat: deny checkins from unregistered badges via bloomfilter
+
 ### 1.5.3 (2021-07-16)
 * **health-department:** feat: add utf-8 BOM for better excel compatibility
 

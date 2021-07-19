@@ -28,6 +28,11 @@ export const getTraceId = tracingSeed => {
   return HMAC_SHA256(userId + int32ToHex(now), userTracingSecret).slice(0, 32);
 };
 
+// V3 BADGE
+export const getV3BadgeRawUserId = qrData => {
+  return KDF_SHA256(base64ToHex(qrData.tracingSeed), '01').slice(0, 32);
+};
+
 export const getV3BadgeCheckinPayload = (qrData, scanner) => {
   // static qr codes
   const rawUserId = KDF_SHA256(base64ToHex(qrData.tracingSeed), '01').slice(
@@ -96,6 +101,17 @@ export const getV3AppCheckinPayload = (scanner, qrData) => {
     publicKey: hexToBase64(publicKey),
     deviceType: qrData.deviceType,
   };
+};
+
+// V4 BADGE
+export const getV4BadgeRawUserId = async qrData => {
+  const l2 = await HKDF_SHA256(
+    base64ToHex(qrData.tracingSeed),
+    48,
+    L2_INFO,
+    ''
+  );
+  return l2.slice(0, 32);
 };
 
 export const getV4BadgeCheckinPayload = async (qrData, scanner) => {
