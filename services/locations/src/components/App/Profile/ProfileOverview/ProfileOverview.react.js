@@ -1,9 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { Form, Input, Button, Alert, notification } from 'antd';
+import { Form, Input, Alert, notification } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import { updateOperator, isEmailUpdatePending, updateEmail } from 'network/api';
+
+import {
+  useEmailValidator,
+  usePersonNameValidator,
+} from 'components/hooks/useValidators';
 
 import { nameChanged, mailChanged } from './ProfileOverview.helper';
 
@@ -13,12 +19,15 @@ import {
   Heading,
   ButtonWrapper,
 } from './ProfileOverview.styled';
-import { buttonStyles } from '../../App.styled';
 
 export const ProfileOverview = ({ operator, refetch }) => {
   const intl = useIntl();
   const formReference = useRef(null);
   const [status, setStatus] = useState(null);
+
+  const firstNameValidator = usePersonNameValidator('firstName');
+  const lastNameValidator = usePersonNameValidator('lastName');
+  const emailValidator = useEmailValidator();
 
   const { data: emailChangeIsActive, refetch: refetchEmailPending } = useQuery(
     'isMailChangeInProgress',
@@ -89,6 +98,7 @@ export const ProfileOverview = ({ operator, refetch }) => {
               id: 'generic.firstName',
             })}
             name="firstName"
+            rules={firstNameValidator}
           >
             <Input />
           </Form.Item>
@@ -98,6 +108,7 @@ export const ProfileOverview = ({ operator, refetch }) => {
               id: 'generic.lastName',
             })}
             name="lastName"
+            rules={lastNameValidator}
           >
             <Input />
           </Form.Item>
@@ -107,20 +118,7 @@ export const ProfileOverview = ({ operator, refetch }) => {
               id: 'registration.form.email',
             })}
             name="email"
-            rules={[
-              {
-                type: 'email',
-                message: intl.formatMessage({
-                  id: 'error.email',
-                }),
-              },
-              {
-                required: true,
-                message: intl.formatMessage({
-                  id: 'error.email',
-                }),
-              },
-            ]}
+            rules={emailValidator}
           >
             <Input disabled={emailChangeIsActive} />
           </Form.Item>
@@ -143,13 +141,9 @@ export const ProfileOverview = ({ operator, refetch }) => {
           )}
         </Form>
         <ButtonWrapper>
-          <Button
-            data-cy="changeOperatorName"
-            onClick={submitForm}
-            style={buttonStyles}
-          >
+          <PrimaryButton data-cy="changeOperatorName" onClick={submitForm}>
             {intl.formatMessage({ id: 'profile.overview.submit' })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Overview>
     </ProfileContent>

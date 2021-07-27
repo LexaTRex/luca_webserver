@@ -1,19 +1,20 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Layout } from 'antd';
+import { Layout } from 'antd';
+import { WarningButton } from 'components/general';
 import { useQuery } from 'react-query';
 
 import { getAllTransfers } from 'network/api';
 import { SHARE_ALL_DATA_ROUTE } from 'constants/routes';
 
 // Components
+import { LocationFooter } from 'components/App/LocationFooter';
 import { NavigationButton } from './NavigationButton';
 import { TransferList } from './TransferList';
 import {
   DataTransfersWrapper,
   Wrapper,
   Header,
-  buttonStyles,
   ButtonWrapper,
   contentStyles,
   sliderStyles,
@@ -49,18 +50,18 @@ export const DataTransfers = () => {
             </Header>
             <ButtonWrapper>
               {!!uncompletedTransfers.length && (
-                <Button
+                <WarningButton
                   onClick={shareAll}
-                  style={buttonStyles}
                   disabled={!uncompletedTransfers.length}
                 >
                   {intl.formatMessage({ id: 'shareData.shareAll' })}
-                </Button>
+                </WarningButton>
               )}
             </ButtonWrapper>
             <DataTransfersWrapper>
               <TransferList transfers={transfers} />
             </DataTransfersWrapper>
+            <LocationFooter />
           </Wrapper>
         </Content>
       </Layout>

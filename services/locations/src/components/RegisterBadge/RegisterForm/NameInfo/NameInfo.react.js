@@ -1,8 +1,9 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input, Button, Form, notification } from 'antd';
+import { Input, Form, notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 
-import { MAX_NAME_LENGTH } from 'constants/valueLength';
+import { usePersonNameValidator } from 'components/hooks/useValidators';
 
 import {
   ContentTitle,
@@ -12,6 +13,8 @@ import {
 
 export const NameInfo = ({ title, next, form, setValues }) => {
   const intl = useIntl();
+  const firstNameValidator = usePersonNameValidator('firstName');
+  const lastNameValidator = usePersonNameValidator('lastName');
 
   const handleNext = () => {
     form.current
@@ -33,20 +36,7 @@ export const NameInfo = ({ title, next, form, setValues }) => {
     <ContentWrapper>
       <ContentTitle>{title}</ContentTitle>
       <Form.Item
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.firstName',
-            }),
-          },
-          {
-            max: MAX_NAME_LENGTH,
-            message: intl.formatMessage({
-              id: 'error.length',
-            }),
-          },
-        ]}
+        rules={firstNameValidator}
         label={intl.formatMessage({
           id: 'generic.firstName',
         })}
@@ -55,20 +45,7 @@ export const NameInfo = ({ title, next, form, setValues }) => {
         <Input />
       </Form.Item>
       <Form.Item
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.lastName',
-            }),
-          },
-          {
-            max: MAX_NAME_LENGTH,
-            message: intl.formatMessage({
-              id: 'error.length',
-            }),
-          },
-        ]}
+        rules={lastNameValidator}
         label={intl.formatMessage({
           id: 'generic.lastName',
         })}
@@ -77,15 +54,9 @@ export const NameInfo = ({ title, next, form, setValues }) => {
         <Input />
       </Form.Item>
       <ButtonRow>
-        <Button
-          onClick={handleNext}
-          style={{
-            color: 'black',
-            backgroundColor: '#b8c0ca',
-          }}
-        >
+        <PrimaryButton onClick={handleNext}>
           {intl.formatMessage({ id: 'registerBadge.next' })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </ContentWrapper>
   );

@@ -13,4 +13,10 @@ router.get('/apps/ios', async (request, response) => {
   });
 });
 
+router.get('/apps/lst', async (request, response) => {
+  return response.send({
+    minimumVersion: await featureFlag.get('lst_minimum_version'),
+  });
+});
+
 module.exports = router;

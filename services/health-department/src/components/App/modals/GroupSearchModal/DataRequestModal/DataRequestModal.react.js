@@ -119,7 +119,7 @@ export const DataRequestModal = ({ group, back }) => {
               ]}
             >
               <TimePicker
-                format={`HH.mm [${intl.formatMessage({
+                format={`HH:mm [${intl.formatMessage({
                   id: 'modal.dataRequest.time.clock',
                 })}]`}
                 suffixIcon={null}
@@ -167,7 +167,7 @@ export const DataRequestModal = ({ group, back }) => {
               ]}
             >
               <TimePicker
-                format={`HH.mm [${intl.formatMessage({
+                format={`HH:mm [${intl.formatMessage({
                   id: 'modal.dataRequest.time.clock',
                 })}]`}
                 suffixIcon={null}

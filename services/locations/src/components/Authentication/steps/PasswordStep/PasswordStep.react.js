@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, notification, Button } from 'antd';
+import { Form, Input, notification } from 'antd';
 import { useHistory } from 'react-router';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 // Api
 import { login } from 'network/api';
@@ -18,8 +22,6 @@ import { BASE_GROUP_ROUTE } from 'constants/routes';
 import {
   CardTitle,
   ButtonWrapper,
-  backButtonStyles,
-  nextButtonStyles,
 } from 'components/Authentication/Authentication.styled';
 import { ForgotPasswordLink } from './ForgotPasswordLink';
 import { ErrorMessage } from './PasswordStep.styled';
@@ -133,16 +135,16 @@ export const PasswordStep = ({ email, back }) => {
         )}
         <ForgotPasswordLink email={email} />
         <ButtonWrapper multipleButtons>
-          <Button style={backButtonStyles} onClick={back}>
+          <SecondaryButton onClick={back}>
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton isButtonWhite htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.login',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </>

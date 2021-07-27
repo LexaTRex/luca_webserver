@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ProfileWrapper = styled.div`
-  padding: 30px 32px 80px;
+  padding: 30px 32px;
   background-color: white;
   margin: 40px;
 `;
@@ -16,12 +16,16 @@ export const ProfileHeader = styled.div`
 `;
 
 export const StyledChildWrapper = styled.div`
-  width: 50%;
   margin-bottom: 24px;
 `;
 
 export const VerificationTagWrapper = styled.div`
   margin-left: 16px;
+`;
+
+export const VersionFooterWrapper = styled.div`
+  padding-top: 42px;
+  text-align: right;
 `;
 
 export const inputStyle = {

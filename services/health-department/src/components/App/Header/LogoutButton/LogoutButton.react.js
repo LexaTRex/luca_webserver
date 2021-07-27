@@ -38,7 +38,7 @@ export const LogoutButton = () => {
       .catch(error => console.error(error));
   };
   return (
-    <LogoutButtonStyled shape="round" onClick={handleClick}>
+    <LogoutButtonStyled data-cy="logout" shape="round" onClick={handleClick}>
       {intl.formatMessage({
         id: 'header.logout',
       })}

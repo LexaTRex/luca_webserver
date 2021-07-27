@@ -2,35 +2,13 @@ import React from 'react';
 import { CSVLink } from 'react-csv';
 import { useIntl } from 'react-intl';
 import sanitize from 'sanitize-filename';
-import { generateQRPayload } from '@lucaapp/cwa-event';
 
 import { sanitizeForCSV } from 'utils/sanitizer';
 import { bytesToBase64Url } from 'utils/encodings';
+import { getCWAFragment, getLocationName } from 'utils/qrCodeData';
 import { WEB_APP_BASE_PATH } from 'constants/links';
-import { RESTAURANT_TYPE } from 'components/App/modals/CreateLocationModal/CreateLocationModal.helper';
 
 import { linkButtonStyle } from './GenerateQRCodes.styled';
-
-const getLocationName = location => {
-  return location.name === null
-    ? `${location.LocationGroup?.name}`
-    : `${location.LocationGroup?.name} ${location.name}`;
-};
-
-const generateLocationCWAContentPart = location => {
-  const address = `${location.streetName} ${location.streetNr}, ${location.zipCode} ${location.city}`;
-  const description = getLocationName(location);
-  const qrCodeContent = {
-    description,
-    address,
-    defaultcheckinlengthMinutes: 120,
-    locationType: location.type === RESTAURANT_TYPE ? 1 : 4,
-  };
-  return generateQRPayload(qrCodeContent);
-};
-
-export const getCWAFragment = (location, isCWAEventEnabled) =>
-  isCWAEventEnabled ? `/CWA1/${generateLocationCWAContentPart(location)}` : '';
 
 const generateLocationQrCode = (
   location,

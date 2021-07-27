@@ -3,6 +3,8 @@ import { useQueryClient } from 'react-query';
 import { Form, InputNumber } from 'antd';
 import React, { useCallback, useState } from 'react';
 
+import { useCheckoutRadiusValidator } from 'components/hooks/useValidators';
+
 import {
   DEFAULT_CHECKOUT_RADIUS,
   MAX_CHECKOUT_RADIUS,
@@ -21,6 +23,7 @@ import { StyledSwitchContainer } from '../GenerateQRCodes/GenerateQRCodes.styled
 
 export const Checkout = ({ location }) => {
   const intl = useIntl();
+  const checkoutRadiusValidator = useCheckoutRadiusValidator();
   const queryClient = useQueryClient();
   const [isAutoCheckoutActive, setIsAutoCheckoutActive] = useState(
     !!location.radius
@@ -85,22 +88,7 @@ export const Checkout = ({ location }) => {
               label={intl.formatMessage({
                 id: 'settings.location.checkout.automatic.radius',
               })}
-              rules={[
-                {
-                  required: true,
-                  message: intl.formatMessage({
-                    id: 'error.radius',
-                  }),
-                },
-                {
-                  type: 'number',
-                  min: DEFAULT_CHECKOUT_RADIUS,
-                  max: MAX_CHECKOUT_RADIUS,
-                  message: intl.formatMessage({
-                    id: 'settings.location.checkout.automatic.range',
-                  }),
-                },
-              ]}
+              rules={checkoutRadiusValidator}
             >
               <InputNumber
                 min={DEFAULT_CHECKOUT_RADIUS}

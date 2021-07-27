@@ -4,13 +4,8 @@ import sanitize from 'sanitize-filename';
 import { useIntl } from 'react-intl';
 import { FileProtectOutlined } from '@ant-design/icons';
 import { generatePrivateKeyFile } from 'utils/privateKey';
-import { Button } from 'antd';
-import {
-  Explain,
-  DownloadRow,
-  ButtonRow,
-  downloadStyle,
-} from './DownloadPrivateKey.styled';
+import { SuccessButton } from 'components/general';
+import { Explain, DownloadRow, ButtonRow } from './DownloadPrivateKey.styled';
 
 export const DownloadPrivateKey = ({
   setHasDownloadedKey,
@@ -49,15 +44,14 @@ export const DownloadPrivateKey = ({
       <DownloadRow>
         <FileProtectOutlined style={{ fontSize: 40, marginBottom: 24 }} />
         <ButtonRow align="center" style={{ marginTop: 0 }}>
-          <Button
+          <SuccessButton
             data-cy="downloadPrivateKey"
             onClick={() => downloadPrivateKey()}
-            style={downloadStyle}
           >
             {intl.formatMessage({
               id: 'modal.registerOperator.downloadButton',
             })}
-          </Button>
+          </SuccessButton>
         </ButtonRow>
       </DownloadRow>
     </>

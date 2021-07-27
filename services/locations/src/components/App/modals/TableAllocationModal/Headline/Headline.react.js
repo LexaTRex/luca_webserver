@@ -1,12 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import { Button } from 'antd';
 import { useIntl } from 'react-intl';
+import { SecondaryButton } from 'components/general/Buttons.styled';
 
 // Components
 import {
   ActiveTableCount,
-  buttonStyles,
   HeaderRow,
   RefreshTime,
   AlignSelfEnd,
@@ -21,11 +20,11 @@ export const Headline = ({ activeTables, callback, lastRefresh }) => {
         <ActiveTableCount>{`${intl.formatMessage({
           id: 'modal.tableAllocation.activeTableCount',
         })}: ${Object.keys(activeTables).length}`}</ActiveTableCount>
-        <Button style={buttonStyles} onClick={callback}>
+        <SecondaryButton onClick={callback}>
           {intl.formatMessage({
             id: 'refresh',
           })}
-        </Button>
+        </SecondaryButton>
       </HeaderRow>
       <AlignSelfEnd>
         <RefreshTime>

@@ -11,7 +11,9 @@ const { authSchema } = require('./auth.schemas');
 // Certificate check is done in Load Balancer
 router.post(
   '/healthDepartmentEmployee/login',
-  limitRequestsPerMinute(5, { skipSuccessfulRequests: true }),
+  limitRequestsPerMinute('auth_hd_login_post_ratelimit_minute', {
+    skipSuccessfulRequests: true,
+  }),
   restrictOrigin,
   validateSchema(authSchema),
   passport.authenticate('local-healthDepartmentEmployee'),

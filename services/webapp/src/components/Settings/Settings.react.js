@@ -11,6 +11,8 @@ import {
   REPOSITORY_URL,
   EDIT_CONTACT_INFORMATION_SETTING,
 } from 'constants/routes';
+
+import { PRIVACY_LINK, TERMS_CONDITIONS_LINK } from 'constants/links';
 import { AppContent, AppHeadline, AppLayout } from 'components/AppLayout';
 
 import {
@@ -21,12 +23,14 @@ import {
 } from './Settings.styled';
 
 import { ResetDeviceModal } from './ResetDeviceModal/ResetDeviceModal.react';
+import { VersionModal } from './VersionModal/VersionModal.react';
 
 export function Settings() {
   const intl = useIntl();
   const history = useHistory();
   const { formatMessage } = useIntl();
   const [showResetAccount, setShowResetAccount] = useState(false);
+  const [showVersion, setShowVersion] = useState(false);
 
   return (
     <>
@@ -67,27 +71,13 @@ export function Settings() {
           </StyledSettingsButton>
           <StyledSettingsButton
             id="privacy"
-            onClick={() =>
-              window.open(
-                formatMessage({
-                  id: 'OnBoarding.privacyLink',
-                }),
-                '_blank'
-              )
-            }
+            onClick={() => window.open(PRIVACY_LINK, '_blank')}
           >
             {formatMessage({ id: 'Settings.Privacy' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="termsAndConditions"
-            onClick={() =>
-              window.open(
-                formatMessage({
-                  id: 'OnBoarding.termsAndConditionsLink',
-                }),
-                '_blank'
-              )
-            }
+            onClick={() => window.open(TERMS_CONDITIONS_LINK, '_blank')}
           >
             {formatMessage({ id: 'Settings.TermsOfService' })}
           </StyledSettingsButton>
@@ -96,6 +86,12 @@ export function Settings() {
             onClick={() => window.open(REPOSITORY_URL, '_blank')}
           >
             {formatMessage({ id: 'Settings.Repository' })}
+          </StyledSettingsButton>
+          <StyledSettingsButton
+            id="version"
+            onClick={() => setShowVersion(true)}
+          >
+            {formatMessage({ id: 'version.version' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="licenses"
@@ -114,6 +110,7 @@ export function Settings() {
       {showResetAccount && (
         <ResetDeviceModal onClose={() => setShowResetAccount(false)} />
       )}
+      {showVersion && <VersionModal onClose={() => setShowVersion(false)} />}
     </>
   );
 }

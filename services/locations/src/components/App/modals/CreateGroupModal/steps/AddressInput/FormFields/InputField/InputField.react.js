@@ -2,20 +2,12 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Form, Input } from 'antd';
 
-export const InputField = ({ name, disabled }) => {
+export const InputField = ({ name, validator, disabled }) => {
   const intl = useIntl();
 
   return (
     <Form.Item
-      rules={[
-        {
-          required: true,
-          whitespace: true,
-          message: intl.formatMessage({
-            id: `error.${name}`,
-          }),
-        },
-      ]}
+      rules={validator}
       key={name}
       name={name}
       label={intl.formatMessage({

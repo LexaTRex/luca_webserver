@@ -1,10 +1,15 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
+
+import { usePersonNameValidator } from 'components/hooks/useValidators';
 
 import {
-  backButtonStyles,
-  nextButtonStyles,
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
+
+import {
   CardTitle,
   ButtonWrapper,
   Step,
@@ -17,6 +22,8 @@ const inputStyle = {
 
 export const NameInputStep = ({ name, setName, next, back, navigation }) => {
   const intl = useIntl();
+  const firstNameValidator = usePersonNameValidator('firstName');
+  const lastNameValidator = usePersonNameValidator('lastName');
 
   const onFinish = values => {
     const { firstName, lastName } = values;
@@ -44,14 +51,7 @@ export const NameInputStep = ({ name, setName, next, back, navigation }) => {
           label={intl.formatMessage({
             id: 'generic.firstName',
           })}
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.firstName',
-              }),
-            },
-          ]}
+          rules={firstNameValidator}
         >
           <Input style={inputStyle} autoFocus />
         </Form.Item>
@@ -61,29 +61,22 @@ export const NameInputStep = ({ name, setName, next, back, navigation }) => {
           label={intl.formatMessage({
             id: 'generic.lastName',
           })}
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.lastName',
-              }),
-            },
-          ]}
+          rules={lastNameValidator}
         >
           <Input style={inputStyle} />
         </Form.Item>
 
         <ButtonWrapper multipleButtons>
-          <Button style={backButtonStyles} onClick={back}>
+          <SecondaryButton onClick={back}>
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton isButtonWhite htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </>

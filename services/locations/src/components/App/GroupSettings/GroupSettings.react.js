@@ -5,6 +5,8 @@ import { Layout } from 'antd';
 
 import { getGroup } from 'network/api';
 
+import { LocationFooter } from 'components/App/LocationFooter';
+
 import { NavigationButton } from './NavigationButton';
 import { SettingsOverview } from './SettingsOverview';
 import { GroupOverview } from './GroupOverview';
@@ -44,6 +46,7 @@ export const GroupSettings = () => {
               <SettingsOverview group={group} refetch={refetch} />
               <DeleteGroup group={group} />
             </SettingsContent>
+            <LocationFooter />
           </Wrapper>
         </Content>
       </Layout>

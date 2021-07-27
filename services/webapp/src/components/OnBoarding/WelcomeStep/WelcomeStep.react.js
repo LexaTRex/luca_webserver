@@ -4,6 +4,8 @@ import { useIntl } from 'react-intl';
 import lucaLogo from 'assets/LucaLogoWhite.svg';
 import { hasMobileCamAccess } from 'utils/environment';
 
+import { TERMS_CONDITIONS_LINK, PRIVACY_LINK } from 'constants/links';
+
 import { CheckBoxWithText } from 'components/CheckBoxWithText';
 import {
   StyledLink,
@@ -56,9 +58,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
               a: (...chunks) => (
                 <StyledLink
                   tabIndex="2"
-                  href={formatMessage({
-                    id: 'OnBoarding.termsAndConditionsLink',
-                  })}
+                  href={TERMS_CONDITIONS_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -81,9 +81,7 @@ export function WelcomeStep({ onSubmit = () => {} }) {
               a: (...chunks) => (
                 <StyledLink
                   tabIndex="4"
-                  href={formatMessage({
-                    id: 'OnBoarding.privacyLink',
-                  })}
+                  href={PRIVACY_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

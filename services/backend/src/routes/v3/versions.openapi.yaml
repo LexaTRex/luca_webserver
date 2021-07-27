@@ -2,8 +2,8 @@ paths:
   /versions/apps/android:
     get:
       summary: Android version
-      tags:
-        - Versions
+      description: Android version.
+      tags: [Versions]
       responses:
         '200':
           description: OK
@@ -14,13 +14,11 @@ paths:
                 properties:
                   minimumVersion:
                     type: integer
-      operationId: get-versions-apps-android
-      description: Android version.
   /versions/apps/ios:
     get:
       summary: iOS version
-      tags:
-        - Versions
+      description: iOS version.
+      tags: [Versions]
       responses:
         '200':
           description: OK
@@ -31,5 +29,18 @@ paths:
                 properties:
                   minimumVersion:
                     type: integer
-      operationId: get-versions-apps-ios
-      description: iOS version.
+  /versions/apps/lst:
+    get:
+      summary: luca signing tool version
+      description: luca signing tool version.
+      tags: [Versions]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  minimumVersion:
+                    type: integer

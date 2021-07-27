@@ -14,7 +14,7 @@ export const UserNameDisplay = ({ userTransferId, onProcessName }) => {
         onProcessName(userTransferId, processData?.fn + processData?.ln);
         return processData;
       }),
-    { retry: false }
+    { retry: false, staleTime: Number.POSITIVE_INFINITY }
   );
 
   if (error instanceof IncompleteDataError) {

@@ -26,7 +26,7 @@ const {
 router.post(
   '/private',
   validateSchema(privateEventCreateSchema),
-  limitRequestsPerDay(100),
+  limitRequestsPerDay('locations_private_post_ratelimit_day'),
   async (request, response) => {
     const location = await database.Location.create({
       radius: 0,
@@ -49,7 +49,7 @@ router.post(
 router.delete(
   '/:accessId',
   validateParametersSchema(accessIdParametersSchema),
-  limitRequestsPerDay(1000),
+  limitRequestsPerDay('locations_delete_ratelimit_day'),
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -117,7 +117,9 @@ router.get(
   '/traces/:accessId',
   validateQuerySchema(locationTracesQuerySchema),
   validateParametersSchema(accessIdParametersSchema),
-  limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('locations_traces_get_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {

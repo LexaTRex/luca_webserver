@@ -1,19 +1,9 @@
 const express = require('express');
 const status = require('http-status');
 const logger = require('../utils/logger');
+const { waitForMiddleware } = require('../utils/middlewares');
 
 const defaultJsonMiddleware = express.json();
-
-const waitForMiddleware = (middleware, request, response) =>
-  new Promise((resolve, reject) => {
-    try {
-      middleware(request, response, () => {
-        resolve();
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
 
 const validateSchema = (schema, limit) => {
   const jsonMiddleware = limit

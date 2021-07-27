@@ -1,11 +1,13 @@
 import { login } from '../../helpers/functions';
 import { checkRadiusInput } from '../../helpers/inputValidation.helper';
+import {
+  RESTAURANT_NAME,
+  RESTAURANT_ADDRESS,
+  RESTAURANT_PHONE,
+  RESTAURANT_TABLE_COUNT,
+  RESTAURANT_RADIUS,
+} from '../../helpers/locations';
 
-const RESTAURANT_NAME = 'Test Restaurant';
-const RESTAURANT_ADDRESS = 'Nexenio';
-const RESTAURANT_PHONE = '017612345678';
-const RESTAURANT_TABLE_COUNT = '12';
-const RESTAURANT_RADIUS = '100';
 describe('Group creation', () => {
   describe('Create Restaurant', () => {
     beforeEach(() => login());

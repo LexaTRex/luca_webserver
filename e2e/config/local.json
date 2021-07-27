@@ -1,0 +1,14 @@
+{
+    "baseUrl": "https://localhost",
+    "env": {
+      "envName": "local",
+      "host": "localhost"
+    },
+    "db": {
+      "user": "luca",
+      "password": "lcadmin",
+      "host": "localhost",
+      "database": "luca-backend",
+      "port":5432
+    }
+}

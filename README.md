@@ -27,11 +27,14 @@ An overview of all releases can be found
 
 - node and yarn (use nvm to switch between versions)
 - docker
-- Git LFS (To enable Git LFS, install it via `brew install git-lfs` and enable it once globally with `git lfs install`.)
+- cfssl (on macos install via `brew install cfssl`)
+- Git LFS (on macos install via `brew install git-lfs`)
+
+Run `yarn && yarn prepare` once in the root directoy to init git lfs, install git hooks and generate local development certificates.
 
 ### Building
 
-Then build containers with `yarn dev build`. You need to do this again when dependencies of a service change.
+Build containers with `yarn dev build`. You need to do this again when dependencies of a service change.
 
 ### Running
 
@@ -49,7 +52,7 @@ The services will be available on:
    5.2 Cam - https://localhost/scanner/cam/`:locationScannerId`
 6. luca Web App - https://localhost/webapp
 
-We always use https. Disable the browser's unsecure ssl certificate warning by trusting the root.crt in the ca folder.
+We always use https. Disable the browser's unsecure ssl certificate warning by trusting the ca_root.pem in the ca/certs folder.
 
 Make sure to allocate enough Docker memory, the 2GB default might be insufficient to run all containers at once.
 

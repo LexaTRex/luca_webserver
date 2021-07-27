@@ -1,11 +1,11 @@
 import { FormattedMessage } from 'react-intl';
 import React from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { Button, Layout, message } from 'antd';
+import { Layout, message } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 import { calculateDaysRemaining } from '../../Profile/AccountDeletion/AccountDeletion.helper';
 import { contentStyles, Heading, sliderStyles } from '../Dashboard.styled';
-import { buttonStyles } from '../../App.styled';
 import { undoAccountDeletion } from '../../../../network/api';
 import { ContentWrapper } from './DeletionMessage.styled';
 import { useFormatMessage } from '../../../../utils/language';
@@ -41,14 +41,13 @@ export const DeletionMessage = ({ operator }) => {
             values={{ days: <strong>{daysRemaining}</strong> }}
           />
         </p>
-        <Button
-          style={buttonStyles}
+        <PrimaryButton
           onClick={mutate}
           loading={isLoading}
           data-cy="restoreAccount"
         >
           <FormattedMessage id="account.delete.reactivate" />
-        </Button>
+        </PrimaryButton>
       </ContentWrapper>
     </>
   );

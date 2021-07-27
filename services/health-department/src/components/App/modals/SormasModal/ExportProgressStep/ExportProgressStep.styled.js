@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
-export const Headline = styled.h1`
-  color: white;
-`;
+export const Headline = styled.h1``;
 export const SpinnerWrapper = styled.div`
   width: 100%;
   height: 100%;

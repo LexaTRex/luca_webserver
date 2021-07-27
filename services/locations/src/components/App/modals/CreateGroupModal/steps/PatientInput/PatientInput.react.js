@@ -1,11 +1,11 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
-  noButtonStyles,
   Wrapper,
   Header,
   Description,
@@ -33,22 +33,26 @@ export const PatientInput = ({ setPatientRequired, next, back }) => {
         })}
       </Description>
       <ButtonWrapper multipleButtons>
-        <Button style={backButtonStyles} onClick={back}>
+        <SecondaryButton onClick={back}>
           {intl.formatMessage({
             id: 'authentication.form.button.back',
           })}
-        </Button>
+        </SecondaryButton>
         <div>
-          <Button style={{ ...noButtonStyles, marginRight: 24 }} onClick={next}>
+          <PrimaryButton
+            style={{ marginRight: 24 }}
+            isButtonWhite
+            onClick={next}
+          >
             {intl.formatMessage({
               id: 'no',
             })}
-          </Button>
-          <Button data-cy="yes" style={nextButtonStyles} onClick={onNext}>
+          </PrimaryButton>
+          <PrimaryButton data-cy="yes" onClick={onNext}>
             {intl.formatMessage({
               id: 'yes',
             })}
-          </Button>
+          </PrimaryButton>
         </div>
       </ButtonWrapper>
     </Wrapper>

@@ -1,13 +1,15 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
 
-import { getRequiredRule } from 'utils/validatorRules';
-import { requiresGroupName } from 'constants/errorMessages';
+import { useLocationNameValidator } from 'components/hooks/useValidators';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
+
+import {
   Wrapper,
   Header,
   ButtonWrapper,
@@ -21,6 +23,7 @@ export const NameInput = ({
   next,
 }) => {
   const intl = useIntl();
+  const groupNameValidator = useLocationNameValidator('groupName');
 
   const onFinish = values => {
     const { groupName } = values;
@@ -45,21 +48,21 @@ export const NameInput = ({
             id: `createGroup.${groupType}.groupName`,
           })}
           name="groupName"
-          rules={[getRequiredRule(intl, requiresGroupName)]}
+          rules={groupNameValidator}
         >
           <Input autoFocus />
         </Form.Item>
         <ButtonWrapper multipleButtons>
-          <Button style={backButtonStyles} onClick={back}>
+          <SecondaryButton onClick={back}>
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </Wrapper>

@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/locations",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -26,6 +26,7 @@
     "argon2-browser": "1.15.3",
     "ascii85": "1.0.2",
     "base64-loader": "1.0.0",
+    "comlink": "4.3.0",
     "connected-react-router": "6.9.1",
     "craco-less": "1.17.1",
     "es6-promisify": "6.1.1",
@@ -58,10 +59,14 @@
     "redux-devtools-extension": "2.13.9",
     "redux-thunk": "2.3.0",
     "sanitize-filename": "1.6.3",
+    "secure-json-parse": "2.4.0",
     "styled-components": "5.2.1",
     "tinycolor2": "1.4.2",
     "ua-parser-js": "0.7.24",
-    "uuid": "8.3.2"
+    "uuid": "8.3.2",
+    "worker-plugin": "5.0.0",
+    "yaqrcode": "0.2.1",
+    "validator": "13.6.0"
   },
   "devDependencies": {
     "@babel/preset-env": "7.14.2",

@@ -3,7 +3,7 @@ import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const NURSING_HOME_NAME = 'Test Nursing Home';
 const NURSING_HOME_ADDRESS = 'Nexenio';
-const NURSING_HOME_PHONE = '017612345678';
+const NURSING_HOME_PHONE = '+4917612345678';
 const NURSING_HOME_RADIUS = '100';
 describe('Group creation', () => {
   beforeEach(() => login());

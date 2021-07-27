@@ -258,7 +258,7 @@ export const getCurrentCount = scannerId => {
 };
 
 export const getAllTransfers = () => {
-  return getRequest(`${API_PATH}/v3/locationTransfers`);
+  return getRequest(`${API_PATH}/v3/locationTransfers?deleted=false`);
 };
 
 export const getAllUncompletedTransfers = () => {

@@ -1,8 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
 
-import { getLocationTransfers } from 'network/api';
+import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
 
 import {
   Wrapper,
@@ -13,14 +12,9 @@ import {
 
 export const Header = ({ process }) => {
   const intl = useIntl();
+  const locations = useLocationWithTransfers(process.uuid);
 
-  const { isLoading, error, data: locations } = useQuery(
-    'locationTransfer',
-    () => getLocationTransfers(process.uuid),
-    { refetchOnWindowFocus: false }
-  );
-
-  if (isLoading || error) return null;
+  if (!locations) return null;
 
   const completedLocations = locations.filter(location => location.isCompleted);
 

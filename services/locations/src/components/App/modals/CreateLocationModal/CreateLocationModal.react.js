@@ -70,16 +70,6 @@ export const CreateLocationModal = ({ groupId }) => {
     closeModal();
   };
 
-  const handleResponse = response => {
-    notification.success({
-      message: intl.formatMessage({
-        id: 'notification.createLocation.success',
-      }),
-    });
-    setLocation(response);
-    queryClient.invalidateQueries(`group/${groupId}`);
-  };
-
   const handleServerError = () => {
     notification.error({
       message: intl.formatMessage({
@@ -87,6 +77,19 @@ export const CreateLocationModal = ({ groupId }) => {
       }),
     });
     closeModal();
+  };
+
+  const handleResponse = response => {
+    if (!response) {
+      handleServerError();
+    }
+    notification.success({
+      message: intl.formatMessage({
+        id: 'notification.createLocation.success',
+      }),
+    });
+    setLocation(response);
+    queryClient.invalidateQueries(`group/${groupId}`);
   };
 
   const createBaseLocation = () => {

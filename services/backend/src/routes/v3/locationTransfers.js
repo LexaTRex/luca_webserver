@@ -10,6 +10,7 @@ const { sendShareDataRequestNotification } = require('../../utils/mailClient');
 const {
   validateSchema,
   validateParametersSchema,
+  validateQuerySchema,
 } = require('../../middlewares/validateSchema');
 const { requireOperator } = require('../../middlewares/requireUser');
 
@@ -21,6 +22,7 @@ const { formatLocationName } = require('../../utils/format');
 
 const {
   createSchema,
+  getSchema,
   sendSchema,
   transferIdParametersSchema,
 } = require('./locationTransfers.schemas');
@@ -140,61 +142,82 @@ router.post(
 );
 
 /**
- * Get all location transfers the currently logged-in health department operator has created
+ * Get all location transfers of the currently logged-in operator.
  */
-router.get('/', requireOperator, async (request, response) => {
-  const operatorId = request.user.uuid;
+router.get(
+  '/',
+  requireOperator,
+  validateQuerySchema(getSchema),
+  async (request, response) => {
+    const { completed, deleted } = request.query;
 
-  const transfers = await database.LocationTransfer.findAll({
-    where: {
+    const operatorId = request.user.uuid;
+
+    const whereClause = {
       contactedAt: {
         [Op.ne]: null,
       },
-    },
-    include: [
-      {
-        required: true,
-        model: database.Location,
-        attributes: ['name'],
-        include: {
-          model: database.LocationGroup,
+    };
+
+    if (completed === 'true') {
+      whereClause.isCompleted = true;
+    } else if (completed === 'false') {
+      whereClause.isCompleted = false;
+    }
+
+    if (deleted === 'true') {
+      whereClause.deletedAt = { [Op.ne]: null };
+    } else if (completed === 'false') {
+      whereClause.deletedAt = null;
+    }
+
+    const transfers = await database.LocationTransfer.findAll({
+      where: whereClause,
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          required: true,
+          model: database.Location,
           attributes: ['name'],
+          include: {
+            model: database.LocationGroup,
+            attributes: ['name'],
+            paranoid: false,
+          },
+          where: {
+            operator: operatorId,
+          },
           paranoid: false,
         },
-        where: {
-          operator: operatorId,
+        {
+          model: database.HealthDepartment,
+          attributes: ['name'],
         },
-        paranoid: false,
-      },
-      {
-        model: database.HealthDepartment,
-        attributes: ['name'],
-      },
-    ],
-  });
-
-  return response.send(
-    transfers.map(transfer => ({
-      uuid: transfer.uuid,
-      groupName: transfer.Location.LocationGroup.name,
-      locationName: transfer.Location.name,
-      name: formatLocationName(
-        transfer.Location,
-        transfer.Location.LocationGroup
-      ),
-
-      departmentName: transfer.HealthDepartment.name,
-      time: [
-        moment(transfer.time[0].value).unix(),
-        moment(transfer.time[1].value).unix(),
       ],
-      isCompleted: transfer.isCompleted,
-      contactedAt: transfer.contactedAt,
-      createdAt: moment(transfer.createdAt).unix(),
-      deletedAt: transfer.deletedAt && moment(transfer.deletedAt).unix(),
-    }))
-  );
-});
+    });
+
+    return response.send(
+      transfers.map(transfer => ({
+        uuid: transfer.uuid,
+        groupName: transfer.Location.LocationGroup.name,
+        locationName: transfer.Location.name,
+        name: formatLocationName(
+          transfer.Location,
+          transfer.Location.LocationGroup
+        ),
+        departmentName: transfer.HealthDepartment.name,
+        time: [
+          moment(transfer.time[0].value).unix(),
+          moment(transfer.time[1].value).unix(),
+        ],
+        isCompleted: transfer.isCompleted,
+        contactedAt: transfer.contactedAt,
+        createdAt: moment(transfer.createdAt).unix(),
+        deletedAt: transfer.deletedAt && moment(transfer.deletedAt).unix(),
+      }))
+    );
+  }
+);
 
 router.get('/uncompleted', requireOperator, async (request, response) => {
   const operatorId = request.user.uuid;

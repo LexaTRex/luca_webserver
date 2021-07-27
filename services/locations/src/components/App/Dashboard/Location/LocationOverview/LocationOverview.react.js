@@ -2,8 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from 'react-query';
-import { Button, notification, Popconfirm } from 'antd';
+import { notification, Popconfirm } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import { forceCheckoutUsers, getCurrentCount } from 'network/api';
 
@@ -12,8 +13,6 @@ import { TableAllocation } from './TableAllocation';
 import { Count } from './Count';
 
 import {
-  checkoutButton,
-  disabledStyle,
   GuestHeader,
   GuestWrapper,
   Info,
@@ -94,16 +93,12 @@ export const LocationOverview = ({ location }) => {
               })}
               icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             >
-              <Button
+              <PrimaryButton
                 data-cy="checkoutGuest"
-                style={{
-                  ...checkoutButton,
-                  ...(checkoutDisabled && disabledStyle),
-                }}
                 disabled={checkoutDisabled}
               >
                 {intl.formatMessage({ id: 'group.view.overview.checkout' })}
-              </Button>
+              </PrimaryButton>
             </Popconfirm>
           </div>
         </InfoWrapper>

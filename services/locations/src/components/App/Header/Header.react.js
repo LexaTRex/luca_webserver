@@ -17,6 +17,7 @@ import { CreateGroup } from './CreateGroup';
 import { SelectGroup } from './SelectGroup';
 import { GroupDisplay } from './GroupDisplay';
 import { DataRequests } from './DataRequests';
+import { HelpCenter } from './HelpCenter';
 import {
   HeaderWrapper,
   Logo,
@@ -55,6 +56,7 @@ export const Header = ({ operator }) => {
         {isActiveAccount && groupId && <SelectGroup groupId={groupId} />}
         {isActiveAccount && !isTablet && <CreateGroup />}
         <DataRequests />
+        <HelpCenter supportCode={operator.supportCode} />
         <LinkMenu />
       </MenuWrapper>
     </HeaderWrapper>

@@ -1,6 +1,6 @@
 {
   "name": "e2e",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "main": "index.js",
   "private": true,
   "engines": {
@@ -14,13 +14,15 @@
   },
   "dependencies": {
     "@lucaapp/crypto": "1.0.3",
-    "cypress": "7.3.0",
+    "cypress": "7.4.0",
     "cypress-file-upload": "5.0.7",
     "faker": "5.5.3",
     "fluent-ffmpeg": "2.1.2",
+    "fs-extra": "10.0.0",
     "moment": "2.29.1"
   },
   "devDependencies": {
+    "cypress-postgres": "1.1.1",
     "eslint-plugin-sonarjs": "0.5.0",
     "prettier": "2.2.1"
   }

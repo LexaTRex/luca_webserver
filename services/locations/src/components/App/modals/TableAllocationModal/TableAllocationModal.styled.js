@@ -50,22 +50,6 @@ export const RefreshTime = styled.div`
   font-weight: 500;
 `;
 
-export const buttonStyles = {
-  border: '2px solid rgb(80, 102, 124)',
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-  color: 'black',
-};
-
-export const checkoutButtonStyle = {
-  ...buttonStyles,
-  border: 'none',
-  backgroundColor: 'rgb(195, 206, 217)',
-  textTransform: 'uppercase',
-};
-
 export const GuestTable = styled.table`
   border-collapse: collapse;
   border-spacing: 0;

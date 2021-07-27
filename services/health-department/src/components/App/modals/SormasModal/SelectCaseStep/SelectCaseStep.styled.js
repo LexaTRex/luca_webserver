@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
-export const Headline = styled.h1`
-  color: white;
-`;
+export const Headline = styled.h1``;
 export const ResultWrapper = styled.h3`
   color: white;
   margin: 8px 0;

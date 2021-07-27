@@ -4,15 +4,20 @@ const assert = require('assert');
 const config = require('config');
 const { z } = require('./validation');
 
-const D_TRUST_ROOT_CA = forge.pki.certificateFromPem(
-  config.get('certs.dtrust.root')
-);
+let ROOT_CA_STORE;
+let D_TRUST_BASIC_CA;
 
-const D_TRUST_BASIC_CA = forge.pki.certificateFromPem(
-  config.get('certs.dtrust.basic')
-);
+const loadCertificates = () => {
+  const D_TRUST_ROOT_CA = forge.pki.certificateFromPem(
+    config.get('certs.dtrust.root')
+  );
 
-const ROOT_CA_STORE = forge.pki.createCaStore([D_TRUST_ROOT_CA]);
+  D_TRUST_BASIC_CA = forge.pki.certificateFromPem(
+    config.get('certs.dtrust.basic')
+  );
+
+  ROOT_CA_STORE = forge.pki.createCaStore([D_TRUST_ROOT_CA]);
+};
 
 const jwtSchema = z.object({
   sub: z.uuid(),
@@ -105,5 +110,7 @@ const verifySignedPublicKeys = (
 };
 
 module.exports = {
+  loadCertificates,
   verifySignedPublicKeys,
+  verifyCertificateAgainstDTrustChain,
 };

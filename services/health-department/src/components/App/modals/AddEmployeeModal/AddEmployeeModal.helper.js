@@ -1,55 +1,39 @@
+import {
+  getMaxLengthRule,
+  getRequiredRule,
+  getSafeStringRule,
+  getPhoneRule,
+  getEmailRule,
+} from 'utils/validators';
+import { MAX_EMAIL_LENGTH, MAX_NAME_LENGTH } from 'constants/valueLength';
+
 export const getFormElements = intl => [
   {
     key: 'firstName',
     rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: intl.formatMessage({
-          id: 'userManagement.error.firstName',
-        }),
-      },
+      getRequiredRule(intl, 'firstName'),
+      getSafeStringRule(intl, 'firstName'),
+      getMaxLengthRule(intl, MAX_NAME_LENGTH),
     ],
   },
   {
     key: 'lastName',
     rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: intl.formatMessage({
-          id: 'userManagement.error.lastName',
-        }),
-      },
+      getRequiredRule(intl, 'lastName'),
+      getSafeStringRule(intl, 'lastName'),
+      getMaxLengthRule(intl, MAX_NAME_LENGTH),
     ],
   },
   {
     key: 'phone',
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: intl.formatMessage({
-          id: 'userManagement.error.phone',
-        }),
-      },
-    ],
+    rules: [getRequiredRule(intl, 'phone'), getPhoneRule(intl)],
   },
   {
     key: 'email',
     rules: [
-      {
-        required: true,
-        message: intl.formatMessage({
-          id: 'userManagement.error.email',
-        }),
-      },
-      {
-        type: 'email',
-        message: intl.formatMessage({
-          id: 'userManagement.error.emailInvalid',
-        }),
-      },
+      getRequiredRule(intl, 'email'),
+      getEmailRule(intl),
+      getMaxLengthRule(intl, MAX_EMAIL_LENGTH),
     ],
   },
 ];

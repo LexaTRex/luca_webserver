@@ -23,15 +23,6 @@ export const informationTooltipStyle = {
   color: '#b8cad3',
 };
 
-export const addButtonStyle = {
-  color: 'rgba(0, 0, 0, 0.87)',
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  border: 'none',
-  boxShadow: 'none',
-  marginTop: 24,
-};
 export const StyledSwitchContainer = styled.div`
   flex: 1;
   display: flex;

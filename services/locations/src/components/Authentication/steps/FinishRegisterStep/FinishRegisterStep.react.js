@@ -1,9 +1,8 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import {
-  nextButtonStyles,
   CardTitle,
   CardSubTitle,
   ButtonWrapper,
@@ -28,11 +27,11 @@ export const FinishRegisterStep = ({ next, navigation }) => {
       </CardSubTitle>
 
       <ButtonWrapper>
-        <Button style={nextButtonStyles} onClick={next}>
+        <PrimaryButton isButtonWhite onClick={next}>
           {intl.formatMessage({
             id: 'authentication.button.ok',
           })}
-        </Button>
+        </PrimaryButton>
       </ButtonWrapper>
     </>
   );

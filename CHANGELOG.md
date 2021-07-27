@@ -1,5 +1,41 @@
 # Changelog
 
+### 1.6.0 (2021-07-27)
+* **backend:** fix: schema validation mismatch
+* **backend:** feat: added dev setup for signing tool
+* **backend:** feat: added route to delete test redeems
+* **backend:** feat: global rate limit configuraable via feature flag
+* **backend:** feat: send notifications on authentication change
+* **backend:** feat: increase user TAN validity to 48h
+* **backend:** feat: add authenticated checkin route for operators
+* **backend:** feat: add version endpoint for signing tool
+* **backend:** chore: setup typescript
+* **health-department:** fix: possible duplicate index case due to name comparison
+* **health-department:** fix: time format in location search modal
+* **health-department:** fix: input validation and error handling based on backend validations
+* **health-department:** feat: enabled SORMAS api for latest SORMAS versions
+* **health-department:** feat: added version, commit hash and GitLab link
+* **health-department:** feat: added download for signing tool
+* **health-department:** feat: updated designs for the contact person view
+* **contact-form:** feat: added version, commit hash and GitLab link
+* **contact-form:** feat: updated data privacy link
+* **locations:** fix: removed whitespace overflow when downloading QR codes
+* **locations:** fix: sorting for share data requests
+* **locations:** fix: input validation and error handling based on backend validations
+* **locations:** fix: improved naming in guestlist
+* **locations:** fix: improved checkin and checkout visualization
+* **locations:** fix: store emails case sensitive
+* **locations:** feat: added help button to header with specific contact information
+* **locations:** feat: added version, commit hash and GitLab link
+* **locations:** feat: improved QR code generation by using web workers
+* **locations:** feat: unified buttons and updated designs
+* **locations:** feat: updated designs of the location card components
+* **locations:** feat: updated data privacy link for badge registration
+* **locations:** chore: enabled sonar
+* **webapp:** feat: added version, commit hash and GitLab link
+* **webapp:** feat: updated data privacy link
+* **scanner:** feat: added version, commit hash and GitLab link
+
 ### 1.5.4 (2021-07-21)
 * **scanner:** feat: deny checkins from unregistered badges via bloomfilter
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form, Input, InputNumber, notification } from 'antd';
+import { Form, Input, InputNumber, notification } from 'antd';
+import { PrimaryButton } from 'general';
 
 import { addCheckinData } from 'network/api';
 import {
@@ -80,16 +81,9 @@ export const AdditionalDataModal = ({
 
         <ButtonRow>
           <Form.Item>
-            <Button
-              htmlType="submit"
-              style={{
-                backgroundColor: '#4e6180',
-                padding: '0 80px',
-                color: 'white',
-              }}
-            >
+            <PrimaryButton htmlType="submit">
               {intl.formatMessage({ id: 'modal.additionalData.button' })}
-            </Button>
+            </PrimaryButton>
           </Form.Item>
         </ButtonRow>
       </Form>

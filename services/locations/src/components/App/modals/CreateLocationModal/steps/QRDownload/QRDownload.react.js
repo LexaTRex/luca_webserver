@@ -1,23 +1,37 @@
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+  SuccessButton,
+} from 'components/general/Buttons.styled';
 
-import { QrCodeDocument } from 'components/QrCodeDocument';
+// Worker
+import { useWorker } from 'components/hooks/useWorker';
+import { downloadPDF } from 'utils/downloadPDF';
+import { getPDFWorker } from 'utils/workers';
+
+// API
+import { getGroup } from 'network/api';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
-  downloadButtonStyles,
   Wrapper,
   Description,
   Header,
   ButtonWrapper,
 } from '../../../generalOnboarding/Onboarding.styled';
 
-export const QRDownload = ({ done, location, group }) => {
+export const QRDownload = ({ done, location }) => {
   const intl = useIntl();
   const [downloadTableQRCodes, setDownloadTableQrCodes] = useState(false);
-  const [isDownload, setIsDownload] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const { isLoading, data: group } = useQuery(`group/${location.groupId}`, () =>
+    getGroup(location.groupId)
+  );
+
+  const pdfWorkerApiReference = useWorker(getPDFWorker());
 
   const onNext = () => {
     if (location.tableCount) {
@@ -27,13 +41,20 @@ export const QRDownload = ({ done, location, group }) => {
     }
   };
 
-  const onBack = () => {
-    setDownloadTableQrCodes(false);
-  };
+  const onBack = () => setDownloadTableQrCodes(false);
 
-  const onDownLoad = () => {
-    setIsDownload(true);
+  const downloadOptions = {
+    setIsDownloading,
+    pdfWorkerApiReference,
+    location: {
+      ...location,
+      groupName: group?.name,
+    },
+    intl,
+    isTableQRCodeEnabled: downloadTableQRCodes,
+    isCWAEventEnabled: true,
   };
+  const triggerDownload = () => downloadPDF(downloadOptions);
 
   return (
     <>
@@ -52,22 +73,21 @@ export const QRDownload = ({ done, location, group }) => {
           <ButtonWrapper
             style={{ justifyContent: 'center', margin: '40px 0 80px 0' }}
           >
-            <Button
+            <SuccessButton
               data-cy="qrCodeDownload"
-              style={downloadButtonStyles}
-              loading={isDownload}
-              onClick={onDownLoad}
+              loading={isDownloading}
+              onClick={triggerDownload}
+              disabled={isLoading}
             >
               {intl.formatMessage({
                 id: 'qrCodeDownload',
               })}
-            </Button>
+            </SuccessButton>
           </ButtonWrapper>
 
           <ButtonWrapper>
-            <Button
+            <PrimaryButton
               onClick={onNext}
-              style={nextButtonStyles}
               data-cy={location.tableCount ? 'nextStep' : 'done'}
             >
               {intl.formatMessage({
@@ -75,7 +95,7 @@ export const QRDownload = ({ done, location, group }) => {
                   ? 'authentication.form.button.next'
                   : 'done',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </Wrapper>
       ) : (
@@ -93,39 +113,32 @@ export const QRDownload = ({ done, location, group }) => {
           <ButtonWrapper
             style={{ justifyContent: 'center', margin: '40px 0 80px 0' }}
           >
-            <Button
-              onClick={onDownLoad}
+            <SuccessButton
+              onClick={triggerDownload}
               data-cy="qrCodeDownload"
-              style={downloadButtonStyles}
-              loading={isDownload}
+              loading={isDownloading}
+              disabled={isLoading}
             >
               {intl.formatMessage({
                 id: 'qrCodesDownload',
               })}
-            </Button>
+            </SuccessButton>
           </ButtonWrapper>
 
           <ButtonWrapper multipleButtons>
-            <Button data-cy="back" style={backButtonStyles} onClick={onBack}>
+            <SecondaryButton data-cy="back" onClick={onBack}>
               {intl.formatMessage({
                 id: 'authentication.form.button.back',
               })}
-            </Button>
-            <Button data-cy="done" style={nextButtonStyles} onClick={done}>
+            </SecondaryButton>
+            <PrimaryButton data-cy="done" onClick={done}>
               {intl.formatMessage({
                 id: 'done',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </Wrapper>
       )}
-      <QrCodeDocument
-        isDownload={isDownload}
-        setIsDownload={setIsDownload}
-        location={location}
-        group={group}
-        downloadTableQRCodes={downloadTableQRCodes}
-      />
     </>
   );
 };

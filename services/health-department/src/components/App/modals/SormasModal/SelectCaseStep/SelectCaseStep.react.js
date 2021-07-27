@@ -26,7 +26,7 @@ export function SelectCaseStep({ client, onSelectCase }) {
 
   return (
     <>
-      <Headline style={{ color: 'white' }}>
+      <Headline>
         {intl.formatMessage({
           id: 'modal.sormas.selectstep.selectCase',
         })}

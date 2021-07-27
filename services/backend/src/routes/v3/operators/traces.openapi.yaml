@@ -1,0 +1,51 @@
+paths:
+  /operators/traces/checkin:
+    post:
+      summary: Check in
+      responses:
+        201:
+          description: Success
+        400:
+          $ref: '#/components/schemas/BadRequest'
+        404:
+          description: Location not found
+        409:
+          description: Request time difference exceeded 300 Seconds
+        429:
+          $ref: '#/components/schemas/TooManyRequestsHour'
+      description: Check in
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceId:
+                  type: string
+                scannerId:
+                  type: string
+                timestamp:
+                  type: integer
+                data:
+                  type: string
+                iv:
+                  type: string
+                mac:
+                  type: string
+                publicKey:
+                  type: string
+                deviceType:
+                  type: integer
+            examples:
+              example-1:
+                value:
+                  traceId: 18910B5F-81CD-4DC8-80DC-78EB
+                  scannerId: F0554A39-5437-442A-AB2B-5974EAC15D67
+                  timestamp: 0
+                  data: example
+                  iv: F0553F39354373442EXAMPLE
+                  mac: F0553F39354373442EXAMPLE0553F393354373442A3A
+                  publicKey: BLMsCG/sWLvwQseEWMR4WBFQqqId6mgGLYuFLGWObMT5IsJTGJGl8n1BT+KgALdA+dCb7MYQEBAbY9e9PxP2qI8=
+                  deviceType: 0
+      tags:
+        - Operators

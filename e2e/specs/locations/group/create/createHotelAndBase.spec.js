@@ -3,7 +3,7 @@ import { checkRadiusInput } from '../../helpers/inputValidation.helper';
 
 const HOTEL_NAME = 'Test Hotel';
 const HOTEL_ADDRESS = 'Nexenio';
-const HOTEL_PHONE = '017612345678';
+const HOTEL_PHONE = '+4917612345678';
 const HOTEL_AREA = 'Restaurant';
 const HOTEL_RADIUS = '100';
 
@@ -26,7 +26,7 @@ describe('Group creation', () => {
       // Enter location
       cy.get('#locationSearch').type(HOTEL_ADDRESS);
       // Select from googleApi
-      cy.get('.pac-container > div:first-of-type', { timeout: 2000 }).should(
+      cy.get('.pac-container > div:first-of-type', { timeout: 6000 }).should(
         'be.visible'
       );
       cy.get('.pac-container > div:first-of-type').click();

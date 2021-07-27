@@ -20,6 +20,7 @@ const stripSequelizeParametersFromErrors = format(info => {
 /* eslint-enable no-param-reassign */
 
 const filterHeaders = format(info => {
+  if (config.get('debug')) return info;
   if (info?.meta?.req?.headers) {
     // eslint-disable-next-line no-param-reassign
     info.meta.req.headers = pick(info.meta.req.headers, [

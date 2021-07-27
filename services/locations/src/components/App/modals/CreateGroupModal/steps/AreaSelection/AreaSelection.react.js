@@ -2,10 +2,16 @@ import React, { useRef, useState } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 import { useIntl } from 'react-intl';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import bin from 'assets/bin.svg';
+
+import { useLocationNameValidator } from 'components/hooks/useValidators';
 
 import { YesNoSelection } from '../../../generalOnboarding/YesNoSelection';
 
@@ -14,8 +20,6 @@ import {
   Wrapper,
   Description,
   ButtonWrapper,
-  nextButtonStyles,
-  backButtonStyles,
 } from '../../../generalOnboarding/Onboarding.styled';
 import {
   AddArea,
@@ -31,7 +35,7 @@ import { IndoorToggle } from '../../../../Dashboard/IndoorToggle';
 export const AreaSelection = ({ groupType, setAreas, next, back }) => {
   const intl = useIntl();
   const formReference = useRef(null);
-
+  const locationNameValidator = useLocationNameValidator('locationName');
   const [isAreaSelection, setIsAreaSelection] = useState(false);
   const [temporaryAreas, setTemporaryAreas] = useState([]);
 
@@ -84,14 +88,7 @@ export const AreaSelection = ({ groupType, setAreas, next, back }) => {
                       { key: index + 1 }
                     )}
                     name={`area${temporaryArea.id}`}
-                    rules={[
-                      {
-                        required: true,
-                        message: intl.formatMessage({
-                          id: 'error.locationName',
-                        }),
-                      },
-                    ]}
+                    rules={locationNameValidator}
                   >
                     <Input autoFocus data-cy="areaNameInput" />
                   </Form.Item>
@@ -148,16 +145,16 @@ export const AreaSelection = ({ groupType, setAreas, next, back }) => {
               </AddArea>
             </AddAreaWrapper>
             <ButtonWrapper multipleButtons>
-              <Button style={backButtonStyles} onClick={back}>
+              <SecondaryButton onClick={back}>
                 {intl.formatMessage({
                   id: 'authentication.form.button.back',
                 })}
-              </Button>
-              <Button style={nextButtonStyles} htmlType="submit">
+              </SecondaryButton>
+              <PrimaryButton htmlType="submit">
                 {intl.formatMessage({
                   id: 'authentication.form.button.next',
                 })}
-              </Button>
+              </PrimaryButton>
             </ButtonWrapper>
           </Form>
         </>

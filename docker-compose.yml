@@ -7,6 +7,7 @@ services:
     ports:
       - 80:8080
       - 443:8443
+      - 9443:9443
   backend:
     image: lucaapp/backend:${IMAGE_TAG}
     build:

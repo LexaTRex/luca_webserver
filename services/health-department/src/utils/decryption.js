@@ -176,7 +176,11 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
     return { userData: null, isInvalid: true, isDynamicDevice: false };
   }
 
-  return { userData, isInvalid: false, isDynamicDevice: true };
+  return {
+    userData: { ...userData, uuid: userId },
+    isInvalid: false,
+    isDynamicDevice: true,
+  };
 }
 
 export function decryptAdditionalData(encryptedTrace, isInvalid) {

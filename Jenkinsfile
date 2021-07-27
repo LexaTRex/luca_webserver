@@ -23,8 +23,9 @@ node {
     stage('Test') {
       def steps = [:]
       for (service in services) {
-        steps[service] = executeTestScriptForService('ci/test.sh', service)
+        steps['Test ' + service] = executeTestScriptForService('ci/test.sh', service)
       }
+      steps['Sonar'] = executeSonarScriptForService()
       parallel steps
     }
 
@@ -138,6 +139,7 @@ Closure buildAndPushContainer(String service, String tag) {
           sh('docker login -u=$DOCKER_PUBLIC_USERNAME -p=$DOCKER_PUBLIC_PASSWORD $DOCKER_PUBLIC_REGISTRY')
           sh("IMAGE_TAG=${tag} GIT_VERSION=${GIT_VERSION} GIT_COMMIT=${GIT_COMMIT} docker-compose -f docker-compose.yml build ${service}")
           sh("IMAGE_TAG=${tag} docker-compose -f docker-compose.yml push ${service}")
+          sh("IMAGE_TAG=${tag} docker-compose -f docker-compose.yml down --rmi all -v -t 0")
           sh('docker logout')
         }
       } finally {
@@ -164,7 +166,52 @@ Closure executeTestScriptForService(String script, String service) {
           sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm ${service} ${script}")
         }
       } finally {
-        sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml down")
+        sh("IMAGE_TAG=test_${UNIQUE_TAG} docker-compose -f docker-compose.yml -f docker-compose.test.yml down --rmi all -v -t 0")
+        cleanWs()
+      }
+    }
+  }
+}
+
+
+Closure executeSonarScriptForService() {
+  return {
+    node('docker') {
+      try {
+        updateSourceCode()
+        withSonarQubeEnv('sonarqube neXenio')
+        {
+          withCredentials([
+          usernamePassword(credentialsId: 'luca-docker-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD'),
+          string(credentialsId: 'luca-docker-registry', variable: 'DOCKER_REGISTRY'),
+        ]){
+            sh('docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD $DOCKER_REGISTRY')
+            if (env.BRANCH_NAME.startsWith('PR')) {
+
+              sh("docker run \
+                --rm \
+                -e SONAR_HOST_URL=$SONAR_HOST_URL \
+                -e SONAR_LOGIN=$SONAR_AUTH_TOKEN \
+                -v `pwd`:/usr/src \
+                -v /tmp/sonar_cache:/opt/sonar-scanner/.sonar/cache \
+                $DOCKER_REGISTRY/tools/sonar-scanner:4 \
+                  sonar-scanner \
+                  -Dsonar.branch.name=${env.CHANGE_BRANCH} ")
+            } else {
+              // run branch analysis
+              sh("docker run \
+              --rm \
+              -e SONAR_HOST_URL=$SONAR_HOST_URL \
+              -e SONAR_LOGIN=$SONAR_AUTH_TOKEN \
+              -v `pwd`:/usr/src \
+              -v /tmp/sonar_cache:/opt/sonar-scanner/.sonar/cache \
+              $DOCKER_REGISTRY/tools/sonar-scanner:4 \
+                sonar-scanner \
+                -Dsonar.branch.name=${BRANCH_NAME} ")
+            }
+          }
+        }
+      } finally {
         cleanWs()
       }
     }
@@ -186,16 +233,21 @@ void e2eTest() {
           string(credentialsId: 'luca-docker-public-registry', variable: 'DOCKER_PUBLIC_REGISTRY'),
         ]) {
           sh('docker login -u=$DOCKER_PUBLIC_USERNAME -p=$DOCKER_PUBLIC_PASSWORD $DOCKER_PUBLIC_REGISTRY')
+          sh('docker run --rm \
+                --entrypoint /app/scripts/generateCertificates.sh \
+                -v `pwd`:/app \
+                -w /app \
+                cfssl/cfssl')
           sh('IMAGE_TAG=e2e docker-compose -f docker-compose.yml build --parallel')
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml up -d database")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn migrate")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn seed")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} SKIP_SMS_VERIFICATION=true E2E=true docker-compose -f docker-compose.yml up -d")
           sh("docker run --rm --network=host --ipc=host --entrypoint='' -v `pwd`/e2e:/e2e -w /e2e cypress/included:7.3.0 /bin/bash -c 'npx wait-on https://127.0.0.1/api/v3/keys/daily/ -t 30000 && yarn install && yarn cache clean && cypress run' ")
-          sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down")
+          sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down --rmi all -v -t 0 ")
         }
       } finally {
-        sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down")
+        sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down --rmi all -v -t 0")
         archiveArtifacts(artifacts: 'e2e/cypress/screenshots/**/*', allowEmptyArchive: true)
         cleanWs()
       }

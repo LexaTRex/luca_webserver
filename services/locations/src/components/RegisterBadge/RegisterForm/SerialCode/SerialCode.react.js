@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Button, Input, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 import { getBadgeUser } from 'network/api';
 
@@ -128,15 +129,9 @@ export const SerialCode = ({ next, title, setUserSecrets }) => {
         </Form.Item>
       </ItemWrapper>
       <ButtonRow>
-        <Button
-          onClick={handleNextStep}
-          style={{
-            color: 'black',
-            backgroundColor: '#b8c0ca',
-          }}
-        >
+        <PrimaryButton onClick={handleNextStep}>
           {intl.formatMessage({ id: 'registerBadge.next' })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </ContentWrapper>
   );

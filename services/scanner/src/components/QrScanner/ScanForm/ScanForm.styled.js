@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 
+export const ScanFormWrapper = styled.div`
+  margin-top: 26px;
+  margin-bottom: 26px;
+`;
+
 export const Wrapper = styled.div`
   display: flex;
   justify-content: center;

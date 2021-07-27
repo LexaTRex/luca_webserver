@@ -1,5 +1,7 @@
+import {WEBAPP_ROUTE} from "./routes";
+
 export const DATABASE_NAME = 'luca';
-export const DATABASE_VERSION = 40;
+export const DATABASE_VERSION = 50;
 
 export const USER_ID = 'USER_ID';
 export const USER_DATA_SECRET = 'USER_DATA_SECRET';
@@ -22,6 +24,7 @@ export async function connect() {
 export async function clearDatabase() {
   return new Cypress.Promise(async (resolve, reject) => {
     try {
+      cy.visit(WEBAPP_ROUTE);
       const database = await connect();
 
       const objects = [];

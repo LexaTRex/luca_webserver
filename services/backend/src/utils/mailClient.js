@@ -128,10 +128,48 @@ const updateEmail = (toEmail, toName, lang, variables) => {
   );
 };
 
+const updateEmailNotification = (toEmail, toName, lang, variables) => {
+  return sendTemplate(
+    getMailId('updateMailNotification', lang),
+    getMailTitle('updateMailNotification', lang),
+    toEmail,
+    toName,
+    variables
+  );
+};
+
+const operatorUpdatePasswordNotification = (
+  toEmail,
+  toName,
+  lang,
+  variables
+) => {
+  return sendTemplate(
+    getMailId('operatorUpdatePasswordNotification', lang),
+    getMailTitle('operatorUpdatePasswordNotification', lang),
+    toEmail,
+    toName,
+    variables
+  );
+};
+
+const hdUpdatePasswordNotification = (toEmail, toName, lang, variables) => {
+  return sendTemplate(
+    getMailId('hdUpdatePasswordNotification', lang),
+    getMailTitle('hdUpdatePasswordNotification', lang),
+    toEmail,
+    toName,
+    variables
+  );
+};
+
 module.exports = {
   sendShareDataRequestNotification,
   sendRegistrationConfirmation,
   sendForgotPasswordMail,
   sendActivationMail,
   updateEmail,
+  updateEmailNotification,
+  operatorUpdatePasswordNotification,
+  hdUpdatePasswordNotification,
 };

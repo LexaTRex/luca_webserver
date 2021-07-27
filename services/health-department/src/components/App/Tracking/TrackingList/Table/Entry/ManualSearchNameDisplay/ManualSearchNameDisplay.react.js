@@ -1,36 +1,24 @@
 import React from 'react';
 import moment from 'moment';
-import { useQuery } from 'react-query';
 
-import { getLocationTransfers } from 'network/api';
+import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
 
 export const ManualSearchNameDisplay = ({ processId, onProcessName }) => {
-  const { isLoading, error, data } = useQuery(
-    `locationTransfer${processId}`,
-    () =>
-      getLocationTransfers(processId).then(processData => {
-        onProcessName(processId, processData?.[0]?.name);
-        return processData;
-      })
-  );
+  const locations = useLocationWithTransfers(processId);
 
-  if (isLoading || error) return null;
+  if (!locations.length) return null;
+  const baseLocation = locations.find(location => !location.locationName);
+  onProcessName(processId, baseLocation.name);
 
   return (
     <div>
-      {data.length ? (
-        <>
-          <div>{data[0].name}</div>
-          <div>
-            {`(${moment.unix(data[0].time[0]).format('DD.MM.YYYY HH:mm')} -`}
-          </div>
-          <div>
-            {`${moment.unix(data[0].time[1]).format('DD.MM.YYYY HH:mm')})`}
-          </div>
-        </>
-      ) : (
-        '–'
-      )}
+      <div>{baseLocation.name}</div>
+      <div>
+        {`(${moment.unix(baseLocation.time[0]).format('DD.MM.YYYY HH:mm')} -`}
+      </div>
+      <div>{`${moment
+        .unix(baseLocation.time[1])
+        .format('DD.MM.YYYY HH:mm')})`}</div>
     </div>
   );
 };

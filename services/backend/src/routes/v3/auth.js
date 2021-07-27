@@ -9,13 +9,16 @@ const {
   requireOperator,
   requireHealthDepartmentEmployee,
 } = require('../../middlewares/requireUser');
+
 const { limitRequestsPerMinute } = require('../../middlewares/rateLimit');
 
 const { authSchema } = require('./auth.schemas');
 
 router.post(
   '/login',
-  limitRequestsPerMinute(5, { skipSuccessfulRequests: true }),
+  limitRequestsPerMinute('auth_login_post_ratelimit_minute', {
+    skipSuccessfulRequests: true,
+  }),
   restrictOrigin,
   validateSchema(authSchema),
   (request, response) =>
@@ -40,7 +43,9 @@ router.post(
 // Certificate check is done in Load Balancer
 router.post(
   '/healthDepartmentEmployee/login',
-  limitRequestsPerMinute(5, { skipSuccessfulRequests: true }),
+  limitRequestsPerMinute('auth_hd_login_post_ratelimit_minute', {
+    skipSuccessfulRequests: true,
+  }),
   restrictOrigin,
   validateSchema(authSchema),
   passport.authenticate('local-healthDepartmentEmployee'),

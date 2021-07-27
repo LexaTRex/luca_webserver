@@ -19,6 +19,18 @@ const MAIL_TEMPLATE_IDS = {
     de: 1836795,
     en: 2420030,
   },
+  updateMailNotification: {
+    de: 3008025,
+    en: 3023632,
+  },
+  operatorUpdatePasswordNotification: {
+    de: 3008037,
+    en: 3023667,
+  },
+  hdUpdatePasswordNotification: {
+    de: 3008045,
+    en: 3023695,
+  },
 };
 
 const MAIL_TEMPLATE_TITLES = {
@@ -42,20 +54,32 @@ const MAIL_TEMPLATE_TITLES = {
     de: 'E-Mail aktualisieren',
     en: 'Update email',
   },
+  updateMailNotification: {
+    de: 'E-Mail erfolgreich geändert',
+    en: 'Email successfully changed',
+  },
+  operatorUpdatePasswordNotification: {
+    de: 'Passwort erfolgreich geändert',
+    en: 'Password successfully changed',
+  },
+  hdUpdatePasswordNotification: {
+    de: 'Passwort erfolgreich geändert',
+    en: 'Password successfully changed',
+  },
 };
 
-const getMailId = (id, lang = 'de') => {
+const getMailId = (id, lang) => {
   if (!(id in MAIL_TEMPLATE_IDS)) {
     throw new Error('Invalid email template id');
   }
-  return MAIL_TEMPLATE_IDS[`${id}`][`${lang}`];
+  return MAIL_TEMPLATE_IDS[`${id}`][`${lang || 'de'}`];
 };
 
-const getMailTitle = (id, lang = 'de') => {
+const getMailTitle = (id, lang) => {
   if (!(id in MAIL_TEMPLATE_TITLES)) {
     throw new Error('Invalid email template title');
   }
-  return MAIL_TEMPLATE_TITLES[`${id}`][`${lang}`];
+  return MAIL_TEMPLATE_TITLES[`${id}`][`${lang || 'de'}`];
 };
 
 module.exports = {

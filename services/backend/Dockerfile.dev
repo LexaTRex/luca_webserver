@@ -1,24 +1,23 @@
-FROM node:14.17.1-alpine3.13
+FROM node:14.17.3-alpine3.14
 WORKDIR /app
 
 ARG GIT_COMMIT
 ARG GIT_VERSION
 ARG NPM_CONFIG__AUTH
 ENV NODE_ENV=development
-ENV GIT_COMMIT $GIT_COMMIT
-ENV GIT_VERSION $GIT_VERSION
 
-COPY package.json yarn.lock .npmrc .yarnrc ./
+COPY package.json tsconfig.json yarn.lock .npmrc .yarnrc ./
 RUN yarn install --production --check-files && yarn cache clean
 RUN yarn licenses generate-disclaimer > ./licenses-full.txt
 RUN echo "{\"commit\":\"$GIT_COMMIT\", \"version\":\"$GIT_VERSION\"}" >> version.json
 
-RUN adduser -D worker
-USER worker
-
 COPY .sequelizerc ./
+COPY certs/  ./certs/
 COPY config/  ./config/
 COPY src/  ./src/
+
+RUN adduser -D worker
+USER worker
 
 EXPOSE 8080
 EXPOSE 9229

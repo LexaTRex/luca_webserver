@@ -17,6 +17,7 @@ import { Update } from 'components/Update';
 import { reloadFilter } from 'utils/bloomFilter';
 
 import {
+  ScanFormWrapper,
   FormWrapper,
   Wrapper,
   Content,
@@ -148,7 +149,7 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
   }, []);
 
   return (
-    <>
+    <ScanFormWrapper>
       <Update latestUpdate={latestUpdate} callback={refetch} cam={false} />
       <Wrapper onClick={triggerFocus}>
         <FormWrapper>
@@ -182,6 +183,6 @@ export const ScanForm = ({ scanner, outerFocus, setOuterFocus }) => {
           {isSuccess && <Tick size={200} />}
         </FormWrapper>
       </Wrapper>
-    </>
+    </ScanFormWrapper>
   );
 };

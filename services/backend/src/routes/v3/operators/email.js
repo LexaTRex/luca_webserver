@@ -15,6 +15,7 @@ const {
   validateSchema,
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
+
 const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
 const {
   requireOperator,
@@ -59,6 +60,16 @@ router.patch(
       }`,
     });
 
+    mailClient.updateEmailNotification(
+      operator.email,
+      `${operator.fullName}`,
+      lang,
+      {
+        originalEmail: operator.email,
+        newEmail: email,
+      }
+    );
+
     return response.sendStatus(status.NO_CONTENT);
   }
 );
@@ -93,7 +104,9 @@ router.get(
 // check if email is in system
 router.get(
   '/:email',
-  limitRequestsPerHour(5, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('email_get_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateParametersSchema(emailParametersSchema),
   async (request, response) => {
     const user = await database.Operator.findOne({
@@ -114,7 +127,9 @@ router.get(
 // confirm email change
 router.post(
   '/confirm',
-  limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('email_confirm_post_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateSchema(activationSchema),
   async (request, response) => {
     const { activationId } = request.body;

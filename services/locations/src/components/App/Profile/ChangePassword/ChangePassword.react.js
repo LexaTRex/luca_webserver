@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input, Button, Form, notification } from 'antd';
+import { Input, Form, notification } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 import { changePassword } from 'network/api';
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 
@@ -11,7 +12,6 @@ import {
   Overview,
   ButtonWrapper,
 } from './ChangePassword.styled';
-import { buttonStyles } from '../../App.styled';
 
 export const ChangePassword = () => {
   const intl = useIntl();
@@ -21,7 +21,7 @@ export const ChangePassword = () => {
     const { currentPassword, newPassword } = values;
 
     changePassword({
-      data: { currentPassword, newPassword },
+      data: { currentPassword, newPassword, lang: intl.locale },
     })
       .then(response => {
         handleResponse(response, intl, form);
@@ -134,13 +134,9 @@ export const ChangePassword = () => {
           </Form.Item>
         </Form>
         <ButtonWrapper>
-          <Button
-            data-cy="changePassword"
-            onClick={submitForm}
-            style={buttonStyles}
-          >
+          <PrimaryButton data-cy="changePassword" onClick={submitForm}>
             {intl.formatMessage({ id: 'profile.overview.submit' })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Overview>
     </ProfileContent>

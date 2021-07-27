@@ -9,8 +9,8 @@ export const SubTitle = styled.div`
   color: white;
   display: flex;
   align-items: flex-end;
-  margin-left: 24px;
   margin-bottom: -4px;
+  margin-left: 6px;
 `;
 
 export const Title = styled.div`
@@ -20,8 +20,11 @@ export const Title = styled.div`
 export const Logo = styled.img`
   height: 48px;
   color: black;
-  padding-left: 48px;
   @media (max-width: 768px) {
     height: 30px;
   }
+`;
+
+export const LinkWrapper = styled.div`
+  align-self: flex-end;
 `;

@@ -1,12 +1,11 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import {
   Wrapper,
   Header,
   Description,
-  nextButtonStyles,
 } from '../../../generalOnboarding/Onboarding.styled';
 import {
   RESTAURANT_TYPE,
@@ -29,22 +28,22 @@ export const SelectLocationType = ({ next, setLocationType }) => {
     {
       type: RESTAURANT_TYPE,
       intlId: 'modal.createGroup.selectType.restaurant',
-      style: { ...nextButtonStyles, marginRight: 16, flex: '0 30%' },
+      style: { marginRight: 16, flex: '0 30%' },
     },
     {
       type: ROOM_TYPE,
       intlId: 'modal.createLocation.selectType.room',
-      style: { ...nextButtonStyles, marginRight: 16, flex: '0 30%' },
+      style: { marginRight: 16, flex: '0 30%' },
     },
     {
       type: BUILDING_TYPE,
       intlId: 'modal.createLocation.selectType.building',
-      style: { ...nextButtonStyles, flex: '0 30%' },
+      style: { flex: '0 30%' },
     },
     {
       type: BASE_TYPE,
       intlId: 'modal.createGroup.selectType.base',
-      style: { ...nextButtonStyles, marginTop: 16, flex: '0 30%' },
+      style: { marginTop: 16, flex: '0 30%' },
     },
   ];
   return (
@@ -59,7 +58,7 @@ export const SelectLocationType = ({ next, setLocationType }) => {
       </Description>
       <Selection>
         {options.map(option => (
-          <Button
+          <PrimaryButton
             key={option.type}
             data-cy={option.type}
             onClick={() => select(option.type)}
@@ -68,7 +67,7 @@ export const SelectLocationType = ({ next, setLocationType }) => {
             {intl.formatMessage({
               id: option.intlId,
             })}
-          </Button>
+          </PrimaryButton>
         ))}
       </Selection>
     </Wrapper>

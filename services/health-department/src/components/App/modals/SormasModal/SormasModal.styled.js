@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 export const CaseWrapper = styled.div`
   width: 100%;
-  background-color: #4e6180;
 `;
 
 export const ButtonWrapper = styled.div`

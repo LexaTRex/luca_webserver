@@ -18,7 +18,6 @@ const supportsWebRTC = (name, version, osName) => {
     case 'edge':
       return major >= 12;
     case 'safari':
-      return major >= 11;
     case 'mobile safari':
       return major >= 11;
     default:

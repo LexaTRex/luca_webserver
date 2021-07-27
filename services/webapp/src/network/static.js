@@ -5,3 +5,7 @@ export const getLicenses = () => {
     method: 'GET',
   }).then(response => response.json());
 };
+
+// Version
+export const getVersion = () =>
+  fetch(`${PUBLIC_URL_PATH}/version.json`).then(response => response.json());

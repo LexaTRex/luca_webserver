@@ -2,14 +2,8 @@ import React, { useState } from 'react';
 
 import moment from 'moment';
 import { useIntl } from 'react-intl';
-import { Spin, Popconfirm, notification, Tooltip } from 'antd';
+import { Spin, notification, Table } from 'antd';
 import { useQuery, useQueryClient } from 'react-query';
-import {
-  MobileOutlined,
-  QrcodeOutlined,
-  ContainerOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
 
 // Utils
 import { sortTraces } from 'utils/sort';
@@ -20,59 +14,11 @@ import { getTraces, forceCheckoutSingleTrace } from 'network/api';
 
 // Components
 import { DurationFilter, TODAY_OPTION, ALL_OPTION } from './DurationFilter';
-import {
-  Wrapper,
-  GuestTable,
-  Entry,
-  TableRow,
-  Count,
-  Header,
-  Loading,
-  CheckoutButton,
-} from './GuestListModal.styled';
+import { DeviceIcon } from './DeviceIcon';
+import { CheckoutButton } from './CheckoutButton';
+import { Wrapper, Count, Header, Loading } from './GuestListModal.styled';
 
-function DeviceIcon({ deviceType }) {
-  const intl = useIntl();
-
-  if (deviceType === 0 || deviceType === 1 || deviceType === 3) {
-    return (
-      <Tooltip
-        placement="top"
-        title={intl.formatMessage({
-          id: 'modal.guestList.deviceType.app',
-        })}
-      >
-        <MobileOutlined />
-      </Tooltip>
-    );
-  }
-
-  if (deviceType === 2) {
-    return (
-      <Tooltip
-        placement="top"
-        title={intl.formatMessage({
-          id: 'modal.guestList.deviceType.badge',
-        })}
-      >
-        <QrcodeOutlined />
-      </Tooltip>
-    );
-  }
-
-  return (
-    <Tooltip
-      placement="top"
-      title={intl.formatMessage({
-        id: 'modal.guestList.deviceType.contactForm',
-      })}
-    >
-      <ContainerOutlined />
-    </Tooltip>
-  );
-}
-
-export function GuestListModal({ location }) {
+export const GuestListModal = ({ location }) => {
   const intl = useIntl();
   const [duration, setActiveDuration] = useState(TODAY_OPTION);
   const queryClient = useQueryClient();
@@ -84,7 +30,14 @@ export function GuestListModal({ location }) {
     getTraces(location.accessId, duration !== ALL_OPTION ? duration : null)
   );
 
-  const onCheckoutGuestSingle = traceId => {
+  const renderCheckoutError = () =>
+    notification.error({
+      message: intl.formatMessage({
+        id: 'notification.checkOut.error',
+      }),
+    });
+
+  const onCheckoutSingleGuest = traceId => {
     forceCheckoutSingleTrace(traceId)
       .then(response => {
         if (response.status === 204) {
@@ -97,29 +50,10 @@ export function GuestListModal({ location }) {
             className: 'successCheckout',
           });
         } else {
-          notification.error({
-            message: intl.formatMessage({
-              id: 'notification.checkOut.error',
-            }),
-          });
+          renderCheckoutError();
         }
       })
-      .catch(() => {
-        notification.error({
-          message: intl.formatMessage({
-            id: 'notification.checkOut.error',
-          }),
-        });
-      });
-  };
-
-  const setTimeFormat = (checkIn, checkOut) => {
-    if (!checkOut) {
-      return moment.unix(checkIn).fromNow(true);
-    }
-    return `${moment.unix(checkIn).format('LT')} - ${moment
-      .unix(checkOut)
-      .format('LT')}`;
+      .catch(() => renderCheckoutError());
   };
 
   if (isLoading)
@@ -129,6 +63,79 @@ export function GuestListModal({ location }) {
       </Loading>
     );
   if (error) return null;
+
+  const columns = [
+    {
+      title: intl.formatMessage({ id: 'modal.guestList.deviceType' }),
+      key: 'deviceType',
+      render: function renderDeviceType(trace) {
+        return <DeviceIcon deviceType={trace.deviceType} />;
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'modal.guestList.checkinDate' }),
+      key: 'checkinDate',
+      render: function renderCheckinDate(trace) {
+        return <>{moment.unix(trace.checkin).format('DD.MM.YYYY')}</>;
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'modal.guestList.checkinTime' }),
+      key: 'checkinTime',
+      render: function renderCheckinTime(trace) {
+        return (
+          <div data-cy="trackingTime">
+            {moment.unix(trace.checkin).format('HH:mm')}
+          </div>
+        );
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'modal.guestList.checkoutDate' }),
+      key: 'checkoutDate',
+      render: function renderCheckinDate(trace) {
+        return (
+          <>
+            {trace.checkout
+              ? moment.unix(trace.checkout).format('DD.MM.YYYY')
+              : '-'}
+          </>
+        );
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'modal.guestList.checkoutTime' }),
+      key: 'checkoutTime',
+      render: function renderCheckinTime(trace) {
+        return (
+          <>
+            {trace.checkout ? moment.unix(trace.checkout).format('HH:mm') : '-'}
+          </>
+        );
+      },
+    },
+    {
+      title: intl.formatMessage({ id: 'modal.guestList.guest' }),
+      key: 'guest',
+      render: function renderCheckin(trace) {
+        return <>{base64ToHex(trace.traceId)}</>;
+      },
+    },
+    {
+      title: intl.formatMessage({
+        id: 'group.view.overview.checkout',
+      }),
+      key: 'checkout',
+      render: function renderCheckout(trace) {
+        return (
+          <CheckoutButton
+            trace={trace}
+            onCheckoutSingleGuest={onCheckoutSingleGuest}
+          />
+        );
+      },
+    },
+  ];
 
   return (
     <Wrapper>
@@ -141,74 +148,12 @@ export function GuestListModal({ location }) {
         </Count>
         <DurationFilter active={duration} onChange={setActiveDuration} />
       </Header>
-      {traces.length > 0 && (
-        <GuestTable>
-          <thead>
-            <TableRow borderBottom headline="true">
-              <Entry headline="true" tableHeader>
-                {intl.formatMessage({ id: 'modal.guestList.deviceType' })}
-              </Entry>
-              <Entry headline="true" tableHeader>
-                {intl.formatMessage({ id: 'modal.guestList.date' })}
-              </Entry>
-              <Entry headline="true" tableHeader>
-                {intl.formatMessage({ id: 'modal.guestList.time' })}
-              </Entry>
-              <Entry headline="true" tableHeader>
-                {intl.formatMessage({ id: 'modal.guestList.guest' })}
-              </Entry>
-              <Entry headline="true" tableHeader>
-                {intl.formatMessage({
-                  id: 'group.view.overview.checkout',
-                })}
-              </Entry>
-            </TableRow>
-          </thead>
-          <tbody>
-            {sortTraces(traces).map(trace => (
-              <TableRow headline="true" key={trace.traceId}>
-                <Entry headline="true">
-                  <DeviceIcon deviceType={trace.deviceType} />
-                </Entry>
-                <Entry headline="true">
-                  {moment.unix(trace.checkin).format('DD.MM.YYYY')}
-                </Entry>
-                <Entry headline="true" data-cy="trackingTime">
-                  {setTimeFormat(trace.checkin, trace.checkout)}
-                </Entry>
-                <Entry headline="true">{base64ToHex(trace.traceId)}</Entry>
-                <Entry headline="true">
-                  {trace.checkout === null && (
-                    <Popconfirm
-                      placement="topLeft"
-                      onConfirm={() => onCheckoutGuestSingle(trace.traceId)}
-                      title={intl.formatMessage({
-                        id: 'location.checkout.confirmText',
-                      })}
-                      okText={intl.formatMessage({
-                        id: 'location.checkout.confirmButton',
-                      })}
-                      cancelText={intl.formatMessage({
-                        id: 'location.checkout.declineButton',
-                      })}
-                      icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                    >
-                      <CheckoutButton
-                        headline="true"
-                        data-cy="checkoutGuestSingle"
-                      >
-                        {intl.formatMessage({
-                          id: 'group.view.overview.checkout',
-                        })}
-                      </CheckoutButton>
-                    </Popconfirm>
-                  )}
-                </Entry>
-              </TableRow>
-            ))}
-          </tbody>
-        </GuestTable>
-      )}
+      <Table
+        columns={columns}
+        dataSource={sortTraces(traces)}
+        pagination={false}
+        rowKey={record => record.traceId}
+      />
     </Wrapper>
   );
-}
+};

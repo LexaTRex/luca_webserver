@@ -1,10 +1,10 @@
 import React from 'react';
 import moment from 'moment';
-import { Button } from 'antd';
 import { useIntl } from 'react-intl';
 
 import { BASE_SHARE_DATA_ROUTE } from 'constants/routes';
 
+import { WarningButton } from 'components/general';
 import { Wrapper, Header } from '../TransferList.styled';
 
 import {
@@ -15,7 +15,6 @@ import {
   Content,
   ContentValue,
   ButtonWrapper,
-  buttonStyles,
 } from './IncompletedDataRequests.styled';
 
 export const IncompletedDataRequests = ({ tracingProcesses }) => {
@@ -104,15 +103,14 @@ export const IncompletedDataRequests = ({ tracingProcesses }) => {
             </Content>
           </TransferContent>
           <ButtonWrapper>
-            <Button
-              style={buttonStyles}
+            <WarningButton
               data-cy="completeDataTransfer"
               onClick={() => openShareDataView(tracingProcess.tracingProcessId)}
             >
               {intl.formatMessage({
                 id: 'dataTransfers.transfer.completeRequest',
               })}
-            </Button>
+            </WarningButton>
           </ButtonWrapper>
         </TransferWrapper>
       ))}

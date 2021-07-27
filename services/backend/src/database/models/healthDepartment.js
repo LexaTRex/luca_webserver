@@ -49,6 +49,10 @@ module.exports = (Sequelize, DataTypes) => {
     HealthDepartment.hasMany(models.DummyTrace, {
       foreignKey: 'healthDepartmentId',
     });
+
+    HealthDepartment.hasMany(models.HealthDepartmentEmployee, {
+      foreignKey: 'departmentId',
+    });
   };
 
   return HealthDepartment;

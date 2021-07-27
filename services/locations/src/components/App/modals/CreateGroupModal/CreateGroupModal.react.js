@@ -70,16 +70,6 @@ export const CreateGroupModal = () => {
     closeModal();
   };
 
-  const handleResponse = response => {
-    queryClient.invalidateQueries('groups');
-    notification.success({
-      message: intl.formatMessage({
-        id: 'notification.createGroup.success',
-      }),
-    });
-    setGroup(response);
-  };
-
   const handleServerError = () => {
     notification.error({
       message: intl.formatMessage({
@@ -87,6 +77,19 @@ export const CreateGroupModal = () => {
       }),
     });
     closeModal();
+  };
+
+  const handleResponse = response => {
+    if (!response) {
+      handleServerError();
+    }
+    queryClient.invalidateQueries('groups');
+    notification.success({
+      message: intl.formatMessage({
+        id: 'notification.createGroup.success',
+      }),
+    });
+    setGroup(response);
   };
 
   const createBaseGroup = () => {

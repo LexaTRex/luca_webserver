@@ -4,7 +4,8 @@ export const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   background: rgb(255, 255, 255);
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
   margin-top: 32px;
 `;
 

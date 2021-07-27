@@ -84,7 +84,7 @@ export const decryptUserTransfer = async userTransferId => {
 
   const { userData } = decryptUser(encryptedUser, userDataEncryptionKey);
 
-  return userData;
+  return { ...userData, uuid: userId };
 };
 
 /**

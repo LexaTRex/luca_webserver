@@ -1,12 +1,11 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import {
   Wrapper,
   Header,
   Description,
-  nextButtonStyles,
 } from '../../../generalOnboarding/Onboarding.styled';
 import {
   RESTAURANT_TYPE,
@@ -30,23 +29,22 @@ export const SelectGroupType = ({ next, setGroupType }) => {
     {
       type: RESTAURANT_TYPE,
       intlId: 'modal.createGroup.selectType.restaurant',
-      style: { ...nextButtonStyles, marginRight: 16, flex: '0 30%' },
+      style: { marginRight: 16, flex: '0 30%' },
     },
     {
       type: HOTEL_TYPE,
       intlId: 'modal.createGroup.selectType.hotel',
-      style: { ...nextButtonStyles, marginRight: 16, flex: '0 30%' },
+      style: { marginRight: 16, flex: '0 30%' },
     },
     {
       type: NURSING_HOME_TYPE,
       intlId: 'modal.createGroup.selectType.nursing_home',
-      style: { ...nextButtonStyles, flex: '0 30%' },
+      style: { flex: '0 30%' },
     },
     {
       type: STORE_TYPE,
       intlId: 'modal.createGroup.selectType.store',
       style: {
-        ...nextButtonStyles,
         marginTop: 16,
         marginRight: 16,
         flex: '0 30%',
@@ -55,7 +53,7 @@ export const SelectGroupType = ({ next, setGroupType }) => {
     {
       type: BASE_TYPE,
       intlId: 'modal.createGroup.selectType.base',
-      style: { ...nextButtonStyles, marginTop: 16, flex: '0 30%' },
+      style: { marginTop: 16, flex: '0 30%' },
     },
   ];
   return (
@@ -70,7 +68,7 @@ export const SelectGroupType = ({ next, setGroupType }) => {
       </Description>
       <Selection>
         {options.map(option => (
-          <Button
+          <PrimaryButton
             data-cy={option.type}
             key={option.type}
             onClick={() => select(option.type)}
@@ -79,7 +77,7 @@ export const SelectGroupType = ({ next, setGroupType }) => {
             {intl.formatMessage({
               id: option.intlId,
             })}
-          </Button>
+          </PrimaryButton>
         ))}
       </Selection>
     </Wrapper>

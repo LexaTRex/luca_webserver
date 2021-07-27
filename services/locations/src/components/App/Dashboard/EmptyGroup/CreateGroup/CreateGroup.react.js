@@ -1,11 +1,11 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 import { useModal } from 'components/hooks/useModal';
 import { CreateGroupModal } from 'components/App/modals/CreateGroupModal';
 
-import { buttonStyles } from './CreateGroup.styled';
+import { ButtonWrapper } from './CreateGroup.styled';
 
 export const CreateGroup = () => {
   const intl = useIntl();
@@ -18,8 +18,10 @@ export const CreateGroup = () => {
     });
   };
   return (
-    <Button onClick={onCreate} style={buttonStyles}>
-      {intl.formatMessage({ id: 'groupList.createGroup' })}
-    </Button>
+    <ButtonWrapper>
+      <PrimaryButton onClick={onCreate}>
+        {intl.formatMessage({ id: 'groupList.createGroup' })}
+      </PrimaryButton>
+    </ButtonWrapper>
   );
 };

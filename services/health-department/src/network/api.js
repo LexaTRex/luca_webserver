@@ -80,6 +80,10 @@ export const getPrivateKeySecret = () =>
     data && data.privateKeySecret ? base64ToHex(data.privateKeySecret) : null
   );
 
+export const getSigningTool = () => {
+  return getRequest(`${API_PATH}/v4/signingTool/downloads`);
+};
+
 // TAN
 export const getUserTransferByTan = tan => {
   return getRequest(`${API_PATH}/v3/userTransfers/tan/${tan}`);
@@ -118,41 +122,15 @@ export const updateProcess = (tracingProcessId, data) => {
   });
 };
 
-export const getLocationTransfers = tracingProcessId => {
-  return getRequest(
+export const getLocationTransfers = tracingProcessId =>
+  getRequest(
     `${API_PATH}/v3/tracingProcesses/${tracingProcessId}/locationTransfers`
-  )
-    .then(transfers => {
-      const transferPromises = transfers.map(async transfer => {
-        const locationTransferResponse = await fetch(
-          `${API_PATH}/v3/healthDepartmentEmployees/locations/${transfer.locationId}`,
-          {
-            method: 'GET',
-            headers,
-          }
-        );
+  );
 
-        const locationResponse = await locationTransferResponse.json();
-
-        return {
-          ...locationResponse,
-          time: transfer.time,
-          transferId: transfer.uuid,
-          isCompleted: transfer.isCompleted,
-          contactedAt: transfer.contactedAt,
-        };
-      });
-
-      return Promise.all(transferPromises);
-    })
-    .catch(error => {
-      if (error.status === 401) {
-        return [];
-      }
-
-      throw error;
-    });
-};
+export const getLocation = locationId =>
+  getRequest(
+    `${API_PATH}/v3/healthDepartmentEmployees/locations/${locationId}`
+  );
 
 export const getContactPersons = transferId => {
   return getRequest(`${API_PATH}/v3/locationTransfers/${transferId}/traces`);

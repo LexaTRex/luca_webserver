@@ -4,23 +4,31 @@ export const CamScannerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: black;
-  height: 100vh;
-  width: 100vw;
+  margin: 0 24px;
   padding: 24px 0 0 0;
+`;
+
+export const TopWrapper = styled.div`
+  height: 60vh;
+`;
+
+export const BottomWrapper = styled.div`
+  position: relative;
+  height: 30vh;
 `;
 
 export const CheckinBox = styled.div`
   display: flex;
   background-color: white;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
+  margin: 0 auto;
   padding: 8px 24px 0 24px;
   border-radius: 2px;
+
+  position: absolute;
+  bottom: 14px;
+
   @media (min-width: 768px) {
-    left: 56px;
-    right: 56px;
     padding: 24px 24px 0 24px;
   }
 `;
@@ -59,6 +67,6 @@ export const QrWrapper = styled.div`
   margin: 24px 0;
   @media (min-width: 768px) {
     width: 50vh;
-    margin: 16px auto auto;
+    margin: 24px auto;
   }
 `;

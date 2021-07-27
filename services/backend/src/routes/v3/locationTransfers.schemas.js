@@ -1,5 +1,10 @@
 const { z } = require('../../utils/validation');
 
+const getSchema = z.object({
+  completed: z.enum(['true', 'false']).optional(),
+  deleted: z.enum(['true', 'false']).optional(),
+});
+
 const createSchema = z.object({
   locations: z
     .array(
@@ -29,7 +34,8 @@ const sendSchema = z.object({
           mac: z.mac(),
           iv: z.iv(),
         })
-        .optional(),
+        .optional()
+        .nullable(),
     })
   ),
 });
@@ -40,6 +46,7 @@ const transferIdParametersSchema = z.object({
 
 module.exports = {
   createSchema,
+  getSchema,
   sendSchema,
   transferIdParametersSchema,
 };

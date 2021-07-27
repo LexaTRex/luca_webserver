@@ -4,4 +4,5 @@ module.exports = {
   skipSmsVerification: false,
   loglevel: 'info',
   hostname: 'app.luca-app.de',
+  shutdownDelay: 15,
 };

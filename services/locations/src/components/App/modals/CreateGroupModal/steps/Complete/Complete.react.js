@@ -1,12 +1,12 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import { Success } from '../../../generalOnboarding/Success';
 import {
-  nextButtonStyles,
-  backButtonStyles,
-  noButtonStyles,
   Wrapper,
   Header,
   Description,
@@ -30,20 +30,16 @@ export const Complete = ({ back, next, group, createGroup, done }) => {
       </Description>
       {!group ? (
         <ButtonWrapper multipleButtons>
-          <Button style={backButtonStyles} onClick={back}>
+          <SecondaryButton onClick={back}>
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button
-            data-cy="finishGroupCreation"
-            style={nextButtonStyles}
-            onClick={createGroup}
-          >
+          </SecondaryButton>
+          <PrimaryButton data-cy="finishGroupCreation" onClick={createGroup}>
             {intl.formatMessage({
               id: 'createGroup.button.done',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       ) : (
         <>
@@ -56,20 +52,21 @@ export const Complete = ({ back, next, group, createGroup, done }) => {
             })}
           </Header>
           <ButtonWrapper multipleButtons style={{ justifyContent: 'flex-end' }}>
-            <Button
+            <PrimaryButton
               data-cy="no"
-              style={{ ...noButtonStyles, marginRight: 24 }}
+              isButtonWhite
+              style={{ marginRight: 24 }}
               onClick={done}
             >
               {intl.formatMessage({
                 id: 'no',
               })}
-            </Button>
-            <Button style={nextButtonStyles} onClick={next}>
+            </PrimaryButton>
+            <PrimaryButton data-cy="yes" onClick={next}>
               {intl.formatMessage({
                 id: 'yes',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </>
       )}

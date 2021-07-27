@@ -1,34 +1,26 @@
 import React from 'react';
-import moment from 'moment';
 import { useIntl } from 'react-intl';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { Table, notification } from 'antd';
 
-import { sortByTimeAsc } from 'utils/time';
+import { sortByTimeAsc, formattedTimeLabel } from 'utils/time';
 import { sortByNameAsc } from 'utils/string';
-import { getLocationTransfers, contactLocation } from 'network/api';
+import { contactLocation } from 'network/api';
 
 import { useModal } from 'components/hooks/useModal';
-import { ContactPersonViewModal } from 'components/App/modals/ContactPersonViewModal';
+import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
+import { ContactPersonsModal } from 'components/App/modals/ContactPersonsModal';
 
 import { Time, Contact } from './HistoryTable.styled';
 import { ContactConfirmationButton } from './ContactConfirmationButton';
 
-export const HistoryTable = ({ process, refetch }) => {
+export const HistoryTable = ({ process }) => {
   const intl = useIntl();
   const [openModal] = useModal();
   const queryClient = useQueryClient();
-  const { isLoading, error, data: locations } = useQuery(
-    'locationTransfer',
-    () => getLocationTransfers(process.uuid),
-    { refetchOnWindowFocus: false }
-  );
+  const locations = useLocationWithTransfers(process.uuid);
 
-  if (isLoading || error) return null;
-
-  const formattedTimeLabel = (timestamp, format = 'DD.MM.YYYY - HH:mm') => {
-    return `${moment.unix(timestamp).format(format)}`;
-  };
+  if (!locations) return null;
 
   const formattedContactInfo = (firstName, lastName) =>
     `${firstName} ${lastName}`;
@@ -36,9 +28,8 @@ export const HistoryTable = ({ process, refetch }) => {
   const handleAction = location => {
     if (location.isCompleted) {
       openModal({
-        content: (
-          <ContactPersonViewModal location={location} process={process} />
-        ),
+        content: <ContactPersonsModal location={location} process={process} />,
+        wide: true,
       });
     }
     if (!location.contactedAt) {
@@ -49,9 +40,9 @@ export const HistoryTable = ({ process, refetch }) => {
               id: 'modal.history.contact.success',
             }),
           });
-          queryClient.invalidateQueries('locationTransfer');
+          queryClient.invalidateQueries(`transfers${process.uuid}`);
+          queryClient.invalidateQueries(`process${process.uuid}`);
           queryClient.invalidateQueries('processes');
-          refetch();
         })
         .catch(() =>
           notification.error({

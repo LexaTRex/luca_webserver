@@ -18,6 +18,7 @@ import { APP_ROUTE } from 'constants/routes';
 import { IS_MOBILE } from 'constants/environment';
 
 // Components
+import { Footer } from './Footer';
 import {
   LoginWrapper,
   LoginCard,
@@ -29,6 +30,7 @@ import {
   SubTitle,
   HeaderWrapper,
   ErrorMessage,
+  VersionFooterWrapper,
 } from './Login.styled';
 import { clearPrivateKeys } from '../../utils/cryptoKeyOperations';
 
@@ -75,6 +77,9 @@ export const Login = () => {
               })}
             </SubTitle>
           </HeaderWrapper>
+          <VersionFooterWrapper>
+            <Footer />
+          </VersionFooterWrapper>
         </Left>
         <Right src={Login1} />
         <LoginWrapper>

@@ -1,3 +1,4 @@
+const config = require('config');
 const moment = require('moment');
 const RateLimit = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis');
@@ -10,6 +11,14 @@ const { isInternalIp, isRateLimitExemptIp } = require('../utils/ipChecks');
 const minuteDuration = moment.duration(1, 'minute');
 const hourDuration = moment.duration(1, 'hour');
 const dayDuration = moment.duration(1, 'day');
+
+const DEFAULT_RATE_LIMIT_MINUTE = config.get(
+  `rate_limits.default_rate_limit_minute`
+);
+const DEFAULT_RATE_LIMIT_HOUR = config.get(
+  `rate_limits.default_rate_limit_hour`
+);
+const DEFAULT_RATE_LIMIT_DAY = config.get(`rate_limits.default_rate_limit_day`);
 
 const ipKeyGenerator = request => {
   return `${request.ip}:${request.baseUrl}${request.route.path}`.toLowerCase();
@@ -45,60 +54,78 @@ const dayStore = new RedisStore({
   expiry: dayDuration.as('s'),
 });
 
-const limitRequestsPerMinute = (max, { skipSuccessfulRequests, global } = {}) =>
-  new RateLimit({
-    store: minuteStore,
-    windowMs: minuteDuration.as('ms'),
-    skip: request =>
-      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
+const limitRequestsByFeatureFlag = (
+  key = '',
+  { skipSuccessfulRequests, global },
+  rateLimitOptions
+) => (request, response, next) => {
+  const max = config.get(`rate_limits.${key}`);
+  const rateLimit = new RateLimit({
+    skip: ({ ip }) => isInternalIp(ip) || isRateLimitExemptIp(ip),
     keyGenerator: global ? globalKeyGenerator : ipKeyGenerator,
     max,
     skipSuccessfulRequests,
+    ...rateLimitOptions,
   });
 
-const limitRequestsPerHour = (max, { skipSuccessfulRequests, global } = {}) =>
-  new RateLimit({
-    store: hourStore,
-    windowMs: hourDuration.as('ms'),
-    skip: request =>
-      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
-    keyGenerator: global ? globalKeyGenerator : ipKeyGenerator,
-    max,
-    skipSuccessfulRequests,
-  });
+  rateLimit(request, response, next);
+};
 
-const limitRequestsPerDay = (max, { skipSuccessfulRequests, global } = {}) =>
-  new RateLimit({
-    store: dayStore,
-    windowMs: dayDuration.as('ms'),
-    skip: request =>
-      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
-    keyGenerator: global ? globalKeyGenerator : ipKeyGenerator,
-    max,
-    skipSuccessfulRequests,
-  });
+const limitRequestsPerMinute = (key, { skipSuccessfulRequests, global } = {}) =>
+  limitRequestsByFeatureFlag(
+    key || DEFAULT_RATE_LIMIT_MINUTE,
+    { skipSuccessfulRequests, global },
+    {
+      store: minuteStore,
+      windowMs: minuteDuration.as('ms'),
+    }
+  );
 
-const limitRequestsByPhoneNumberPerDay = max =>
-  new RateLimit({
-    store: dayStore,
-    windowMs: dayDuration.as('ms'),
-    skip: request =>
-      isInternalIp(request.ip) || isRateLimitExemptIp(request.ip),
-    keyGenerator: phoneNumberKeyGenerator,
-    max,
-  });
+const limitRequestsPerHour = (key, { skipSuccessfulRequests, global } = {}) =>
+  limitRequestsByFeatureFlag(
+    key || DEFAULT_RATE_LIMIT_HOUR,
+    { skipSuccessfulRequests, global },
+    {
+      store: hourStore,
+      windowMs: hourDuration.as('ms'),
+    }
+  );
 
-const limitRequestsByFixedLinePhoneNumberPerDay = max =>
-  new RateLimit({
-    store: dayStore,
-    windowMs: dayDuration.as('ms'),
-    skip: request =>
-      isInternalIp(request.ip) ||
-      !isFixedLinePhoneNumber(request) ||
-      isRateLimitExemptIp(request.ip),
-    keyGenerator: phoneNumberKeyGenerator,
-    max,
-  });
+const limitRequestsPerDay = (key, { skipSuccessfulRequests, global } = {}) =>
+  limitRequestsByFeatureFlag(
+    key || DEFAULT_RATE_LIMIT_DAY,
+    { skipSuccessfulRequests, global },
+    {
+      store: dayStore,
+      windowMs: dayDuration.as('ms'),
+    }
+  );
+
+const limitRequestsByPhoneNumberPerDay = key =>
+  limitRequestsByFeatureFlag(
+    key,
+    {},
+    {
+      store: dayStore,
+      windowMs: dayDuration.as('ms'),
+      keyGenerator: phoneNumberKeyGenerator,
+    }
+  );
+
+const limitRequestsByFixedLinePhoneNumberPerDay = key =>
+  limitRequestsByFeatureFlag(
+    key,
+    {},
+    {
+      store: dayStore,
+      windowMs: dayDuration.as('ms'),
+      skip: request =>
+        isInternalIp(request.ip) ||
+        !isFixedLinePhoneNumber(request) ||
+        isRateLimitExemptIp(request.ip),
+      keyGenerator: phoneNumberKeyGenerator,
+    }
+  );
 
 module.exports = {
   limitRequestsPerMinute,

@@ -1,36 +1,34 @@
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { v4 as generateUUID } from 'uuid';
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Grid,
-  Input,
-  InputNumber,
-  Row,
-  Divider,
-} from 'antd';
+import { Checkbox, Form, Input, InputNumber, Divider } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useQuery } from 'react-query';
 
 import { getAdditionalData, getDailyKey } from 'network/api';
+import { PRIVACY_LINK } from 'constants/links';
 
 // Hooks
 import { useRegister } from 'components/hooks/useRegister';
-import { useContactDataRules } from 'components/hooks/useContactDataRules';
+import {
+  useNameValidator,
+  usePhoneValidator,
+  useEmailValidator,
+  useTableValidator,
+} from 'components/hooks/useValidators';
 
 // Components
+import { FormItem } from './FormItem';
+import { AddressInput } from './AddressInput';
+
 import { ButtonWrapper, Link } from './InputForm.styled';
 
-const { useBreakpoint } = Grid;
 export const InputForm = ({
   scanner,
   initialValues = null,
   additionalData = null,
 }) => {
   const intl = useIntl();
-  const screens = useBreakpoint();
   const [formFieldNames, setFormFieldNames] = useState({
     firstName: generateUUID(),
     lastName: generateUUID(),
@@ -44,17 +42,11 @@ export const InputForm = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formReference = useRef(null);
-  const {
-    firstNameValidator,
-    lastNameValidator,
-    streetValidator,
-    houseNoValidator,
-    zipCodeValidator,
-    cityValidator,
-    phoneValidator,
-    emailValidator,
-    tableValidator,
-  } = useContactDataRules();
+
+  const { firstNameValidator, lastNameValidator } = useNameValidator();
+  const { phoneValidator } = usePhoneValidator();
+  const { emailValidator } = useEmailValidator();
+  const { tableValidator } = useTableValidator();
 
   const { isLoading, error, data: dailyKey } = useQuery(
     'dailyKey',
@@ -105,100 +97,30 @@ export const InputForm = ({
         initialValues={initialValues}
         style={{ width: '60vw' }}
       >
-        <Form.Item name={formFieldNames.firstName} rules={firstNameValidator()}>
-          <Input
-            data-cy="firstName"
-            autoComplete="new-password"
-            placeholder={`* ${intl.formatMessage({
-              id: 'contactDataForm.firstName',
-            })}`}
-          />
-        </Form.Item>
-        <Form.Item name={formFieldNames.lastName} rules={lastNameValidator()}>
-          <Input
-            data-cy="lastName"
-            autoComplete="new-password"
-            placeholder={`* ${intl.formatMessage({
-              id: 'contactDataForm.lastName',
-            })}`}
-          />
-        </Form.Item>
-        <Row gutter={16} wrap>
-          <Col span={!screens.md ? 24 : 20}>
-            <Form.Item
-              name={formFieldNames.street}
-              rules={streetValidator()}
-              width="50%"
-            >
-              <Input
-                data-cy="street"
-                autoComplete="new-password"
-                placeholder={`* ${intl.formatMessage({
-                  id: 'contactDataForm.street',
-                })}`}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={!screens.md ? 24 : 4}>
-            <Form.Item name={formFieldNames.number} rules={houseNoValidator()}>
-              <Input
-                data-cy="number"
-                autoComplete="new-password"
-                placeholder={`* ${intl.formatMessage({
-                  id: 'contactDataForm.number',
-                })}`}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Input.Group
-          placeholder={intl.formatMessage({
-            id: 'contactDataForm.city',
-          })}
-        >
-          <Row gutter={16}>
-            <Col span={!screens.md ? 24 : 4}>
-              <Form.Item name={formFieldNames.zip} rules={zipCodeValidator()}>
-                <Input
-                  data-cy="zip"
-                  autoComplete="new-password"
-                  placeholder={`* ${intl.formatMessage({
-                    id: 'contactDataForm.zip',
-                  })}`}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={!screens.md ? 24 : 20}>
-              <Form.Item name={formFieldNames.city} rules={cityValidator()}>
-                <Input
-                  data-cy="city"
-                  autoComplete="new-password"
-                  placeholder={`* ${intl.formatMessage({
-                    id: 'contactDataForm.city',
-                  })}`}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Input.Group>
-        <Form.Item name={formFieldNames.phone} rules={phoneValidator()}>
-          <Input
-            data-cy="phone"
-            autoComplete="new-password"
-            placeholder={`* ${intl.formatMessage({
-              id: 'contactDataForm.phone',
-            })}`}
-          />
-        </Form.Item>
-        <Form.Item name={formFieldNames.email} rules={emailValidator()}>
-          <Input
-            data-cy="email"
-            autoComplete="new-password"
-            placeholder={intl.formatMessage({
-              id: 'contactDataForm.email',
-            })}
-          />
-        </Form.Item>
+        <FormItem
+          generatedUUID={formFieldNames.firstName}
+          validator={firstNameValidator}
+          fieldName="firstName"
+          isMandatory
+        />
+        <FormItem
+          generatedUUID={formFieldNames.lastName}
+          validator={lastNameValidator}
+          fieldName="lastName"
+          isMandatory
+        />
+        <AddressInput formFieldNames={formFieldNames} />
+        <FormItem
+          generatedUUID={formFieldNames.phone}
+          validator={phoneValidator}
+          fieldName="phone"
+          isMandatory
+        />
+        <FormItem
+          generatedUUID={formFieldNames.email}
+          validator={emailValidator}
+          fieldName="email"
+        />
 
         {(scanner?.tableCount || checkinData?.additionalData.length !== 0) && (
           <Divider>
@@ -209,7 +131,7 @@ export const InputForm = ({
         )}
 
         {scanner?.tableCount && (
-          <Form.Item name="additionalData-table" rules={tableValidator()}>
+          <Form.Item name="additionalData-table" rules={tableValidator}>
             <InputNumber
               min={1}
               max={scanner.tableCount}
@@ -249,9 +171,7 @@ export const InputForm = ({
                 // eslint-disable-next-line react/display-name
                 a: (...chunks) => (
                   <Link
-                    href={intl.formatMessage({
-                      id: 'registration.privacyLink',
-                    })}
+                    href={PRIVACY_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -268,17 +188,15 @@ export const InputForm = ({
               marginBottom: 0,
             }}
           >
-            <Button
+            <PrimaryButton
               data-cy="contactSubmit"
-              type="primary"
               htmlType="submit"
-              shape="round"
               loading={isSubmitting}
             >
               {intl.formatMessage({
                 id: 'contactDataForm.button',
               })}
-            </Button>
+            </PrimaryButton>
           </Form.Item>
         </ButtonWrapper>
       </Form>

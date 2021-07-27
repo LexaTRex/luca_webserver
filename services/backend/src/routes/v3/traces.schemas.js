@@ -8,7 +8,7 @@ const checkinSchema = z.object({
   iv: z.iv(),
   mac: z.mac(),
   publicKey: z.ecPublicKey(),
-  deviceType: z.number().int().min(0),
+  deviceType: z.deviceType(),
 });
 
 const checkoutSchema = z.object({

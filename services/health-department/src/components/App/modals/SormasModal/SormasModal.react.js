@@ -6,6 +6,7 @@ import { v1 as generateUUID } from 'uuid';
 
 import { getSormasClient } from 'network/sormas';
 import { getSORMASCaseUIURL } from 'utils/sormas';
+import { useModal } from 'components/hooks/useModal';
 
 import { CaseWrapper } from './SormasModal.styled';
 
@@ -13,8 +14,9 @@ import { SelectCaseStep } from './SelectCaseStep';
 import { CredentialsStep } from './CredentialsStep';
 import { ExportProgressStep } from './ExportProgressStep';
 
-export function SormasModal({ traces, location, closeModal }) {
+export function SormasModal({ traces, location }) {
   const intl = useIntl();
+  const [, closeModal] = useModal();
   const [sormasClient, setSORMASClient] = useState();
   const [currentStep, setCurrentStep] = useState(0);
   const [clientInformation, setClientInformation] = useState({});

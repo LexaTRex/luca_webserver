@@ -5,5 +5,8 @@
   "integrationFolder": "./specs",
   "video": false,
   "supportFile": "./support",
-  "downloadsFolder": "./downloads"
+  "downloadsFolder": "./downloads",
+  "env": {
+    "envName": "local"
+  }
 }

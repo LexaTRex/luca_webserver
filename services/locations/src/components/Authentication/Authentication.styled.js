@@ -117,20 +117,3 @@ export const ButtonWrapper = styled.div`
     flex-direction: column;  
   `}
 `;
-
-export const backButtonStyles = {
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-  background: 'transparent',
-  border: '1px solid black',
-  marginBottom: 16,
-};
-
-export const nextButtonStyles = {
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-};

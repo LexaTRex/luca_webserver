@@ -1,7 +1,8 @@
-import { Button, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import React, { useCallback, useEffect, useState } from 'react';
+import { PrimaryButton } from 'components/general';
 
 import {
   createAdditionalData,
@@ -18,7 +19,6 @@ import {
 
 import {
   StyledFooter,
-  addButtonStyle,
   informationTooltipStyle,
   StyledSwitchContainer,
   StyledInformationText,
@@ -134,15 +134,16 @@ export const CheckInQuery = ({ location }) => {
         ))}
         <StyledFooter>
           {isAdditionalDataEnabled && (
-            <Button
+            <PrimaryButton
               onClick={addAdditionalData}
-              style={addButtonStyle}
+              isButtonWhite
+              style={{ marginTop: 24 }}
               data-cy="addRequestButton"
             >
               {intl.formatMessage({
                 id: 'settings.location.checkin.additionalData.add',
               })}
-            </Button>
+            </PrimaryButton>
           )}
         </StyledFooter>
       </CardSection>

@@ -2,23 +2,15 @@ import React, { useMemo } from 'react';
 
 import moment from 'moment';
 import { notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useIntl } from 'react-intl';
 
 import { shareData } from 'network/api';
-import {
-  base64ToHex,
-  DECRYPT_DLIES,
-  ENCRYPT_DLIES,
-  hexToBase64,
-  hexToBytes,
-  hexToInt8,
-} from '@lucaapp/crypto';
 
+import { reencryptAdditionalData, decryptTrace } from 'utils/crypto';
 import {
-  buttonStyles,
   SubHeader,
   StepLabel,
-  FinishButton,
   RequestContent,
   FinishButtonWrapper,
 } from '../ShareData.styled';
@@ -45,49 +37,21 @@ export const ShareDataStep = ({
         const traces = transfer.traces
           .map(trace => {
             try {
-              const decData = DECRYPT_DLIES(
+              const decryptedTrace = decryptTrace(trace, privateKey);
+              const reencryptedAdditionalData = reencryptAdditionalData(
+                trace.additionalData,
                 privateKey,
-                base64ToHex(trace.publicKey),
-                base64ToHex(trace.data),
-                base64ToHex(trace.iv),
-                base64ToHex(trace.mac)
+                transfer.department.publicHDEKP
               );
-              let additionalData;
-
-              if (trace.additionalData) {
-                try {
-                  const decryptedAdditionaldata = DECRYPT_DLIES(
-                    privateKey,
-                    base64ToHex(trace.additionalData.publicKey),
-                    base64ToHex(trace.additionalData.data),
-                    base64ToHex(trace.additionalData.iv),
-                    base64ToHex(trace.additionalData.mac)
-                  );
-                  JSON.parse(hexToBytes(decryptedAdditionaldata));
-                  const encAdditionalData = ENCRYPT_DLIES(
-                    base64ToHex(transfer.department.publicHDEKP),
-                    decryptedAdditionaldata
-                  );
-                  additionalData = {
-                    data: hexToBase64(encAdditionalData.data),
-                    publicKey: hexToBase64(encAdditionalData.publicKey),
-                    mac: hexToBase64(encAdditionalData.mac),
-                    iv: hexToBase64(encAdditionalData.iv),
-                  };
-                } catch (error) {
-                  // eslint-disable-next-line no-console
-                  console.error('error decrypting additional data', error);
-                }
-              }
 
               return {
                 traceId: trace.traceId,
-                version: hexToInt8(decData.slice(0, 2)),
-                keyId: hexToInt8(decData.slice(2, 4)),
-                publicKey: hexToBase64(decData.slice(4, 70)),
-                verification: hexToBase64(decData.slice(70, 86)),
-                data: hexToBase64(decData.slice(86, decData.length)),
-                additionalData,
+                version: decryptedTrace.version,
+                keyId: decryptedTrace.keyId,
+                publicKey: decryptedTrace.publicKey,
+                verification: decryptedTrace.verification,
+                data: decryptedTrace.data,
+                additionalData: reencryptedAdditionalData,
               };
             } catch (error) {
               // eslint-disable-next-line no-console
@@ -173,9 +137,9 @@ export const ShareDataStep = ({
         ))}
       </RequestContent>
       <FinishButtonWrapper align="flex-end">
-        <FinishButton data-cy="next" onClick={onFinish} style={buttonStyles}>
+        <PrimaryButton data-cy="next" onClick={onFinish}>
           {intl.formatMessage({ id: 'shareData.finish' })}
-        </FinishButton>
+        </PrimaryButton>
       </FinishButtonWrapper>
     </>
   );

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Button } from 'antd';
 
 // Constants
 import { IS_MOBILE } from 'constants/environment';
@@ -75,10 +74,4 @@ export const UploadButton = styled.button`
 export const UploadProgress = styled.div`
   display: flex;
   width: 200px;
-`;
-
-export const CustomButton = styled(Button)`
-  height: 40px;
-  width: ${({ width }) => (IS_MOBILE ? '100%' : width)};
-  background-color: ${({ $bgColor }) => $bgColor};
 `;

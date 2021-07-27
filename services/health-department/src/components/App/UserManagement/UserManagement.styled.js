@@ -6,3 +6,9 @@ export const Wrapper = styled.div`
   background-color: rgb(232, 231, 229);
   position: relative;
 `;
+
+export const VersionFooterWrapper = styled.div`
+  padding-top: 24px;
+  padding-bottom: 24px;
+  float: right;
+`;

@@ -1,4 +1,4 @@
-import { checkPhoneNumber } from './parsePhoneNumber';
+import { isValidPhoneNumber } from './parsePhoneNumber';
 
 describe('Phone number validation', () => {
   it('accepts valid phone numbers', () => {
@@ -15,9 +15,8 @@ describe('Phone number validation', () => {
       '+852 7777 3333',
       '+39 347 1234567',
     ];
-
     validPhoneNumbers.map(number =>
-      expect(checkPhoneNumber(number)).toBe(true)
+      expect(isValidPhoneNumber(number)).toBe(true)
     );
   });
 
@@ -33,9 +32,8 @@ describe('Phone number validation', () => {
       '+49456778945666666666933',
       '                    ',
     ];
-
     inValidPhoneNumbers.map(number =>
-      expect(checkPhoneNumber(number)).toBe(false)
+      expect(isValidPhoneNumber(number)).toBe(false)
     );
   });
 });

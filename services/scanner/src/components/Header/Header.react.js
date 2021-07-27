@@ -6,7 +6,15 @@ import LucaLogo from 'assets/LucaLogo.svg';
 
 // Components
 import { LicenseLink } from 'components/LicenseLink';
-import { HeaderWrapper, Logo, Title, SubTitle } from './Header.styled';
+import { VersionLink } from 'components/VersionLink';
+
+import {
+  HeaderWrapper,
+  Logo,
+  Title,
+  SubTitle,
+  LinkWrapper,
+} from './Header.styled';
 
 export const Header = () => {
   const intl = useIntl();
@@ -20,7 +28,10 @@ export const Header = () => {
           })}
         </SubTitle>
       </Title>
-      <LicenseLink />
+      <LinkWrapper>
+        <LicenseLink />
+        <VersionLink />
+      </LinkWrapper>
     </HeaderWrapper>
   );
 };

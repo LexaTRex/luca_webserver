@@ -16,7 +16,10 @@ const {
 } = require('../../middlewares/requireUser');
 const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
-const { DEVICE_TYPE_STATIC } = require('../../constants/deviceTypes');
+const {
+  DEVICE_TYPE_STATIC,
+  DEVICE_TYPE_FORM,
+} = require('../../constants/deviceTypes');
 
 const {
   checkoutSchema,
@@ -32,11 +35,17 @@ const {
  *
  * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-validation-and-check-in-upload
  */
+const forbiddenDeviceTypes = new Set([DEVICE_TYPE_STATIC, DEVICE_TYPE_FORM]);
+
 router.post(
   '/checkin',
-  limitRequestsPerHour(1000),
+  limitRequestsPerHour('traces_checkin_post_ratelimit_hour'),
   validateSchema(checkinSchema),
   async (request, response) => {
+    if (forbiddenDeviceTypes.has(request.body.deviceType)) {
+      return response.sendStatus(status.PRECONDITION_FAILED);
+    }
+
     const location = await database.Location.findOne({
       where: { scannerId: request.body.scannerId },
       include: {
@@ -109,7 +118,9 @@ router.post(
  */
 router.post(
   '/additionalData',
-  limitRequestsPerHour(60, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('traces_additionaldata_post_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateSchema(additionalDataSchema),
   async (request, response) => {
     const existingData = await database.TraceData.findByPk(

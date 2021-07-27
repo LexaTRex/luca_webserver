@@ -17,7 +17,9 @@ const deserializeUser = async (info, done) => {
         user.type = 'Operator';
         break;
       case 'HealthDepartmentEmployee':
-        user = await database.HealthDepartmentEmployee.findByPk(info.uuid);
+        user = await database.HealthDepartmentEmployee.findByPk(info.uuid, {
+          include: database.HealthDepartment,
+        });
         if (!user)
           throw new SessionError('HealthDepartmentEmployee does not exist');
         user.type = 'HealthDepartmentEmployee';

@@ -22,6 +22,7 @@ import { Content, Main, RequestWrapper } from './ShareData.styled';
 import { PrivateKeyStep } from './PrivateKeyStep';
 import { ShareDataStep } from './ShareDataStep';
 import { FinishStep } from './FinishStep';
+import { LocationFooter } from '../App/LocationFooter';
 
 export const ShareData = () => {
   const intl = useIntl();
@@ -141,6 +142,7 @@ export const ShareData = () => {
             </RequestWrapper>
           )}
         </Content>
+        <LocationFooter color="#fff" />
       </Main>
     </>
   );

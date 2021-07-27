@@ -2,20 +2,16 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { useIntl } from 'react-intl';
 
-import { getLocationTransfers } from 'network/api';
 import { decryptUserTransfer } from 'utils/cryptoOperations';
 import { IncompleteDataError } from 'errors/incompleteDataError';
+import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
 
 import { ToggleCompleted } from './ToggleCompleted';
 import { Wrapper, ProcessName, ButtonRow } from './HeaderRow.styled';
 
 export const HeaderRow = ({ process }) => {
   const intl = useIntl();
-  const { isLoading, error, data: locations } = useQuery(
-    'locationTransfer',
-    () => getLocationTransfers(process.uuid),
-    { refetchOnWindowFocus: false }
-  );
+  const locations = useLocationWithTransfers(process.uuid);
 
   const {
     isLoading: isUserLoading,
@@ -25,10 +21,10 @@ export const HeaderRow = ({ process }) => {
     `userTransfer${process.userTransferId}`,
     () =>
       process.userTransferId ? decryptUserTransfer(process.userTransferId) : {},
-    { retry: false }
+    { retry: false, staleTime: Number.POSITIVE_INFINITY }
   );
 
-  if (isLoading || error || isUserLoading) return null;
+  if (isUserLoading || !locations) return null;
   if (userError && !(userError instanceof IncompleteDataError)) return null;
 
   const processName = (() => {

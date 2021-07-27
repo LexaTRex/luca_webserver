@@ -51,7 +51,3 @@ export const checkoutButton = {
   fontWeight: 'bold',
   padding: '0 40px',
 };
-
-export const disabledStyle = {
-  backgroundColor: '#dae0e7',
-};

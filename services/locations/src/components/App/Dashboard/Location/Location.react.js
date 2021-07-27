@@ -12,6 +12,8 @@ import {
 } from 'constants/routes';
 import LucaLogo from 'assets/luca_logo_padding.svg';
 
+import { LocationFooter } from 'components/App/LocationFooter';
+
 import { Checkout } from './Checkout';
 import { CheckInQuery } from './CheckInQuery';
 import { ScannerSelection } from './ScannerSelection';
@@ -77,6 +79,7 @@ export const Location = ({ isOperatorTrusted }) => {
       <TableSubdivision location={location} />
       <GenerateQRCodes location={location} />
       {location.lat && location.lng && <Checkout location={location} />}
+      <LocationFooter />
       {/* We need to pre load the Luca logo for QR-Code generation */}
       <HiddenImage src={LucaLogo} />
     </Wrapper>

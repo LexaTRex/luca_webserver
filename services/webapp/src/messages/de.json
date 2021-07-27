@@ -164,5 +164,7 @@
     "HistoryShareConsentModal.Cancel": "Abbrechen",
     "HistoryShareConsentModal.Share": "Freigeben",
     "HistoryShareConsentModal.Link": "Datenschutz - App",
-    "Settings.Repository": "GitLab Repository"
+    "Settings.Repository": "GitLab Repository",
+    "version.version": "Version",
+    "version.modal.title": "Version"
 }

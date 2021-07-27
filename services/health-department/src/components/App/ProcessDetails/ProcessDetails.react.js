@@ -20,7 +20,6 @@ export const ProcessDetails = () => {
     isLoading: isLoadingProcess,
     error: processError,
     data: process,
-    refetch,
   } = useQuery(`process${processId}`, () => getProcess(processId), {
     cacheTime: 0,
     retry: false,
@@ -35,7 +34,7 @@ export const ProcessDetails = () => {
         <BackButton />
         <HeaderRow process={process} />
         <InfoRow process={process} />
-        <History process={process} refetch={refetch} />
+        <History process={process} />
       </ContentWrapper>
     </PageWrapper>
   );

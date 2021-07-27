@@ -16,6 +16,7 @@ const {
   validateParametersSchema,
   validateSchema,
 } = require('../../../middlewares/validateSchema');
+
 const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
 const {
   requireOperator,
@@ -32,15 +33,18 @@ const {
 // change password
 router.post(
   '/change',
-  limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('password_change_post_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   requireOperator,
   requireNonDeletedUser,
   validateSchema(changePasswordSchema),
   async (request, response) => {
     const operator = request.user;
+    const { currentPassword, newPassword, lang } = request.body;
 
     const isCurrentPasswordCorrect = await operator.checkPassword(
-      request.body.currentPassword
+      currentPassword
     );
 
     if (!isCurrentPasswordCorrect) {
@@ -48,8 +52,17 @@ router.post(
     }
 
     await operator.update({
-      password: request.body.newPassword,
+      password: newPassword,
     });
+
+    mailClient.operatorUpdatePasswordNotification(
+      operator.email,
+      `${operator.fullName}`,
+      lang,
+      {
+        email: operator.email,
+      }
+    );
 
     return response.sendStatus(status.NO_CONTENT);
   }
@@ -58,7 +71,7 @@ router.post(
 // password forgot
 router.post(
   '/forgot',
-  limitRequestsPerHour(5),
+  limitRequestsPerHour('password_forgot_post_ratelimit_hour'),
   validateSchema(forgotPasswordSchema),
   async (request, response) => {
     const operator = await database.Operator.findOne({
@@ -105,7 +118,9 @@ router.post(
 // reset password
 router.post(
   '/reset',
-  limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('password_reset_post_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateSchema(resetPasswordSchema),
   async (request, response) => {
     const resetRequest = await database.PasswordReset.findOne({
@@ -152,7 +167,9 @@ router.post(
 // get password reset
 router.get(
   '/reset/:resetId',
-  limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('password_reset_get_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateParametersSchema(resetRequestSchema),
   async (request, response) => {
     const { resetId } = request.params;

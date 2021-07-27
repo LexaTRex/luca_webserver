@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
 import { useQuery } from 'react-query';
 
-import { getGroup } from 'network/api';
-import { requiresLocationName } from 'constants/errorMessages';
-import {
-  getRequiredRule,
-  getDefaultNameRule,
-  checkExistingLocation,
-} from 'utils/validatorRules';
+import { useLocationNameValidator } from 'components/hooks/useValidators';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
+
+import { getGroup } from 'network/api';
+
+import { getDefaultNameRule, getUniqueNameRule } from 'utils/validatorRules';
+
+import {
   Wrapper,
   Header,
   ButtonWrapper,
@@ -30,6 +31,7 @@ export const NameInput = ({
   const intl = useIntl();
   const [form] = Form.useForm();
   const [isLocationNameTaken, setIsLocationNameTaken] = useState(false);
+  const locationNameValidator = useLocationNameValidator('locationName');
 
   const { isLoading, error, data: group } = useQuery(`group/${groupId}`, () =>
     getGroup(groupId)
@@ -52,12 +54,9 @@ export const NameInput = ({
   const onValueUpdate = () => setIsLocationNameTaken(false);
 
   const locationNameRules = [
-    getRequiredRule(intl, requiresLocationName),
     getDefaultNameRule(intl),
-    {
-      required: isLocationNameTaken,
-      validator: checkExistingLocation(isLocationNameTaken, intl),
-    },
+    getUniqueNameRule(intl, isLocationNameTaken),
+    ...locationNameValidator,
   ];
 
   if (isLoading || error) return null;
@@ -88,20 +87,16 @@ export const NameInput = ({
           <Input autoFocus />
         </Form.Item>
         <ButtonWrapper multipleButtons>
-          <Button
-            onClick={back}
-            data-cy="previousStep"
-            style={backButtonStyles}
-          >
+          <SecondaryButton onClick={back} data-cy="previousStep">
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button data-cy="nextStep" style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton data-cy="nextStep" htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </Wrapper>

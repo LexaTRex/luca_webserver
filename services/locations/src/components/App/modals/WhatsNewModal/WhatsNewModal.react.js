@@ -1,13 +1,12 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import NewsSVG from 'assets/News.svg';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general';
 import {
   Wrapper,
   StyledImage,
   Headline,
   Content,
-  buttonStyles,
 } from './WhatsNewModal.styled';
 
 export const WhatsNewModal = ({ headline, content, onAccept }) => {
@@ -18,9 +17,13 @@ export const WhatsNewModal = ({ headline, content, onAccept }) => {
       <StyledImage src={NewsSVG} />
       <Headline>{headline}</Headline>
       <Content>{content}</Content>
-      <Button style={buttonStyles} onClick={onAccept}>
+      <PrimaryButton
+        isButtonWhite
+        style={{ float: 'right' }}
+        onClick={onAccept}
+      >
         {intl.formatMessage({ id: 'whatsNew.accept' })}
-      </Button>
+      </PrimaryButton>
     </Wrapper>
   );
 };

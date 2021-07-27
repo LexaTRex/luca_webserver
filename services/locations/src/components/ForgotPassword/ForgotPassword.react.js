@@ -1,7 +1,8 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
-import { Button, Form, Input, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useHistory } from 'react-router';
 
 import LucaLogoWhite from 'assets/LucaLogoWhite.svg';
@@ -11,7 +12,6 @@ import { forgotPassword } from 'network/api';
 import { AUTHENTICATION_ROUTE } from 'constants/routes';
 
 import {
-  buttonStyle,
   ButtonWrapper,
   ForgotPasswordCard,
   ForgotPasswordWrapper,
@@ -117,15 +117,15 @@ export const ForgotPassword = ({ location }) => {
                 />
               </Form.Item>
               <ButtonWrapper>
-                <Button
-                  style={buttonStyle}
+                <PrimaryButton
                   htmlType="submit"
+                  isButtonWhite
                   data-cy="sentResetLinkSubmit"
                 >
                   {intl.formatMessage({
                     id: 'forgotPassword.form.button',
                   })}
-                </Button>
+                </PrimaryButton>
               </ButtonWrapper>
             </Form>
             <LinkWrapper>

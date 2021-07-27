@@ -35,7 +35,7 @@ const STATIC_USER_TYPE = 'static';
  */
 router.post(
   '/',
-  limitRequestsPerHour(200),
+  limitRequestsPerHour('users_post_ratelimit_hour'),
   validateSchema(createSchema),
   async (request, response) => {
     const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
@@ -94,7 +94,9 @@ router.post(
  */
 router.get(
   '/:userId',
-  limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('users_get_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateParametersSchema(userIdParametersSchema),
   async (request, response) => {
     const user = await database.User.findOne({
@@ -151,7 +153,9 @@ router.get(
  */
 router.patch(
   '/:userId',
-  limitRequestsPerHour(1000, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('users_patch_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateParametersSchema(userIdParametersSchema),
   validateSchema(patchSchema),
   async (request, response) => {
@@ -200,7 +204,9 @@ router.patch(
  */
 router.delete(
   '/:userId',
-  limitRequestsPerHour(100, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('users_delete_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   validateParametersSchema(userIdParametersSchema),
   validateSchema(deleteSchema),
   async (request, response) => {

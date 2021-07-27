@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, InputNumber, Button } from 'antd';
+import { Form, InputNumber } from 'antd';
+
+import { useCheckoutRadiusValidator } from 'components/hooks/useValidators';
+
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import {
   DEFAULT_CHECKOUT_RADIUS,
@@ -10,8 +17,6 @@ import {
 import { YesNoSelection } from '../YesNoSelection';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
   Wrapper,
   Header,
   Description,
@@ -25,6 +30,7 @@ export const AutomaticCheckout = ({
   next,
 }) => {
   const intl = useIntl();
+  const checkoutRadiusValidator = useCheckoutRadiusValidator();
   const [automaticCheckout, setAutomaticCheckout] = useState(false);
 
   const onFinish = values => {
@@ -71,44 +77,26 @@ export const AutomaticCheckout = ({
                 id: 'createGroup.radius',
               })}
               name="radius"
-              rules={[
-                {
-                  required: true,
-                  message: intl.formatMessage({
-                    id: 'error.radius',
-                  }),
-                },
-                {
-                  type: 'number',
-                  min: DEFAULT_CHECKOUT_RADIUS,
-                  max: MAX_CHECKOUT_RADIUS,
-                  message: intl.formatMessage({
-                    id: 'settings.location.checkout.automatic.range',
-                  }),
-                },
-              ]}
+              rules={checkoutRadiusValidator}
             >
-              <InputNumber style={{ width: '100%' }} autoFocus />
+              <InputNumber
+                min={DEFAULT_CHECKOUT_RADIUS}
+                max={MAX_CHECKOUT_RADIUS}
+                style={{ width: '100%' }}
+                autoFocus
+              />
             </Form.Item>
             <ButtonWrapper multipleButtons>
-              <Button
-                onClick={back}
-                data-cy="previousStep"
-                style={backButtonStyles}
-              >
+              <SecondaryButton onClick={back} data-cy="previousStep">
                 {intl.formatMessage({
                   id: 'authentication.form.button.back',
                 })}
-              </Button>
-              <Button
-                htmlType="submit"
-                data-cy="nextStep"
-                style={nextButtonStyles}
-              >
+              </SecondaryButton>
+              <PrimaryButton htmlType="submit" data-cy="nextStep">
                 {intl.formatMessage({
                   id: 'authentication.form.button.next',
                 })}
-              </Button>
+              </PrimaryButton>
             </ButtonWrapper>
           </Form>
         </>

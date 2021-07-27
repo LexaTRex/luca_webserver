@@ -9,6 +9,13 @@ export const getFormattedTime = timestamp =>
 export const getFormattedDateTime = timestamp =>
   `${getFormattedDate(timestamp)} ${getFormattedTime(timestamp)}`;
 
+export const formattedTimeLabel = (
+  timestamp,
+  format = 'DD.MM.YYYY - HH:mm'
+) => {
+  return `${moment.unix(timestamp).format(format)}`;
+};
+
 export const sortByTimeAsc = locations =>
   locations.sort((a, b) => {
     if (a.time[0] === b.time[0]) return 0;

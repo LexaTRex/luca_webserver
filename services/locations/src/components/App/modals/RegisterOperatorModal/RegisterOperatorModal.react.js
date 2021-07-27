@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 import { useQuery, useQueryClient } from 'react-query';
 
 import { getPrivateKeySecret, storePublicKey } from 'network/api';
@@ -8,12 +8,7 @@ import { hexToBase64, EC_KEYPAIR_GENERATE } from '@lucaapp/crypto';
 import { ConfirmPrivateKey } from './ConfirmPrivateKey';
 import { DownloadPrivateKey } from './DownloadPrivateKey';
 
-import {
-  Wrapper,
-  ButtonWrapper,
-  disabledStyle,
-  nextButtonStyles,
-} from './RegisterOperatorModal.styled';
+import { Wrapper, ButtonWrapper } from './RegisterOperatorModal.styled';
 
 /**
  * Modal for registering a new location. Generates a new keypair and
@@ -66,16 +61,15 @@ export const RegisterOperatorModal = ({ onClose, operator }) => {
         setHasSavedKey={setHasSavedKey}
       />
       <ButtonWrapper multipleButtons>
-        <Button
+        <PrimaryButton
           data-cy="finish"
-          style={!hasSavedKey ? disabledStyle : nextButtonStyles}
           disabled={!hasSavedKey}
           onClick={setOperatorKey}
         >
           {intl.formatMessage({
             id: 'authentication.form.button.next',
           })}
-        </Button>
+        </PrimaryButton>
       </ButtonWrapper>
     </Wrapper>
   );

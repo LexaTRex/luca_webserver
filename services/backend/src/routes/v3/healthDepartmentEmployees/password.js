@@ -7,6 +7,7 @@ const {
   requireHealthDepartmentAdmin,
 } = require('../../../middlewares/requireUser');
 
+const mailClient = require('../../../utils/mailClient');
 const { generatePassword } = require('../../../utils/generators');
 
 const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
@@ -16,14 +17,17 @@ const { changePasswordSchema, renewSchema } = require('./password.schemas');
 // change password
 router.post(
   '/change',
-  limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('hd_password_change_post_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   requireHealthDepartmentEmployee,
   validateSchema(changePasswordSchema),
   async (request, response) => {
     const employee = request.user;
+    const { currentPassword, newPassword, lang } = request.body;
 
     const isCurrentPasswordCorrect = await employee.checkPassword(
-      request.body.currentPassword
+      currentPassword
     );
 
     if (!isCurrentPasswordCorrect) {
@@ -31,8 +35,17 @@ router.post(
     }
 
     await employee.update({
-      password: request.body.newPassword,
+      password: newPassword,
     });
+
+    mailClient.hdUpdatePasswordNotification(
+      employee.email,
+      `${employee.firstName} ${employee.lastName}`,
+      lang,
+      {
+        email: employee.email,
+      }
+    );
 
     return response.sendStatus(status.NO_CONTENT);
   }
@@ -40,7 +53,9 @@ router.post(
 
 router.patch(
   '/renew',
-  limitRequestsPerHour(15, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('hd_password_renew_patch_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   requireHealthDepartmentAdmin,
   validateSchema(renewSchema),
   async (request, response) => {

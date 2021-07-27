@@ -23,7 +23,20 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+import { CONNECTION_STRING } from './database';
 
 Cypress.Commands.add('getByCy', (selector, ...args) => {
   return cy.get(`[data-cy="${selector}"]`, ...args);
+});
+
+Cypress.Commands.add('executeQuery', (query) => {
+  return cy.task("dbQuery", {query, "connection" : CONNECTION_STRING});
+});
+
+Cypress.Commands.add('stubNewWindow', () => {
+  cy.window().then(win => {
+    cy.stub(win, 'open').callsFake(link => {
+      win.location.href = link;
+    });
+  });
 });

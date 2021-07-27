@@ -1,28 +1,11 @@
-import {
-  base64ToHex,
-  decodeUtf8,
-  DECRYPT_DLIES,
-  hexToBytes,
-} from '@lucaapp/crypto';
+import { decryptAdditionalData } from 'utils/crypto';
 
 export function extractTableNumbers(traces, privateKey) {
   const tables = {};
   const activeTraces = (traces || []).filter(trace => !trace.checkout);
   for (const trace of activeTraces) {
     try {
-      const { data, iv, mac, publicKey } = trace.data;
-      const decryptedAdditionalData = decodeUtf8(
-        hexToBytes(
-          DECRYPT_DLIES(
-            privateKey,
-            base64ToHex(publicKey),
-            base64ToHex(data),
-            base64ToHex(iv),
-            base64ToHex(mac)
-          )
-        )
-      );
-      const { table } = JSON.parse(decryptedAdditionalData);
+      const { table } = decryptAdditionalData(trace.data, privateKey);
       if (typeof table === 'number') {
         if (tables[table]) {
           tables[table].push(trace.traceId);

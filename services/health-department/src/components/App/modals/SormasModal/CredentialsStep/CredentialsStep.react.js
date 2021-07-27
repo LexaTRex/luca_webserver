@@ -4,6 +4,8 @@ import { getSormasClient } from 'network/sormas';
 import { Button, Form, Input, notification } from 'antd';
 
 import { ButtonWrapper } from '../SormasModal.styled';
+
+import { Headline } from './Credentials.styled';
 import { getConnectionFields } from './CredentialsStep.helper';
 
 export function CredentialsStep({ onFinish }) {
@@ -42,11 +44,11 @@ export function CredentialsStep({ onFinish }) {
 
   return (
     <Form onFinish={onConnect}>
-      <h1 style={{ color: 'white' }}>
+      <Headline>
         {intl.formatMessage({
           id: 'modal.sormas.credentialstep.connect.header',
         })}
-      </h1>
+      </Headline>
       {getConnectionFields(intl).map(field => (
         <Form.Item key={field.name} name={field.name} rules={field.rules}>
           <Input

@@ -11,7 +11,6 @@ import { zIndex } from 'constants/layout';
 
 const ModalTitle = styled.h1`
   margin: 0;
-
   font-size: 32px;
   line-height: 36px;
 `;

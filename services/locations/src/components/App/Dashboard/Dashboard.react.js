@@ -27,7 +27,8 @@ import { Location } from './Location';
 import { EmptyGroup } from './EmptyGroup';
 import { DeletionMessageLayout } from './DeletionMessage/DeletionMessage.react';
 import { LocationList } from './LocationList';
-import { LinkButton, LocationSider, MainContent } from './Dashboard.styled';
+import { LocationSider, MainContent } from './Dashboard.styled';
+import { LinkButton } from './Location/LocationOverview/TableAllocation/TableAllocation.styled';
 
 export const Dashboard = ({ operator }) => {
   const intl = useIntl();

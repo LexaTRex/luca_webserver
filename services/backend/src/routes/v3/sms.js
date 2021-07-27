@@ -54,11 +54,15 @@ const getProvider = async () => {
 
 router.post(
   '/request',
-  limitRequestsPerHour(10),
-  limitRequestsPerMinute(7200, { global: true }),
+  limitRequestsPerHour('sms_request_post_ratelimit_hour'),
+  limitRequestsPerMinute('sms_request_post_ratelimit_minute', {
+    global: true,
+  }),
   validateSchema(requestSchema),
-  limitRequestsByFixedLinePhoneNumberPerDay(2),
-  limitRequestsByPhoneNumberPerDay(5),
+  limitRequestsByFixedLinePhoneNumberPerDay(
+    'sms_request_post_ratelimit_fixed_phone_number'
+  ),
+  limitRequestsByPhoneNumberPerDay('sms_request_post_ratelimit_phone_number'),
   requireNonBlockedIp,
   async (request, response) => {
     const tan = crypto.randomInt(1000000).toString().padStart(6, '0');
@@ -107,7 +111,7 @@ router.post(
 
 router.post(
   '/verify',
-  limitRequestsPerDay(50),
+  limitRequestsPerDay('sms_verify_post_ratelimit_day'),
   validateSchema(verifySchema),
   async (request, response) => {
     if (config.get('skipSmsVerification')) {
@@ -149,7 +153,7 @@ router.post(
 
 router.post(
   '/verify/bulk',
-  limitRequestsPerDay(50),
+  limitRequestsPerDay('sms_verify_bulk_post_ratelimit_day'),
   validateSchema(bulkVerifySchema),
   async (request, response) => {
     if (config.get('skipSmsVerification')) {

@@ -4,7 +4,11 @@ import { Input, Button, Form, notification } from 'antd';
 import { changePassword } from 'network/api';
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 import { handleResponse } from './ChangePasswordView.helper';
-import { StyledHeadline, buttonStyle } from './ChangePasswordView.styled';
+import {
+  Wrapper,
+  StyledHeadline,
+  buttonStyle,
+} from './ChangePasswordView.styled';
 import { inputStyle, StyledButtonRow } from '../Profile.styled';
 
 export const ChangePasswordView = () => {
@@ -14,7 +18,7 @@ export const ChangePasswordView = () => {
   const onFinish = values => {
     const { currentPassword, newPassword } = values;
 
-    changePassword({ currentPassword, newPassword })
+    changePassword({ currentPassword, newPassword, lang: intl.locale })
       .then(response => {
         handleResponse(response, intl, form);
       })
@@ -31,7 +35,7 @@ export const ChangePasswordView = () => {
   };
 
   return (
-    <>
+    <Wrapper>
       <StyledHeadline>
         {intl.formatMessage({ id: 'profile.changePassword' })}
       </StyledHeadline>
@@ -124,6 +128,6 @@ export const ChangePasswordView = () => {
           </Form.Item>
         </StyledButtonRow>
       </Form>
-    </>
+    </Wrapper>
   );
 };

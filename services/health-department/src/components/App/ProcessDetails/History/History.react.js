@@ -5,11 +5,11 @@ import { HistoryTable } from './HistoryTable';
 
 import { Wrapper } from './History.styled';
 
-export const History = ({ process, refetch }) => {
+export const History = ({ process }) => {
   return (
     <Wrapper>
       <Header process={process} />
-      <HistoryTable process={process} refetch={refetch} />
+      <HistoryTable process={process} />
     </Wrapper>
   );
 };

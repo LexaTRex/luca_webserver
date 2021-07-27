@@ -5,3 +5,6 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
+export const Placeholder = styled.div`
+  height: 80vh;
+`;

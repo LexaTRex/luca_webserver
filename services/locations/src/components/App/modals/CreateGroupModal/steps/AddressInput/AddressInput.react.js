@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form } from 'antd';
+import { Form } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 import { LoadScript } from '@react-google-maps/api';
 
 import { GOOGLE_LIBRARIES, GOOGLE_MAPS_API_KEY } from 'constants/googleApi';
@@ -9,9 +13,6 @@ import { FormFields } from './FormFields';
 import { ManualAddressText } from '../../../generalOnboarding/ManualAddressText';
 import {
   ManualInputButton,
-  nextButtonStyles,
-  disabledStyles,
-  backButtonStyles,
   Wrapper,
   Header,
   Description,
@@ -86,25 +87,20 @@ export const AddressInput = ({
           {showManualInput && <ManualAddressText />}
           <FormFields show={filled || showManualInput} disabled={disabled} />
           <ButtonWrapper multipleButtons>
-            <Button style={backButtonStyles} onClick={back}>
+            <SecondaryButton onClick={back}>
               {intl.formatMessage({
                 id: 'authentication.form.button.back',
               })}
-            </Button>
-            <Button
+            </SecondaryButton>
+            <PrimaryButton
               data-cy="proceed"
               disabled={isError || (!filled && !showManualInput)}
-              style={
-                isError || (!filled && !showManualInput)
-                  ? disabledStyles
-                  : nextButtonStyles
-              }
               onClick={() => formReference.current.submit()}
             >
               {intl.formatMessage({
                 id: 'authentication.form.button.next',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </Form>
       </LoadScript>

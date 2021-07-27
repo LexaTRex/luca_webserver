@@ -33,7 +33,9 @@ const { badgeCreateSchema } = require('./badges.schemas');
 
 router.post(
   '/',
-  limitRequestsPerHour(10, { skipSuccessfulRequests: true }),
+  limitRequestsPerHour('badges_post_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   passport.authenticate('bearer-badgeGenerator', { session: false }),
   validateSchema(badgeCreateSchema),
   async (request, response) => {

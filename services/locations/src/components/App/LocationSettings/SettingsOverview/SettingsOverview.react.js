@@ -1,25 +1,21 @@
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import { updateLocation } from 'network/api';
 
+// hooks
+import {
+  useLocationNameValidator,
+  usePhoneValidator,
+} from 'components/hooks/useValidators';
+
 import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
-import {
-  getPhoneRules,
-  getRequiredRule,
-  showErrorNotification,
-  checkExistingLocation,
-  getDefaultNameRule,
-} from 'utils/validatorRules';
+
+import { getDefaultNameRule, getUniqueNameRule } from 'utils/validatorRules';
 
 import {
-  requiresLocationName,
-  updateLocationNotificationError,
-} from 'constants/errorMessages';
-
-import {
-  buttonStyles,
   Overview,
   Heading,
   ButtonWrapper,
@@ -35,8 +31,13 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [isLocationNameTaken, setIsLocationNameTaken] = useState(false);
 
+  const locationNameValidator = useLocationNameValidator('locationName');
+  const phoneValidator = usePhoneValidator('phone');
+
   const handleServerError = () => {
-    showErrorNotification(notification, intl, updateLocationNotificationError);
+    notification.error({
+      message: intl.formatMessage({ id: 'notification.updateLocation.error' }),
+    });
   };
 
   const handleResponse = response => {
@@ -61,19 +62,23 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
   };
 
   const onFinish = values => {
-    const { phone } = values;
+    const { phone, locationName } = values;
     const formattedPhoneNumber = getFormattedPhoneNumber(phone);
+    const formattedLocationName = locationName?.trim();
     updateLocation({
       locationId: location.uuid,
       data: {
         phone: formattedPhoneNumber,
         locationName:
-          location.name === null ? undefined : values.locationName.trim(),
+          location.name === null ? undefined : formattedLocationName,
       },
     })
       .then(response => {
         refetch();
-        formReference.current?.setFieldsValue({ phone: formattedPhoneNumber });
+        formReference.current?.setFieldsValue({
+          phone: formattedPhoneNumber,
+          locationName: formattedLocationName,
+        });
         handleResponse(response);
       })
       .catch(() => {
@@ -103,15 +108,12 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
     setIsButtonDisabled(true);
   };
 
-  const locationNameRules = [
+  let locationNameRules = [
     getDefaultNameRule(intl),
-    {
-      required: isLocationNameTaken,
-      validator: checkExistingLocation(isLocationNameTaken, intl),
-    },
+    getUniqueNameRule(intl, isLocationNameTaken),
   ];
   if (location.name !== null) {
-    locationNameRules.push(getRequiredRule(intl, requiresLocationName));
+    locationNameRules = [...locationNameRules, ...locationNameValidator];
   }
 
   return (
@@ -151,7 +153,7 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
           label={intl.formatMessage({
             id: 'settings.location.phone',
           })}
-          rules={[getPhoneRules(intl)]}
+          rules={phoneValidator}
         >
           <Input />
         </Form.Item>
@@ -164,14 +166,13 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
         <AddressRow>{`${location.zipCode} ${location.city}`}</AddressRow>
       </Address>
       <ButtonWrapper>
-        <Button
+        <PrimaryButton
           onClick={submitForm}
-          style={buttonStyles}
           disabled={isButtonDisabled}
           data-cy="editLocation"
         >
           {intl.formatMessage({ id: 'profile.overview.submit' })}
-        </Button>
+        </PrimaryButton>
       </ButtonWrapper>
     </Overview>
   );

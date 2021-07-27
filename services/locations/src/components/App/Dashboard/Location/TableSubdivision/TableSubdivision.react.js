@@ -6,6 +6,9 @@ import { useQueryClient } from 'react-query';
 
 import { updateLocation } from 'network/api';
 
+import { useTableNumberValidator } from 'components/hooks/useValidators';
+
+import { MIN_TABLE_NUMBER, MAX_TABLE_NUMBER } from 'constants/tableNumber';
 import { Switch } from '../../Switch';
 import { CardSection, CardSectionTitle, LocationCard } from '../LocationCard';
 import { StyledSwitchContainer } from '../GenerateQRCodes/GenerateQRCodes.styled';
@@ -14,6 +17,7 @@ export function TableSubdivision({ location }) {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const isTableSubdivisionActive = location.tableCount > 0;
+  const tableNumberValidator = useTableNumberValidator();
 
   const refetch = () => {
     queryClient.invalidateQueries(`location/${location.uuid}`);
@@ -67,17 +71,13 @@ export function TableSubdivision({ location }) {
                 label={intl.formatMessage({
                   id: 'settings.location.tables.input',
                 })}
-                rules={[
-                  {
-                    type: 'number',
-                    required: true,
-                    message: intl.formatMessage({
-                      id: 'error.tableCount',
-                    }),
-                  },
-                ]}
+                rules={tableNumberValidator}
               >
-                <InputNumber style={{ width: '100%' }} min={1} />
+                <InputNumber
+                  style={{ width: '100%' }}
+                  min={MIN_TABLE_NUMBER}
+                  max={MAX_TABLE_NUMBER}
+                />
               </Form.Item>
             </Form>
           </>

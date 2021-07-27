@@ -6,6 +6,7 @@ import { useModal } from 'components/hooks/useModal';
 
 import { createEmployee } from 'network/api';
 
+import { getFormattedPhoneNumber } from 'utils/checkPhoneNumber';
 import {
   Wrapper,
   ButtonRow,
@@ -19,17 +20,27 @@ export const AddEmployeeForm = ({ setNewUserPassword }) => {
   const intl = useIntl();
   const [, closeModal] = useModal();
 
-  const onFinish = async values => {
+  const handleServerError = () =>
+    notification.error({
+      message: intl.formatMessage({ id: 'userManagement.create.error' }),
+    });
+
+  const onFinish = async ({ phone, ...values }) => {
+    const formattedPhone = getFormattedPhoneNumber(phone);
     try {
-      const newEmployee = await createEmployee(values);
+      const newEmployee = await createEmployee({
+        ...values,
+        phone: formattedPhone,
+      });
+      if (!newEmployee) {
+        handleServerError();
+      }
       notification.success({
         message: intl.formatMessage({ id: 'userManagement.create.success' }),
       });
       setNewUserPassword(newEmployee.password);
     } catch {
-      notification.error({
-        message: intl.formatMessage({ id: 'userManagement.create.error' }),
-      });
+      handleServerError();
     }
   };
 

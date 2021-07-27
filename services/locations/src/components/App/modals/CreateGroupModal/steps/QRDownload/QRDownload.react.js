@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+  SuccessButton,
+} from 'components/general/Buttons.styled';
 
-import { QrCodeDocument } from 'components/QrCodeDocument';
+// Worker
+import { useWorker } from 'components/hooks/useWorker';
+import { downloadPDF } from 'utils/downloadPDF';
+import { getPDFWorker } from 'utils/workers';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
-  downloadButtonStyles,
   Wrapper,
   Description,
   Header,
@@ -17,7 +21,9 @@ import {
 export const QRDownload = ({ done, group }) => {
   const intl = useIntl();
   const [downloadTableQRCodes, setDownloadTableQrCodes] = useState(false);
-  const [isDownload, setIsDownload] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const pdfWorkerApiReference = useWorker(getPDFWorker());
 
   const onNext = () => {
     if (group.location.tableCount) {
@@ -27,13 +33,17 @@ export const QRDownload = ({ done, group }) => {
     }
   };
 
-  const onBack = () => {
-    setDownloadTableQrCodes(false);
-  };
+  const onBack = () => setDownloadTableQrCodes(false);
 
-  const onDownLoad = () => {
-    setIsDownload(true);
+  const downloadOptions = {
+    setIsDownloading,
+    pdfWorkerApiReference,
+    location: { ...group.location, groupName: group.name },
+    intl,
+    isTableQRCodeEnabled: downloadTableQRCodes,
+    isCWAEventEnabled: true,
   };
+  const triggerDownload = () => downloadPDF(downloadOptions);
 
   return (
     <>
@@ -52,25 +62,25 @@ export const QRDownload = ({ done, group }) => {
           <ButtonWrapper
             style={{ justifyContent: 'center', margin: '40px 0 80px 0' }}
           >
-            <Button
-              style={downloadButtonStyles}
-              loading={isDownload}
-              onClick={onDownLoad}
+            <SuccessButton
+              loading={isDownloading}
+              onClick={triggerDownload}
+              data-cy="download"
             >
               {intl.formatMessage({
                 id: 'qrCodeDownload',
               })}
-            </Button>
+            </SuccessButton>
           </ButtonWrapper>
 
           <ButtonWrapper>
-            <Button style={nextButtonStyles} onClick={onNext}>
+            <PrimaryButton onClick={onNext}>
               {intl.formatMessage({
                 id: group.location.tableCount
                   ? 'authentication.form.button.next'
                   : 'done',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </Wrapper>
       ) : (
@@ -88,37 +98,27 @@ export const QRDownload = ({ done, group }) => {
           <ButtonWrapper
             style={{ justifyContent: 'center', margin: '40px 0 80px 0' }}
           >
-            <Button
-              style={downloadButtonStyles}
-              loading={isDownload}
-              onClick={onDownLoad}
-            >
+            <SuccessButton loading={isDownloading} onClick={triggerDownload}>
               {intl.formatMessage({
                 id: 'qrCodesDownload',
               })}
-            </Button>
+            </SuccessButton>
           </ButtonWrapper>
 
           <ButtonWrapper multipleButtons>
-            <Button style={backButtonStyles} onClick={onBack}>
+            <SecondaryButton onClick={onBack}>
               {intl.formatMessage({
                 id: 'authentication.form.button.back',
               })}
-            </Button>
-            <Button style={nextButtonStyles} onClick={done}>
+            </SecondaryButton>
+            <PrimaryButton onClick={done}>
               {intl.formatMessage({
                 id: 'done',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </Wrapper>
       )}
-      <QrCodeDocument
-        isDownload={isDownload}
-        setIsDownload={setIsDownload}
-        group={group}
-        downloadTableQRCodes={downloadTableQRCodes}
-      />
     </>
   );
 };

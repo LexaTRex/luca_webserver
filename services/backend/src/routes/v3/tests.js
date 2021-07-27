@@ -7,7 +7,7 @@ const database = require('../../database');
 const { validateSchema } = require('../../middlewares/validateSchema');
 const { limitRequestsPerMinute } = require('../../middlewares/rateLimit');
 
-const { redeemSchema } = require('./tests.schemas');
+const { redeemSchema, redeemDeleteSchema } = require('./tests.schemas');
 
 const REDEEM_MAX_EXPIRY = moment.duration(
   config.get('luca.testRedeems.maxAge'),
@@ -21,7 +21,7 @@ const REDEEM_DEFAULT_EXPIRY = moment.duration(
 // Redeem a test
 router.post(
   '/redeem',
-  limitRequestsPerMinute(50),
+  limitRequestsPerMinute('tests_redeem_post_ratelimit_minute'),
   validateSchema(redeemSchema),
   async (request, response) => {
     const testRedeem = await database.TestRedeem.findByPk(request.body.hash);
@@ -45,6 +45,27 @@ router.post(
     }
 
     return response.sendStatus(status.CONFLICT);
+  }
+);
+
+router.delete(
+  '/redeem',
+  limitRequestsPerMinute('tests_redeem_delete_ratelimit_minute'),
+  validateSchema(redeemDeleteSchema),
+  async (request, response) => {
+    const {
+      body: { hash, tag },
+    } = request;
+    const testRedeem = await database.TestRedeem.findOne({
+      where: { hash, tag },
+    });
+
+    if (!testRedeem) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    await testRedeem.destroy();
+    return response.sendStatus(status.NO_CONTENT);
   }
 );
 

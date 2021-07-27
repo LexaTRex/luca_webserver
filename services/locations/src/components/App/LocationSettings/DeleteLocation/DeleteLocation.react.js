@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, notification, Popconfirm } from 'antd';
+import { notification, Popconfirm } from 'antd';
+import { DangerButton } from 'components/general';
 import { useQueryClient, useQuery } from 'react-query';
 import { useHistory } from 'react-router';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -9,13 +10,7 @@ import { deleteLocation, getGroup } from 'network/api';
 
 import { BASE_GROUP_ROUTE, BASE_LOCATION_ROUTE } from 'constants/routes';
 
-import {
-  Wrapper,
-  Heading,
-  ButtonWrapper,
-  buttonStyles,
-  Info,
-} from './DeleteLocation.styled';
+import { Wrapper, Heading, ButtonWrapper, Info } from './DeleteLocation.styled';
 
 export const DeleteLocation = ({ location }) => {
   const intl = useIntl();
@@ -74,9 +69,9 @@ export const DeleteLocation = ({ location }) => {
           })}
           icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
         >
-          <Button data-cy="deleteLocation" style={buttonStyles}>
+          <DangerButton data-cy="deleteLocation">
             {intl.formatMessage({ id: 'settings.location.delete.submit' })}
-          </Button>
+          </DangerButton>
         </Popconfirm>
       </ButtonWrapper>
     </Wrapper>

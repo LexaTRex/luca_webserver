@@ -1,6 +1,8 @@
 const fs = require('fs');
+const fse = require('fs-extra');
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
+const postgres = require('cypress-postgres');
 
 function generateCameraStream(path) {
   if (!fs.existsSync('/tmp/luca')) {
@@ -25,6 +27,13 @@ function generateCameraStream(path) {
   );
 }
 
+function getConfigurationByFile(file) {
+  const pathToConfigFile = path.resolve('..', 'e2e/config', `${file}.json`)
+  console.log('Path to config:' + pathToConfigFile);
+  console.log('Read config:' + pathToConfigFile);
+  return fse.readJson(pathToConfigFile)
+}
+
 module.exports = (on, config) => {
   on('task', {
     setCameraImage: async path => {
@@ -36,11 +45,18 @@ module.exports = (on, config) => {
         fs.unlinkSync(path);
       }
       return true;
-    }
+    },
+    fileExists: filename => {
+      if (fs.existsSync(filename)) {
+        return true;
+      }
+      return false;
+    },
+    dbQuery: query => postgres(query.query, query.connection)
   });
+
   on('before:browser:launch', async (browser = {}, launchOptions) => {
     launchOptions.args.push('--another-arg');
-
     if (browser.name === 'chrome') {
       launchOptions.args.push('--use-fake-ui-for-media-stream');
       launchOptions.args.push('--use-fake-device-for-media-stream');
@@ -51,7 +67,10 @@ module.exports = (on, config) => {
         default_directory: path.join(__dirname, 'downloads'),
       };
     }
-
     return launchOptions;
   });
+
+  //switching between envs
+  const file = config.env.configFile || 'local'
+  return getConfigurationByFile(file)
 };

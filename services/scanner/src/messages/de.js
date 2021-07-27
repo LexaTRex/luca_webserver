@@ -67,4 +67,9 @@ export const de = {
     'Die Anzahl der Check-ins kann von der tatsächlichen Anzahl der Gäste abweichen, wenn Gäste über unterschiedliche Geräte eingecheckt werden. Nach einem Scan wird die Anzahl automatisch aktualisiert. Ohne Scan aktualisiert sich die Anzahl nach fünf Minuten.',
   'countdown.text': 'Zuletzt aktualisiert:',
   'countdown.button': 'AKTUALISIEREN',
+  // Footer
+  'location.footer.faq': 'FAQ',
+  'location.footer.repository': 'GitLab',
+  // Modal
+  'location.modal.okay': 'Ok',
 };

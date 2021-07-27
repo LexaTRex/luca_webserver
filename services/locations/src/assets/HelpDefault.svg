@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #000000;">
+    <title>Button / Hilfecenter / Default</title>
+    <g id="Button-/-Hilfecenter-/-Default" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="#000000" x="0" y="0" width="32" height="32"></rect>
+        <circle id="Oval" stroke="#FFFFFF" stroke-width="2" cx="16" cy="16" r="15"></circle>
+        <circle id="Oval" fill="#FFFFFF" cx="16" cy="21" r="1"></circle>
+        <path d="M16,9 C18.3202773,9 20,10.5470102 20,13 C20,14.1356902 19.5750936,14.8125378 18.4188111,15.9933085 L17.9044152,16.5152079 L17.6527466,16.7845441 C17.6148441,16.8265327 17.5789104,16.8671531 17.5448668,16.9065291 L17.362658,17.1288401 C17.1214807,17.4428721 17.0206696,17.6761221 17.0029191,17.9186793 L17,18 L15,18 C15,16.8643098 15.4249064,16.1874622 16.5811889,15.0066915 L17.0955848,14.4847921 L17.3472534,14.2154559 C17.3851559,14.1734673 17.4210896,14.1328469 17.4551332,14.0934709 L17.637342,13.8711599 C17.9053168,13.5222354 18,13.2730419 18,13 C18,11.6900155 17.2507905,11 16,11 C14.9456382,11 14.0818349,11.8158778 14.0054857,12.8507377 L14,13 L12,13 C12,10.790861 13.790861,9 16,9 Z" id="Oval" fill="#FFFFFF" fill-rule="nonzero"></path>
+    </g>
+</svg>

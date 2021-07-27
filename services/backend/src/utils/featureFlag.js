@@ -9,6 +9,7 @@ const DEFAULT_VALUES = {
   v4_signed_public_keys: false,
   android_minimum_version: 57,
   ios_minimum_version: 24,
+  lst_minimum_version: 'v1.0.0',
 };
 
 const get = async key => {

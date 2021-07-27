@@ -23,3 +23,9 @@ node_modules/
 # license and version information
 licenses-full.txt
 version.json
+
+# certificates
+certs/*.pem
+
+# build
+build

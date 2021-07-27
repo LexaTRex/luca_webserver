@@ -1,27 +1,28 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Tooltip } from 'antd';
+import { message, Tooltip } from 'antd';
+import { SecondaryButton } from 'components/general/Buttons.styled';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import { getGroup } from 'network/api';
+import { useWorker } from 'components/hooks/useWorker';
+import { downloadPDF } from 'utils/downloadPDF';
+import { getPDFWorker } from 'utils/workers';
 
-import { QrCodeDocument } from 'components/QrCodeDocument';
-import { Switch } from '../../Switch';
+import { LOADING_MESSAGE } from 'components/notifications';
 
 import { LocationCard, CardSection, CardSectionTitle } from '../LocationCard';
+import { Switch } from '../../Switch';
 
 import { QRCodeCSVDownload } from './GenerateQRCodes.helper';
 import { QrPrint } from './QrPrint';
 import {
   StyledSwitchContainer,
-  buttonStyle,
   ButtonWrapper,
   CWASwitchLabel,
+  CWASwitchWrapper,
   linkInfoButton,
   StyledCSVWrapper,
-  CWASwitchWrapper,
 } from './GenerateQRCodes.styled';
 
 const TABLE_QR_CODE = 'TABLE_QR_CODE';
@@ -29,7 +30,7 @@ const LOCATION_QR_CODE = 'LOCATION_QR_CODE';
 
 export function GenerateQRCodes({ location }) {
   const intl = useIntl();
-  const [isDownload, setIsDownload] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [isCWAEventEnabled, setIsCWAEventEnabled] = useState(true);
   const [isLocationQRCodeEnabled, setIsLocationQRCodeEnabled] = useState(
     !location.tableCount
@@ -38,9 +39,11 @@ export function GenerateQRCodes({ location }) {
     !!location.tableCount
   );
 
-  const { isLoading, error, data: group } = useQuery('group', () =>
-    getGroup(location.groupId)
-  );
+  const worker = useRef(getPDFWorker());
+  const cleanup = useCallback(() => {
+    message.destroy(LOADING_MESSAGE);
+  }, []);
+  const pdfWorkerApiReference = useWorker(worker.current, cleanup);
 
   useEffect(() => {
     setIsLocationQRCodeEnabled(!location.tableCount);
@@ -73,7 +76,15 @@ export function GenerateQRCodes({ location }) {
     [isLocationQRCodeEnabled, isTableQRCodeEnabled]
   );
 
-  if (isLoading || error) return null;
+  const downloadOptions = {
+    setIsDownloading,
+    pdfWorkerApiReference,
+    location,
+    intl,
+    isTableQRCodeEnabled,
+    isCWAEventEnabled,
+  };
+  const triggerDownload = () => downloadPDF(downloadOptions);
 
   return (
     <LocationCard
@@ -90,6 +101,7 @@ export function GenerateQRCodes({ location }) {
             <Switch
               checked={isLocationQRCodeEnabled}
               onChange={() => switchQRCodeSettings(LOCATION_QR_CODE)}
+              data-cy="toggleAreaQRCodes"
             />
           </StyledSwitchContainer>
         </CardSectionTitle>
@@ -105,6 +117,7 @@ export function GenerateQRCodes({ location }) {
                 checked={isTableQRCodeEnabled}
                 disabled={!location.tableCount}
                 onChange={() => switchQRCodeSettings(TABLE_QR_CODE)}
+                data-cy="switchTables"
               />
             </StyledSwitchContainer>
           </CardSectionTitle>
@@ -129,14 +142,15 @@ export function GenerateQRCodes({ location }) {
               onChange={() => setIsCWAEventEnabled(!isCWAEventEnabled)}
             />
           </CWASwitchWrapper>
-          <Button
-            style={buttonStyle}
-            loading={isDownload}
-            onClick={() => setIsDownload(true)}
+          <SecondaryButton
+            style={{ marginBottom: '10px' }}
+            loading={isDownloading}
+            onClick={triggerDownload}
             disabled={!isLocationQRCodeEnabled && !isTableQRCodeEnabled}
+            data-cy="qrCodeDownload"
           >
             {intl.formatMessage({ id: 'settings.location.qrcode.generate' })}
-          </Button>
+          </SecondaryButton>
           <StyledCSVWrapper>
             <QRCodeCSVDownload
               location={location}
@@ -155,14 +169,6 @@ export function GenerateQRCodes({ location }) {
         </ButtonWrapper>
       </CardSection>
       <QrPrint />
-      <QrCodeDocument
-        location={location}
-        group={group}
-        isDownload={isDownload}
-        setIsDownload={setIsDownload}
-        isCWAEventEnabled={isCWAEventEnabled}
-        downloadTableQRCodes={isTableQRCodeEnabled}
-      />
     </LocationCard>
   );
 }

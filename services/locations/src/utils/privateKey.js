@@ -8,6 +8,7 @@ import {
   ENCRYPT_AES_GCM,
   GET_RANDOM_BYTES,
 } from '@lucaapp/crypto';
+import sjson from 'secure-json-parse';
 
 // Constants
 import { ENCRYPTED_PRIVATE_KEY_SESSION_KEY } from 'constants/storage';
@@ -25,7 +26,7 @@ export function generatePrivateKeyFile(privateKey, privateKeySecret) {
 }
 export function parsePrivateKeyFile(fileData, privateKeySecret) {
   try {
-    const payload = JSON.parse(base64ToBytes(fileData));
+    const payload = sjson.parse(base64ToBytes(fileData));
 
     if (payload.v !== 2) {
       return null;
@@ -49,7 +50,7 @@ export function usePrivateKey(privateKeySecret) {
     }
 
     try {
-      const { data: encryptedPrivateKey, tag, iv } = JSON.parse(
+      const { data: encryptedPrivateKey, tag, iv } = sjson.parse(
         sessionStorage.getItem(ENCRYPTED_PRIVATE_KEY_SESSION_KEY)
       );
       return DECRYPT_AES_GCM(
@@ -75,7 +76,7 @@ export function usePrivateKey(privateKeySecret) {
           return;
         }
 
-        const payload = JSON.parse(base64ToBytes(fileData));
+        const payload = sjson.parse(base64ToBytes(fileData));
 
         if (payload.v !== 2) {
           return;

@@ -1,9 +1,14 @@
 import React from 'react';
 
+import { VersionFooter } from 'components/App/VersionFooter';
 import { NewTrackingButton } from './NewTrackingButton';
 import { ManualSearchButton } from './ManualSearchButton';
 import { TrackingList } from './TrackingList';
-import { ButtonWrapper, TrackingWrapper } from './Tracking.styled';
+import {
+  ButtonWrapper,
+  TrackingWrapper,
+  VersionFooterWrapper,
+} from './Tracking.styled';
 import { useKeyLoader } from '../../hooks/useKeyLoader';
 
 export const Tracking = () => {
@@ -18,6 +23,9 @@ export const Tracking = () => {
         <NewTrackingButton />
       </ButtonWrapper>
       <TrackingList />
+      <VersionFooterWrapper>
+        <VersionFooter />
+      </VersionFooterWrapper>
     </TrackingWrapper>
   );
 };

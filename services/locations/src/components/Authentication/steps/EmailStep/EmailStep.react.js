@@ -1,11 +1,13 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import { checkEmail } from 'network/api';
 
+import { useEmailValidator } from 'components/hooks/useValidators';
+
 import {
-  nextButtonStyles,
   CardTitle,
   ButtonWrapper,
 } from 'components/Authentication/Authentication.styled';
@@ -17,20 +19,21 @@ export const EmailStep = ({
   next,
 }) => {
   const intl = useIntl();
+  const emailValidator = useEmailValidator();
 
   const onFinish = values => {
     const { email } = values;
-    checkEmail(email.toLowerCase())
+    checkEmail(email)
       .then(() => {
         // Email exists
-        setEmail(email.toLowerCase());
+        setEmail(email);
         next();
       })
       .catch(error => {
         switch (error.status) {
           case 404:
             // email simply does not exist
-            setEmail(email.toLowerCase());
+            setEmail(email);
             setIsRegistration(true);
             next();
             break;
@@ -75,20 +78,7 @@ export const EmailStep = ({
             id: 'registration.form.email',
           })}
           name="email"
-          rules={[
-            {
-              type: 'email',
-              message: intl.formatMessage({
-                id: 'error.email',
-              }),
-            },
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.email',
-              }),
-            },
-          ]}
+          rules={emailValidator}
         >
           <Input
             autoFocus
@@ -101,11 +91,11 @@ export const EmailStep = ({
         </Form.Item>
 
         <ButtonWrapper>
-          <Button style={nextButtonStyles} htmlType="submit">
+          <PrimaryButton isButtonWhite htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </>

@@ -157,8 +157,6 @@ paths:
                   minLength: 1
                 tableCount:
                   type: number
-                shouldProvideGeoLocation:
-                  type: boolean
                 radius:
                   type: number
                 isIndoor:

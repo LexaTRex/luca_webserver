@@ -9,7 +9,7 @@ import { findGroups } from 'network/api';
 import { DEFAULT_SEARCH_LIMIT } from 'constants/search';
 
 // Utils
-import { zipValidator } from 'utils/validator';
+import { validateZipCode } from 'utils/validators.helper';
 
 // Components
 import { DataRequestModal } from 'components/App/modals/GroupSearchModal/DataRequestModal';
@@ -102,7 +102,7 @@ export const GroupSearchModal = () => {
               style={{ width: '30%' }}
               rules={[
                 {
-                  validator: (_, value) => zipValidator(value),
+                  validator: (_, value) => validateZipCode(value),
                   message: intl.formatMessage({
                     id: 'groupSearch.form.error.zipCodeLength',
                   }),
@@ -117,7 +117,7 @@ export const GroupSearchModal = () => {
                 id="zipCode"
                 onChange={change => {
                   const { value } = change.target;
-                  zipValidator(value)
+                  validateZipCode(value)
                     .then(() =>
                       setInputValid({
                         ...inputValid,

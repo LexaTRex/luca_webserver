@@ -40,8 +40,9 @@ export const getCompletedTransfers = transfers => {
   );
 
   return filteredCompletedTracingProcesses
-    .sort((tracingProcessA, tracingProcessB) =>
-      tracingProcessA.createdAt > tracingProcessB ? 1 : -1
+    .sort(
+      (tracingProcessA, tracingProcessB) =>
+        tracingProcessA.createdAt - tracingProcessB.createdAt
     )
     .map(tracingProcess => ({
       tracingProcessId: tracingProcess,

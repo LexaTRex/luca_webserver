@@ -6,14 +6,17 @@ import { getHealthDepartment } from 'network/api';
 
 // Components
 import { VerificationTag } from 'components/App/VerificationTag';
+import { VersionFooter } from 'components/App/VersionFooter';
 import { BackButton } from './BackButton';
 import { ProfileOverview } from './ProfileOverview';
+import { DownloadSigningTool } from './DownloadSigningTool';
 import { ChangePasswordView } from './ChangePasswordView';
 import {
   ProfileWrapper,
   StyledChildWrapper,
   ProfileHeader,
   VerificationTagWrapper,
+  VersionFooterWrapper,
 } from './Profile.styled';
 
 export const Profile = ({ profileData }) => {
@@ -42,11 +45,15 @@ export const Profile = ({ profileData }) => {
               <VerificationTag />
             </VerificationTagWrapper>
           </ProfileHeader>
+          <DownloadSigningTool department={department} />
           <ProfileOverview me={profileData} department={department} />
         </StyledChildWrapper>
         <StyledChildWrapper>
           <ChangePasswordView />
         </StyledChildWrapper>
+        <VersionFooterWrapper>
+          <VersionFooter />
+        </VersionFooterWrapper>
       </ProfileWrapper>
     </>
   );

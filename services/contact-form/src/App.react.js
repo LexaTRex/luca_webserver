@@ -28,7 +28,6 @@ import { ErrorPage } from 'components/ErrorPage';
 import { LoadingScreen } from 'components/LoadingScreen';
 import { ContactForm } from 'components/ContactForm';
 import { Licenses } from 'components/Licenses';
-import { LicenseLink } from 'components/LicenseLink';
 import { configureStore } from './configureStore';
 import { AppWrapper } from './App.styled';
 
@@ -54,7 +53,6 @@ const LoadContactFormHOC = ({ component: Component }) => {
   return (
     <>
       <Component scanner={data} />
-      <LicenseLink />
     </>
   );
 };

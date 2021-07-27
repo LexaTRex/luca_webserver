@@ -19,6 +19,7 @@ export const Entry = ({ process, onProcessName }) => {
   const openDetails = () => {
     history.push(`${PROCESS_DETAILS_BASE_ROUTE}${process.uuid}`);
   };
+
   return (
     <Row data-cy="processEntry" onClick={openDetails}>
       <Column flex="10%">

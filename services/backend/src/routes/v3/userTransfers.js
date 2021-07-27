@@ -27,7 +27,7 @@ const {
  */
 router.post(
   '/',
-  limitRequestsPerHour(15),
+  limitRequestsPerHour('usertransfers_post_ratelimit_hour'),
   validateSchema(createSchema),
   async (request, response) => {
     const transfer = await database.UserTransfer.create({
@@ -56,6 +56,9 @@ router.get(
   '/tan/:tan',
   requireHealthDepartmentEmployee,
   validateParametersSchema(tanParametersSchema),
+  limitRequestsPerHour('usertransfers_get_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   async (request, response) => {
     const userTransfer = await database.UserTransfer.findOne({
       where: {

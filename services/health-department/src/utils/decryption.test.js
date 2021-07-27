@@ -165,6 +165,7 @@ describe('utils / decryption', () => {
       pc: '10117',
       pn: '0049 170 1234567',
       st: 'Charlottenstraße',
+      uuid: encryptedUser.userId,
       v: '3',
     };
 

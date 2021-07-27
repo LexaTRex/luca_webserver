@@ -147,7 +147,9 @@ export function CheckOut({ location: { search } }) {
       </Helmet>
       <AppLayout
         header={
-          <StyledAppHeadline color="#000">{location?.name}</StyledAppHeadline>
+          <StyledAppHeadline color="#000" data-cy="locationName">
+            {location?.name}
+          </StyledAppHeadline>
         }
         bgColor="linear-gradient(-180deg, rgb(211, 222, 195) 0%, rgb(132, 137, 101) 100%);"
       >
@@ -185,7 +187,7 @@ export function CheckOut({ location: { search } }) {
               <StyledTimeType>h</StyledTimeType>
             </StyledCheckInTime>
             <StyledCheckInTime>
-              <StyledTime>:{clock.minute}</StyledTime>
+              <StyledTime data-cy="clockMinutes">:{clock.minute}</StyledTime>
               <StyledTimeType isNotHours>min</StyledTimeType>
             </StyledCheckInTime>
             <StyledCheckInTime>
@@ -198,6 +200,7 @@ export function CheckOut({ location: { search } }) {
           <StyledCheckoutButton
             tabIndex="1"
             id="checkout"
+            data-cy="checkout"
             disabled={!isCheckoutAllowed}
             onClick={async () => {
               await checkout(traceId);

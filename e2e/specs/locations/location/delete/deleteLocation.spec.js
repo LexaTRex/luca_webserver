@@ -7,7 +7,7 @@ import {
 
 describe('Delete location', () => {
   beforeEach(() => login());
-  it('cannot delete the base location', () => {
+  it('cannot delete the base location', { retries: 3 }, () => {
     cy.getByCy('openSettings').click();
     cy.getByCy('deleteLocation').should('not.exist');
   });

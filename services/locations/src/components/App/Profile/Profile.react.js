@@ -1,6 +1,8 @@
 import React from 'react';
 import { Layout } from 'antd';
 
+import { LocationFooter } from 'components/App/LocationFooter';
+
 // Components
 import { ProfileOverview } from './ProfileOverview';
 import { ChangePassword } from './ChangePassword';
@@ -33,6 +35,7 @@ export const Profile = ({ operator, refetch }) => {
             <GroupOverview />
             <Services supportCode={operator.supportCode} />
             <AccountDeletion operator={operator} refetch={refetch} />
+            <LocationFooter />
           </Wrapper>
         </Content>
       </Layout>

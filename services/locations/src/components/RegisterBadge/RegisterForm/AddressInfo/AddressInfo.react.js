@@ -1,13 +1,14 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input, Button, Form, notification } from 'antd';
+import { Input, Form, notification } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 
 import {
-  MAX_CITY_LENGTH,
-  MAX_STREET_LENGTH,
-  MAX_POSTAL_CODE_LENGTH,
-  MAX_HOUSE_NUMBER_LENGTH,
-} from 'constants/valueLength';
+  useCityValidator,
+  useHouseNoValidator,
+  useStreetValidator,
+  useZipCodeValidator,
+} from 'components/hooks/useValidators';
 
 import {
   ContentWrapper,
@@ -15,10 +16,13 @@ import {
   ButtonRow,
 } from '../RegisterForm.styled';
 
-const lengthErrorMessageId = 'error.length';
-
 export const AddressInfo = ({ title, next, back, form, setValues }) => {
   const intl = useIntl();
+
+  const streetValidator = useStreetValidator('streetName');
+  const houseNoValidator = useHouseNoValidator('streetNr');
+  const zipCodValidator = useZipCodeValidator('zipCode');
+  const cityValidator = useCityValidator('city');
 
   const handleNext = () => {
     form.current
@@ -40,20 +44,7 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
     <ContentWrapper>
       <ContentTitle>{title}</ContentTitle>
       <Form.Item
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.streetName',
-            }),
-          },
-          {
-            max: MAX_STREET_LENGTH,
-            message: intl.formatMessage({
-              id: lengthErrorMessageId,
-            }),
-          },
-        ]}
+        rules={streetValidator}
         label={intl.formatMessage({
           id: 'registerBadge.street',
         })}
@@ -62,20 +53,7 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
         <Input />
       </Form.Item>
       <Form.Item
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.streetNr',
-            }),
-          },
-          {
-            max: MAX_HOUSE_NUMBER_LENGTH,
-            message: intl.formatMessage({
-              id: lengthErrorMessageId,
-            }),
-          },
-        ]}
+        rules={houseNoValidator}
         label={intl.formatMessage({
           id: 'registerBadge.streetNumber',
         })}
@@ -84,20 +62,7 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
         <Input />
       </Form.Item>
       <Form.Item
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.zipCode',
-            }),
-          },
-          {
-            max: MAX_POSTAL_CODE_LENGTH,
-            message: intl.formatMessage({
-              id: lengthErrorMessageId,
-            }),
-          },
-        ]}
+        rules={zipCodValidator}
         label={intl.formatMessage({
           id: 'registerBadge.zip',
         })}
@@ -106,20 +71,7 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
         <Input />
       </Form.Item>
       <Form.Item
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({
-              id: 'error.city',
-            }),
-          },
-          {
-            max: MAX_CITY_LENGTH,
-            message: intl.formatMessage({
-              id: lengthErrorMessageId,
-            }),
-          },
-        ]}
+        rules={cityValidator}
         label={intl.formatMessage({
           id: 'registerBadge.city',
         })}
@@ -128,24 +80,12 @@ export const AddressInfo = ({ title, next, back, form, setValues }) => {
         <Input />
       </Form.Item>
       <ButtonRow multipleButtons>
-        <Button
-          onClick={back}
-          style={{
-            color: 'black',
-            border: '1px solid #b8c0ca',
-          }}
-        >
+        <SecondaryButton onClick={back}>
           {intl.formatMessage({ id: 'registerBadge.back' })}
-        </Button>
-        <Button
-          onClick={handleNext}
-          style={{
-            color: 'black',
-            backgroundColor: '#b8c0ca',
-          }}
-        >
+        </SecondaryButton>
+        <PrimaryButton onClick={handleNext}>
           {intl.formatMessage({ id: 'registerBadge.next' })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </ContentWrapper>
   );

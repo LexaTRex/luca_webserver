@@ -1,13 +1,17 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
+
+// hooks
+import { usePhoneValidator } from 'components/hooks/useValidators';
 
 import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
-import { getPhoneRules } from 'utils/validatorRules';
 
 import {
-  nextButtonStyles,
-  backButtonStyles,
   Wrapper,
   Header,
   Description,
@@ -16,6 +20,7 @@ import {
 
 export const PhoneInput = ({ phone: currentPhone, setPhone, back, next }) => {
   const intl = useIntl();
+  const phoneValidator = usePhoneValidator('phone');
 
   const onFinish = ({ phone }) => {
     setPhone(getFormattedPhoneNumber(phone));
@@ -44,25 +49,21 @@ export const PhoneInput = ({ phone: currentPhone, setPhone, back, next }) => {
             id: 'createGroup.phone',
           })}
           name="phone"
-          rules={[getPhoneRules(intl)]}
+          rules={phoneValidator}
         >
           <Input autoFocus />
         </Form.Item>
         <ButtonWrapper multipleButtons>
-          <Button
-            onClick={back}
-            data-cy="previousStep"
-            style={backButtonStyles}
-          >
+          <SecondaryButton onClick={back} data-cy="previousStep">
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button data-cy="nextStep" style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton data-cy="nextStep" htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </Wrapper>

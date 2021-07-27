@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { Media } from 'utils/media';
 
 const font = 'Montserrat-Bold, sans-serif';
-const fontColor = 'rgba(0, 0, 0, 0.87)';
 
 export const Wrapper = styled.div`
   width: 750px;
@@ -63,44 +62,3 @@ export const ButtonWrapper = styled.div`
     flex-direction: column;  
   `}
 `;
-
-export const backButtonStyles = {
-  fontFamily: font,
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-  background: 'transparent',
-  border: '1px solid black',
-  color: fontColor,
-  marginBottom: 16,
-};
-
-export const noButtonStyles = {
-  ...backButtonStyles,
-  border: 'none',
-  boxShadow: 'none',
-};
-
-export const nextButtonStyles = {
-  backgroundColor: 'rgb(195, 206, 217)',
-  color: fontColor,
-  fontFamily: font,
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-};
-
-export const disabledStyles = {
-  ...nextButtonStyles,
-  opacity: '.5',
-  cursor: 'not-allowed',
-};
-
-export const downloadButtonStyles = {
-  backgroundColor: 'rgb(211, 222, 195)',
-  color: fontColor,
-  fontFamily: font,
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-};

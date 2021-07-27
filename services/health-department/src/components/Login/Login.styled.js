@@ -18,9 +18,16 @@ export const LoginWrapper = styled.div`
   }
 `;
 
+export const VersionFooterWrapper = styled.div`
+  margin-top: auto;
+  padding: 24px;
+`;
+
 export const Left = styled.div`
   background-color: #e8e7e5;
   position: absolute;
+  display: flex;
+  flex-direction: column;
   left: 0;
   top: 0;
   bottom: 0;

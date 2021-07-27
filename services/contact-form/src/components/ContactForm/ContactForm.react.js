@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 
 // Components
 import { InputForm } from 'components/InputForm';
+
 import {
   RegistrationWrapper,
   RegistrationCard,

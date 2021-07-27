@@ -65,10 +65,15 @@ module.exports = (Sequelize, DataTypes) => {
   );
 
   HealthDepartmentEmployee.associate = models => {
+    HealthDepartmentEmployee.belongsTo(models.HealthDepartment, {
+      foreignKey: 'departmentId',
+    });
+
     HealthDepartmentEmployee.hasMany(models.TracingProcess, {
       foreignKey: 'assigneeId',
     });
   };
+
   HealthDepartmentEmployee.prototype.checkPassword = async function checkPassword(
     testPassword
   ) {

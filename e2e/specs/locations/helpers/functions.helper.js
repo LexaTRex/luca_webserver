@@ -1,11 +1,14 @@
 import { E2E_DEFAULT_LOCATION_SCANNER } from './locations';
 
+export const E2E_TRACE_ID = 'w2RiSHiitpfJ0hxcJz5ZYw==';
+export const DEVICE_TYPES = { "mobile":1, "tablet":2, "scanner":3, "contactForm":4 };
+
 export const createGroupPayload = {
   type: 'base',
   name: 'Testing group',
   firstName: 'Torsten',
   lastName: 'Tester',
-  phone: '017612345678',
+  phone: '+4917612345678',
   streetName: 'Charlottenstr.',
   streetNr: '59',
   zipCode: '10117',
@@ -24,7 +27,7 @@ export const getCreateLocationPayload = (groupId, locationName) => ({
   firstName: 'Torsten',
   lastName: 'Tester',
   streetName: 'Charlottenstr.',
-  phone: '017612345678',
+  phone: '+4917612345678',
   streetNr: '59',
   zipCode: '10117',
   city: 'Berlin',
@@ -46,5 +49,5 @@ export const traceDataPayload = {
     'BCbsDAh8GiavgoDN0JEP9B+WSNvDI6PHZKvHbQpyW+T3dmBJTanLWxbyxbj6QEroG3wjQRbhDlaxeeuU5ycmd6Y=',
   scannerId: E2E_DEFAULT_LOCATION_SCANNER,
   timestamp: parseInt(Date.now() / 1000),
-  traceId: 'w2RiSHiitpfJ0hxcJz5ZYw==',
+  traceId: E2E_TRACE_ID,
 };

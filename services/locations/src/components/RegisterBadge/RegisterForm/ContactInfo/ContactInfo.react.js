@@ -1,16 +1,15 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form, Input, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 
 import { requestTan } from 'network/api';
 
-import { requiresPhone, invalidPhone } from 'constants/errorMessages';
+// hooks
 import {
-  getRequiredRule,
-  getPhoneRules,
-  getMaxLengthRule,
-} from 'utils/validatorRules';
-import { MAX_EMAIL_LENGTH, MAX_PHONE_LENGTH } from 'constants/valueLength';
+  usePhoneValidator,
+  useEmailValidator,
+} from 'components/hooks/useValidators';
 
 import {
   ButtonRow,
@@ -28,6 +27,8 @@ export const ContactInfo = ({
   setValues,
 }) => {
   const intl = useIntl();
+  const phoneValidator = usePhoneValidator('phone');
+  const emailValidator = useEmailValidator();
 
   function validateResponse(response) {
     if (
@@ -79,11 +80,7 @@ export const ContactInfo = ({
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Form.Item
             style={{ flexBasis: '60%' }}
-            rules={[
-              getRequiredRule(intl, requiresPhone),
-              getPhoneRules(intl, invalidPhone),
-              getMaxLengthRule(intl, MAX_PHONE_LENGTH),
-            ]}
+            rules={phoneValidator}
             label={intl.formatMessage({
               id: 'registerBadge.phone',
             })}
@@ -96,11 +93,7 @@ export const ContactInfo = ({
     }
     return (
       <Form.Item
-        rules={[
-          getRequiredRule(intl, requiresPhone),
-          getPhoneRules(intl, invalidPhone),
-          getMaxLengthRule(intl, MAX_PHONE_LENGTH),
-        ]}
+        rules={phoneValidator}
         label={intl.formatMessage({
           id: 'registerBadge.phone',
         })}
@@ -116,15 +109,7 @@ export const ContactInfo = ({
       <ContentTitle>{title}</ContentTitle>
       {renderPhoneItem()}
       <Form.Item
-        rules={[
-          {
-            type: 'email',
-            message: intl.formatMessage({
-              id: 'error.email',
-            }),
-          },
-          getMaxLengthRule(intl, MAX_EMAIL_LENGTH),
-        ]}
+        rules={emailValidator}
         label={intl.formatMessage({
           id: 'registerBadge.email',
         })}
@@ -134,35 +119,17 @@ export const ContactInfo = ({
       </Form.Item>
 
       <ButtonRow multipleButtons>
-        <Button
-          onClick={back}
-          style={{
-            color: 'black',
-            border: '1px solid #b8c0ca',
-          }}
-        >
+        <SecondaryButton onClick={back}>
           {intl.formatMessage({ id: 'registerBadge.back' })}
-        </Button>
+        </SecondaryButton>
         {requiresPhoneVerification ? (
-          <Button
-            onClick={handleNext}
-            style={{
-              color: 'black',
-              backgroundColor: '#b8c0ca',
-            }}
-          >
+          <PrimaryButton onClick={handleNext}>
             {intl.formatMessage({ id: 'registerBadge.next' })}
-          </Button>
+          </PrimaryButton>
         ) : (
-          <Button
-            htmlType="submit"
-            style={{
-              color: 'black',
-              backgroundColor: '#b8c0ca',
-            }}
-          >
+          <PrimaryButton htmlType="submit">
             {intl.formatMessage({ id: 'registerBadge.next' })}
-          </Button>
+          </PrimaryButton>
         )}
       </ButtonRow>
     </ContentWrapper>

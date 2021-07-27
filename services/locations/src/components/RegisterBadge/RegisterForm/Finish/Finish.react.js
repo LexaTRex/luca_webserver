@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Tick } from 'react-crude-animated-tick';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 // Components
 import {
@@ -22,16 +22,9 @@ export const Finish = ({ onFinish }) => {
       <SubTitle>{intl.formatMessage({ id: 'registerBadge.finish' })}</SubTitle>
 
       <ButtonRow>
-        <Button
-          onClick={onFinish}
-          style={{
-            padding: '0 40px',
-            color: 'black',
-            backgroundColor: '#b8c0ca',
-          }}
-        >
+        <PrimaryButton onClick={onFinish}>
           {intl.formatMessage({ id: 'registerBadge.end' })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </ContentWrapper>
   );

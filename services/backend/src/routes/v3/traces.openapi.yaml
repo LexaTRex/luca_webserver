@@ -4,15 +4,17 @@ paths:
       summary: Check in
       operationId: post-traces-checkin
       responses:
-        '201':
+        201:
           description: Success
-        '400':
+        400:
           $ref: '#/components/schemas/BadRequest'
-        '404':
+        404:
           description: Location not found or Check-In Quota exceeded
-        '409':
+        409:
           description: Request time difference exceeded 300 Seconds
-        '429':
+        412:
+          description: Device Type is not valid for unauthenticated check ins
+        429:
           $ref: '#/components/schemas/TooManyRequestsHour'
       description: Check in
       requestBody:

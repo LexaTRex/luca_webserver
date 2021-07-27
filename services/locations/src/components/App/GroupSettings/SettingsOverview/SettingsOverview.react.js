@@ -1,15 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 
 import { updateGroup } from 'network/api';
 
-import { requiresGroupName } from 'constants/errorMessages';
-import { getRequiredRule, getPhoneRules } from 'utils/validatorRules';
+// hooks
+import {
+  useLocationNameValidator,
+  usePhoneValidator,
+} from 'components/hooks/useValidators';
+
 import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
 
 import {
-  buttonStyles,
   Overview,
   Heading,
   ButtonWrapper,
@@ -22,32 +26,49 @@ export const SettingsOverview = ({ group, refetch }) => {
   const intl = useIntl();
   const formReference = useRef(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const groupNameValidator = useLocationNameValidator('groupName');
+  const phoneValidator = usePhoneValidator('phone');
 
   const baseLocation = group.locations.find(location => !location.name);
 
+  const handleServerError = () => {
+    notification.error({
+      message: intl.formatMessage({
+        id: 'notification.updateGroup.error',
+      }),
+    });
+  };
+
+  const handleSuccessNotification = () => {
+    notification.success({
+      message: intl.formatMessage({
+        id: 'notification.updateGroup.success',
+      }),
+    });
+  };
+
   const onFinish = values => {
-    const { phone } = values;
+    const { phone, name } = values;
     const formattedPhoneNumber = getFormattedPhoneNumber(phone);
+    const formattedGroupName = name.trim();
     updateGroup({
       groupId: group.groupId,
-      data: { ...values, phone: formattedPhoneNumber },
+      data: { name: formattedGroupName, phone: formattedPhoneNumber },
     })
-      .then(() => {
+      .then(response => {
+        if (response.status !== 204) {
+          handleServerError();
+        }
         refetch();
-        formReference.current?.setFieldsValue({ phone: formattedPhoneNumber });
-        notification.success({
-          message: intl.formatMessage({
-            id: 'notification.updateGroup.success',
-          }),
+        formReference.current?.setFieldsValue({
+          phone: formattedPhoneNumber,
+          name: formattedGroupName,
         });
+        handleSuccessNotification();
         setIsButtonDisabled(true);
       })
       .catch(() => {
-        notification.error({
-          message: intl.formatMessage({
-            id: 'notification.updateGroup.error',
-          }),
-        });
+        handleServerError();
       });
   };
 
@@ -87,7 +108,7 @@ export const SettingsOverview = ({ group, refetch }) => {
           label={intl.formatMessage({
             id: 'settings.group.name',
           })}
-          rules={[getRequiredRule(intl, requiresGroupName)]}
+          rules={groupNameValidator}
         >
           <Input />
         </Form.Item>
@@ -97,7 +118,7 @@ export const SettingsOverview = ({ group, refetch }) => {
             id: 'settings.location.phone',
           })}
           name="phone"
-          rules={[getPhoneRules(intl)]}
+          rules={phoneValidator}
         >
           <Input />
         </Form.Item>
@@ -110,14 +131,13 @@ export const SettingsOverview = ({ group, refetch }) => {
         <AddressRow>{`${baseLocation.zipCode} ${baseLocation.city}`}</AddressRow>
       </Address>
       <ButtonWrapper>
-        <Button
+        <PrimaryButton
           data-cy="editGroupName"
           onClick={submitForm}
-          style={buttonStyles}
           disabled={isButtonDisabled}
         >
           {intl.formatMessage({ id: 'profile.overview.submit' })}
-        </Button>
+        </PrimaryButton>
       </ButtonWrapper>
     </Overview>
   );

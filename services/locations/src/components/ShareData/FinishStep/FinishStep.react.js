@@ -1,9 +1,10 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Tick } from 'react-crude-animated-tick';
+import { PrimaryButton } from 'components/general';
 
 // Components
-import { CustomButton, FinishButtonWrapper } from '../ShareData.styled';
+import { FinishButtonWrapper } from '../ShareData.styled';
 import { ContentWrapper, SubTitle, SuccessWrapper } from './FinishStep.styled';
 
 export const FinishStep = ({ done }) => {
@@ -16,14 +17,9 @@ export const FinishStep = ({ done }) => {
       </SuccessWrapper>
       <SubTitle>{intl.formatMessage({ id: 'shareData.finish.text' })}</SubTitle>
       <FinishButtonWrapper align="flex-end">
-        <CustomButton
-          width="200px"
-          onClick={done}
-          data-cy="finish"
-          bgColor="#c3ced9"
-        >
+        <PrimaryButton onClick={done} data-cy="finish">
           {intl.formatMessage({ id: 'shareData.finish' })}
-        </CustomButton>
+        </PrimaryButton>
       </FinishButtonWrapper>
     </ContentWrapper>
   );

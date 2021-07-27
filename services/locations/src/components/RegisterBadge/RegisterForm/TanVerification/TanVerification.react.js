@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input, Button, Form, notification } from 'antd';
+import { Input, Form, notification } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 
 // API
 import { verifyTan } from 'network/api';
@@ -63,24 +64,12 @@ export const TanVerification = ({ title, back, challengeId, form, next }) => {
       </Form.Item>
 
       <ButtonRow multipleButtons>
-        <Button
-          onClick={back}
-          style={{
-            color: 'black',
-            border: '1px solid #b8c0ca',
-          }}
-        >
+        <SecondaryButton onClick={back}>
           {intl.formatMessage({ id: 'registerBadge.back' })}
-        </Button>
-        <Button
-          onClick={handleNext}
-          style={{
-            color: 'black',
-            backgroundColor: '#b8c0ca',
-          }}
-        >
+        </SecondaryButton>
+        <PrimaryButton onClick={handleNext}>
           {intl.formatMessage({ id: 'registerBadge.next' })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </ContentWrapper>
   );

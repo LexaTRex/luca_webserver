@@ -7,15 +7,22 @@
 }
 
 .ant-modal-header {
+  padding: 0 0 16px 0;
   border: none;
 }
 
+.ant-modal-header h1 {
+  font-weight: bold;
+  font-size: 20px;
+  color: rgb(0, 0, 0);
+}
+
 .ant-modal-body {
-  padding-bottom: 0;
+  padding: 0;
 }
 
 .ant-modal-content {
-  padding: 32px;
+  padding: 24px;
 }
 
 .ant-modal-title {

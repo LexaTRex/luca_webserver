@@ -1,6 +1,6 @@
 import { login } from '../../helpers/functions';
 
-const HOTEL_PHONE = '017612345678';
+const HOTEL_PHONE = '+4917612345678';
 
 const BASE_NAME = 'Test Group';
 const BASE_AREA = 'Some area';
@@ -8,7 +8,6 @@ const BASE_AREA = 'Some area';
 const STREET = 'Charlottenstr. ';
 const STREET_NR = '59';
 const ZIP = '10117';
-const UNSUPPORTED_ZIP = '10111';
 const STATE = 'Berlin';
 
 describe('Group creation with manuell input', () => {

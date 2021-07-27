@@ -93,7 +93,7 @@
     "OnBoarding.FinishStep.Description2": "Check-ins are possible at luca locations and at luca private meetings.",
     "OnBoarding.FinishStep.Description3": "By the way: Both can only be created at locations whose health departments are connected to the luca system.",
     "OnBoarding.FinishStep.Submit": "Let's go!",
-    "OnBoarding.acceptTermsAndConditions": "I accept the <a>Terms of use</a>.",
+    "OnBoarding.acceptTermsAndConditions": "I accept the <a>Terms of Services</a>.",
     "OnBoarding.PhoneNumberInputStep.SMSTANInfo": "We will send a text message with a TAN to the number you enter for verification purposes. Please enter a correct mobile or landline number. You can decide for yourself whether you also want to enter an email address.",
     "OnBoarding.LocationInputStep.Description": "Hosts usually have to include your address as part of the contact data collection. Therefore, it is mandatory to enter your address when using luca.",
     "QRCodeScanner.error.invalidQRCode": "Invalid qr code.",
@@ -164,5 +164,7 @@
     "HistoryShareConsentModal.Cancel": "Cancel",
     "HistoryShareConsentModal.Share": "Share",
     "HistoryShareConsentModal.Link": "data privacy - app",
-    "Settings.Repository": "GitLab Repository"
+    "Settings.Repository": "GitLab Repository",
+    "version.version": "Version",
+    "version.modal.title": "Version"
 }

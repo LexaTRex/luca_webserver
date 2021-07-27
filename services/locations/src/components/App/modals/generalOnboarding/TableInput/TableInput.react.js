@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Form, InputNumber, Button } from 'antd';
+import { Form, InputNumber } from 'antd';
 
-import { YesNoSelection } from '../YesNoSelection';
+import { useTableNumberValidator } from 'components/hooks/useValidators';
+
 import {
-  nextButtonStyles,
-  backButtonStyles,
-  Wrapper,
-  Header,
-  ButtonWrapper,
-} from '../Onboarding.styled';
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
+
+import { MIN_TABLE_NUMBER, MAX_TABLE_NUMBER } from 'constants/tableNumber';
+import { YesNoSelection } from '../YesNoSelection';
+import { Wrapper, Header, ButtonWrapper } from '../Onboarding.styled';
 
 export const TableInput = ({
   tableCount: currentTableCount,
@@ -19,6 +21,7 @@ export const TableInput = ({
 }) => {
   const intl = useIntl();
   const [hasTables, setHasTables] = useState(false);
+  const tableNumberValidator = useTableNumberValidator();
 
   const onFinish = values => {
     const { tableCount } = values;
@@ -53,33 +56,26 @@ export const TableInput = ({
               id: 'createGroup.tableCount',
             })}
             name="tableCount"
-            rules={[
-              {
-                type: 'number',
-                required: true,
-                message: intl.formatMessage({
-                  id: 'error.tableCount',
-                }),
-              },
-            ]}
+            rules={tableNumberValidator}
           >
-            <InputNumber style={{ width: '100%' }} min={1} autoFocus />
+            <InputNumber
+              style={{ width: '100%' }}
+              min={MIN_TABLE_NUMBER}
+              max={MAX_TABLE_NUMBER}
+              autoFocus
+            />
           </Form.Item>
           <ButtonWrapper multipleButtons>
-            <Button style={backButtonStyles} onClick={back}>
+            <SecondaryButton onClick={back}>
               {intl.formatMessage({
                 id: 'authentication.form.button.back',
               })}
-            </Button>
-            <Button
-              data-cy="nextStep"
-              style={nextButtonStyles}
-              htmlType="submit"
-            >
+            </SecondaryButton>
+            <PrimaryButton data-cy="nextStep" htmlType="submit">
               {intl.formatMessage({
                 id: 'authentication.form.button.next',
               })}
-            </Button>
+            </PrimaryButton>
           </ButtonWrapper>
         </Form>
       )}

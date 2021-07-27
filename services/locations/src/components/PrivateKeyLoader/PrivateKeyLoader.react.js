@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { notification, Progress, Spin, Upload } from 'antd';
+import { PrimaryButton } from 'components/general/Buttons.styled';
 import { base64ToHex, EC_KEYPAIR_FROM_PRIVATE_KEY } from '@lucaapp/crypto';
 
 import { getPrivateKeySecret } from 'network/api';
@@ -10,11 +11,9 @@ import { MAX_PRIVATE_KEY_FILE_SIZE } from 'constants/valueLength';
 import { parsePrivateKeyFile, usePrivateKey } from 'utils/privateKey';
 
 import {
-  CustomButton,
   FinishButtonWrapper,
   InfoBlock,
   RequestContent,
-  UploadButton,
   UploadMessage,
   UploadProgress,
 } from './PrivateKeyLoader.styled';
@@ -125,9 +124,9 @@ export const PrivateKeyLoader = ({
             {intl.formatMessage({ id: uploadMessageId })}
           </UploadMessage>
           {progressPercent <= 0 && (
-            <UploadButton>
+            <PrimaryButton>
               {intl.formatMessage({ id: 'shareData.privateKey.btnLabel' })}
-            </UploadButton>
+            </PrimaryButton>
           )}
           {progressPercent > 0 && (
             <UploadProgress>
@@ -146,13 +145,12 @@ export const PrivateKeyLoader = ({
         }
       >
         {footerItem}
-        <CustomButton
+        <PrimaryButton
           onClick={reset}
-          $bgColor="#f3f5f7"
           hidden={uploadStatus !== uploadException}
         >
           {intl.formatMessage({ id: 'shareData.tryAgain' })}
-        </CustomButton>
+        </PrimaryButton>
       </FinishButtonWrapper>
     </>
   );

@@ -2,10 +2,11 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
-import { Form, Input, notification, Alert, Button } from 'antd';
+import { Form, Input, notification, Alert } from 'antd';
 import { useDispatch } from 'react-redux';
 import { replace } from 'connected-react-router';
 import { useParams } from 'react-router-dom';
+import { PrimaryButton } from 'components/general';
 
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 
@@ -27,7 +28,6 @@ import {
   Logo,
   SubTitle,
   HeaderWrapper,
-  buttonStyle,
   Title,
 } from '../ForgotPassword/ForgotPassword.styled';
 
@@ -178,11 +178,11 @@ export const ResetPassword = () => {
                   <Input.Password style={inputStyle} />
                 </Form.Item>
                 <ButtonWrapper>
-                  <Button style={buttonStyle} htmlType="submit">
+                  <PrimaryButton isButtonWhite htmlType="submit">
                     {intl.formatMessage({
                       id: 'resetPassword.form.button',
                     })}
-                  </Button>
+                  </PrimaryButton>
                 </ButtonWrapper>
               </Form>
             )}

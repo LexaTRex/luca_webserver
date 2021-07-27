@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 
 import { getLocation } from 'network/api';
 
+import { LocationFooter } from 'components/App/LocationFooter';
+
 import { NavigationButton } from './NavigationButton';
 import { SettingsOverview } from './SettingsOverview';
 import { DeleteLocation } from './DeleteLocation';
@@ -51,6 +53,7 @@ export const LocationSettings = () => {
               />
               {location.name !== null && <DeleteLocation location={location} />}
             </SettingsContent>
+            <LocationFooter />
           </Wrapper>
         </Content>
       </Layout>

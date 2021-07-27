@@ -10,3 +10,5 @@ export const DPA_FRAGMENT = 'AVV_Luca';
 export const TOMS_FRAGMENT = 'TOMS_Luca';
 export const PRIVACY_MANDATORY_FRAGMENT = 'DSE_Luca_mandatory';
 export const PRIVACY_OPTIONAL_FRAGMENT = 'DSE_Luca_optional';
+
+export const LOCATION_GROUPS_ROUTE = 'api/v3/locationGroups';

@@ -4,12 +4,17 @@ const GenerateJsonPlugin = require('generate-json-webpack-plugin');
 
 const { THEME } = require('./ant.theme');
 
-function generateVersionFile() {
-  return {
-    commit: process.env.GIT_COMMIT,
-    version: process.env.GIT_VERSION,
-  };
-}
+const generateVersionFile = () => ({
+  commit: process.env.GIT_COMMIT,
+  version: process.env.GIT_VERSION,
+});
+
+const licenseTypeOverrides = {
+  // part of libphonenumber-js which is licensed under MIT
+  'libphonenumber-js-core': 'MIT',
+  'libphonenumber-js-min': 'MIT',
+  'libphonenumber-js-max': 'MIT',
+};
 
 module.exports = {
   plugins: [
@@ -35,6 +40,7 @@ module.exports = {
             warnings: false,
             errors: false,
           },
+          licenseTypeOverrides,
           renderLicenses: modules => {
             const licenseList = [];
             modules.forEach(
@@ -61,6 +67,7 @@ module.exports = {
             warnings: false,
             errors: false,
           },
+          licenseTypeOverrides,
         }),
 
         new GenerateJsonPlugin('version.json', generateVersionFile()),

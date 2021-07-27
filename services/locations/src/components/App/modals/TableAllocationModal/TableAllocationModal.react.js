@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import moment from 'moment';
-import { Button, Spin, Popconfirm, notification } from 'antd';
+import { Spin, Popconfirm, notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from 'react-query';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -15,7 +16,6 @@ import {
   Entry,
   Loading,
   Wrapper,
-  checkoutButtonStyle,
   GuestTable,
   TableRow,
 } from './TableAllocationModal.styled';
@@ -110,11 +110,11 @@ export const TableAllocationModal = ({ privateKey, location }) => {
                     })}
                     icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                   >
-                    <Button style={checkoutButtonStyle}>
+                    <PrimaryButton>
                       {intl.formatMessage({
                         id: 'group.view.overview.tableAllocationCheckout',
                       })}
-                    </Button>
+                    </PrimaryButton>
                   </Popconfirm>
                 )}
               </Entry>

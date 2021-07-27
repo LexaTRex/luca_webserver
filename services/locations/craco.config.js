@@ -2,6 +2,7 @@ const CracoLessPlugin = require('craco-less');
 const { LicenseWebpackPlugin } = require('license-webpack-plugin');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
 const { DefinePlugin } = require('webpack');
+const WorkerPlugin = require('worker-plugin');
 
 const { THEME } = require('./ant.theme');
 
@@ -16,6 +17,8 @@ const licenseTypeOverrides = {
   // part of libphonenumber-js which is licensed under MIT
   'libphonenumber-js-core': 'MIT',
   'libphonenumber-js-min': 'MIT',
+  'libphonenumber-js-max': 'MIT',
+  yaqrcode: 'MIT', // https://github.com/zenozeng/node-yaqrcode/blob/master/LICENSE
 };
 
 module.exports = {
@@ -77,6 +80,7 @@ module.exports = {
           licenseTypeOverrides,
         }),
         new GenerateJsonPlugin('version.json', generateVersionFile()),
+        new WorkerPlugin(),
       ],
     },
     configure: config => {

@@ -1,39 +1,38 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
-
 import {
-  nextButtonStyles,
-  noButtonStyles,
-  backButtonStyles,
-  ButtonWrapper,
-} from '../Onboarding.styled';
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
+
+import { ButtonWrapper } from '../Onboarding.styled';
 
 export const YesNoSelection = ({ onYes, onNo, onBack }) => {
   const intl = useIntl();
 
   return (
     <ButtonWrapper multipleButtons>
-      <Button style={backButtonStyles} onClick={onBack}>
+      <SecondaryButton onClick={onBack}>
         {intl.formatMessage({
           id: 'authentication.form.button.back',
         })}
-      </Button>
+      </SecondaryButton>
       <div>
-        <Button
+        <PrimaryButton
           data-cy="no"
-          style={{ ...noButtonStyles, marginRight: 24 }}
+          isButtonWhite
+          style={{ marginRight: 24 }}
           onClick={onNo}
         >
           {intl.formatMessage({
             id: 'no',
           })}
-        </Button>
-        <Button data-cy="yes" style={nextButtonStyles} onClick={onYes}>
+        </PrimaryButton>
+        <PrimaryButton data-cy="yes" onClick={onYes}>
           {intl.formatMessage({
             id: 'yes',
           })}
-        </Button>
+        </PrimaryButton>
       </div>
     </ButtonWrapper>
   );

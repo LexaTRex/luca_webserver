@@ -8,6 +8,10 @@ export const StyledHeadline = styled.div`
   font-weight: bold;
 `;
 
+export const Wrapper = styled.div`
+  width: 65%;
+`;
+
 export const buttonStyle = {
   backgroundColor: 'transparent',
   color: 'rgba(0, 0, 0, 0.87)',

@@ -34,7 +34,6 @@ const updateSchema = z.object({
   lastName: z.safeString().max(255).optional(),
   phone: z.phoneNumber().optional(),
   tableCount: z.number().int().positive().optional().nullable(),
-  shouldProvideGeoLocation: z.boolean().optional(),
   radius: z.number().int().nonnegative().max(5000).optional().nullable(),
   isIndoor: z.boolean().optional(),
 });

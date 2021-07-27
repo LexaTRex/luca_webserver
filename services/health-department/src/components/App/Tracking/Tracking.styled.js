@@ -13,6 +13,11 @@ export const ButtonWrapper = styled.div`
   right: 32px;
 `;
 
+export const VersionFooterWrapper = styled.div`
+  padding-right: 24px;
+  float: right;
+`;
+
 export const buttonStyle = {
   fontFamily: 'Montserrat-Bold, sans-serif',
   fontSize: 14,

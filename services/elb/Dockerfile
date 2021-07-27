@@ -1,4 +1,4 @@
-FROM nginx:1.21.0-alpine
+FROM nginx:1.21.1-alpine
 
 ## add permissions
 RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html && \
@@ -10,11 +10,11 @@ RUN touch /var/run/nginx.pid && \
         chown -R nginx:nginx /var/run/nginx.pid
 
 # install security patches
-RUN apk --no-cache add libcurl=7.77.0-r1
-RUN apk --no-cache add curl=7.77.0-r1
-RUN apk --no-cache add libxml2=2.9.10-r7
-RUN apk --no-cache add libgcrypt=1.8.8-r0
-RUN apk --no-cache add musl=1.2.2-r1
+RUN apk --no-cache add libcurl=7.78.0-r0
+RUN apk --no-cache add curl=7.78.0-r0
+RUN apk --no-cache add libxml2=2.9.12-r1
+RUN apk --no-cache add libgcrypt=1.9.3-r0
+RUN apk --no-cache add musl=1.2.2-r3
 
 ## switch to non-root user
 USER nginx

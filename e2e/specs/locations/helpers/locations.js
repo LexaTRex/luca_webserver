@@ -32,3 +32,9 @@ export const RESTAURANT_TYPE = 'restaurant';
 
 export const TEST_NUMBER = '0176 1111 1111';
 export const TEST_LOCATION_NAME = 'Test_Restaurant';
+
+export const RESTAURANT_NAME = 'Test Restaurant';
+export const RESTAURANT_ADDRESS = 'Nexenio';
+export const RESTAURANT_PHONE = '017601234567';
+export const RESTAURANT_TABLE_COUNT = '12';
+export const RESTAURANT_RADIUS = '100';

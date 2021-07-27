@@ -79,6 +79,7 @@ const configureApp = () => {
   app.use(
     session({
       secret: config.get('cookies.secret'),
+      name: `__Secure-${config.get('cookies.name')}`,
       store: sequelizeStore,
       resave: true,
       rolling: true,
@@ -89,6 +90,7 @@ const configureApp = () => {
         httpOnly: true,
         sameSite: 'strict',
         maxAge: config.get('cookies.maxAge'),
+        path: config.get('cookies.path'),
       },
     })
   );

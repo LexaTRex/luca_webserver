@@ -1,6 +1,6 @@
 import { getSORMASRestURL } from 'utils/sormas';
+import { SUPPORTED_SORMAS_VERSIONS } from 'constants/sormas';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
-import { SUPPORTED_SORMAS_VERSION } from 'constants/sormas';
 
 export function getSormasClient(host, username, password) {
   const SORMAS_REST_API = getSORMASRestURL(host);
@@ -9,13 +9,13 @@ export function getSormasClient(host, username, password) {
     Authorization: `Basic ${btoa(`${username}:${password}`)}`,
   };
 
-  const checkVersion = (version = SUPPORTED_SORMAS_VERSION) =>
-    fetch(`${SORMAS_REST_API}/info/checkcompatibility?appVersion=${version}`, {
+  const checkVersion = () =>
+    fetch(`${SORMAS_REST_API}/info/version`, {
       method: 'GET',
       headers,
     })
       .then(response => response.text())
-      .then(text => text === '"COMPATIBLE"');
+      .then(text => SUPPORTED_SORMAS_VERSIONS[text]);
 
   const getActiveUUIDs = () =>
     fetch(`${SORMAS_REST_API}/cases/uuids`, {

@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const NoRequests = styled.div``;
+export const NoRequests = styled.div`
+  height: 65vh;
+`;
 
 export const Wrapper = styled.div`
   padding: 24px 32px 32px 32px;

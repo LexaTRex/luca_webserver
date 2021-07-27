@@ -1,10 +1,12 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Form, Checkbox, Button } from 'antd';
+import { Form, Checkbox } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import {
-  backButtonStyles,
-  nextButtonStyles,
   CardTitle,
   CardSubTitle,
   ButtonWrapper,
@@ -109,16 +111,16 @@ export const LegalTermsStep = ({ next, back, navigation }) => {
           {intl.formatMessage({ id: 'authentication.registration.legalHint' })}
         </Description>
         <ButtonWrapper multipleButtons>
-          <Button style={backButtonStyles} onClick={back}>
+          <SecondaryButton onClick={back}>
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton isButtonWhite htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </>

@@ -54,7 +54,7 @@ export const App = () => {
         <meta name="description" content={meta} />
       </Helmet>
       <AppWrapper>
-        <Header />
+        <Header profileData={profileData} />
         {!isProfileRoute && <Navigation />}
         <ModalArea />
         <Switch>

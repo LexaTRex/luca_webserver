@@ -6,6 +6,12 @@ const redeemSchema = z.object({
   expireAt: z.unixTimestamp().optional(),
 });
 
+const redeemDeleteSchema = z.object({
+  hash: z.string().length(44),
+  tag: z.string().length(24),
+});
+
 module.exports = {
   redeemSchema,
+  redeemDeleteSchema,
 };

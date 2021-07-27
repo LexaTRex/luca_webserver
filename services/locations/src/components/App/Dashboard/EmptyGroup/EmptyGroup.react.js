@@ -7,8 +7,10 @@ import { getGroups } from 'network/api';
 
 import { BASE_LOCATION_ROUTE, BASE_GROUP_ROUTE } from 'constants/routes';
 
+import { LocationFooter } from 'components/App/LocationFooter';
+
 import { CreateGroup } from './CreateGroup';
-import { Wrapper } from './EmptyGroup.styled';
+import { Wrapper, Placeholder } from './EmptyGroup.styled';
 
 export const EmptyGroup = () => {
   const intl = useIntl();
@@ -48,6 +50,8 @@ export const EmptyGroup = () => {
     <Wrapper>
       {intl.formatMessage({ id: 'group.noGroup' })}
       <CreateGroup />
+      <Placeholder />
+      <LocationFooter />
     </Wrapper>
   );
 };

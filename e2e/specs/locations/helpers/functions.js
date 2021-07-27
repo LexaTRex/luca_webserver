@@ -1,4 +1,4 @@
-import { APP_ROUTE } from './routes';
+import { APP_ROUTE, LOCATION_GROUPS_ROUTE } from './routes';
 import { E2E_EMAIL, E2E_PASSWORD, E2E_LASTNAME, E2E_FIRSTNAME } from './users';
 import {
   E2E_DEFAULT_LOCATION_GROUP,
@@ -16,7 +16,8 @@ export const login = route => {
 
 export const basicLocationLogin = (
   username = E2E_EMAIL,
-  password = E2E_PASSWORD
+  password = E2E_PASSWORD,
+  closeModal = true
 ) => {
   cy.request({
     method: 'POST',
@@ -33,10 +34,14 @@ export const basicLocationLogin = (
   cy.server();
   cy.intercept({ method: 'GET', url: '**/me' }).as('me');
   cy.visit(APP_ROUTE);
-  cy.wait('@me');
   cy.window().then(window => {
-    window.sessionStorage.setItem('PRIVATE_KEY_MODAL_SEEN', 'true');
+    window.sessionStorage.clear();
+    cy.reload();
   });
+  cy.wait('@me');
+  if (closeModal) {
+    cy.get('.ant-modal-close-x').click();
+  }
 };
 
 export const logout = () => {
@@ -63,25 +68,46 @@ export const resetPassword = currentPassword => {
   cy.request('POST', 'api/v3/operators/password/change', {
     currentPassword,
     newPassword: E2E_PASSWORD,
+    lang: 'de',
   });
 };
 
 export const resetGroupName = () => {
-  cy.request('PATCH', `api/v3/locationGroups/${E2E_DEFAULT_LOCATION_GROUP}`, {
-    name: E2E_DEFAULT_GROUP_NAME,
-  });
+  cy.request(
+    'PATCH',
+    `${LOCATION_GROUPS_ROUTE}/${E2E_DEFAULT_LOCATION_GROUP}`,
+    {
+      name: E2E_DEFAULT_GROUP_NAME,
+    }
+  );
 };
 
-export const createGroup = (group = createGroupPayload) => {
-  cy.request('POST', 'api/v3/locationGroups/', group).then(async response => {
-    cy.request('GET', `api/v3/locationGroups/${response.body.groupId}`).then(
-      response => {
-        cy.visit(
-          `${APP_ROUTE}/${response.body.groupId}/location/${response.body.locations[0].uuid}`
+export const createGroup = (group = createGroupPayload, redirect = true) => {
+  cy.request('POST', `${LOCATION_GROUPS_ROUTE}/`, group).then(
+    async response => {
+      const groupId = response.body.groupId;
+      cy.wrap(response.body).as('group');
+      cy.wrap(response.body.name).as('groupName');
+      cy.wrap(response.body.groupId).as('groupId');
+      cy.wrap(response.body.location.scannerId).as('scannerId');
+      if (redirect) {
+        cy.request('GET', `${LOCATION_GROUPS_ROUTE}/${groupId}`).then(
+          response => {
+            cy.wrap(response.body).as('group');
+            cy.visit(
+              `${APP_ROUTE}/${groupId}/location/${response.body.locations[0].uuid}`
+            );
+          }
         );
       }
-    );
-  });
+
+      return response;
+    }
+  );
+};
+
+export const deleteGroup = groupId => {
+  return cy.request('DELETE', `api/v3/locationGroups/${groupId}`);
 };
 
 export const createLocation = (groupId, locationName) => {
@@ -101,7 +127,7 @@ export const createLocation = (groupId, locationName) => {
 };
 
 export const contactFormCheckin = traceDataPayload => {
-  cy.request('POST', '/api/v3/traces/checkin', traceDataPayload);
+  cy.request('POST', '/api/v3/operators/traces/checkin', traceDataPayload);
 };
 
 export const requestAccountDeletion = () => {
@@ -112,20 +138,27 @@ export const undoAccountDeletion = () => {
   return cy.request('POST', 'api/v3/operators/restore');
 };
 
-export const uploadLocationPrivateKeyFile = () => {
-  cy.readFile('./downloads/luca_locations_Simon_Tester_privateKey.luca').then(
-    fileContent => {
-      cy.get('input[type=file]').attachFile({
-        fileContent,
-        mimeType: 'text/plain',
-        fileName: 'luca_locations_Simon_Tester_privateKey.luca',
-      });
-    }
-  );
+export const uploadLocationPrivateKeyFile = filename => {
+  cy.readFile(filename).then(fileContent => {
+    cy.get('input[type=file]').attachFile({
+      fileContent,
+      mimeType: 'text/plain',
+      fileName: 'luca_locations_Simon_Tester_privateKey.luca',
+    });
+  });
 };
+
+export const skipLocationPrivateKeyFile = () => {
+  cy.get('.ant-modal-content').within($modal => {
+    cy.getByCy('skipPrivateKeyUpload')
+      .should('exist')
+      .should('be.visible')
+      .click();
+  });
+};
+
 export const downloadLocationPrivateKeyFile = () => {
   cy.getByCy('downloadPrivateKey', { timeout: 8000 }).click();
   cy.getByCy('checkPrivateKeyIsDownloaded').click();
-  cy.getByCy('finish').should('exist');
-  cy.getByCy('finish').click();
+  cy.getByCy('finish').should('exist').click();
 };

@@ -20,6 +20,21 @@ export const checkRadiusInputEdgeCase = () => {
   cy.get('.ant-form-item-explain-error').should('exist');
 };
 
+export const verifyLocationOverview = () => {
+  cy.getByCy('camScanner').should('exist').should('be.visible');
+  cy.getByCy('scanner').should('exist').should('be.visible');
+  cy.getByCy('contactForm').should('exist').should('be.visible');
+  cy.getByCy('guestCount').should('exist').should('be.visible');
+  cy.getByCy('showGuestList').should('exist').should('be.visible');
+  cy.getByCy('checkoutGuest').should('exist').should('be.visible').should('have.attr', 'disabled');
+};
+
+export const verifyScannerCounter = (groupName) => {
+  cy.contains(groupName);
+  cy.contains('0/0');
+  cy.get('span[aria-label=redo]').should('exist').should('be.visible');
+};
+
 export const defaultLocationNameShouldBeRejected = () => {
   cy.get('#locationName').type(E2E_DEFAULT_LOCATION_NAME);
   cy.getByCy('nextStep').click();
@@ -30,4 +45,15 @@ export const checkLocationNameIsUnique = () => {
   cy.get('#locationName').type(E2E_SECOND_LOCATION_NAME);
   cy.getByCy('nextStep').click();
   cy.get('.ant-form-item-explain-error').should('exist');
+};
+
+export const verifyLocationHomePage = () => {
+  cy.get('section > aside').should('be.visible').should('exist');
+  cy.get('section > main').should('be.visible').should('exist');
+};
+
+export const verifyModalWindowIsClosed = () => {
+  cy.get('#root').within(($root) => {
+    expect($root.find('.ant-modal-content').length).to.equal(0);
+  });
 };

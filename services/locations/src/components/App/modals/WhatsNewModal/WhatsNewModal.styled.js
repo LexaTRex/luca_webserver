@@ -41,13 +41,3 @@ export const Link = styled.a`
   margin-bottom: 24px;
   text-decoration: none;
 `;
-
-export const buttonStyles = {
-  background: 'white',
-  color: 'rgba(0, 0, 0, 0.87)',
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontWeight: 'bold',
-  fontSize: 14,
-  padding: '0 40px',
-  float: 'right',
-};

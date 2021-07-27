@@ -1,13 +1,15 @@
 import React, { useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form } from 'antd';
+import { Form } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import {
-  backButtonStyles,
   ButtonWrapper,
   Description,
   Header,
-  nextButtonStyles,
   Wrapper,
 } from '../Onboarding.styled';
 import { IndoorToggle } from '../../../Dashboard/IndoorToggle';
@@ -52,20 +54,16 @@ export const IndoorInput = ({
           <IndoorToggle callback={indoorToggleHandler} />
         </Form.Item>
         <ButtonWrapper multipleButtons>
-          <Button
-            onClick={back}
-            data-cy="previousStep"
-            style={backButtonStyles}
-          >
+          <SecondaryButton onClick={back} data-cy="previousStep">
             {intl.formatMessage({
               id: 'authentication.form.button.back',
             })}
-          </Button>
-          <Button data-cy="nextStep" style={nextButtonStyles} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton data-cy="nextStep" htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}
-          </Button>
+          </PrimaryButton>
         </ButtonWrapper>
       </Form>
     </Wrapper>

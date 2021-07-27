@@ -54,7 +54,7 @@ export const Navigation = () => {
   if (isLoading || error) return null;
 
   return (
-    <NavigationWrapper>
+    <NavigationWrapper data-cy="navigation">
       <Menu
         style={{
           border: 'none',

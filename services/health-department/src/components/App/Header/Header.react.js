@@ -1,23 +1,32 @@
 import React from 'react';
+import { useQuery } from 'react-query';
+import { getHealthDepartment } from 'network/api';
 
 // Components
-import { LogoutButton } from './LogoutButton';
-import { LinkMenu } from './LinkMenu';
 import { Profile } from './Profile';
+import { LinkMenu } from './LinkMenu';
 import { Headline } from './Headline';
+import { LogoutButton } from './LogoutButton';
 import { HeaderWrapper, MenuWrapper } from './Header.styled';
 
-export const Header = ({ onlyLogo = false }) => {
+export const Header = ({ profileData }) => {
+  const { data: healthDepartment, isLoading } = useQuery(
+    'healthDepartment',
+    () => getHealthDepartment(profileData.departmentId)
+  );
+
+  if (isLoading) {
+    return null;
+  }
+
   return (
-    <HeaderWrapper>
-      <Headline onlyLogo={onlyLogo} data-testid="header-headline" />
-      {!onlyLogo && (
-        <MenuWrapper data-testid="header-menu-wrapper">
-          <Profile />
-          <LinkMenu />
-          <LogoutButton />
-        </MenuWrapper>
-      )}
+    <HeaderWrapper data-cy="header">
+      <Headline data-testid="header-headline" />
+      <MenuWrapper data-testid="header-menu-wrapper">
+        <Profile healthDepartment={healthDepartment} />
+        <LinkMenu />
+        <LogoutButton />
+      </MenuWrapper>
     </HeaderWrapper>
   );
 };

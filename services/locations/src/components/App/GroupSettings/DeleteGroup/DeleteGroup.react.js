@@ -2,19 +2,14 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { Button, notification, Popconfirm } from 'antd';
+import { notification, Popconfirm } from 'antd';
+import { DangerButton } from 'components/general';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import { BASE_GROUP_ROUTE } from 'constants/routes';
 import { deleteGroup } from 'network/api';
 
-import {
-  Wrapper,
-  Heading,
-  ButtonWrapper,
-  buttonStyles,
-  Info,
-} from './DeleteGroup.styled';
+import { Wrapper, Heading, ButtonWrapper, Info } from './DeleteGroup.styled';
 
 export const DeleteGroup = ({ group }) => {
   const intl = useIntl();
@@ -56,9 +51,9 @@ export const DeleteGroup = ({ group }) => {
           })}
           icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
         >
-          <Button style={buttonStyles} data-cy="deleteGroup">
+          <DangerButton data-cy="deleteGroup">
             {intl.formatMessage({ id: 'settings.group.delete.submit' })}
-          </Button>
+          </DangerButton>
         </Popconfirm>
       </ButtonWrapper>
     </Wrapper>

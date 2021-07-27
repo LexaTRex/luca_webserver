@@ -2,11 +2,12 @@ import moment from 'moment';
 
 import { fillForm } from '../../contact-form/helpers/functions';
 
+import { loginHealthDepartment } from '../../health-department/helper/api/auth.helper';
+
 import {
   downloadHealthDepartmentPrivateKey,
-  uploadHealthDepartmentPrivateKeyFile,
-  loginHealthDepartment,
-} from '../../health-department/helper/functions';
+  addHealthDepartmentPrivateKeyFile,
+} from '../../health-department/helper/ui/login.helper';
 
 import { APP_ROUTE } from '../../locations/helpers/routes';
 import { createGroupPayload } from '../../locations/helpers/functions.helper';
@@ -19,7 +20,7 @@ import {
 } from '../../locations/helpers/functions';
 
 import { clean } from '../helpers/functions';
-import { E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD } from '../helpers/users';
+import { E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD, WORKFLOW_LOCATION_PRIVATE_KEY_PATH } from '../helpers/users';
 
 const FORM_WORKFLOW_TESTING_GROUP_NAME = 'Form Workflow';
 
@@ -36,14 +37,14 @@ context('Workflow', () => {
       // SETUP Health department
       cy.log('Setup Health department');
       loginHealthDepartment();
-      downloadHealthDepartmentPrivateKey();
+      addHealthDepartmentPrivateKeyFile();
       // We need to wait for the key rotation logic
       cy.wait(1000);
       logout();
 
       // SETUP Location
       cy.log('Setup Location');
-      basicLocationLogin(E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD);
+      basicLocationLogin(E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD, false);
       cy.visit(APP_ROUTE);
       downloadLocationPrivateKeyFile();
       cy.wait(1000);
@@ -52,6 +53,7 @@ context('Workflow', () => {
         name: FORM_WORKFLOW_TESTING_GROUP_NAME,
       });
 
+      cy.get('.ant-modal-close-x').click();
       // Checkin with contact form
       cy.log('Checkin with in testing Location with Contact Form');
       cy.window().then(win => {
@@ -69,7 +71,7 @@ context('Workflow', () => {
       // Request data from testing Location
       cy.log('Request data from testing Location');
       loginHealthDepartment();
-      uploadHealthDepartmentPrivateKeyFile();
+      addHealthDepartmentPrivateKeyFile();
       cy.getByCy('searchGroup').click();
       cy.get('.ant-modal').should('exist');
       cy.getByCy('groupNameInput').type(FORM_WORKFLOW_TESTING_GROUP_NAME);
@@ -100,6 +102,7 @@ context('Workflow', () => {
       cy.getByCy('requestGroupData').click();
       cy.getByCy('processEntry').should('exist');
       cy.getByCy('processEntry').first().click();
+
       cy.getByCy(`contactLocation_${FORM_WORKFLOW_TESTING_GROUP_NAME}`)
         .first()
         .click();
@@ -123,7 +126,7 @@ context('Workflow', () => {
         });
       });
       cy.getByCy('completeDataTransfer').first().click();
-      uploadLocationPrivateKeyFile();
+      uploadLocationPrivateKeyFile(WORKFLOW_LOCATION_PRIVATE_KEY_PATH);
       cy.getByCy('next').click();
       cy.getByCy('finish').click();
 
@@ -131,7 +134,7 @@ context('Workflow', () => {
       cy.log('Check requested data in Health department');
       logout();
       loginHealthDepartment();
-      uploadHealthDepartmentPrivateKeyFile();
+      addHealthDepartmentPrivateKeyFile();
       cy.getByCy('processEntry').should('exist');
       cy.getByCy('processEntry').first().click();
       cy.getByCy(`confirmedLocation_${FORM_WORKFLOW_TESTING_GROUP_NAME}`)
@@ -141,9 +144,9 @@ context('Workflow', () => {
 
       for (let index = 0; index < users.length; index++) {
         const user = users[index];
-        cy.getByCy('traceTable').contains(user.lastName);
-        cy.getByCy('traceTable').contains(user.firstName);
-        cy.getByCy('traceTable').contains(user.phoneNumber);
+        cy.get('#contactPersonsTable').contains(user.lastName);
+        cy.get('#contactPersonsTable').contains(user.firstName);
+        cy.get('#contactPersonsTable').contains(user.phoneNumber);
       }
     });
   });

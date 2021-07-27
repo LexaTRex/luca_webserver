@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Button, message, Popconfirm } from 'antd';
+import { message, Popconfirm } from 'antd';
+import { DangerButton, PrimaryButton } from 'components/general';
 import { useMutation } from 'react-query';
 
 import { requestAccountDeletion, undoAccountDeletion } from 'network/api';
@@ -11,7 +12,6 @@ import {
   calculateDaysRemaining,
   waitingPeriodDays,
 } from './AccountDeletion.helper';
-import { buttonStyles } from '../../App.styled';
 
 const AccountDeletionBody = ({ refetch }) => {
   const intl = useFormatMessage();
@@ -46,13 +46,9 @@ const AccountDeletionBody = ({ refetch }) => {
           okText={intl('account.delete.confirm')}
           cancelText={intl('account.delete.cancel')}
         >
-          <Button
-            data-cy="deleteAccount"
-            loading={isLoading}
-            style={{ ...buttonStyles, borderColor: '#e16f2d' }}
-          >
+          <DangerButton data-cy="deleteAccount" loading={isLoading}>
             <FormattedMessage id="account.delete.confirm" />
-          </Button>
+          </DangerButton>
         </Popconfirm>
       </ButtonWrapper>
     </>
@@ -87,14 +83,13 @@ const AccountRestorationBody = ({ operator, refetch }) => {
         />
       </Text>
       <ButtonWrapper>
-        <Button
+        <PrimaryButton
           loading={isLoading}
           onClick={() => mutate()}
-          style={buttonStyles}
           data-cy="restoreAccount"
         >
           <FormattedMessage id="account.delete.reactivate" />
-        </Button>
+        </PrimaryButton>
       </ButtonWrapper>
     </>
   );

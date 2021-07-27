@@ -27,6 +27,8 @@ import { reloadFilter } from 'utils/bloomFilter';
 import { AdditionalDataModal } from 'components/modals/AdditionalDataModal';
 import { Update } from 'components/Update';
 import {
+  TopWrapper,
+  BottomWrapper,
   CamScannerWrapper,
   CheckinBox,
   Content,
@@ -131,52 +133,56 @@ export const CamScanner = ({ scanner }) => {
         <Header />
         {canScanCode ? (
           <>
-            <QrWrapper>
-              {isSuccess ? (
-                <QrReader
-                  onError={error => notifyScanError(error, intl)}
-                  onScan={() => {}}
-                  showViewFinder={false}
-                />
-              ) : (
-                <QrReader
-                  delay={SCAN_TIMEOUT}
-                  onError={error => notifyScanError(error, intl)}
-                  onScan={handleScan}
-                />
-              )}
-              {isSuccess && (
-                <SuccessWrapper>
-                  <Tick size={100} />
-                </SuccessWrapper>
-              )}
-            </QrWrapper>
-            <CheckinBox>
-              <Content>
-                {intl.formatMessage({
-                  id: 'form.checkins',
-                })}
-                {isMobile && <br />}
-                <b>{scanner.name}</b>
-                {intl.formatMessage({
-                  id: 'form.checkinsSuffix',
-                })}
-                <Count>
-                  {currentCount}/{totalCount}
-                  <RedoOutlined
-                    style={{ marginLeft: 16, transform: 'rotate(-90deg)' }}
-                    onClick={refetch}
+            <TopWrapper>
+              <QrWrapper>
+                {isSuccess ? (
+                  <QrReader
+                    onError={error => notifyScanError(error, intl)}
+                    onScan={() => {}}
+                    showViewFinder={false}
                   />
-                </Count>
-              </Content>
-            </CheckinBox>
+                ) : (
+                  <QrReader
+                    delay={SCAN_TIMEOUT}
+                    onError={error => notifyScanError(error, intl)}
+                    onScan={handleScan}
+                  />
+                )}
+                {isSuccess && (
+                  <SuccessWrapper>
+                    <Tick size={100} />
+                  </SuccessWrapper>
+                )}
+              </QrWrapper>
+              <Update latestUpdate={latestUpdate} />
+            </TopWrapper>
+            <BottomWrapper>
+              <CheckinBox>
+                <Content>
+                  {intl.formatMessage({
+                    id: 'form.checkins',
+                  })}
+                  {isMobile && <br />}
+                  <b>{scanner.name}</b>
+                  {intl.formatMessage({
+                    id: 'form.checkinsSuffix',
+                  })}
+                  <Count>
+                    {currentCount}/{totalCount}
+                    <RedoOutlined
+                      style={{ marginLeft: 16, transform: 'rotate(-90deg)' }}
+                      onClick={refetch}
+                    />
+                  </Count>
+                </Content>
+              </CheckinBox>
+            </BottomWrapper>
           </>
         ) : (
           <h3 style={{ color: 'white', padding: '40px 20px' }}>
             {intl.formatMessage({ id: 'error.browserNotSupported' })}
           </h3>
         )}
-        <Update latestUpdate={latestUpdate} />
       </CamScannerWrapper>
     </>
   );

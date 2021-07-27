@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form } from 'antd';
+import { Form } from 'antd';
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'components/general/Buttons.styled';
 
 import { LoadScript } from '@react-google-maps/api';
 
@@ -11,10 +15,6 @@ import { LocationSearch } from './LocationSearch';
 import { AddressWrapper, Address } from './AddressInput.styled';
 import { ManualAddressText } from '../../../generalOnboarding/ManualAddressText';
 import {
-  nextButtonStyles,
-  backButtonStyles,
-  disabledStyles,
-  noButtonStyles,
   Wrapper,
   Header,
   Description,
@@ -76,26 +76,27 @@ export const AddressInput = ({
             multipleButtons
             style={isNewAddress ? { justifyContent: 'flex-end' } : {}}
           >
-            <Button style={backButtonStyles} onClick={back}>
+            <SecondaryButton onClick={back}>
               {intl.formatMessage({
                 id: 'authentication.form.button.back',
               })}
-            </Button>
+            </SecondaryButton>
             <div>
-              <Button
+              <PrimaryButton
                 data-cy="no"
-                style={{ ...noButtonStyles, marginRight: 24 }}
+                isButtonWhite
+                style={{ marginRight: 24 }}
                 onClick={() => setIsNewAddress(true)}
               >
                 {intl.formatMessage({
                   id: 'no',
                 })}
-              </Button>
-              <Button data-cy="yes" style={nextButtonStyles} onClick={onNext}>
+              </PrimaryButton>
+              <PrimaryButton data-cy="yes" onClick={onNext}>
                 {intl.formatMessage({
                   id: 'yes',
                 })}
-              </Button>
+              </PrimaryButton>
             </div>
           </ButtonWrapper>
         </Wrapper>
@@ -151,29 +152,20 @@ export const AddressInput = ({
                 show={filled || showManualInput}
               />
               <ButtonWrapper multipleButtons>
-                <Button
-                  onClick={back}
-                  data-cy="previousStep"
-                  style={backButtonStyles}
-                >
+                <SecondaryButton onClick={back} data-cy="previousStep">
                   {intl.formatMessage({
                     id: 'authentication.form.button.back',
                   })}
-                </Button>
-                <Button
+                </SecondaryButton>
+                <PrimaryButton
                   data-cy="nextStep"
                   disabled={isError || (!filled && !showManualInput)}
-                  style={
-                    isError || (!filled && !showManualInput)
-                      ? disabledStyles
-                      : nextButtonStyles
-                  }
                   onClick={() => formReference.current.submit()}
                 >
                   {intl.formatMessage({
                     id: 'authentication.form.button.next',
                   })}
-                </Button>
+                </PrimaryButton>
               </ButtonWrapper>
             </Form>
           </LoadScript>

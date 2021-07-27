@@ -4,12 +4,22 @@ import React from 'react';
 import LucaLogo from 'assets/LucaLogo.svg';
 
 // Components
-import { HeaderWrapper, Logo } from './Header.styled';
+import { Wrapper, HeaderWrapper, Logo, LinksWrapper } from './Header.styled';
+import { LicenseLink } from './LicenseLink';
+import { VersionLink } from './VersionLink';
+import { GitlabLink } from './GitlabLink';
 
 export const Header = () => {
   return (
-    <HeaderWrapper>
-      <Logo src={LucaLogo} />
-    </HeaderWrapper>
+    <Wrapper>
+      <HeaderWrapper>
+        <Logo src={LucaLogo} />
+      </HeaderWrapper>
+      <LinksWrapper>
+        <LicenseLink />
+        <VersionLink />
+        <GitlabLink />
+      </LinksWrapper>
+    </Wrapper>
   );
 };
