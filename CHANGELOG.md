@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.6.1 (2021-07-28)
+* **backend:** feat: lower redis usage by adding etag caching for large values
+
 ### 1.6.0 (2021-07-27)
 * **backend:** fix: schema validation mismatch
 * **backend:** feat: added dev setup for signing tool

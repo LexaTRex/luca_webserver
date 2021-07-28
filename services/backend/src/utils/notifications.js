@@ -10,10 +10,10 @@ const {
   HMAC_SHA256,
 } = require('@lucaapp/crypto');
 
-const redis = require('./redis');
+const cache = require('./redisCache');
 const database = require('../database');
 
-const NOTIFICATIONS_CACHE_KEY = 'cache:notifications';
+const NOTIFICATIONS_CACHE_KEY = 'notifications';
 const {
   DEVICE_TYPE_IOS,
   DEVICE_TYPE_ANDROID,
@@ -103,9 +103,10 @@ const generateNotifications = async () => {
     }))
     .filter(healthDepartment => healthDepartment.hashedTraceIds.length > 0);
 
-  redis.set(NOTIFICATIONS_CACHE_KEY, JSON.stringify(responseValue));
+  cache.set(NOTIFICATIONS_CACHE_KEY, JSON.stringify(responseValue));
 };
 
-const getNotifications = () => redis.get(NOTIFICATIONS_CACHE_KEY);
+const getNotifications = () =>
+  cache.get(NOTIFICATIONS_CACHE_KEY).then(cachedResponse => cachedResponse[0]);
 
 module.exports = { generateNotifications, getNotifications };

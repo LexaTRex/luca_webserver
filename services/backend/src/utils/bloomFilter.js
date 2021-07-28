@@ -1,5 +1,4 @@
 const moment = require('moment');
-const etag = require('etag');
 const { Worker } = require('worker_threads');
 const { Op } = require('sequelize');
 
@@ -10,9 +9,9 @@ const {
   set: redisSet,
   get: redisGet,
 } = require('./redis');
+const cache = require('./redisCache');
 const database = require('../database');
 
-const BLOOM_FILTER_ETAG_KEY = 'BadgeBloomFilterEtag';
 const BLOOM_FILTER_BUFFER_KEY = 'BadgeBloomFilterBuffer';
 const BLOOM_FILTER_STATE_GENERATING_KEY = 'IsBloomFilterGenerating';
 const BLOOM_FILTER_STATE_EMPTY_BADGE_KEY = 'LastEmptyBadgeCount';
@@ -123,19 +122,15 @@ const updateBloomFilter = async () => {
   worker.postMessage(await getUnregisteredBadges());
 };
 
-const getBloomFilter = () =>
-  redisGet(Buffer.from(BLOOM_FILTER_BUFFER_KEY)).catch(() => null);
-
-const getBloomFilterEtag = () => redisGet(BLOOM_FILTER_ETAG_KEY);
+const getBloomFilterAndEtag = () => cache.get(BLOOM_FILTER_BUFFER_KEY, true);
 
 worker.on('message', async bloomFilterArrayDump => {
   const emptyBadgeCount = await getEmptyBadgeCount();
   const totalBadgeCount = await getTotalBadgeCount();
   const bloomFilterBuffer = Buffer.from(bloomFilterArrayDump);
+  cache.set(BLOOM_FILTER_BUFFER_KEY, bloomFilterBuffer);
   redisClient
     .multi()
-    .set(BLOOM_FILTER_BUFFER_KEY, bloomFilterBuffer)
-    .set(BLOOM_FILTER_ETAG_KEY, etag(bloomFilterBuffer))
     .set(BLOOM_FILTER_STATE_GENERATING_KEY, false)
     .set(BLOOM_FILTER_STATE_EMPTY_BADGE_KEY, (emptyBadgeCount || 0).toString())
     .set(BLOOM_FILTER_STATE_TOTAL_BADGE_KEY, (totalBadgeCount || 0).toString())
@@ -146,6 +141,5 @@ worker.on('message', async bloomFilterArrayDump => {
 
 module.exports = {
   updateBloomFilter,
-  getBloomFilter,
-  getBloomFilterEtag,
+  getBloomFilterAndEtag,
 };
