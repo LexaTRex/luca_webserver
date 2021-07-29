@@ -23,8 +23,8 @@ export const getScanner = async scannerAccessId => {
 };
 
 // CHECK-IN
-export const createCheckinV3 = data => {
-  return fetch(`${API_PATH}v3/operators/traces/checkin`, {
+export const createCheckinV3 = (scannerAccessId, data) => {
+  return fetch(`${API_PATH}v3/scanners/${scannerAccessId}/traces/checkin`, {
     method: 'POST',
     headers,
     body: JSON.stringify(data),

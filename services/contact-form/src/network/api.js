@@ -37,8 +37,8 @@ export const createUser = data => {
 };
 
 // CHECKIN
-export const createCheckinV3 = data => {
-  return fetch(`${API_PATH}v3/operators/traces/checkin`, {
+export const createCheckinV3 = (formId, data) => {
+  return fetch(`${API_PATH}v3/forms/${formId}/traces/checkin`, {
     method: 'POST',
     headers,
     body: JSON.stringify(data),

@@ -52,7 +52,7 @@ const LoadContactFormHOC = ({ component: Component }) => {
 
   return (
     <>
-      <Component scanner={data} />
+      <Component scanner={data} formId={formId} />
     </>
   );
 };

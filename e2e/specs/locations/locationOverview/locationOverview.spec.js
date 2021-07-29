@@ -1,6 +1,7 @@
-import { contactFormCheckin, login } from '../helpers/functions';
-import { traceDataPayload } from '../helpers/functions.helper';
+import { checkin, login } from '../helpers/functions';
+import { traceDataPayload, DEVICE_TYPES } from '../helpers/functions.helper';
 import { DELETE_E2E_TRACE_QUERY } from '../helpers/dbQueries';
+import { E2E_DEFAULT_LOCATION_FORM } from '../helpers/locations';
 
 const checkTrackingTime = x => {
   const filtered = x.split(' - ').filter(el => el !== '');
@@ -22,7 +23,7 @@ describe('Locations / Location overview', () => {
   describe('when check-in/check-out location', () => {
     it('guest count and the tracking time is changed', () => {
       // Check in a guest
-      contactFormCheckin(traceDataPayload);
+      checkin({ ...traceDataPayload, deviceType: DEVICE_TYPES.mobile });
       // Expect the guest count to be 1
       cy.getByCy('guestCount').next().should('be.visible').click();
       cy.getByCy('guestCount').should('contain', 1);
@@ -44,7 +45,10 @@ describe('Locations / Location overview', () => {
       // Expect the both checkin and checkout time exist in the guest list modal
       cy.getByCy('showGuestList').click({ force: true });
       cy.getByCy('trackingTime').then(el => {
-        setTimeout(() => expect(checkTrackingTime(el.text())).to.equal(2), 3000);
+        setTimeout(
+          () => expect(checkTrackingTime(el.text())).to.equal(2),
+          3000
+        );
       });
     });
   });

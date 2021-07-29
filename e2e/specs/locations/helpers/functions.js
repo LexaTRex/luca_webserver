@@ -126,8 +126,8 @@ export const createLocation = (groupId, locationName) => {
   });
 };
 
-export const contactFormCheckin = traceDataPayload => {
-  cy.request('POST', '/api/v3/operators/traces/checkin', traceDataPayload);
+export const checkin = traceDataPayload => {
+  cy.request('POST', `/api/v3/traces/checkin`, traceDataPayload);
 };
 
 export const requestAccountDeletion = () => {

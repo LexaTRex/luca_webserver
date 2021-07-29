@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.6.2 (2021-07-29)
+* **backend:** ref: split checkin route for scanner and contact-form
+
 ### 1.6.1 (2021-07-28)
 * **backend:** feat: lower redis usage by adding etag caching for large values
 

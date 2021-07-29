@@ -52,7 +52,7 @@ const handleV3StaticData = parameters => {
 
   const v3BagdePayload = getV3BadgeCheckinPayload(qrData, scanner);
 
-  createCheckinV3(v3BagdePayload)
+  createCheckinV3(scanner.scannerAccessId, v3BagdePayload)
     .then(response => {
       if (response.status === 409) {
         notifyScanError(DUPLICATE_CHECKIN, intl);
@@ -92,7 +92,7 @@ const handleV3AppData = parameters => {
 
   const v3AppCheckinPayload = getV3AppCheckinPayload(scanner, qrData);
 
-  createCheckinV3(v3AppCheckinPayload)
+  createCheckinV3(scanner.scannerAccessId, v3AppCheckinPayload)
     .then(response => {
       if (response.status === 409) {
         notifyScanError(DUPLICATE_CHECKIN, intl);
@@ -141,7 +141,7 @@ const handleV4StaticData = async parameters => {
   }
 
   const v4BadgePayload = await getV4BadgeCheckinPayload(qrData, scanner);
-  createCheckinV3(v4BadgePayload)
+  createCheckinV3(scanner.scannerAccessId, v4BadgePayload)
     .then(response => {
       if (response.status === 409) {
         notifyScanError(DUPLICATE_CHECKIN, intl);

@@ -24,6 +24,7 @@ import { AddressInput } from './AddressInput';
 import { ButtonWrapper, Link } from './InputForm.styled';
 
 export const InputForm = ({
+  formId,
   scanner,
   initialValues = null,
   additionalData = null,
@@ -61,6 +62,7 @@ export const InputForm = ({
   );
 
   const register = useRegister(
+    formId,
     formReference,
     formFieldNames,
     () =>

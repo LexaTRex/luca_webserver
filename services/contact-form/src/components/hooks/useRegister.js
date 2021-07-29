@@ -14,6 +14,7 @@ import {
 } from './useRegister.helper';
 
 export const useRegister = (
+  formId,
   formReference,
   fieldMap,
   clearFormMap,
@@ -67,7 +68,7 @@ export const useRegister = (
         timestamp,
         traceId
       );
-      await createCheckinV3(v3checkinPayload);
+      await createCheckinV3(formId, v3checkinPayload);
       // CHECKIN SUCCESS
       if (formReference.current) {
         clearFormMap();

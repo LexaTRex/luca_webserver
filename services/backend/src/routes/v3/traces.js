@@ -17,8 +17,10 @@ const {
 const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
 const {
+  DEVICE_TYPE_IOS,
+  DEVICE_TYPE_ANDROID,
+  DEVICE_TYPE_WEBAPP,
   DEVICE_TYPE_STATIC,
-  DEVICE_TYPE_FORM,
 } = require('../../constants/deviceTypes');
 
 const {
@@ -35,14 +37,18 @@ const {
  *
  * @see https://www.luca-app.de/securityoverview/processes/guest_app_checkin.html#qr-code-scanning-validation-and-check-in-upload
  */
-const forbiddenDeviceTypes = new Set([DEVICE_TYPE_STATIC, DEVICE_TYPE_FORM]);
+const allowedDeviceTypes = new Set([
+  DEVICE_TYPE_IOS,
+  DEVICE_TYPE_ANDROID,
+  DEVICE_TYPE_WEBAPP,
+]);
 
 router.post(
   '/checkin',
   limitRequestsPerHour('traces_checkin_post_ratelimit_hour'),
   validateSchema(checkinSchema),
   async (request, response) => {
-    if (forbiddenDeviceTypes.has(request.body.deviceType)) {
+    if (!allowedDeviceTypes.has(request.body.deviceType)) {
       return response.sendStatus(status.PRECONDITION_FAILED);
     }
 

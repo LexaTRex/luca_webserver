@@ -11,7 +11,7 @@ import {
   Headline,
 } from './ContactForm.styled';
 
-export const ContactForm = ({ scanner }) => {
+export const ContactForm = ({ scanner, formId }) => {
   const intl = useIntl();
 
   const title = intl.formatMessage({ id: 'contactForm.site.title' });
@@ -25,7 +25,7 @@ export const ContactForm = ({ scanner }) => {
       <RegistrationWrapper>
         <RegistrationCard>
           <Headline>{scanner.name}</Headline>
-          <InputForm scanner={scanner} />
+          <InputForm scanner={scanner} formId={formId} />
         </RegistrationCard>
       </RegistrationWrapper>
     </>

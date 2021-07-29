@@ -1,7 +1,12 @@
 import { E2E_DEFAULT_LOCATION_SCANNER } from './locations';
 
 export const E2E_TRACE_ID = 'w2RiSHiitpfJ0hxcJz5ZYw==';
-export const DEVICE_TYPES = { "mobile":1, "tablet":2, "scanner":3, "contactForm":4 };
+export const DEVICE_TYPES = {
+  mobile: 1,
+  tablet: 2,
+  scanner: 3,
+  contactForm: 4,
+};
 
 export const createGroupPayload = {
   type: 'base',
