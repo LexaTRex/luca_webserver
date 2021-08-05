@@ -76,7 +76,11 @@ export const GuestListModal = ({ location }) => {
       title: intl.formatMessage({ id: 'modal.guestList.checkinDate' }),
       key: 'checkinDate',
       render: function renderCheckinDate(trace) {
-        return <>{moment.unix(trace.checkin).format('DD.MM.YYYY')}</>;
+        return (
+          <div data-cy="checkinDate">
+            {moment.unix(trace.checkin).format('DD.MM.YYYY')}
+          </div>
+        );
       },
     },
     {
@@ -84,7 +88,7 @@ export const GuestListModal = ({ location }) => {
       key: 'checkinTime',
       render: function renderCheckinTime(trace) {
         return (
-          <div data-cy="trackingTime">
+          <div data-cy="checkinTime">
             {moment.unix(trace.checkin).format('HH:mm')}
           </div>
         );
@@ -95,11 +99,11 @@ export const GuestListModal = ({ location }) => {
       key: 'checkoutDate',
       render: function renderCheckinDate(trace) {
         return (
-          <>
+          <div data-cy="checkoutDate">
             {trace.checkout
               ? moment.unix(trace.checkout).format('DD.MM.YYYY')
               : '-'}
-          </>
+          </div>
         );
       },
     },
@@ -108,9 +112,9 @@ export const GuestListModal = ({ location }) => {
       key: 'checkoutTime',
       render: function renderCheckinTime(trace) {
         return (
-          <>
+          <div data-cy="checkoutTime">
             {trace.checkout ? moment.unix(trace.checkout).format('HH:mm') : '-'}
-          </>
+          </div>
         );
       },
     },

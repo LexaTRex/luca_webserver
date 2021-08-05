@@ -17,6 +17,7 @@ const passportSession = require('./passport/session');
 const bearerBadgeGeneratorStrategy = require('./passport/bearerBadgeGenerator');
 const localOperatorStrategy = require('./passport/localOperator');
 const localHealthDepartmentEmployeeStrategy = require('./passport/localHealthDepartmentEmployee');
+const requestMetricsMiddleware = require('./middlewares/requestMetrics');
 
 // Routes
 const versionRouter = require('./routes/version');
@@ -75,6 +76,7 @@ const configureApp = () => {
   if (!config.get('debug')) {
     app.use(helmet.hsts());
   }
+  app.use(requestMetricsMiddleware);
   app.use(cookieParser());
   app.use(
     session({

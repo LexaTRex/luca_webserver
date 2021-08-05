@@ -1,5 +1,17 @@
 # Changelog
 
+### 1.7.0 (2021-08-05)
+* **backend:** feat: instrument with metrics
+* **health-department:** feat: update route access restrictions for employees
+* **health-department:** feat: unified buttons and updated designs
+* **locations:** fix: qr code labels and names
+* **locations:** feat: inform venue owners about unusally long request times from health departments before sharing data
+* **locations:** feat: support special characters in location creation
+* **contact-form:** feat: updated string validation
+* **webapp:** fix: checkin timer starting time
+* **webapp:** fix: timer resets after refresh
+* **scanner:** fix: improve camera resolution to scan badges faster
+
 ### 1.6.2 (2021-07-29)
 * **backend:** ref: split checkin route for scanner and contact-form
 

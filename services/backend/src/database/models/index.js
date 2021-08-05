@@ -6,6 +6,7 @@ const Sequelize = require('sequelize');
 
 const environment = config.util.getEnv('NODE_ENV');
 const logger = require('../../utils/logger');
+const { client } = require('../../utils/metrics');
 const databaseConfig = require('../config.js')[environment];
 
 const basename = path.basename(__filename);
@@ -27,6 +28,28 @@ const database = new Sequelize({
       Sequelize.ConnectionTimedOutError,
     ],
   },
+});
+
+const counter = new client.Counter({
+  name: 'sequelize_table_creation_count',
+  help: 'Total database rows created since process start.',
+  labelNames: ['tableName'],
+});
+
+database.addHook('beforeCreate', instance => {
+  counter.inc({
+    tableName: instance.constructor.name,
+  });
+});
+
+database.addHook('beforeBulkCreate', instances => {
+  if (instances.length <= 0) return;
+  counter.inc(
+    {
+      tableName: instances[0].constructor.name,
+    },
+    instances.length
+  );
 });
 
 /* eslint-disable-next-line security/detect-non-literal-fs-filename */

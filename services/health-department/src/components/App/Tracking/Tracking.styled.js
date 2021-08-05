@@ -17,10 +17,3 @@ export const VersionFooterWrapper = styled.div`
   padding-right: 24px;
   float: right;
 `;
-
-export const buttonStyle = {
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-};

@@ -3,6 +3,8 @@ import {
   E2E_SECOND_LOCATION_NAME,
 } from '../helpers/locations';
 
+const TIME_REGEXP = /^\d{2}:\d{2}$/;
+
 export const checkRadiusInput = () => {
   // Invalid radius input (empty, under 50 or over 5000):
   cy.get('#radius').clear();
@@ -55,5 +57,28 @@ export const verifyLocationHomePage = () => {
 export const verifyModalWindowIsClosed = () => {
   cy.get('#root').within(($root) => {
     expect($root.find('.ant-modal-content').length).to.equal(0);
+  });
+};
+
+export const verifyGuestsCount = (count) => {
+  cy.getByCy('guestCount').next().click();
+  cy.getByCy('guestCount').should('contain', count);
+};
+
+export const verifyCheckinGuestTime = (date) => {
+  cy.get('.ant-modal-content').should('be.visible').within(() => {
+    cy.getByCy('checkinDate').should('have.text', date);
+    cy.getByCy('checkinTime').contains(TIME_REGEXP);
+    cy.getByCy('checkoutDate').should('have.text', '-');
+    cy.getByCy('checkoutTime').contains('-');
+  });
+};
+
+export const verifyCheckoutGuestTime = (date) => {
+  cy.get('.ant-modal-content').should('be.visible').within(() => {
+    cy.getByCy('checkinDate').should('have.text', date);
+    cy.getByCy('checkinTime').contains(TIME_REGEXP);
+    cy.getByCy('checkoutDate').should('have.text', date);
+    cy.getByCy('checkoutTime').contains(TIME_REGEXP);
   });
 };

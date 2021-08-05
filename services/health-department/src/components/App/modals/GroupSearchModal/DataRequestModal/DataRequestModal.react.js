@@ -3,6 +3,7 @@ import moment from 'moment';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
 import { Form, DatePicker, TimePicker, notification } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 import { createLocationTransfer } from 'network/api';
 import { mergeTimeAndDateObject } from 'utils/moment';
 
@@ -13,9 +14,7 @@ import {
   InfoText,
   AddressText,
   DateText,
-  OpenProcessButton,
   DateSelectorWrapper,
-  BackButton,
   DatePickerRow,
 } from './DataRequestModal.styled';
 
@@ -182,13 +181,13 @@ export const DataRequestModal = ({ group, back }) => {
         </DateSelectorWrapper>
 
         <ButtonRow>
-          <BackButton onClick={back}>
+          <SecondaryButton onClick={back}>
             {intl.formatMessage({ id: 'modal.dataRequest.back' })}
-          </BackButton>
+          </SecondaryButton>
           <Form.Item>
-            <OpenProcessButton htmlType="submit" data-cy="requestGroupData">
+            <PrimaryButton htmlType="submit" data-cy="requestGroupData">
               {intl.formatMessage({ id: 'modal.dataRequest.button' })}
-            </OpenProcessButton>
+            </PrimaryButton>
           </Form.Item>
         </ButtonRow>
       </Form>

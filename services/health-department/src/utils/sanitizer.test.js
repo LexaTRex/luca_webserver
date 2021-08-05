@@ -111,3 +111,16 @@ it('handles other input', () => {
   expect(sanitizeForCSV(-1)).toBe('-1');
   expect(sanitizeForCSV(null)).toBe('');
 });
+
+it('handles brackets and commas', () => {
+  const testData = {
+    '(),': '_',
+    'Frankfurt (Oder)': 'Frankfurt  Oder ',
+    'C,S,V': 'C S V',
+    '(test), test, test': '_test  test  test',
+  };
+
+  Object.keys(testData).forEach(value => {
+    expect(sanitizeForCSV(value)).toBe(testData[value]);
+  });
+});

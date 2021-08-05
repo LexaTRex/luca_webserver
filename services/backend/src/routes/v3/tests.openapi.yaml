@@ -25,6 +25,7 @@ paths:
                 - tag
     delete:
       summary: Delete a redeemed test
+      tags: [Tests]
       requestBody:
         content:
           application/json:

@@ -4,10 +4,7 @@ import { fillForm } from '../../contact-form/helpers/functions';
 
 import { loginHealthDepartment } from '../../health-department/helper/api/auth.helper';
 
-import {
-  downloadHealthDepartmentPrivateKey,
-  addHealthDepartmentPrivateKeyFile,
-} from '../../health-department/helper/ui/login.helper';
+import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/login.helper';
 
 import { APP_ROUTE } from '../../locations/helpers/routes';
 import { createGroupPayload } from '../../locations/helpers/functions.helper';
@@ -20,7 +17,15 @@ import {
 } from '../../locations/helpers/functions';
 
 import { clean } from '../helpers/functions';
-import { E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD, WORKFLOW_LOCATION_PRIVATE_KEY_PATH } from '../helpers/users';
+import {
+  E2E_COMPLETE_EMAIL,
+  E2E_COMPLETE_PASSWORD,
+  WORKFLOW_LOCATION_PRIVATE_KEY_PATH,
+} from '../helpers/users';
+import {
+  setDatePickerStartDate,
+  setDatePickerEndDate,
+} from '../../health-department/helper/ui/tracking.helper';
 
 const FORM_WORKFLOW_TESTING_GROUP_NAME = 'Form Workflow';
 
@@ -56,14 +61,10 @@ context('Workflow', () => {
       cy.get('.ant-modal-close-x').click();
       // Checkin with contact form
       cy.log('Checkin with in testing Location with Contact Form');
-      cy.window().then(win => {
-        cy.stub(win, 'open', link => {
-          win.location.href = link;
-        });
-      });
+      cy.stubNewWindow();
       cy.getByCy('contactForm').click();
       const users = [];
-      for (let index = 0; index < 5; index += 1) {
+      for (let index = 0; index < 2; index += 1) {
         users.push(fillForm());
       }
       logout();
@@ -77,27 +78,8 @@ context('Workflow', () => {
       cy.getByCy('groupNameInput').type(FORM_WORKFLOW_TESTING_GROUP_NAME);
       cy.getByCy('startGroupSearch').click();
       cy.getByCy(`group_${FORM_WORKFLOW_TESTING_GROUP_NAME}`).click();
-      cy.get('input[id=startDate]').should('exist');
-      cy.get('input[id=startDate]').click();
-      cy.get('input[id=startDate]').type(`${yesterdayDate}{enter}`);
-      cy.get('input[id=startTime]').should('exist');
-      cy.get('input[id=startTime]').click();
-      cy.get('.ant-picker-time-panel').should('exist');
-      cy.get('.ant-picker-time-panel').within(() => {
-        cy.get('.ant-picker-time-panel-cell').eq(0).click().type('{enter}');
-      });
-
-      cy.get('input[id=endDate]').should('exist');
-      cy.get('input[id=endDate]').click();
-      cy.get('input[id=endDate]').type(`${tomorrowDate}{enter}`);
-      cy.get('input[id=endTime]').should('exist');
-      cy.get('input[id=endTime]').click();
-      cy.get('.ant-picker-time-panel').should('exist');
-      cy.get('.ant-picker-time-panel')
-        .eq(1)
-        .within(() => {
-          cy.get('.ant-picker-time-panel-cell').eq(0).click().type('{enter}');
-        });
+      setDatePickerStartDate(yesterdayDate);
+      setDatePickerEndDate(tomorrowDate);
 
       cy.getByCy('requestGroupData').click();
       cy.getByCy('processEntry').should('exist');
@@ -120,11 +102,7 @@ context('Workflow', () => {
       basicLocationLogin(E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD);
       cy.visit(APP_ROUTE);
       cy.getByCy('dataRequests').click();
-      cy.window().then(win => {
-        cy.stub(win, 'open', link => {
-          win.location.href = link;
-        });
-      });
+      cy.stubNewWindow();
       cy.getByCy('completeDataTransfer').first().click();
       uploadLocationPrivateKeyFile(WORKFLOW_LOCATION_PRIVATE_KEY_PATH);
       cy.getByCy('next').click();

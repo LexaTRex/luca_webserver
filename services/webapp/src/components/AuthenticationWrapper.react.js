@@ -1,26 +1,24 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import useInterval from '@use-it/interval';
 import { useHistory } from 'react-router-dom';
 import { getLocation } from 'connected-react-router';
-
 import { indexDB } from 'db';
 import {
-  HOME_PATH,
-  CHECK_OUT_PATH,
-  ON_BOARDING_PATH,
-  COVID_TEST_PATH,
   APPOINTMENT_PATH,
   BASE_PRIVATE_MEETING_PATH,
+  CHECK_OUT_PATH,
+  COVID_TEST_PATH,
+  HOME_PATH,
+  ON_BOARDING_PATH,
 } from 'constants/routes';
 import {
-  syncHistory,
   checkHistory,
-  checkSession,
   checkLocalHistory,
+  checkSession,
+  syncHistory,
 } from 'helpers/history';
 import { getCheckOutPath } from 'helpers/routes';
 import { checkForActiveHostedPrivateMeeting } from 'helpers/privateMeeting';

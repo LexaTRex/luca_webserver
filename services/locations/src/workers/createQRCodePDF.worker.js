@@ -42,14 +42,43 @@ const generateQRData = (
   return qrData;
 };
 
-const drawQRCode = (pdf, x, y, base64QR, title, subtitle) => {
-  pdf.text(title, 35 + x, 10 + y, 'center');
+const drawCuttedText = (text, length, pdf, x, y) => {
+  const parts = pdf.splitTextToSize(text, length);
+  const isTextFitting = parts.length === 1;
+  pdf.text(`${parts[0]}${isTextFitting ? '' : '...'}`, x, y, {
+    align: 'center',
+  });
+};
+
+const drawQRCode = ({
+  pdf,
+  x,
+  y,
+  base64QR,
+  areaName = '',
+  table = '',
+  locationName,
+}) => {
+  const maxTextLength = 40;
+  if (areaName) {
+    pdf.setFontSize(9);
+    pdf.setFont(undefined, 'bold');
+    const yOffset = table ? 10 : 15;
+    drawCuttedText(areaName, maxTextLength, pdf, 35 + x, yOffset + y);
+  }
+  if (table) {
+    pdf.setFontSize(8);
+    pdf.setFont(undefined, 'normal');
+    drawCuttedText(table, maxTextLength, pdf, 35 + x, 15 + y);
+  }
   pdf.rect(0 + x, 0 + y, 70, 74.25);
-  pdf.addImage(base64QR, 'png', 15 + x, 15 + y, 40, 40);
+  pdf.addImage(base64QR, 'png', 15 + x, 17 + y, 40, 40);
   pdf.setFillColor('#FFFFFF');
-  pdf.rect(29 + x, 31 + y, 12, 8, 'F');
-  pdf.addImage(LUCA_SVG_BASE_64, 'png', 31 + x, 33 + y, 8, 4);
-  pdf.text(subtitle, 35 + x, 62 + y, 'center');
+  pdf.rect(29 + x, 33 + y, 12, 8, 'F');
+  pdf.addImage(LUCA_SVG_BASE_64, 'png', 31 + x, 35 + y, 8, 4);
+  pdf.setFontSize(9);
+  pdf.setFont(undefined, 'bold');
+  drawCuttedText(locationName, maxTextLength, pdf, 35 + x, 62 + y);
 };
 
 const PDFCreator = {
@@ -58,14 +87,11 @@ const PDFCreator = {
     isTableQRCodeEnabled,
     isCWAEventEnabled,
     path,
-    title,
-    subtitle,
-    name,
+    table,
     keyName,
     progressCallback
   ) {
     const pdf = new jsPDF();
-    pdf.setFontSize(15);
 
     const qrCodeData = generateQRData(
       location,
@@ -86,14 +112,15 @@ const PDFCreator = {
               size: 800,
             });
             id += 1;
-            drawQRCode(
+            drawQRCode({
               pdf,
-              row * 70,
-              column * 74.25,
+              x: row * 70,
+              y: column * 74.25,
               base64QR,
-              `${title} ${id}`,
-              subtitle
-            );
+              areaName: location.name,
+              table: `${table} ${id}`,
+              locationName: location.groupName,
+            });
             const percentage = Math.round((id / qrCodeData.length) * 100);
             progressCallback(percentage);
           }
@@ -105,7 +132,14 @@ const PDFCreator = {
       const base64QR = qrcode(qrCodeData[0], {
         size: 800,
       });
-      drawQRCode(pdf, 0, 0, base64QR, `${name}`, subtitle);
+      drawQRCode({
+        pdf,
+        x: 0,
+        y: 0,
+        base64QR,
+        areaName: location.name,
+        locationName: location.groupName,
+      });
     }
     return pdf.output('blob');
   },

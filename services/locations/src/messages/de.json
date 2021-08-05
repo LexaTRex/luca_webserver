@@ -161,7 +161,7 @@
     "shareData.finish": "Fertig",
     "shareData.privkey.error.description": "Dein privater Schlüssel ist nicht korrekt",
     "shareData.shareData": "Datenfreigabe bestätigen",
-    "shareData.transfersLabel": "Check-ins während des gewünschten Zeitraums",
+    "shareData.transfersLabel": "{note}: Gesundheitsämter fragen in der Regel nicht mehr als 72 Stunden an Check-In-Daten an. Bitte vergewissere dich, dass die vorliegende Anfrage legitim ist.",
     "shareData.activeCheckIns": "Summe der Check-ins",
     "shareData.passwordStep.info": "Zum Entschlüsseln der Daten wird dein persönliches Passwort benötigt. Das Passwort hast du bei der Erstellung des Treffens erhalten. Bitte gib das Passwort hier ein, um den Datenzugriff durch das Gesundheitsamt zu ermöglichen.",
     "shareData.finish.text": "Deine Daten wurden für das Gesundheitsamt freigegeben.",
@@ -639,5 +639,9 @@
     "modal.guestList.checkoutDate": "Checkout Datum",
     "modal.guestList.checkoutTime": "Checkout Zeit",
     "shareData.privateKey.keySize": "Die hochgeladene Datei war zu groß.",
-    "profile.services.support": "Hilfe"
+    "profile.services.support": "Hilfe",
+    "shareData.note": "HINWEIS",
+    "shareData.dataRequest": "Location und Anfragezeitraum",
+    "verificationTag.info": "Dieses Gesundheitsamt ist verifiziert",
+    "requestWarning.info": "Achtung, der angefragte Zeitraum ist ungewöhnlich lang. In der Regel fragen Gesundheitsämter nicht mehr als 72 Stunden an Check-in Daten an. Bitte prüfe die Anfrage."
 }

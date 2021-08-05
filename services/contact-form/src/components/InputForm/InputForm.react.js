@@ -11,7 +11,7 @@ import { PRIVACY_LINK } from 'constants/links';
 // Hooks
 import { useRegister } from 'components/hooks/useRegister';
 import {
-  useNameValidator,
+  usePersonNameValidator,
   usePhoneValidator,
   useEmailValidator,
   useTableValidator,
@@ -44,10 +44,11 @@ export const InputForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formReference = useRef(null);
 
-  const { firstNameValidator, lastNameValidator } = useNameValidator();
-  const { phoneValidator } = usePhoneValidator();
-  const { emailValidator } = useEmailValidator();
-  const { tableValidator } = useTableValidator();
+  const firstNameValidator = usePersonNameValidator('firstName');
+  const lastNameValidator = usePersonNameValidator('lastName');
+  const phoneValidator = usePhoneValidator();
+  const emailValidator = useEmailValidator();
+  const tableValidator = useTableValidator();
 
   const { isLoading, error, data: dailyKey } = useQuery(
     'dailyKey',

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 import { push } from 'connected-react-router';
 import { notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 // API
 import { logout } from 'network/api';
@@ -11,8 +12,6 @@ import { logout } from 'network/api';
 // CONSTANTS
 import { LOGIN_ROUTE } from 'constants/routes';
 import { clearPrivateKeys } from 'utils/cryptoKeyOperations';
-
-import { LogoutButtonStyled } from './LogoutButton.styled';
 
 export const LogoutButton = () => {
   const intl = useIntl();
@@ -38,10 +37,10 @@ export const LogoutButton = () => {
       .catch(error => console.error(error));
   };
   return (
-    <LogoutButtonStyled data-cy="logout" shape="round" onClick={handleClick}>
+    <PrimaryButton data-cy="logout" onClick={handleClick}>
       {intl.formatMessage({
         id: 'header.logout',
       })}
-    </LogoutButtonStyled>
+    </PrimaryButton>
   );
 };

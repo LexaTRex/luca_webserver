@@ -1,18 +1,13 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, notification, Popconfirm } from 'antd';
+import { notification, Popconfirm } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 
 import { renewEmployeePassword } from 'network/api';
 
 import { useModal } from 'components/hooks/useModal';
 
-import {
-  Wrapper,
-  ButtonRow,
-  Info,
-  cancelStyle,
-  confirmStyle,
-} from '../RenewEmployeePasswordModal.styled';
+import { Wrapper, ButtonRow, Info } from '../RenewEmployeePasswordModal.styled';
 
 export const CreateNewPassword = ({ employee, setNewUserPassword }) => {
   const intl = useIntl();
@@ -59,11 +54,11 @@ export const CreateNewPassword = ({ employee, setNewUserPassword }) => {
         )}
       </Info>
       <ButtonRow>
-        <Button style={cancelStyle} onClick={close}>
+        <SecondaryButton style={{ marginRight: 24 }} onClick={close}>
           {intl.formatMessage({
             id: 'cancel',
           })}
-        </Button>
+        </SecondaryButton>
         <Popconfirm
           placement="top"
           title={intl.formatMessage({
@@ -77,11 +72,11 @@ export const CreateNewPassword = ({ employee, setNewUserPassword }) => {
             id: 'cancel',
           })}
         >
-          <Button style={confirmStyle}>
+          <PrimaryButton>
             {intl.formatMessage({
               id: 'modal.renewEmployeePassword.create',
             })}
-          </Button>
+          </PrimaryButton>
         </Popconfirm>
       </ButtonRow>
     </Wrapper>

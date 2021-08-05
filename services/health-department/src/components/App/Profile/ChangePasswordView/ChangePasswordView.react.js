@@ -1,14 +1,11 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Input, Button, Form, notification } from 'antd';
+import { Input, Form, notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { changePassword } from 'network/api';
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 import { handleResponse } from './ChangePasswordView.helper';
-import {
-  Wrapper,
-  StyledHeadline,
-  buttonStyle,
-} from './ChangePasswordView.styled';
+import { Wrapper, StyledHeadline } from './ChangePasswordView.styled';
 import { inputStyle, StyledButtonRow } from '../Profile.styled';
 
 export const ChangePasswordView = () => {
@@ -120,11 +117,11 @@ export const ChangePasswordView = () => {
         </Form.Item>
         <StyledButtonRow>
           <Form.Item>
-            <Button htmlType="submit" style={buttonStyle}>
+            <PrimaryButton htmlType="submit">
               {intl.formatMessage({
                 id: 'profile.changePassword',
               })}
-            </Button>
+            </PrimaryButton>
           </Form.Item>
         </StyledButtonRow>
       </Form>

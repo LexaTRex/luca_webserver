@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 // Components
 import { Explain, ButtonRow } from '../RegisterHealthDepartmentModal.styled';
@@ -21,19 +21,11 @@ export const CompleteStep = ({ closeModal }) => {
           marginTop: 200,
         }}
       >
-        <Button
-          data-cy="finish"
-          onClick={closeModal}
-          style={{
-            backgroundColor: '#4e6180',
-            padding: '0 40px',
-            color: 'white',
-          }}
-        >
+        <PrimaryButton data-cy="finish" onClick={closeModal}>
           {intl.formatMessage({
             id: 'modal.registerHealthDepartment.step1.button',
           })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </>
   );

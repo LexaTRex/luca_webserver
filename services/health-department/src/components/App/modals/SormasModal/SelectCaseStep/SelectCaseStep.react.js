@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Select, Button } from 'antd';
+import { Select } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useQuery } from 'react-query';
 import { useIntl } from 'react-intl';
 
@@ -59,7 +60,7 @@ export function SelectCaseStep({ client, onSelectCase }) {
         </ResultWrapper>
       )}
       <ButtonWrapper>
-        <Button
+        <PrimaryButton
           style={{ marginTop: '12px', alignSelf: 'flex-end' }}
           disabled={!selectedCase}
           onClick={() => {
@@ -69,7 +70,7 @@ export function SelectCaseStep({ client, onSelectCase }) {
           {intl.formatMessage({
             id: 'modal.sormas.selectstep.export',
           })}
-        </Button>
+        </PrimaryButton>
       </ButtonWrapper>
     </>
   );

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon / Verifizierung</title>
+    <g id="Gesundheitsamt" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Profil" transform="translate(-299.000000, -56.000000)">
+            <g id="Group" transform="translate(299.000000, 56.000000)">
+                <polygon id="Star" fill="#7CA5F6" points="8 14.4 4.93853254 15.3910363 3.4745166 12.5254834 0.60896374 11.0614675 1.6 8 0.60896374 4.93853254 3.4745166 3.4745166 4.93853254 0.60896374 8 1.6 11.0614675 0.60896374 12.5254834 3.4745166 15.3910363 4.93853254 14.4 8 15.3910363 11.0614675 12.5254834 12.5254834 11.0614675 15.3910363"></polygon>
+                <polyline id="Path-3" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" points="5 9 7 11 11 5"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

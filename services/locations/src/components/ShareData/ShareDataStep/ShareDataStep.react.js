@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import moment from 'moment';
 import { notification } from 'antd';
 import { PrimaryButton } from 'components/general';
 import { useIntl } from 'react-intl';
@@ -14,6 +13,12 @@ import {
   RequestContent,
   FinishButtonWrapper,
 } from '../ShareData.styled';
+
+import { Checkins } from './Checkins';
+import { HealthDepartmentInfo } from './HealthDepartmentInfo';
+import { DataRequests } from './DataRequests';
+
+import { InfoText } from './ShareDataStep.styled';
 
 /**
  * This step decrypts the outer encryption layer of the traces requested by
@@ -54,7 +59,6 @@ export const ShareDataStep = ({
                 additionalData: reencryptedAdditionalData,
               };
             } catch (error) {
-              // eslint-disable-next-line no-console
               console.error('Trace decryption failed.', trace, error);
               return null;
             }
@@ -78,20 +82,6 @@ export const ShareDataStep = ({
     );
   };
 
-  const timestampFormat = 'DD.MM.YYYY hh:mm';
-
-  const healthDepartments = useMemo(() => {
-    const departments = {};
-
-    if (!transfers) return [];
-
-    for (const transfer of transfers) {
-      departments[transfer.department.name] = transfer.department;
-    }
-
-    return Object.values(departments);
-  }, [transfers]);
-
   return (
     <>
       {showStepLabel && <StepLabel>2/2</StepLabel>}
@@ -100,42 +90,18 @@ export const ShareDataStep = ({
         <SubHeader>
           {intl.formatMessage({ id: 'shareData.shareData' })}
         </SubHeader>
-
-        <h4>{intl.formatMessage({ id: 'shareData.transfersLabel' })}</h4>
-
-        {transfers.map(transfer => (
-          <h3 key={transfer.transferId}>
-            {transfer.location.name}
-            <br />
-            {` ${moment
-              .unix(transfer.time[0])
-              .format(timestampFormat)} ${intl.formatMessage({
-              id: 'dataTransfers.transfer.timeLabel',
-            })} - ${moment
-              .unix(transfer.time[1])
-
-              .format(timestampFormat)} ${intl.formatMessage({
-              id: 'dataTransfers.transfer.timeLabel',
-            })}`}
-          </h3>
-        ))}
+        <InfoText>
+          {intl.formatMessage(
+            { id: 'shareData.transfersLabel' },
+            {
+              note: <b>{intl.formatMessage({ id: 'shareData.note' })}</b>,
+            }
+          )}
+        </InfoText>
       </RequestContent>
-
-      <RequestContent>
-        <h4>{intl.formatMessage({ id: 'shareData.activeCheckIns' })}</h4>
-
-        <h3>
-          {transfers.reduce((sum, transfer) => sum + transfer.traces.length, 0)}
-        </h3>
-      </RequestContent>
-
-      <RequestContent>
-        <h4>{intl.formatMessage({ id: 'shareData.inquiringHD' })}</h4>
-
-        {healthDepartments.map(healthDepartment => (
-          <h3 key={healthDepartment.name}>{healthDepartment.name}</h3>
-        ))}
-      </RequestContent>
+      <DataRequests transfers={transfers} />
+      <Checkins transfers={transfers} />
+      <HealthDepartmentInfo transfers={transfers} />
       <FinishButtonWrapper align="flex-end">
         <PrimaryButton data-cy="next" onClick={onFinish}>
           {intl.formatMessage({ id: 'shareData.finish' })}

@@ -1,14 +1,13 @@
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { Popconfirm } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useHistory } from 'react-router-dom';
 
 import { TRACKING_ROUTE } from 'constants/routes';
 
 // Api
 import { updateProcess } from 'network/api';
-
-import { ToggleCompletedButton } from './ToggleCompleted.styled';
 
 const ToggleCompletedRaw = ({ process }) => {
   const intl = useIntl();
@@ -35,11 +34,11 @@ const ToggleCompletedRaw = ({ process }) => {
       onConfirm={updateComplete}
       cancelText={intl.formatMessage({ id: 'toggleComplete.cancel' })}
     >
-      <ToggleCompletedButton>
+      <PrimaryButton data-cy="complete">
         {process.isCompleted
           ? intl.formatMessage({ id: 'processTable.toggleIncomplete' })
           : intl.formatMessage({ id: 'processTable.toggleComplete' })}
-      </ToggleCompletedButton>
+      </PrimaryButton>
     </Popconfirm>
   );
 };

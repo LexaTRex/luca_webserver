@@ -6,16 +6,15 @@ import {
   deleteGroup,
 } from '../helpers/functions';
 import {
+  DEVICE_TYPES,
   traceDataPayload,
   createGroupPayload,
-  DEVICE_TYPES,
 } from '../helpers/functions.helper';
 import { DELETE_E2E_TRACE_QUERY } from '../helpers/dbQueries.js';
 import {
-  verifyLocationOverview,
   verifyScannerCounter,
+  verifyLocationOverview,
 } from '../helpers/inputValidation.helper';
-import { E2E_DEFAULT_LOCATION_FORM } from '../helpers/locations';
 
 const CHECKIN_GROUP_NAME = 'neXenio';
 

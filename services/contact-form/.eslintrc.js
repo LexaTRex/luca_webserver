@@ -54,6 +54,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'import/no-default-export': 2,
     'import/no-namespace': 0,
+    'unicorn/better-regex': 1,
     'unicorn/filename-case': 0,
     'unicorn/no-null': 0,
     'unicorn/no-array-for-each': 0,

@@ -368,6 +368,7 @@ router.get(
         uuid: department.uuid,
         name: department.name,
         publicHDEKP: department.publicHDEKP,
+        signedPublicHDEKP: department.signedPublicHDEKP,
       },
       location: {
         groupId: location.LocationGroup.uuid,

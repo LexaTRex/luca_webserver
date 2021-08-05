@@ -1,7 +1,8 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { getSormasClient } from 'network/sormas';
-import { Button, Form, Input, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 import { ButtonWrapper } from '../SormasModal.styled';
 
@@ -60,11 +61,11 @@ export function CredentialsStep({ onFinish }) {
       ))}
       <ButtonWrapper>
         <Form.Item>
-          <Button htmlType="submit">
+          <PrimaryButton htmlType="submit">
             {intl.formatMessage({
               id: 'modal.sormas.credentialstep.connect',
             })}
-          </Button>
+          </PrimaryButton>
         </Form.Item>
       </ButtonWrapper>
     </Form>

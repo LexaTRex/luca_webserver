@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Popconfirm, notification, Button } from 'antd';
+import { Popconfirm, notification } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 
 import { ReactComponent as CrossSvg } from 'assets/cross.svg';
 import { ReactComponent as LockSvg } from 'assets/lock.svg';
@@ -14,12 +15,7 @@ import { deleteEmployee } from 'network/api';
 
 // Components
 import { RenewEmployeePasswordModal } from 'components/App/modals/RenewEmployeePasswordModal';
-import {
-  cancelStyle,
-  buttonStyle,
-  IconWrapper,
-  Icon,
-} from './EmployeeActions.styled';
+import { IconWrapper, Icon } from './EmployeeActions.styled';
 
 const CrossIcon = () => <Icon component={CrossSvg} />;
 
@@ -106,12 +102,15 @@ export const EmployeeActions = ({ employee, refetch, setEditing, editing }) => {
         </>
       ) : (
         <>
-          <Button style={cancelStyle} onClick={() => setEditing(null)}>
+          <SecondaryButton
+            style={{ marginRight: 24 }}
+            onClick={() => setEditing(null)}
+          >
             {intl.formatMessage({ id: 'cancel' })}
-          </Button>
-          <Button style={buttonStyle} htmlType="submit">
+          </SecondaryButton>
+          <PrimaryButton htmlType="submit">
             {intl.formatMessage({ id: 'save' })}
-          </Button>
+          </PrimaryButton>
         </>
       )}
     </>

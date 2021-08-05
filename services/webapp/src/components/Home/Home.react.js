@@ -7,9 +7,9 @@ import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';
 import {
+  BASE_PRIVATE_MEETING_PATH,
   HISTORY_PATH,
   SETTINGS_PATH,
-  BASE_PRIVATE_MEETING_PATH,
 } from 'constants/routes';
 import { createMeeting } from 'helpers/privateMeeting';
 
@@ -20,16 +20,16 @@ import { CheckinIcon, HistoryIcon } from 'components/Icons';
 import { AppContent, AppHeadline, AppLayout } from 'components/AppLayout';
 
 import {
+  StyledFooterContainer,
+  StyledFooterItem,
+  StyledHeaderMenuIconContainer,
   StyledLucaLogo,
   StyledMenuIcon,
+  StyledPrivateMeetingButton,
   StyledQRCodeInfo,
-  StyledFooterItem,
+  StyledQRCodeInfoContainer,
   StyledQRCodeWrapper,
   StyledSecondaryButton,
-  StyledQRCodeInfoContainer,
-  StyledPrivateMeetingButton,
-  StyledHeaderMenuIconContainer,
-  StyledFooterContainer,
 } from './Home.styled';
 import { SelfCheckin } from './SelfCheckin';
 import { WebAppWarningModal } from './WebAppWarningModal';

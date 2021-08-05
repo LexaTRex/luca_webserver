@@ -146,6 +146,7 @@ export const CamScanner = ({ scanner }) => {
                     delay={SCAN_TIMEOUT}
                     onError={error => notifyScanError(error, intl)}
                     onScan={handleScan}
+                    resolution={1200}
                   />
                 )}
                 {isSuccess && (

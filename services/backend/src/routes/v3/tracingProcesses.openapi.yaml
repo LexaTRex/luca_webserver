@@ -137,6 +137,8 @@ paths:
       description: Update tracing process information.
     delete:
       summary: Delete Tracing Process
+      tags:
+        - TracingProcesses
       responses:
         204:
           description: Success

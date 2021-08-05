@@ -1,37 +1,37 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import moment from 'moment';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
-import useInterval from '@use-it/interval';
 import { useHistory } from 'react-router-dom';
 import { base64UrlToBytes } from '@lucaapp/crypto';
 
 import { checkout } from 'helpers/crypto';
 import { getSession } from 'helpers/history';
 import { getLocation } from 'helpers/locations';
-import { AppContent, AppLayout } from 'components/AppLayout';
-import { HOME_PATH, CHECK_OUT_LOCATION_TYPE } from 'constants/routes';
+import { AppLayout } from 'components/AppLayout';
+import { CHECK_OUT_LOCATION_TYPE, HOME_PATH } from 'constants/routes';
 import { WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY } from 'constants/storage';
+import { useTraceClock } from 'hooks/useTraceClock';
+import { useUserSession } from 'contexts/userSessionContext';
 
 import {
-  StyledTime,
-  StyledTimeType,
-  StyledInfoText,
   StyledAppHeadline,
-  StyledCheckInTime,
-  StyledCheckoutButton,
+  StyledInfoText,
   StyledLocationInfoText,
-  StyledCheckInTimeContainer,
-  StyledLocationInfoContainer,
-  StyledLocationInfoTextContainer,
-  StyledNumberOfAccountsOnThisLocation,
+  StyledWrapper,
 } from './Checkout.styled';
+import { CheckoutButton } from './CheckoutButton';
+import { TimerDisplay } from './TimerDisplay';
+import { LocationInfoContainer } from './LocationInfoContainer';
 
 export function CheckOut({ location: { search } }) {
   const intl = useIntl();
   const history = useHistory();
+  const { checkin, setCheckin } = useUserSession();
+  const clock = useTraceClock();
+
   const { traceId, type } = useMemo(() => {
     const searchParameters = new URLSearchParams(search);
     return {
@@ -39,37 +39,9 @@ export function CheckOut({ location: { search } }) {
       type: searchParameters.get('type') || CHECK_OUT_LOCATION_TYPE,
     };
   }, [search]);
-  const [clock, setClock] = useState({
-    hour: '00',
-    minute: '00',
-    seconds: '00',
-  });
   const [session, setSession] = useState();
   const [location, setLocation] = useState();
   const [additionalData, setAdditionalData] = useState();
-  const [isCheckoutAllowed, setIsCheckoutAllowed] = useState(false);
-
-  const traceClock = useCallback(() => {
-    if (session?.checkin) {
-      const time = moment.duration(moment().diff(moment.unix(session.checkin)));
-      setClock({
-        hour: time.hours().toString().padStart(2, '0'),
-        minute: time.minutes().toString().padStart(2, '0'),
-        seconds: time.seconds().toString().padStart(2, '0'),
-      });
-
-      if (time.minutes() >= 2) {
-        setIsCheckoutAllowed(true);
-      } else {
-        setIsCheckoutAllowed(false);
-      }
-    }
-  }, [session?.checkin]);
-
-  useInterval(traceClock, 1000);
-  useEffect(() => {
-    traceClock();
-  }, [traceClock]);
 
   const handleError = useCallback(() => {
     notification.error({
@@ -83,7 +55,7 @@ export function CheckOut({ location: { search } }) {
   }, [intl]);
 
   useEffect(() => {
-    if (session && session.locationId) {
+    if (session && session?.locationId) {
       getLocation(session.locationId)
         .then(apiLocation => {
           setLocation(apiLocation);
@@ -100,24 +72,24 @@ export function CheckOut({ location: { search } }) {
       getSession(traceId)
         .then(apiSession => {
           if (!apiSession) {
+            setCheckin(null);
             history.push(HOME_PATH);
             return;
           }
 
-          if (!apiSession.checkout) {
-            const time = moment.duration(
-              moment().diff(moment.unix(apiSession.checkin))
-            );
-            if (time.minutes() < 1 && time.hours() === 0) {
-              setSession({ ...apiSession, checkin: moment().unix() });
-              return;
-            }
-
-            setSession(apiSession);
-            return;
+          if (apiSession.checkin && checkin) {
+            setCheckin(checkin);
+          } else {
+            setCheckin(moment().unix());
           }
 
-          history.push(HOME_PATH);
+          if (apiSession.checkout) {
+            const timestamp = moment().unix();
+            setCheckin(null);
+            setSession({ ...apiSession, checkin: timestamp });
+            return;
+          }
+          setSession(apiSession);
         })
         .catch(() => {
           handleError();
@@ -125,20 +97,25 @@ export function CheckOut({ location: { search } }) {
     } else {
       history.push(HOME_PATH);
     }
-  }, [history, traceId, intl, type, handleError]);
+  }, [history, traceId, intl, type, handleError, setCheckin, checkin]);
 
   useEffect(() => {
     if (!window.location.hash) return;
-
     const [key, value] = Object.entries(
       JSON.parse(base64UrlToBytes(window.location.hash.slice(1)))
     )[0];
-
     const label =
       key === 'table' ? intl.formatMessage({ id: 'Checkout.table' }) : key;
 
     setAdditionalData(`${label}: ${value}`);
-  }, [intl]);
+  }, [intl, setCheckin]);
+
+  const onCheckout = async () => {
+    await checkout(traceId);
+    setCheckin(null);
+    sessionStorage.removeItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY);
+    history.push(HOME_PATH);
+  };
 
   return (
     <>
@@ -153,64 +130,29 @@ export function CheckOut({ location: { search } }) {
         }
         bgColor="linear-gradient(-180deg, rgb(211, 222, 195) 0%, rgb(132, 137, 101) 100%);"
       >
-        <AppContent noCentering>
-          <StyledLocationInfoContainer>
-            <StyledLocationInfoTextContainer>
-              <StyledLocationInfoText>
-                {intl.formatMessage({ id: 'Checkout.YouAreCheckIn' })}
+        <LocationInfoContainer session={session}>
+          {additionalData &&
+            Object.keys(additionalData).map(valueKey => (
+              <StyledLocationInfoText key={valueKey}>
+                {valueKey[0].toUpperCase() + valueKey.slice(1)}:{' '}
+                {additionalData[valueKey]}
               </StyledLocationInfoText>
-              <StyledLocationInfoText>
-                {intl.formatMessage({ id: 'Checkout.CheckIn' })}{' '}
-                {session?.checkin &&
-                  `${moment
-                    .unix(session?.checkin)
-                    .format('DD.MM.YYYY - HH.mm')} Uhr`}
-              </StyledLocationInfoText>
-              {additionalData &&
-                Object.keys(additionalData).map(valueKey => (
-                  <StyledLocationInfoText key={valueKey}>
-                    {valueKey[0].toUpperCase() + valueKey.slice(1)}:{' '}
-                    {additionalData[valueKey]}
-                  </StyledLocationInfoText>
-                ))}
-            </StyledLocationInfoTextContainer>
-            <StyledNumberOfAccountsOnThisLocation />
-          </StyledLocationInfoContainer>
-        </AppContent>
-        <AppContent>
+            ))}
+        </LocationInfoContainer>
+
+        <StyledWrapper>
           <StyledInfoText>
             {intl.formatMessage({ id: 'Checkout.CurrentLocation' })}
           </StyledInfoText>
-          <StyledCheckInTimeContainer>
-            <StyledCheckInTime>
-              <StyledTime>{clock.hour}</StyledTime>
-              <StyledTimeType>h</StyledTimeType>
-            </StyledCheckInTime>
-            <StyledCheckInTime>
-              <StyledTime data-cy="clockMinutes">:{clock.minute}</StyledTime>
-              <StyledTimeType isNotHours>min</StyledTimeType>
-            </StyledCheckInTime>
-            <StyledCheckInTime>
-              <StyledTime>:{clock.seconds}</StyledTime>
-              <StyledTimeType isNotHours>s</StyledTimeType>
-            </StyledCheckInTime>
-          </StyledCheckInTimeContainer>
-        </AppContent>
-        <AppContent>
-          <StyledCheckoutButton
-            tabIndex="1"
-            id="checkout"
-            data-cy="checkout"
-            disabled={!isCheckoutAllowed}
-            onClick={async () => {
-              await checkout(traceId);
-              history.push(HOME_PATH);
-              sessionStorage.removeItem(WEBAPP_WARNING_MODAL_SHOWN_SESSION_KEY);
-            }}
-          >
-            {intl.formatMessage({ id: 'Checkout.CheckOutButton' })}
-          </StyledCheckoutButton>
-        </AppContent>
+          <TimerDisplay
+            hour={clock.hour}
+            minute={clock.minute}
+            seconds={clock.seconds}
+          />
+        </StyledWrapper>
+        <CheckoutButton disabled={!clock.allowCheckout} onClick={onCheckout}>
+          {intl.formatMessage({ id: 'Checkout.CheckOutButton' })}
+        </CheckoutButton>
       </AppLayout>
     </>
   );

@@ -18,7 +18,12 @@ const PHONE_NUMBER_TEST_CASES_INVALID = [
   'notanumber',
 ];
 
-const SAFE_STRING_TEST_CASES_VALID = ['015100123123', 'Standort', 'a@bc.de'];
+const SAFE_STRING_TEST_CASES_VALID = [
+  '015100123123',
+  'Standort',
+  'a@bc.de',
+  'CMD()',
+];
 const SAFE_STRING_TEST_CASES_INVALID = [
   "Carl's Bar",
   '100$ Bill',

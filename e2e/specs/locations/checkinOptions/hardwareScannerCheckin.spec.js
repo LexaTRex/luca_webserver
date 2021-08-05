@@ -15,7 +15,6 @@ import {
   createGroup,
   deleteGroup,
 } from '../helpers/functions';
-import { E2E_DEFAULT_LOCATION_FORM } from '../helpers/locations';
 
 const CHECKIN_GROUP_NAME = 'neXenio';
 

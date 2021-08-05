@@ -3,13 +3,8 @@ import { useIntl } from 'react-intl';
 import { Popconfirm } from 'antd';
 import moment from 'moment';
 
-import {
-  Expiry,
-  ButtonWrapper,
-  ContactedButton,
-  CompletedButton,
-  ContactButton,
-} from './ContactConfirmationButton.styled';
+import { PrimaryButton, SuccessButton } from 'components/general';
+import { Expiry, ButtonWrapper } from './ContactConfirmationButton.styled';
 
 export const ContactConfirmationButton = ({ location, callback }) => {
   const intl = useIntl();
@@ -24,9 +19,9 @@ export const ContactConfirmationButton = ({ location, callback }) => {
   if (!isCompleted && !!contactedAt) {
     return (
       <ButtonWrapper>
-        <ContactedButton>
+        <PrimaryButton disabled>
           {intl.formatMessage({ id: 'history.contacted' })}
-        </ContactedButton>
+        </PrimaryButton>
         {renderExpiration()}
       </ButtonWrapper>
     );
@@ -35,12 +30,12 @@ export const ContactConfirmationButton = ({ location, callback }) => {
   if (isCompleted) {
     return (
       <ButtonWrapper>
-        <CompletedButton
+        <SuccessButton
           data-cy={`confirmedLocation_${location.name}`}
           onClick={() => callback(location)}
         >
           {intl.formatMessage({ id: 'history.confirmed' })}
-        </CompletedButton>
+        </SuccessButton>
         {renderExpiration()}
       </ButtonWrapper>
     );
@@ -65,7 +60,7 @@ export const ContactConfirmationButton = ({ location, callback }) => {
       })}
     >
       <ButtonWrapper>
-        <ContactButton
+        <PrimaryButton
           disabled={!isCompleted && !!contactedAt}
           data-cy={`contactLocation_${location.name}`}
           onClick={() => {
@@ -73,7 +68,7 @@ export const ContactConfirmationButton = ({ location, callback }) => {
           }}
         >
           {intl.formatMessage({ id: 'history.contact' })}
-        </ContactButton>
+        </PrimaryButton>
         {renderExpiration()}
       </ButtonWrapper>
     </Popconfirm>

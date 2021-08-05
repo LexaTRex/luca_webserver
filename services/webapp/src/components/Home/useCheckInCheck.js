@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import { decodeUtf8, base64UrlToBytes } from '@lucaapp/crypto';
+import { base64UrlToBytes, decodeUtf8 } from '@lucaapp/crypto';
 import { useHistory } from 'react-router-dom';
 
 import { getScanner } from 'network/api';

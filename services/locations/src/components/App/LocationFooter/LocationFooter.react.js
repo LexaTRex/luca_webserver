@@ -13,7 +13,7 @@ import { Link, Version, Wrapper } from './LocationFooter.styled';
 
 export function LocationFooter({
   color = '#000',
-  title = 'location',
+  title = 'Locations',
   showBadgePrivacy = false,
 }) {
   const intl = useIntl();

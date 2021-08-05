@@ -2,7 +2,12 @@ import React from 'react';
 
 import { Col, Input, Row, Grid } from 'antd';
 
-import { useAddressValidator } from 'components/hooks/useValidators';
+import {
+  useStreetValidator,
+  useHouseNoValidator,
+  useZipCodValidator,
+  useCityValidator,
+} from 'components/hooks/useValidators';
 
 import { FormItem } from '../FormItem';
 
@@ -11,12 +16,10 @@ const { useBreakpoint } = Grid;
 export const AddressInput = ({ formFieldNames }) => {
   const screens = useBreakpoint();
 
-  const {
-    streetValidator,
-    houseNoValidator,
-    zipCodValidator,
-    cityValidator,
-  } = useAddressValidator();
+  const streetValidator = useStreetValidator('street');
+  const houseNoValidator = useHouseNoValidator();
+  const zipCodValidator = useZipCodValidator();
+  const cityValidator = useCityValidator('city');
 
   return (
     <>

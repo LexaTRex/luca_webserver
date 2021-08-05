@@ -5,15 +5,20 @@ import useInterval from '@use-it/interval';
 
 import { generateQRCode } from 'helpers/crypto';
 import { isLocalTimeCorrect } from 'helpers/time';
+import { useUserSession } from 'contexts/userSessionContext';
 
 export function useTraceQRCode(users) {
   const intl = useIntl();
+  const { setCheckin } = useUserSession();
   const [qrCode, setQRCode] = useState('');
 
   useEffect(() => {
     isLocalTimeCorrect()
       .then(isTimeCorrect => {
-        if (isTimeCorrect) return;
+        if (isTimeCorrect) {
+          setCheckin(null);
+          return;
+        }
         notification.error({
           message: intl.formatMessage({
             id: 'error.systemTime',
@@ -21,7 +26,7 @@ export function useTraceQRCode(users) {
         });
       })
       .catch(console.error);
-  }, [intl]);
+  }, [intl, setCheckin]);
 
   const generateTraceQRCode = useMemo(() => {
     return async () => {

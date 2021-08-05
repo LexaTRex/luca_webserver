@@ -161,7 +161,7 @@
     "shareData.finish": "Done",
     "shareData.privkey.error.description": "Your private key is not correct",
     "shareData.shareData": "Confirm data release",
-    "shareData.transfersLabel": "Check-ins during the requested period",
+    "shareData.transfersLabel": "{note}: Usually health departments do not request data for more than 72 hours. Please make sure the current share data request is valid.",
     "shareData.activeCheckIns": "Number of check ins",
     "shareData.passwordStep.info": "To decrypt your data the health department needs the password you received when setting up your meeting. Please enter your password to grant access.",
     "shareData.finish.text": "Your data has been shared with the health department.",
@@ -639,5 +639,9 @@
     "modal.guestList.checkoutDate": "Check out date",
     "modal.guestList.checkoutTime": "Check out time",
     "shareData.privateKey.keySize": "The uploaded file was too big.",
-    "profile.services.support": "Support"
+    "profile.services.support": "Support",
+    "shareData.note": "NOTE",
+    "shareData.dataRequest": "Location and request time",
+    "verificationTag.info": "This health department is verified",
+    "requestWarning.info": "Caution, the requested time is longer than usual. Normally health departments do not request data from check ins for more than 72 hours. Please recheck this request."
 }

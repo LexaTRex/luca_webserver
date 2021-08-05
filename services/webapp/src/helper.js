@@ -7,6 +7,7 @@ export const LUCA_USER_DATA_KEY = 'LUCA_USER_DATA';
 export const LUCA_USER_CHECKIN_TRACEID_KEY = 'LUCA_USER_CHECKIN_TRACEID';
 
 export const LUCA_TIMESTAMP_LAST_CHECKIN_KEY = 'LUCA_TIMESTAMP_LAST_CHECKIN';
+export const LUCA_CHECKIN_KEY = 'LUCA_CHECKIN';
 
 export function getUserIdFromLocalStorage() {
   return localStorage.getItem(LUCA_USER_ID_KEY);

@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
-import { Form, Button, notification, Popconfirm } from 'antd';
+import { Form, notification, Popconfirm } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import {
@@ -23,7 +24,6 @@ import {
   ItemWrapper,
   StyledInput,
   StyledFormItem,
-  buttonStyle,
 } from './TrackInfectionModal.styled';
 
 import { getTanRules, TAN_SECTION_LENGTH } from './InfectionModal.helper';
@@ -210,9 +210,9 @@ export const TrackInfectionModal = () => {
               })}
               icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             >
-              <Button style={buttonStyle} loading={isLoading}>
+              <PrimaryButton loading={isLoading}>
                 {intl.formatMessage({ id: 'modal.trackInfection.button' })}
-              </Button>
+              </PrimaryButton>
             </Popconfirm>
           </Form.Item>
         </SubmitWrapper>

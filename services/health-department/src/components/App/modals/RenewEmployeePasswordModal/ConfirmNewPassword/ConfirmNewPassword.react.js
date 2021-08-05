@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Popconfirm } from 'antd';
+import { Popconfirm } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 import { useModal } from 'components/hooks/useModal';
 
@@ -9,7 +10,6 @@ import {
   ButtonRow,
   Info,
   Password,
-  confirmStyle,
 } from '../RenewEmployeePasswordModal.styled';
 
 export const ConfirmNewPassword = ({ password }) => {
@@ -42,11 +42,11 @@ export const ConfirmNewPassword = ({ password }) => {
             id: 'cancel',
           })}
         >
-          <Button style={confirmStyle}>
+          <PrimaryButton>
             {intl.formatMessage({
               id: 'modal.renewEmployeePassword.done',
             })}
-          </Button>
+          </PrimaryButton>
         </Popconfirm>
       </ButtonRow>
     </Wrapper>

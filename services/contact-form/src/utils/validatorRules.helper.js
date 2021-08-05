@@ -1,19 +1,19 @@
-import { isNumeric, isPostalCode } from 'validator/validator.min';
+import validator from 'validator';
 import { isValidCharacter } from './checkCharacter';
 import { isValidPhoneNumber } from './checkPhoneNumber';
 
-export const validateNames = (_, value) => {
+export const validateStrings = (_, value) => {
   if (value?.trim() && !isValidCharacter(value)) {
     return Promise.reject();
   }
-  if (value?.trim() && isNumeric(value.replace(/\s/g, ''))) {
+  if (value?.trim() && validator.isNumeric(value.replace(/\s/g, ''))) {
     return Promise.reject();
   }
   return Promise.resolve();
 };
 
 export const validateZipCode = (_, value) => {
-  if (value?.trim() && !isPostalCode(value, 'DE')) {
+  if (value?.trim() && !validator.isPostalCode(value, 'DE')) {
     return Promise.reject();
   }
   return Promise.resolve();

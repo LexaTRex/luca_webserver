@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
+import { PrimaryButton } from 'components/general';
 import { useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
@@ -15,7 +16,6 @@ import { login } from 'network/api';
 
 // Constants
 import { APP_ROUTE } from 'constants/routes';
-import { IS_MOBILE } from 'constants/environment';
 
 // Components
 import { Footer } from './Footer';
@@ -129,20 +129,20 @@ export const Login = () => {
                 <Form.Item
                   style={{
                     marginBottom: 0,
+                    marginTop: 24,
                   }}
                 >
-                  <Button
+                  <PrimaryButton
                     htmlType="submit"
-                    size="large"
+                    isButtonWhite
                     style={{
-                      padding: IS_MOBILE ? '' : '0 80px',
                       marginTop: '24px',
                     }}
                   >
                     {intl.formatMessage({
                       id: 'login.form.button',
                     })}
-                  </Button>
+                  </PrimaryButton>
                 </Form.Item>
               </ButtonWrapper>
             </Form>

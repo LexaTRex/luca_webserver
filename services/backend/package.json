@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/backend",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -63,6 +63,7 @@
     "prom-client": "13.1.0",
     "rate-limit-redis": "2.1.0",
     "redis": "3.1.2",
+    "response-time": "2.3.2",
     "sequelize": "6.5.1",
     "sequelize-cli": "6.2.0",
     "swagger-jsdoc": "6.1.0",

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Form } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 // API
 import { findGroups } from 'network/api';
@@ -13,20 +14,14 @@ import { validateZipCode } from 'utils/validators.helper';
 
 // Components
 import { DataRequestModal } from 'components/App/modals/GroupSearchModal/DataRequestModal';
-import { EmptySearch } from './EmptySearch';
+import { SearchResults } from './SearchResults';
 import {
   StyledSearchOutlined,
   DescriptionText,
   GroupSearchInput,
   ZipCodeInput,
-  SubmitButton,
   InputWrapper,
   GroupSearchWrapper,
-  ResultsWrapper,
-  Entry,
-  EntryInfo,
-  EntryAdress,
-  EntryName,
 } from './GroupSearchModal.styled';
 
 export const GroupSearchModal = () => {
@@ -132,39 +127,22 @@ export const GroupSearchModal = () => {
             </Form.Item>
           </InputWrapper>
           <Form.Item>
-            <SubmitButton
+            <PrimaryButton
               data-cy="startGroupSearch"
               htmlType="submit"
+              floatRight
               disabled={!inputValid.zipCode || !inputValid.groupName}
             >
               {intl.formatMessage({
                 id: 'groupSearch.form.button.search',
               })}
-            </SubmitButton>
+            </PrimaryButton>
           </Form.Item>
         </Form>
-        {!!searchResults && (
-          <ResultsWrapper>
-            {searchResults.length > 0 ? (
-              searchResults.map(entry => (
-                <Entry
-                  key={entry.groupId}
-                  data-cy={`group_${entry.name}`}
-                  onClick={() => setRequestData(entry)}
-                >
-                  <EntryInfo>
-                    <EntryName>{entry.name}</EntryName>
-                    <EntryAdress>
-                      {`${entry.baseLocation.streetName} ${entry.baseLocation.streetNr}, ${entry.baseLocation.zipCode} ${entry.baseLocation.city}`}
-                    </EntryAdress>
-                  </EntryInfo>
-                </Entry>
-              ))
-            ) : (
-              <EmptySearch />
-            )}
-          </ResultsWrapper>
-        )}
+        <SearchResults
+          setRequestData={setRequestData}
+          searchResults={searchResults}
+        />
       </GroupSearchWrapper>
     </>
   );

@@ -42,11 +42,3 @@ export const StyledFormItem = styled(Form.Item)`
   width: auto !important;
   max-width: 160px;
 `;
-
-export const buttonStyle = {
-  background: 'rgb(195, 206, 217)',
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  padding: '0 40px',
-};

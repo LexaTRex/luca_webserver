@@ -1,19 +1,14 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Form, Input, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
+import { PrimaryButton, SecondaryButton } from 'components/general';
 
 import { useModal } from 'components/hooks/useModal';
 
 import { createEmployee } from 'network/api';
 
 import { getFormattedPhoneNumber } from 'utils/checkPhoneNumber';
-import {
-  Wrapper,
-  ButtonRow,
-  Info,
-  buttonStyle,
-  cancelStyle,
-} from '../AddEmployeeModal.styled';
+import { Wrapper, ButtonRow, Info } from '../AddEmployeeModal.styled';
 import { getFormElements } from '../AddEmployeeModal.helper';
 
 export const AddEmployeeForm = ({ setNewUserPassword }) => {
@@ -67,17 +62,17 @@ export const AddEmployeeForm = ({ setNewUserPassword }) => {
         ))}
 
         <ButtonRow>
-          <Button style={cancelStyle} onClick={closeModal}>
+          <SecondaryButton style={{ marginRight: 24 }} onClick={closeModal}>
             {intl.formatMessage({
               id: 'cancel',
             })}
-          </Button>
+          </SecondaryButton>
           <Form.Item>
-            <Button htmlType="submit" style={buttonStyle}>
+            <PrimaryButton htmlType="submit">
               {intl.formatMessage({
                 id: 'userManagement.create.button',
               })}
-            </Button>
+            </PrimaryButton>
           </Form.Item>
         </ButtonRow>
       </Form>

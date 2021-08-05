@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import FileSaver from 'file-saver';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
 import { FileProtectOutlined } from '@ant-design/icons';
+import { PrimaryButton } from 'components/general';
 
 import { bytesToHex } from '@lucaapp/crypto';
 import { generatePrivateKeyFile } from 'utils/privateKey';
@@ -56,20 +56,17 @@ export const GenerateKeysStep = ({
       </Explain>
       <DownloadRow>
         <FileProtectOutlined style={{ fontSize: 40, marginBottom: 24 }} />
-        <Button
+        <PrimaryButton
           data-cy="downloadPrivateKey"
           onClick={onDownLoad}
           style={{
-            padding: '0 40px',
-            color: 'black',
-            backgroundColor: '#b8c0ca',
             width: '50%',
           }}
         >
           {intl.formatMessage({
             id: 'modal.registerHealthDepartment.step0.downloadButton',
           })}
-        </Button>
+        </PrimaryButton>
       </DownloadRow>
       <ButtonRow
         numberOfButtons={1}
@@ -77,20 +74,15 @@ export const GenerateKeysStep = ({
           marginTop: 40,
         }}
       >
-        <Button
+        <PrimaryButton
           data-cy="next"
           onClick={proceed}
           disabled={!hasDownloaded}
-          style={{
-            backgroundColor: '#4e6180',
-            padding: '0 40px',
-            color: 'white',
-          }}
         >
           {intl.formatMessage({
             id: 'modal.registerHealthDepartment.step0.nextButton',
           })}
-        </Button>
+        </PrimaryButton>
       </ButtonRow>
     </>
   );

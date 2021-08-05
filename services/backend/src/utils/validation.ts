@@ -11,7 +11,7 @@ import {
   DEVICE_TYPE_FORM,
 } from 'constants/deviceTypes';
 
-const SAFE_CHARACTERS_REGEX = /^[\w !&+./:@`|£À-ÿāăąćĉċčđēėęěĝğģĥħĩīįİıĵķĸĺļłńņōőœŗřśŝşšţŦũūŭůűųŵŷźżžơưếệ–-]*$/i;
+const SAFE_CHARACTERS_REGEX = /^[\w !&()+,./:@`|£À-ÿāăąćĉċčđēėęěĝğģĥħĩīįİıĵķĸĺļłńņōőœŗřśŝşšţŦũūŭůűųŵŷźżžơưếệ–-]*$/i;
 const NO_HTTP_REGEX = /^((?!http).)*$/i;
 
 const PASSWORD_REQUIREMENTS = {

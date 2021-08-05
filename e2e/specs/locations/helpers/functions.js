@@ -162,3 +162,9 @@ export const downloadLocationPrivateKeyFile = () => {
   cy.getByCy('checkPrivateKeyIsDownloaded').click();
   cy.getByCy('finish').should('exist').click();
 };
+
+export const checkoutGuests = () => {
+  cy.getByCy('checkoutGuest').click();
+  cy.get('.ant-popover-buttons .ant-btn-primary').click();
+  cy.get('.successCheckout').should('exist');
+};

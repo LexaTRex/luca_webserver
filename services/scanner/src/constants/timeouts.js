@@ -1,4 +1,4 @@
-export const SCAN_TIMEOUT = 3000;
+export const SCAN_TIMEOUT = 700;
 
 // 5 min in ms
 export const REFETCH_INTERVAL_MS = 300000;

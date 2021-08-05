@@ -39,14 +39,13 @@ import { CheckOut } from 'components/Checkout';
 import { OnBoarding } from 'components/OnBoarding';
 import { ContactInformation } from 'components/ContactInformation';
 import { FeatureNotImplemented } from 'components/FeatureNotImplemented';
-
 import { AuthenticationWrapper } from 'components/AuthenticationWrapper.react';
 import { PrivateMeeting } from 'components/PrivateMeeting/PrivateMeeting.react';
-
+import { UserSessionProvider } from 'contexts/userSessionContext';
+import { configureStore } from 'configureStore';
 import { AppWrapper } from './App.styled';
 
 import { messages } from './messages';
-import { configureStore } from './configureStore';
 
 const history = createBrowserHistory();
 const store = configureStore(undefined, history);
@@ -73,38 +72,43 @@ export const Main = () => {
               <ConnectedRouter history={history}>
                 <ErrorWrapper>
                   <AuthenticationWrapper>
-                    <Switch>
-                      <Route path={LICENSES_ROUTE} component={Licenses} />
-                      <Route
-                        path={`${ON_BOARDING_PATH}/:scannerId/`}
-                        component={OnBoarding}
-                      />
-                      <Route path={ON_BOARDING_PATH} component={OnBoarding} />
-                      <Route path={`${CHECK_OUT_PATH}/`} component={CheckOut} />
-                      <Route
-                        path={EDIT_CONTACT_INFORMATION_SETTING}
-                        component={ContactInformation}
-                      />
-                      <Route path={HISTORY_PATH} component={History} />
-                      <Route path={SETTINGS_PATH} component={Settings} />
-                      <Route
-                        path={[APPOINTMENT_PATH, COVID_TEST_PATH]}
-                        component={FeatureNotImplemented}
-                      />
-                      <Route
-                        component={Home}
-                        path={CHECKIN_TO_PRIVATE_MEETING_PATH}
-                      />
-                      <Route
-                        path={BASE_PRIVATE_MEETING_PATH}
-                        component={PrivateMeeting}
-                      />
-                      <Route
-                        component={Home}
-                        path={`${HOME_PATH}/:scannerId`}
-                      />
-                      <Route path={HOME_PATH} component={Home} />
-                    </Switch>
+                    <UserSessionProvider>
+                      <Switch>
+                        <Route path={LICENSES_ROUTE} component={Licenses} />
+                        <Route
+                          path={`${ON_BOARDING_PATH}/:scannerId/`}
+                          component={OnBoarding}
+                        />
+                        <Route path={ON_BOARDING_PATH} component={OnBoarding} />
+                        <Route
+                          path={`${CHECK_OUT_PATH}/`}
+                          component={CheckOut}
+                        />
+                        <Route
+                          path={EDIT_CONTACT_INFORMATION_SETTING}
+                          component={ContactInformation}
+                        />
+                        <Route path={HISTORY_PATH} component={History} />
+                        <Route path={SETTINGS_PATH} component={Settings} />
+                        <Route
+                          path={[APPOINTMENT_PATH, COVID_TEST_PATH]}
+                          component={FeatureNotImplemented}
+                        />
+                        <Route
+                          component={Home}
+                          path={CHECKIN_TO_PRIVATE_MEETING_PATH}
+                        />
+                        <Route
+                          path={BASE_PRIVATE_MEETING_PATH}
+                          component={PrivateMeeting}
+                        />
+                        <Route
+                          component={Home}
+                          path={`${HOME_PATH}/:scannerId`}
+                        />
+                        <Route path={HOME_PATH} component={Home} />
+                      </Switch>
+                    </UserSessionProvider>
                   </AuthenticationWrapper>
                 </ErrorWrapper>
               </ConnectedRouter>

@@ -47,6 +47,8 @@ export const App = () => {
 
   if (isProfileLoading) return null;
 
+  const { isAdmin } = profileData;
+
   return (
     <>
       <Helmet>
@@ -65,9 +67,11 @@ export const App = () => {
             <ProcessDetails />
           </Route>
           <Route path={TRACKING_ROUTE} component={Tracking} />
-          <Route path={USER_MANAGEMENT_ROUTE}>
-            <UserManagement profileData={profileData} />
-          </Route>
+          {isAdmin && (
+            <Route path={USER_MANAGEMENT_ROUTE}>
+              <UserManagement profileData={profileData} />
+            </Route>
+          )}
           <Redirect to={`${TRACKING_ROUTE}${window.location.search}`} />
         </Switch>
       </AppWrapper>

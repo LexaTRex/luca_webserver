@@ -20,15 +20,12 @@ export const Content = styled.div`
 `;
 export const RequestWrapper = styled.div`
   position: relative;
-  color: rgba(0, 0, 0, 0.87);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin: 40px auto 0;
   width: 656px;
-
   padding: 40px 48px 80px;
-
   background: #f3f5f7;
   border-radius: 2px;
 `;
@@ -52,18 +49,18 @@ export const SubHeader = styled.h5`
 export const InfoBlock = styled.p`
   font-size: 14px;
   font-weight: 500;
-  margin-bottom: 21px;
+  margin-bottom: 24px;
   width: 524px;
 `;
 
 export const RequestContent = styled.div`
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 `;
 
 export const FinishButtonWrapper = styled.div`
   display: flex;
   justify-content: ${({ align }) => align};
-  margin-top: 40px;
+  margin-top: 24px;
 `;
 
 export const UploadMessage = styled.p`

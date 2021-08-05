@@ -16,11 +16,9 @@ export const downloadPDF = async ({
   isCWAEventEnabled,
 }) => {
   const messageText = intl.formatMessage({ id: 'message.generatingPDF' });
-  const locationName =
-    location.name ||
-    intl.formatMessage({
-      id: 'location.defaultName',
-    });
+  const locationName = `${location.groupName}${
+    location.name ? ` - ${location.name}` : ''
+  }`;
   const showLoadingProgress = percentage =>
     openLoadingMessage(percentage, messageText);
   setIsDownloading(true);
@@ -34,10 +32,6 @@ export const downloadPDF = async ({
     intl.formatMessage({
       id: 'modal.qrCodeDocument.table',
     }),
-    intl.formatMessage({
-      id: 'modal.qrCodeDocument.message',
-    }),
-    locationName,
     TABLE_KEY,
     proxy(showLoadingProgress)
   );

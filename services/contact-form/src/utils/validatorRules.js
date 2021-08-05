@@ -1,6 +1,6 @@
 import {
   validateHouseNo,
-  validateNames,
+  validateStrings,
   validatePhoneNumber,
   validateZipCode,
 } from './validatorRules.helper';
@@ -13,34 +13,34 @@ export const getRequiredRule = intl => ({
   }),
 });
 
-export const getNamesRule = (intl, message) => ({
-  validator: validateNames,
-  message: intl.formatMessage(message),
+export const getStringsRule = (intl, fieldName) => ({
+  validator: validateStrings,
+  message: intl.formatMessage({ id: `contactDataForm.invalid.${fieldName}` }),
 });
 
-export const getZipCodeRule = (intl, message) => ({
+export const getZipCodeRule = intl => ({
   validator: validateZipCode,
-  message: intl.formatMessage(message),
+  message: intl.formatMessage({ id: 'contactDataForm.invalid.zipCode' }),
 });
 
-export const getPhoneRule = (intl, message) => ({
+export const getPhoneRule = intl => ({
   validator: validatePhoneNumber,
-  message: intl.formatMessage(message),
+  message: intl.formatMessage({ id: 'contactDataForm.invalid.phone' }),
 });
 
-export const getEmailRule = (intl, message) => ({
+export const getEmailRule = intl => ({
   type: 'email',
-  message: intl.formatMessage(message),
+  message: intl.formatMessage({ id: 'contactDataForm.invalid.email' }),
 });
 
-export const getHouseNoRule = (intl, message) => ({
+export const getHouseNoRule = intl => ({
   validator: validateHouseNo,
-  message: intl.formatMessage(message),
+  message: intl.formatMessage({ id: 'contactDataForm.invalid.houseNo' }),
 });
 
-export const getTableNoRule = (intl, message) => ({
+export const getTableNoRule = intl => ({
   type: 'number',
-  message: intl.formatMessage(message),
+  message: intl.formatMessage({ id: 'contactDataForm.invalid.invalidTableNo' }),
 });
 
 export const getMaxLengthRule = (intl, max) => ({

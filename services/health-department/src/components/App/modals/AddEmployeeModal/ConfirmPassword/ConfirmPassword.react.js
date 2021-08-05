@@ -1,17 +1,12 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
-import { Button, Popconfirm } from 'antd';
+import { Popconfirm } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 import { useModal } from 'components/hooks/useModal';
 
-import {
-  Wrapper,
-  ButtonRow,
-  Info,
-  Password,
-  buttonStyle,
-} from '../AddEmployeeModal.styled';
+import { Wrapper, ButtonRow, Info, Password } from '../AddEmployeeModal.styled';
 
 export const ConfirmPassword = ({ password }) => {
   const intl = useIntl();
@@ -30,7 +25,7 @@ export const ConfirmPassword = ({ password }) => {
           id: 'userManagement.created.info',
         })}
       </Info>
-      <Password>{password}</Password>
+      <Password data-cy="generatedPassword">{password}</Password>
       <ButtonRow>
         <Popconfirm
           placement="top"
@@ -45,11 +40,11 @@ export const ConfirmPassword = ({ password }) => {
             id: 'userManagement.created.confirm.cancel',
           })}
         >
-          <Button style={buttonStyle}>
+          <PrimaryButton>
             {intl.formatMessage({
               id: 'userManagement.created.button',
             })}
-          </Button>
+          </PrimaryButton>
         </Popconfirm>
       </ButtonRow>
     </Wrapper>

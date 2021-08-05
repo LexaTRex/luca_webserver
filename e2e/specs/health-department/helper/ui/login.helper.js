@@ -41,11 +41,7 @@ export const uploadHealthDepartmentPrivateKeyFile = () => {
 };
 
 export const removeHealthDepartmentPrivateKeyFile = () => {
-  cy.task('fileExists', HEALTH_DEPARTMENT_PRIVATE_KEY_PATH).then(exists => {
-    if (exists) {
-      cy.exec(`rm ${HEALTH_DEPARTMENT_PRIVATE_KEY_PATH}`);
-    }
-  });
+  cy.task('deleteFileIfExists', HEALTH_DEPARTMENT_PRIVATE_KEY_PATH);
 };
 
 export const addHealthDepartmentPrivateKeyFile = () => {

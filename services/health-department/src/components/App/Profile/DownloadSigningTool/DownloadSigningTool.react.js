@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { Button } from 'antd';
+import { PrimaryButton } from 'components/general';
 
 // Api
 import { getSigningTool } from 'network/api';
@@ -13,7 +13,6 @@ import {
   StyledHeadline,
   StyledText,
   VersionTag,
-  buttonStyle,
 } from './DownloadSigningTool.styled';
 
 export const DownloadSigningTool = ({ department }) => {
@@ -44,16 +43,12 @@ export const DownloadSigningTool = ({ department }) => {
           )}
         </StyledText>
         <ButtonWrapper>
-          <Button
-            href={`${signingTool[0].downloadUrl}`}
-            target="_blank"
-            style={buttonStyle}
-          >
+          <PrimaryButton href={`${signingTool[0].downloadUrl}`} target="_blank">
             {intl.formatMessage(
               { id: 'profile.signingTool.download.button' },
               { version: `v${signingTool[0].version}` }
             )}
-          </Button>
+          </PrimaryButton>
           <VersionTag>
             {intl.formatMessage(
               { id: 'profile.signingTool.download.hash' },

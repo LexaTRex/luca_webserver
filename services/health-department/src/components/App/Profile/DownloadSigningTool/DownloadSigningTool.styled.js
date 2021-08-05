@@ -33,14 +33,3 @@ export const VersionTag = styled.div`
   font-size: 14px;
   font-weight: 600;
 `;
-
-export const buttonStyle = {
-  backgroundColor: '#fdac72',
-  textTransform: 'uppercase',
-  color: 'black',
-  padding: '0 40px',
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-  marginBottom: 16,
-};

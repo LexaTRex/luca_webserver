@@ -1,28 +1,20 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
 
 // Hooks
 import { useModal } from 'components/hooks/useModal';
 
 // Components
 import { AddEmployeeModal } from 'components/App/modals/AddEmployeeModal';
-
-const buttonStyles = {
-  padding: '0 40px',
-  backgroundColor: 'white',
-  color: 'black',
-  fontFamily: 'Montserrat-Bold, sans-serif',
-  fontSize: 14,
-  fontWeight: 'bold',
-};
+import { PrimaryButton } from 'components/general';
 
 export const AddEmployeeButton = () => {
   const intl = useIntl();
 
   const [openModal] = useModal();
 
-  const addEmployee = () => {
+  const addEmployee = event => {
+    event.currentTarget.blur();
     openModal({
       title: intl.formatMessage({
         id: 'modal.addEmployee.title',
@@ -33,10 +25,10 @@ export const AddEmployeeButton = () => {
   };
 
   return (
-    <Button onClick={addEmployee} style={buttonStyles}>
+    <PrimaryButton isButtonWhite data-cy="addEmployee" onClick={addEmployee}>
       {intl.formatMessage({
         id: 'modal.addEmployee.button',
       })}
-    </Button>
+    </PrimaryButton>
   );
 };

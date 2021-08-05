@@ -1,13 +1,12 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from 'antd';
 
 // Hooks
 import { useModal } from 'components/hooks/useModal';
 
 // Components
 import { TrackInfectionModal } from 'components/App/modals/TrackInfectionModal';
-import { buttonStyle } from '../Tracking.styled';
+import { PrimaryButton } from 'components/general';
 
 export const NewTrackingButton = () => {
   const intl = useIntl();
@@ -23,8 +22,8 @@ export const NewTrackingButton = () => {
   };
 
   return (
-    <Button style={buttonStyle} onClick={trackInfection}>
+    <PrimaryButton isButtonWhite onClick={trackInfection}>
       {intl.formatMessage({ id: 'startTracking.button' })}
-    </Button>
+    </PrimaryButton>
   );
 };

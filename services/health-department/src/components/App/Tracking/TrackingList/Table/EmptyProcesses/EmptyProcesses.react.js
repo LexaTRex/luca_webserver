@@ -11,7 +11,7 @@ export const EmptyMessage = styled.div`
 export const EmptyProcesses = () => {
   const intl = useIntl();
   return (
-    <EmptyMessage>
+    <EmptyMessage data-cy="emptyProcesses">
       {intl.formatMessage({ id: 'processTable.empty' })}
     </EmptyMessage>
   );

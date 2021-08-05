@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import styled from 'styled-components';
 
 export const DatePickerRow = styled.div`
@@ -10,25 +9,6 @@ export const ButtonRow = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 24px;
-`;
-
-export const BackButton = styled(Button)`
-  border: 2px solid rgb(80, 102, 124);
-  color: rgba(0, 0, 0, 0.87);
-  background: transparent;
-  font-weight: bold;
-  text-transform: uppercase;
-  height: 40px;
-  padding: 0 24px;
-`;
-
-export const OpenProcessButton = styled(Button)`
-  color: rgba(0, 0, 0, 0.87);
-  background-color: rgb(195, 206, 217);
-  font-weight: bold;
-  text-transform: uppercase;
-  height: 40px;
-  padding: 0 24px;
 `;
 
 export const GroupText = styled.div`
