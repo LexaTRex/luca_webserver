@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Steps } from 'antd';
+
 import { useIntl } from 'react-intl';
-import { PrimaryButton } from 'components/general/Buttons.styled';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
+import { storePublicKey } from 'network/api';
+import { useModal } from 'components/hooks/useModal';
+import { DownloadPrivateKey } from './steps/DownloadPrivateKey';
+import { VerifyPrivateKey } from './steps/VerifyPrivateKey';
 
-import { getPrivateKeySecret, storePublicKey } from 'network/api';
-import { hexToBase64, EC_KEYPAIR_GENERATE } from '@lucaapp/crypto';
-import { ConfirmPrivateKey } from './ConfirmPrivateKey';
-import { DownloadPrivateKey } from './DownloadPrivateKey';
-
-import { Wrapper, ButtonWrapper } from './RegisterOperatorModal.styled';
+import { Wrapper, Title } from './RegisterOperatorModal.styled';
 
 /**
  * Modal for registering a new location. Generates a new keypair and
@@ -16,61 +16,62 @@ import { Wrapper, ButtonWrapper } from './RegisterOperatorModal.styled';
  *
  * @see https://www.luca-app.de/securityoverview/processes/venue_registration.html#process
  */
-export const RegisterOperatorModal = ({ onClose, operator }) => {
+export const RegisterOperatorModal = ({ operator, privateKeySecret }) => {
   const intl = useIntl();
+  const [publicKey, setPublicKey] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [, closeModal] = useModal();
+
   const queryClient = useQueryClient();
-  const [keyPair, setKeyPair] = useState(null);
-  const [hasDownloadedKey, setHasDownloadedKey] = useState(false);
-  const [hasSavedKey, setHasSavedKey] = useState(false);
 
-  useEffect(() => {
-    const keys = EC_KEYPAIR_GENERATE();
-    setKeyPair(keys);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const nextStep = () => setCurrentStep(currentStep + 1);
+  const previousStep = () => setCurrentStep(currentStep - 1);
 
-  const {
-    data: privateKeySecret,
-    isLoading,
-    isError,
-  } = useQuery('privateKeySecret', () => getPrivateKeySecret());
-
-  const setOperatorKey = () => {
-    storePublicKey({ publicKey: hexToBase64(keyPair.publicKey) })
+  const onFinish = () => {
+    storePublicKey({ publicKey })
       .then(() => {
         queryClient.invalidateQueries('me');
-        onClose();
+        closeModal();
       })
       .catch(error => console.error(error));
   };
 
-  if (isLoading || isError) {
-    return null;
-  }
+  const steps = [
+    {
+      id: '0',
+      title: 'modal.registerOperator.title',
+      content: (
+        <DownloadPrivateKey
+          privateKeySecret={privateKeySecret}
+          operator={operator}
+          next={nextStep}
+          setPublicKey={setPublicKey}
+        />
+      ),
+    },
+    {
+      id: '1',
+      title: 'modal.registerOperator.keyTest',
+      content: (
+        <VerifyPrivateKey
+          privateKeySecret={privateKeySecret}
+          publicKey={publicKey}
+          back={previousStep}
+          confirmKey={onFinish}
+        />
+      ),
+    },
+  ];
 
   return (
     <Wrapper>
-      <DownloadPrivateKey
-        operator={operator}
-        keyPair={keyPair}
-        setHasDownloadedKey={setHasDownloadedKey}
-        privateKeySecret={privateKeySecret}
-      />
-      <ConfirmPrivateKey
-        hasDownloadedKey={hasDownloadedKey}
-        setHasSavedKey={setHasSavedKey}
-      />
-      <ButtonWrapper multipleButtons>
-        <PrimaryButton
-          data-cy="finish"
-          disabled={!hasSavedKey}
-          onClick={setOperatorKey}
-        >
-          {intl.formatMessage({
-            id: 'authentication.form.button.next',
-          })}
-        </PrimaryButton>
-      </ButtonWrapper>
+      <Title>{intl.formatMessage({ id: steps[currentStep].title })}</Title>
+      <Steps progressDot={() => null} current={currentStep}>
+        {steps.map(step => (
+          <Steps.Step key={step.id} />
+        ))}
+      </Steps>
+      {steps[currentStep].content}
     </Wrapper>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from 'antd';
 import Icon from '@ant-design/icons';
+import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -25,6 +26,7 @@ const getProfileIcon = isProfileRoute => (
 
 export const Profile = ({ healthDepartment }) => {
   const history = useHistory();
+  const intl = useIntl();
   const currentRoute = useSelector(state => state.router.location.pathname);
   const isProfileRoute = currentRoute === PROFILE_ROUTE;
   const handleClick = () => history.push(PROFILE_ROUTE);
@@ -40,7 +42,12 @@ export const Profile = ({ healthDepartment }) => {
 
   return (
     <Badge dot={showDot} style={badgeStyle}>
-      <IconWrapper onClick={handleClick}>
+      <IconWrapper
+        title={intl.formatMessage({
+          id: 'profile',
+        })}
+        onClick={handleClick}
+      >
         {getProfileIcon(isProfileRoute)}
       </IconWrapper>
     </Badge>

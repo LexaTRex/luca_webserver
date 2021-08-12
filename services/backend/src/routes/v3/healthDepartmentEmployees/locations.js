@@ -36,6 +36,7 @@ router.get(
       type: location.type,
       locationId: location.uuid,
       groupName: location.LocationGroup?.name,
+      groupType: location.LocationGroup?.type,
       locationName: location.name,
       name: formatLocationName(location, location.LocationGroup),
       firstName: location.firstName,

@@ -23,6 +23,7 @@ const {
 const locationsRouter = require('./operators/locations');
 const passwordRouter = require('./operators/password');
 const emailsRouter = require('./operators/email');
+const tracesRouter = require('./operators/traces');
 
 const {
   createSchema,
@@ -237,5 +238,6 @@ router.post('/restore', requireOperator, async (request, response) => {
 router.use('/locations', locationsRouter);
 router.use('/password', passwordRouter);
 router.use('/email', emailsRouter);
+router.use('/traces', tracesRouter.default);
 
 module.exports = router;

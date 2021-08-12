@@ -8,22 +8,36 @@ import {
   getProcessAssigneeOptions,
 } from './hooks/filterHelpers';
 
-import { useListFilters, useGetAssigneeNameOptions } from './hooks/useFilters';
+import { useListFilters } from './hooks/useFilters';
 
 import { Filter } from './Filter';
 import { StyledContainer } from './ListFilters.styled';
 
-export function ListFilters({ filters, onChange = () => {} }) {
+export function ListFilters({ processes, filters, onChange = () => {} }) {
   const intl = useIntl();
+
+  const getAssigneeOptions = () => {
+    const duplicates = new Set();
+    const assigneesWithDup = processes
+      .filter(process => process.assignee)
+      .map(process => {
+        return {
+          value: process.assignee.uuid,
+          name: `${process.assignee.firstName} ${process.assignee.lastName}`,
+        };
+      });
+    return assigneesWithDup.filter(assignee => {
+      const duplicate = duplicates.has(assignee.value);
+      duplicates.add(assignee.value);
+      return !duplicate;
+    });
+  };
 
   const typeOptions = getProcessTypeOptions(intl);
   const stateOptions = getProcessStateOptions(intl);
   const statusOptions = getProcessStatusOptions(intl);
   const basicAssigneeOptions = getProcessAssigneeOptions(intl);
-  const assigneeOptions = [
-    ...basicAssigneeOptions,
-    ...useGetAssigneeNameOptions(),
-  ];
+  const assigneeOptions = [...basicAssigneeOptions, ...getAssigneeOptions()];
 
   const { type } = useListFilters(filters, onChange, 'type', typeOptions);
   const { state } = useListFilters(filters, onChange, 'state', stateOptions);

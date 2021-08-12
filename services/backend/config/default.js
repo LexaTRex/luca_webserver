@@ -67,6 +67,9 @@ module.exports = {
       maxAge: moment.duration(28, 'days').as('hours'),
       maxDuration: moment.duration(24, 'hours').as('hours'),
     },
+    locationTransfers: {
+      maxLocations: 100 * 14, // Max 100 location transfers per day for 14 days of contact tracing
+    },
     smsChallenges: {
       maxAge: moment.duration(45, 'days').as('hours'),
     },
@@ -108,9 +111,9 @@ module.exports = {
       minKeyAge: moment.duration(24, 'hours').as('hours'),
     },
     badge: {
-      targetKeyId: 1,
+      targetKeyId: 2,
+      keyLength: 64,
       // DEV ONLY
-      private: 'qzbym5WwwkbSQ9BJvIdGZIjdh9p72HwQseZXbDs+AbU=',
       attestation: {
         // DEV ONLY
         v3:

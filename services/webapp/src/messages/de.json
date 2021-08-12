@@ -166,5 +166,21 @@
     "HistoryShareConsentModal.Link": "Datenschutz - App",
     "Settings.Repository": "GitLab Repository",
     "version.version": "Version",
-    "version.modal.title": "Version"
+    "version.modal.title": "Version",
+    "Settings.CertificateChain.PageTitle": "GA Verschlüsselung",
+    "Settings.CertificateChain.TransferKey": "TRANSFER SCHLÜSSEL",
+    "Settings.CertificateChain.Date": "Datum",
+    "Settings.CertificateChain.Author": "Aussteller",
+    "Settings.CertificateChain.isSigned": "Signiert",
+    "Settings.CertificateChain": "GA Verschlüsselung",
+    "Settings.CertificateChain.Download": "Download zertifikatskette",
+    "UpdatedTermsAndConditions.Headline": "Hallo",
+    "UpdatedTermsAndConditions.InfoPart1": "Wir aktualisieren unsere Nutzungsbedingungen und unsere Datenschutzrichtlinien.",
+    "UpdatedTermsAndConditions.InfoPart2": "Wir haben unsere Dienstbeschreibung zugunsten besserer Transparenz und Verständlichkeit aktualisiert.",
+    "UpdatedTermsAndConditions.Overview": "Tippe auf „ZUSTIMMEN“ um die aktualisierten {termsAndConditionsLink} und die {privacyLink} zu akzeptieren.",
+    "UpdatedTermsAndConditions.TermsAndConditionsLink": "Nutzungsbedingungen",
+    "UpdatedTermsAndConditions.PrivacyLink": "Datenschutzrichtlinien",
+    "UpdatedTermsAndConditions.Button": "ZUSTIMMEN",
+    "UpdatedTermsAndConditions.AriaDeleteAccountLabel": "Account löschen",
+    "Form.Validation.invalidCharacter": "Bitte gib nur unterstützte Zeichen eingeben."
 }

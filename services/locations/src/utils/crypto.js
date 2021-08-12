@@ -60,6 +60,9 @@ const parseAdditionalDataRaw = additionalDataRaw =>
 export const decryptAdditionalData = (additionalData, privateKey) =>
   parseAdditionalDataRaw(decryptDataRaw(additionalData, privateKey));
 
+export const reencryptWithHDEKP = (data, publicHDEKP) =>
+  encryptRawData(base64ToHex(data), publicHDEKP);
+
 export const reencryptAdditionalData = (
   additionalData,
   privateKey,

@@ -99,3 +99,17 @@ indexDB.version(5).stores({
   users:
     '&userId, firstName, lastName, phoneNumber, email, street, houseNumber, zip, city, useWebApp, version',
 });
+indexDB
+  .version(6)
+  .stores({
+    covidTests: null,
+    users:
+      '&userId, firstName, lastName, phoneNumber, email, street, houseNumber, zip, city, useWebApp, lastTermsAndConditionsVersion, version',
+  })
+  .upgrade(async transaction => {
+    const [user] = await transaction.table('users').toArray();
+    await transaction
+      .table('users')
+      .where({ userId: user.userId })
+      .modify({ lastTermsAndConditionsVersion: null });
+  });

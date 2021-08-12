@@ -1,7 +1,7 @@
 import {WEBAPP_ROUTE} from "./routes";
 
 export const DATABASE_NAME = 'luca';
-export const DATABASE_VERSION = 50;
+export const DATABASE_VERSION = 60;
 
 export const USER_ID = 'USER_ID';
 export const USER_DATA_SECRET = 'USER_DATA_SECRET';

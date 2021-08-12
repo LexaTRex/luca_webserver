@@ -1,5 +1,23 @@
 # Changelog
 
+### 1.8.0 (2021-08-12)
+* **backend:** fix: limit number of locations in location transfers
+* **backend:** feat: check integrity of device types in tracing processes
+* **backend:** feat: take badge attestation key offline
+* **health-department:** fix: additional data under certain conditions not displayed in the contact person overview
+* **health-department:** fix: clear storage after logout
+* **health-department:** feat: encrypt share data request only for the requesting health department
+* **health-department:** feat: download contact persons in octowareTN format
+* **location:** fix: improve error handling during share data process
+* **location:** fix: improve error handling during private key import
+* **location:** fix: broken button arrangement when deleting the account
+* **location:** feat: check private key after initial key download for new operators
+* **scanner:** feat: add warning that v3 badges are to be replaced
+* **scanner:** feat: improve scanning qr codes on badges
+* **webapp:** fix: error message in the background shown after deleting the account
+* **webapp:** feat: add screen to accept new AGBs
+* chore: improve e2e tests
+
 ### 1.7.0 (2021-08-05)
 * **backend:** feat: instrument with metrics
 * **health-department:** feat: update route access restrictions for employees

@@ -22,7 +22,15 @@ const sendSchema = z.object({
   traces: z.array(
     z.object({
       traceId: z.traceId(),
-      data: z.base64({ rawLength: 32 }),
+      isHDEncrypted: z.boolean().optional(),
+      data: z.base64({ rawLength: 32 }).or(
+        z.object({
+          data: z.base64({ max: 44 }),
+          publicKey: z.ecPublicKey(),
+          mac: z.mac(),
+          iv: z.iv(),
+        })
+      ),
       publicKey: z.ecCompressedPublicKey(),
       keyId: z.dailyKeyId(),
       version: z.number().int().optional(),

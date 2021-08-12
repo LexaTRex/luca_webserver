@@ -16,6 +16,7 @@ export const openHDLoginPage = () => {
 
 export const loginToHD = (email, password) => {
   cy.get('#username').type(email);
+  cy.get('#password').click();
   cy.get('#password').type(password);
   cy.get('button[type=submit]').click();
 };

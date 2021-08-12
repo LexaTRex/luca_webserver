@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/locations",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -14,7 +14,9 @@
     "eslint": "eslint src",
     "stylelint": "stylelint 'src/**/*.js'",
     "update:locales": "./scripts/updateLocales.sh",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --watch --runInBand"
   },
   "dependencies": {
     "@ant-design/icons": "4.5.0",
@@ -64,14 +66,15 @@
     "tinycolor2": "1.4.2",
     "ua-parser-js": "0.7.24",
     "uuid": "8.3.2",
+    "validator": "13.6.0",
     "worker-plugin": "5.0.0",
-    "yaqrcode": "0.2.1",
-    "validator": "13.6.0"
+    "yaqrcode": "0.2.1"
   },
   "devDependencies": {
     "@babel/preset-env": "7.14.2",
     "@babel/preset-react": "7.13.13",
     "@testing-library/jest-dom": "5.12.0",
+    "@testing-library/react": "12.0.0",
     "eslint-config-airbnb": "18.2.1",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-import": "2.22.1",
@@ -86,6 +89,7 @@
     "jest-environment-jsdom": "27.0.1",
     "jest-environment-jsdom-global": "2.0.4",
     "jest-runner": "27.0.1",
+    "jest-svg-transformer": "1.0.0",
     "postcss": "8.2.15",
     "prettier": "2.2.1",
     "string.prototype.replaceall": "1.0.5",

@@ -10,3 +10,5 @@ export const REGISTER_BADGE_PRIVACY_LINK =
   'https://www.luca-app.de/badge-privacy-policy/';
 
 export const WEB_APP_BASE_PATH = `https://${window.location.host}/webapp/`;
+
+export const SUPPORT_EMAIL = 'datenfreigabe@luca-app.de';

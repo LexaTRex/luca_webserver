@@ -31,7 +31,7 @@ export const DataTransfers = () => {
     .filter(transfer => !!transfer.contactedAt && !transfer.isCompleted)
     .map(transfer => transfer.uuid);
 
-  const shareAll = () => window.open(SHARE_ALL_DATA_ROUTE, '_blank');
+  const shareAll = () => window.open(SHARE_ALL_DATA_ROUTE);
 
   if (error || isLoading) return null;
 

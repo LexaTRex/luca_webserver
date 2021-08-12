@@ -12,7 +12,8 @@
     "/node_modules/"
   ],
   "transform": {
-    "^.+\\.(js|jsx)?$": "babel-jest"
+    "^.+\\.(js|jsx)?$": "babel-jest",
+    "^.+\\.svg$": "jest-svg-transformer"
   },
   "testEnvironment":"jsdom",
   "setupFilesAfterEnv": ["./src/utils/jest.setup.js"]

@@ -17,10 +17,13 @@ export const Export = ({ traces, location }) => {
         <FILES.CSVDownload traces={traces} location={location} />
       </StyledMenuItem>
       <StyledMenuItem>
+        <FILES.ExcelDownload traces={traces} location={location} />
+      </StyledMenuItem>
+      <StyledMenuItem>
         <FILES.SormasDownload traces={traces} location={location} />
       </StyledMenuItem>
       <StyledMenuItem>
-        <FILES.ExcelDownload traces={traces} location={location} />
+        <FILES.OctoWareTNDownload traces={traces} location={location} />
       </StyledMenuItem>
       <StyledMenuItem>
         <INTERFACE.SormasAPI traces={traces} location={location} />

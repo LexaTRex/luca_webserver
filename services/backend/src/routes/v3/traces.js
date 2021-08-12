@@ -18,6 +18,7 @@ const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
 const {
   DEVICE_TYPE_IOS,
+  DEVICE_TYPE_FORM,
   DEVICE_TYPE_ANDROID,
   DEVICE_TYPE_WEBAPP,
   DEVICE_TYPE_STATIC,
@@ -31,6 +32,8 @@ const {
   traceIdParametersSchema,
   traceSchema,
 } = require('./traces.schemas');
+
+const declinedDeviceTypes = new Set([DEVICE_TYPE_STATIC, DEVICE_TYPE_FORM]);
 
 /**
  * Performs a check-in in a location.
@@ -250,7 +253,7 @@ router.post(
       },
     });
 
-    if (!trace) {
+    if (!trace || declinedDeviceTypes.has(trace.deviceType)) {
       return response.sendStatus(status.NOT_FOUND);
     }
 

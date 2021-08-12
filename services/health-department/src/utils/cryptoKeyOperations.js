@@ -37,7 +37,7 @@ let hdekp;
 let hdskp;
 
 export function isHdekpInMemory() {
-  return hdekp !== undefined;
+  return !!hdekp;
 }
 
 export const storeHealthDepartmentPrivateKeys = (HDEKP, HDSKP) => {
@@ -57,7 +57,8 @@ export const getDailyPrivateKey = async keyId => {
 };
 
 export function clearPrivateKeys() {
-  sessionStorage.clear();
+  hdekp = null;
+  hdskp = null;
 }
 
 export const getBadgePrivateKey = async keyId => {

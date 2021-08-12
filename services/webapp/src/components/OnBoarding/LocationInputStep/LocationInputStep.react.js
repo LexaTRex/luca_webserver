@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-import { TextInput } from 'components/TextInput';
 import {
-  MAX_CITY_LENGTH,
-  MAX_STREET_LENGTH,
-  MAX_POSTAL_CODE_LENGTH,
-  MAX_HOUSE_NUMBER_LENGTH,
-} from 'constants/valueLength';
+  useCityValidator,
+  useHouseNumberValidator,
+  useStreetValidator,
+  useZipCodeValidator,
+} from 'hooks/useValidators';
+import { TextInput } from 'components/TextInput';
 
 import {
   StyledForm,
@@ -21,6 +21,11 @@ import {
 export function LocationInputStep({ onSubmit }) {
   const { formatMessage } = useIntl();
   const [isReady, setIsReady] = useState(false);
+
+  const cityValidator = useCityValidator();
+  const streetValidator = useStreetValidator();
+  const zipCodeValidator = useZipCodeValidator();
+  const houseNumberValidator = useHouseNumberValidator();
 
   const onValuesChange = useCallback(
     (_, { street, houseNumber, zip, city }) =>
@@ -43,66 +48,30 @@ export function LocationInputStep({ onSubmit }) {
         <TextInput
           autoFocus
           name="street"
+          rules={streetValidator}
           autocomplete="address-line1"
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_STREET_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
           label={formatMessage({ id: 'Form.Street.Label' })}
           placeholder={formatMessage({ id: 'Form.Street.Placeholder' })}
         />
         <TextInput
           name="houseNumber"
           autocomplete="address-line2"
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_HOUSE_NUMBER_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
+          rules={houseNumberValidator}
           label={formatMessage({ id: 'Form.HouseNumber.Label' })}
           placeholder={formatMessage({ id: 'Form.HouseNumber.Placeholder' })}
         />
         <TextInput
           name="zip"
-          autocomplete="postal-code"
           maxLength="5"
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_POSTAL_CODE_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
+          rules={zipCodeValidator}
+          autocomplete="postal-code"
           label={formatMessage({ id: 'Form.Zip.Label' })}
           placeholder={formatMessage({ id: 'Form.Zip.Placeholder' })}
         />
         <TextInput
           name="city"
+          rules={cityValidator}
           autocomplete="address-level2"
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_CITY_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
           label={formatMessage({ id: 'Form.City.Label' })}
           placeholder={formatMessage({ id: 'Form.City.Placeholder' })}
         />

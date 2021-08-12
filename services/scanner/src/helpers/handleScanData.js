@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { notification } from 'antd';
 import { hexToUuid4 } from '@lucaapp/crypto';
 
 import { SCAN_TIMEOUT } from 'constants/timeouts';
@@ -51,6 +52,12 @@ const handleV3StaticData = parameters => {
   }
 
   const v3BagdePayload = getV3BadgeCheckinPayload(qrData, scanner);
+
+  notification.warning({
+    message: intl.formatMessage({
+      id: 'warning.badgeV3Unsupported',
+    }),
+  });
 
   createCheckinV3(scanner.scannerAccessId, v3BagdePayload)
     .then(response => {

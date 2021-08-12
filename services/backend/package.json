@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/backend",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -83,6 +83,7 @@
   "devDependencies": {
     "@types/expect": "24.3.0",
     "@types/mocha": "8.2.3",
+    "@types/node": "16.4.13",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",
     "chai": "4.3.4",

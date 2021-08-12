@@ -98,7 +98,7 @@ export const UploadKeyFileModal = ({ keysData, onFinish }) => {
         type="file"
         accept=".luca"
         onChange={onFile}
-        data-testid="fileUpload"
+        data-cy="fileUpload"
       />
       <ButtonRow>
         <PrimaryButton onClick={triggerInput} style={{ zIndex: 3 }}>

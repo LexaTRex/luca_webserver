@@ -21,8 +21,8 @@ export const Header = ({ profileData }) => {
 
   return (
     <HeaderWrapper data-cy="header">
-      <Headline data-testid="header-headline" />
-      <MenuWrapper data-testid="header-menu-wrapper">
+      <Headline data-cy="header-headline" />
+      <MenuWrapper data-cy="header-menu-wrapper">
         <Profile healthDepartment={healthDepartment} />
         <LinkMenu />
         <LogoutButton />

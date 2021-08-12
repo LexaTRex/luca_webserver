@@ -1,11 +1,14 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import sanitize from 'sanitize-filename';
 import ReactExport from 'react-data-export';
 import { sanitizeForCSV } from 'utils/sanitizer';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 
-import { showErrorNotification, formatAdditionalDataKey } from './helpers';
+import {
+  showErrorNotification,
+  formatAdditionalDataKey,
+  getSanitizedFilename,
+} from './helpers';
 
 import { DownloadButton } from '../Export.styled';
 
@@ -75,12 +78,16 @@ export const ExcelDownload = ({ traces, location }) => {
 
   return (
     <ExcelFile
-      filename={sanitize(`${location.name}_luca`)}
-      element={<DownloadButton>Download Excel</DownloadButton>}
+      filename={getSanitizedFilename(location.name, 'luca')}
+      element={
+        <DownloadButton>
+          {intl.formatMessage({ id: 'download.excel' })}
+        </DownloadButton>
+      }
     >
       <ExcelSheet
         data={getExcelDownloadDataFromTraces(traces, intl)}
-        name={sanitizeForCSV(`${location.groupName} - ${location.name}`)}
+        name={sanitizeForCSV(`${location.name}`)}
       >
         <ExcelColumn
           label={intl.formatMessage({ id: 'contactPersonTable.locationName' })}

@@ -1,8 +1,8 @@
 import { Form } from 'antd';
 import styled from 'styled-components';
 
-import { SmallHeadline, Text } from '../../Text';
-import { SecondaryButton } from '../../Buttons';
+import { SecondaryButton } from 'components/Buttons';
+import { SmallHeadline, Text } from 'components/Text';
 
 export const StyledForm = styled(Form)`
   flex: 1;

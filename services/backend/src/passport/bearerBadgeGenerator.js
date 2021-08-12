@@ -4,7 +4,7 @@ const passportCustom = require('passport-custom');
 const database = require('../database');
 
 // eslint-disable-next-line consistent-return
-const bearerStrategy = new passportCustom.Strategy((request, done) => {
+const bearerStrategy = new passportCustom.Strategy(async (request, done) => {
   let token = request.headers['badge-generator-authorization'];
 
   if (!token) {
@@ -16,14 +16,23 @@ const bearerStrategy = new passportCustom.Strategy((request, done) => {
   if (token.split(' ')[0] === 'Bearer')
     token = token.split(' ').slice(1).join(' ');
 
-  database.BadgeGenerator.findByPk(token)
-    .then(badgeGenerator => {
-      if (!badgeGenerator) {
-        return done(null, false);
-      }
-      return done(null, badgeGenerator);
-    })
-    .catch(error => done(error));
+  try {
+    const decoded = Buffer.from(token, 'base64').toString('ascii');
+    const [name, password] = decoded.split(':');
+    const badgeGenerator = await database.BadgeGenerator.findByPk(name);
+
+    if (!badgeGenerator) return done(null, false);
+
+    const isValidPassword = await badgeGenerator.checkPassword(password);
+
+    if (!isValidPassword) {
+      return done(null, false);
+    }
+
+    return done(null, badgeGenerator);
+  } catch (error) {
+    return done(error);
+  }
 });
 
 module.exports = bearerStrategy;

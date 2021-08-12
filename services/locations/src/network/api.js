@@ -239,8 +239,8 @@ export const forceCheckoutUsers = locationId => {
   });
 };
 
-export const forceCheckoutSingleTrace = traceId => {
-  return fetch(`${API_PATH}/v3/traces/checkout`, {
+export const forceCheckoutByOperator = traceId =>
+  fetch(`${API_PATH}/v3/operators/traces/checkout`, {
     method: 'POST',
     body: JSON.stringify({
       traceId,
@@ -248,7 +248,6 @@ export const forceCheckoutSingleTrace = traceId => {
     }),
     headers,
   });
-};
 
 // COUNTER
 export const getCurrentCount = scannerId => {

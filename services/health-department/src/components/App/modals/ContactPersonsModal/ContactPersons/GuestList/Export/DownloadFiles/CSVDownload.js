@@ -1,11 +1,14 @@
 import React from 'react';
 import FileSaver from 'file-saver';
 import { useIntl } from 'react-intl';
-import sanitize from 'sanitize-filename';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 import { createCSV } from 'utils/exports/csv';
 
-import { showErrorNotification, formatAdditionalData } from './helpers';
+import {
+  showErrorNotification,
+  formatAdditionalData,
+  getSanitizedFilename,
+} from './helpers';
 
 import { DownloadButton } from '../Export.styled';
 
@@ -89,7 +92,7 @@ export const CSVDownload = ({ traces, location }) => {
       const data = createCSV(
         getCSVDownloadDataFromTraces(traces, location, intl)
       );
-      const filename = sanitize(`${location.name}_luca.csv`);
+      const filename = getSanitizedFilename(location.name, 'luca.csv');
       const blob = new Blob(
         [
           new Uint8Array([0xef, 0xbb, 0xbf]), // UTF-8 BOM
@@ -104,5 +107,9 @@ export const CSVDownload = ({ traces, location }) => {
     }
   };
 
-  return <DownloadButton onClick={download}>Download CSV</DownloadButton>;
+  return (
+    <DownloadButton onClick={download}>
+      {intl.formatMessage({ id: 'download.csv' })}
+    </DownloadButton>
+  );
 };

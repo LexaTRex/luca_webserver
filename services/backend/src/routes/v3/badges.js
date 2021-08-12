@@ -1,13 +1,11 @@
 const router = require('express').Router();
 const status = require('http-status');
-const config = require('config');
 const passport = require('passport');
 
 const {
   uuidToHex,
   base64ToHex,
-  hexToBase64,
-  SIGN_EC_SHA256_IEEE,
+  bytesToHex,
   VERIFY_EC_SHA256_DER_SIGNATURE,
 } = require('@lucaapp/crypto');
 
@@ -22,8 +20,7 @@ const { badgeCreateSchema } = require('./badges.schemas');
 /**
  * Creates an empty user for a new generated static badge. Returns an error if
  * the given user id already exists or the signature is not valid for the
- * given public key. On success, returns an attestation signature computed with
- * the badge private key.
+ * given public key.
  *
  * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html#process
  */
@@ -38,7 +35,9 @@ router.post(
   async (request, response) => {
     const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
       base64ToHex(request.body.publicKey),
-      uuidToHex(request.body.userId) + base64ToHex(request.body.data),
+      bytesToHex('CREATE_USER') +
+        uuidToHex(request.body.userId) +
+        base64ToHex(request.body.data),
       base64ToHex(request.body.signature)
     );
 
@@ -63,14 +62,7 @@ router.post(
       deviceType: 'static',
     });
 
-    const signature = SIGN_EC_SHA256_IEEE(
-      base64ToHex(config.get('keys.badge.private')),
-      uuidToHex(request.body.userId) + base64ToHex(request.body.data)
-    );
-
-    return response.send({
-      signature: hexToBase64(signature),
-    });
+    return response.sendStatus(status.NO_CONTENT);
   }
 );
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import { useHistory } from 'react-router-dom';
 import {
   uuidToHex,
   bytesToHex,
@@ -25,7 +24,6 @@ import {
 } from './ResetDeviceModal.styled';
 
 export function ResetDeviceModal({ onClose }) {
-  const history = useHistory();
   const { formatMessage } = useIntl();
 
   return (
@@ -54,8 +52,7 @@ export function ResetDeviceModal({ onClose }) {
               );
               await deleteUser(userId, hexToBase64(signature));
               indexDB.delete();
-              history.push(ON_BOARDING_PATH);
-              window.location.reload();
+              window.location.href = ON_BOARDING_PATH;
             } catch {
               onClose();
               notification.error({

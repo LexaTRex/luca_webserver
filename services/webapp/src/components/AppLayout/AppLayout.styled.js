@@ -14,7 +14,8 @@ export const StyledHeader = styled.header`
   margin: 0 0 8px;
   padding: 8px 16px 0;
   align-items: center;
-  border-bottom: 1px solid rgb(151, 151, 151);
+  border-bottom: ${({ showBorder }) => (showBorder ? 1 : 0)}px solid
+    rgb(151, 151, 151);
 `;
 export const AppHeadline = styled(LucaStyledHeadline)`
   margin: 0;
@@ -47,6 +48,7 @@ export const StyledMain = styled.main`
 export const StyledFooter = styled.nav`
   display: flex;
   padding: 0 16px;
-  border-top: 1px solid rgb(151, 151, 151);
   height: ${({ footerHeight }) => footerHeight};
+  border-top: ${({ showBorder }) => (showBorder ? 1 : 0)}px solid
+    rgb(151, 151, 151);
 `;

@@ -18,8 +18,20 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.RANGE(DataTypes.DATE),
       allowNull: false,
     },
+    isHDEncrypted: {
+      type: DataTypes.BOOLEAN,
+    },
     data: {
       type: DataTypes.STRING(44),
+    },
+    dataPublicKey: {
+      type: DataTypes.STRING(88),
+    },
+    dataMAC: {
+      type: DataTypes.STRING(44),
+    },
+    dataIV: {
+      type: DataTypes.STRING(24),
     },
     publicKey: {
       type: DataTypes.STRING(88),

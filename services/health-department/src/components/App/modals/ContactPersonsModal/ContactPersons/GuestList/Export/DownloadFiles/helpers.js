@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import sanitize from 'sanitize-filename';
 
 const TABLE_KEY = 'table';
 
@@ -24,3 +25,8 @@ export const formatAdditionalData = (additionalData, intl) => {
     .map(key => `${formatAdditionalDataKey(key, intl)}: ${additionalData[key]}`)
     .join(' / ');
 };
+
+const MAX_FILE_LENGTH = 100;
+
+export const getSanitizedFilename = (name, suffix) =>
+  `${sanitize(`${name}`).slice(0, MAX_FILE_LENGTH)}_${suffix}`;

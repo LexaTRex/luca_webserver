@@ -8,7 +8,7 @@ import { useHistory } from 'react-router';
 import { useParams } from 'react-router-dom';
 
 import { usePrivateKey } from 'utils/privateKey';
-import { BASE_GROUP_ROUTE } from 'constants/routes';
+import { BASE_SHARE_DATA_ROUTE } from 'constants/routes';
 import {
   getAllUncompletedTransfers,
   getLocationTransfer,
@@ -69,17 +69,11 @@ export const ShareData = () => {
     }
   );
 
-  const progressStep = () => {
-    setCurrentStep(currentStep + 1);
-  };
+  const progressStep = () => setCurrentStep(currentStep + 1);
 
-  const setKey = key => {
-    setPrivateKey(key);
-  };
+  const setKey = key => setPrivateKey(key);
 
-  const onDone = () => {
-    history.push(BASE_GROUP_ROUTE);
-  };
+  const onDone = () => history.push(BASE_SHARE_DATA_ROUTE);
 
   if (isLoading || error) return null;
 

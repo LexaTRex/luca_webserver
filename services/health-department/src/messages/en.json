@@ -15,6 +15,7 @@
     "login.error": "Wrong Email or password",
     "login.keyFile.error.title": "Invalid keyfile",
     "login.keyFile.error.description": "The specified file is invalid.",
+    "profile": "Profile",
     "profile.header": "Overview",
     "profile.firstname": "Firstname",
     "profile.lastname": "Lastname",
@@ -322,8 +323,8 @@
     "verificationTag.info": "The public keys of your luca Health Department are signed.",
     "login.keyFileSize.error.description": "The uploaded file was too big.",
     "profile.signingTool.download.title": "Safety precautions necessary",
-    "profile.signingTool.download.info": "The public keys of luca Health Department have not been signed for your health department yet. Please sign your keys by using the luca Signature Tool. This step ensures that other components within the luca system can check the authenticity of your health department's request and therefore strengthens the whole system's security. {br} This process can only be done by luca Health Department admins and only needs to be performed once for each health department. A certificate from the Bundesdruckerei GmbH is required for this process.",
-    "profile.signingTool.download.button": "Download luca signature ({version}) tool",
+    "profile.signingTool.download.info": "The public keys of luca Health Department have not been signed for your health department yet. Please sign your keys by using the luca Signature Tool. This step ensures that other components within the luca system can check the authenticity of your health department's request and therefore strengthens the whole system's security. {br}{br} This process can only be done by luca Health Department admins and only needs to be performed once for each health department. A certificate from the Bundesdruckerei GmbH is required for this process. {br}{br} Please download the luca Signature Tool and follow the steps within the tool.",
+    "profile.signingTool.download.button": "Download luca signature ({version}) tool (Windows)",
     "profile.signingTool.download.hash": "sha265sum: {hash}",
     "commitHashVersionDisplay.lucaHealthDepartment": "luca Health Department",
     "commitHashVersionDisplay.gitlab": "GitLab",
@@ -337,5 +338,9 @@
     "error.length": "The Input is too long.",
     "modal.privateKey.uploadMessage": "Drag and drop to open your key.",
     "login.keyFile.success.title": "Loaded successfully",
-    "uploadKey.tryAgain": "Try again"
+    "uploadKey.tryAgain": "Try again",
+    "contactPersonTable.octoWareTN.unregisteredBadgeUser": "Nicht vergeben",
+    "download.csv": "Download CSV",
+    "download.excel": "Download Excel",
+    "download.octoWareTN": "Download OctoWareTN format"
 }

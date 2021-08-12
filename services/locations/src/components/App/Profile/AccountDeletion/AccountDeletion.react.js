@@ -39,7 +39,7 @@ const AccountDeletionBody = ({ refetch }) => {
       </Text>
       <ButtonWrapper>
         <Popconfirm
-          placement="top"
+          placement="topRight"
           disabled={false}
           onConfirm={() => mutate()}
           title={intl('account.delete.confirm.prompt')}

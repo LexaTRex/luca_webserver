@@ -37,12 +37,15 @@ import { Licenses } from 'components/Licenses';
 import { Settings } from 'components/Settings';
 import { CheckOut } from 'components/Checkout';
 import { OnBoarding } from 'components/OnBoarding';
+import { UserSessionProvider } from 'contexts/userSessionContext';
 import { ContactInformation } from 'components/ContactInformation';
 import { FeatureNotImplemented } from 'components/FeatureNotImplemented';
 import { AuthenticationWrapper } from 'components/AuthenticationWrapper.react';
 import { PrivateMeeting } from 'components/PrivateMeeting/PrivateMeeting.react';
-import { UserSessionProvider } from 'contexts/userSessionContext';
+import { UpdatedTermsAndConditionsWrapper } from 'components/UpdatedTermsAndConditionsWrapper';
+
 import { configureStore } from 'configureStore';
+
 import { AppWrapper } from './App.styled';
 
 import { messages } from './messages';
@@ -73,41 +76,46 @@ export const Main = () => {
                 <ErrorWrapper>
                   <AuthenticationWrapper>
                     <UserSessionProvider>
-                      <Switch>
-                        <Route path={LICENSES_ROUTE} component={Licenses} />
-                        <Route
-                          path={`${ON_BOARDING_PATH}/:scannerId/`}
-                          component={OnBoarding}
-                        />
-                        <Route path={ON_BOARDING_PATH} component={OnBoarding} />
-                        <Route
-                          path={`${CHECK_OUT_PATH}/`}
-                          component={CheckOut}
-                        />
-                        <Route
-                          path={EDIT_CONTACT_INFORMATION_SETTING}
-                          component={ContactInformation}
-                        />
-                        <Route path={HISTORY_PATH} component={History} />
-                        <Route path={SETTINGS_PATH} component={Settings} />
-                        <Route
-                          path={[APPOINTMENT_PATH, COVID_TEST_PATH]}
-                          component={FeatureNotImplemented}
-                        />
-                        <Route
-                          component={Home}
-                          path={CHECKIN_TO_PRIVATE_MEETING_PATH}
-                        />
-                        <Route
-                          path={BASE_PRIVATE_MEETING_PATH}
-                          component={PrivateMeeting}
-                        />
-                        <Route
-                          component={Home}
-                          path={`${HOME_PATH}/:scannerId`}
-                        />
-                        <Route path={HOME_PATH} component={Home} />
-                      </Switch>
+                      <UpdatedTermsAndConditionsWrapper>
+                        <Switch>
+                          <Route
+                            path={ON_BOARDING_PATH}
+                            component={OnBoarding}
+                          />
+                          <Route path={LICENSES_ROUTE} component={Licenses} />
+                          <Route
+                            path={`${ON_BOARDING_PATH}/:scannerId/`}
+                            component={OnBoarding}
+                          />
+                          <Route
+                            path={`${CHECK_OUT_PATH}/`}
+                            component={CheckOut}
+                          />
+                          <Route
+                            path={EDIT_CONTACT_INFORMATION_SETTING}
+                            component={ContactInformation}
+                          />
+                          <Route path={HISTORY_PATH} component={History} />
+                          <Route path={SETTINGS_PATH} component={Settings} />
+                          <Route
+                            path={[APPOINTMENT_PATH, COVID_TEST_PATH]}
+                            component={FeatureNotImplemented}
+                          />
+                          <Route
+                            component={Home}
+                            path={CHECKIN_TO_PRIVATE_MEETING_PATH}
+                          />
+                          <Route
+                            path={BASE_PRIVATE_MEETING_PATH}
+                            component={PrivateMeeting}
+                          />
+                          <Route
+                            component={Home}
+                            path={`${HOME_PATH}/:scannerId`}
+                          />
+                          <Route path={HOME_PATH} component={Home} />
+                        </Switch>
+                      </UpdatedTermsAndConditionsWrapper>
                     </UserSessionProvider>
                   </AuthenticationWrapper>
                 </ErrorWrapper>

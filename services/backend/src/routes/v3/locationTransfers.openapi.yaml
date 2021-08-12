@@ -14,6 +14,8 @@ paths:
           $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '404':
           description: User Transfer not found
+        '413':
+          description: Too many locations attached to request
       requestBody:
         content:
           application/json:
@@ -208,8 +210,15 @@ paths:
                           items:
                             type: object
                         data:
-                          type: string
-                          minLength: 1
+                          oneOf:
+                          - type: string
+                            minLength: 1
+                          - type: object
+                            required:
+                              - data
+                              - iv
+                              - mac
+                              - publicKey
                         publicKey:
                           type: string
                           minLength: 1
@@ -263,9 +272,18 @@ paths:
                   items:
                     type: object
                     properties:
+                      isHDEncrypted:
+                        type: boolean
                       data:
-                        type: string
-                      traceId:
+                        oneOf:
+                        - type: string
+                          minLength: 1
+                        - type: object
+                          required:
+                            - data
+                            - iv
+                            - mac
+                            - publicKey                      traceId:
                         type: string
                       publicKey:
                         type: string
@@ -332,9 +350,18 @@ paths:
                           type: number
                         checkout:
                           type: number
+                        isHDEncrypted:
+                          type: boolean
                         data:
-                          type: string
-                          minLength: 1
+                          oneOf:
+                          - type: string
+                            minLength: 1
+                          - type: object
+                            required:
+                              - data
+                              - iv
+                              - mac
+                              - publicKey
                         publicKey:
                           type: string
                           minLength: 1

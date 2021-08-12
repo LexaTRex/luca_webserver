@@ -27,6 +27,18 @@ const {
   transferIdParametersSchema,
 } = require('./locationTransfers.schemas');
 
+const mapTraceEncryptedData = trace => ({
+  isHDEncrypted: trace.isHDEncrypted,
+  data: trace.isHDEncrypted
+    ? {
+        data: trace.data,
+        publicKey: trace.dataPublicKey,
+        iv: trace.dataIV,
+        mac: trace.dataMAC,
+      }
+    : trace.data,
+});
+
 /**
  * Create a transfer request for venues traced by an infected guest. Preceded
  * by a user transfer of check-in history, this will check for venues an
@@ -40,6 +52,9 @@ router.post(
   validateSchema(createSchema),
   async (request, response) => {
     const transaction = await database.transaction();
+    const maxLocations = config.get('luca.locationTransfers.maxLocations');
+    if (request.body.locations.length > maxLocations)
+      return response.sendStatus(status.REQUEST_ENTITY_TOO_LARGE);
 
     try {
       const tracingProcess = await database.TracingProcess.create(
@@ -293,7 +308,7 @@ router.get('/uncompleted', requireOperator, async (request, response) => {
           moment(trace.time[0].value).unix(),
           moment(trace.time[1].value).unix(),
         ],
-        data: trace.data,
+        ...mapTraceEncryptedData(trace),
         publicKey: trace.publicKey,
         iv: trace.iv,
         mac: trace.mac,
@@ -388,7 +403,7 @@ router.get(
           moment(trace.time[0].value).unix(),
           moment(trace.time[1].value).unix(),
         ],
-        data: trace.data,
+        ...mapTraceEncryptedData(trace),
         publicKey: trace.publicKey,
         iv: trace.iv,
         mac: trace.mac,
@@ -505,7 +520,7 @@ router.get(
         traceId: trace.traceId,
         checkin: moment(trace.time[0].value).unix(),
         checkout: moment(trace.time[1].value).unix(),
-        data: trace.data,
+        ...mapTraceEncryptedData(trace),
         publicKey: trace.publicKey,
         keyId: trace.keyId,
         version: trace.version,
@@ -582,9 +597,8 @@ router.post(
         if (!requestTraceData) {
           return null;
         }
-
         const transferTracePayload = {
-          data: requestTraceData.data,
+          isHDEncrypted: requestTraceData.isHDEncrypted,
           publicKey: requestTraceData.publicKey,
           verification: requestTraceData.verification,
           keyId: requestTraceData.keyId,
@@ -592,6 +606,14 @@ router.post(
           deviceType: requestTraceData.deviceType,
         };
 
+        if (requestTraceData.isHDEncrypted && requestTraceData.data) {
+          transferTracePayload.data = requestTraceData.data.data;
+          transferTracePayload.dataPublicKey = requestTraceData.data.publicKey;
+          transferTracePayload.dataIV = requestTraceData.data.iv;
+          transferTracePayload.dataMAC = requestTraceData.data.mac;
+        } else {
+          transferTracePayload.data = requestTraceData.data;
+        }
         if (requestTraceData.additionalData) {
           transferTracePayload.additionalData =
             requestTraceData.additionalData.data;

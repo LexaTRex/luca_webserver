@@ -10,7 +10,7 @@ import { sortTraces } from 'utils/sort';
 import { base64ToHex } from '@lucaapp/crypto';
 
 // Api
-import { getTraces, forceCheckoutSingleTrace } from 'network/api';
+import { getTraces, forceCheckoutByOperator } from 'network/api';
 
 // Components
 import { DurationFilter, TODAY_OPTION, ALL_OPTION } from './DurationFilter';
@@ -38,7 +38,7 @@ export const GuestListModal = ({ location }) => {
     });
 
   const onCheckoutSingleGuest = traceId => {
-    forceCheckoutSingleTrace(traceId)
+    forceCheckoutByOperator(traceId)
       .then(response => {
         if (response.status === 204) {
           queryClient.invalidateQueries(`current/${location.scannerId}`);

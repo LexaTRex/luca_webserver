@@ -1,14 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { notification, Spin } from 'antd';
+
 import { useIntl } from 'react-intl';
+import { notification, Spin } from 'antd';
 import parsePhoneNumber from 'libphonenumber-js/max';
 
-import { checkPhoneNumber } from 'utils/parsePhoneNumber';
-
+import {
+  useEmailValidator,
+  usePhoneNumberValidator,
+} from 'hooks/useValidators';
 import { sendSMSTAN, verifySMSTAN } from 'network/api';
 
 import { TextInput } from 'components/TextInput';
-import { MAX_EMAIL_LENGTH, MAX_PHONE_LENGTH } from 'constants/valueLength';
 
 import {
   StyledForm,
@@ -35,6 +37,9 @@ export function ContactInformationInputStep({ onSubmit }) {
   const [challengeId, setChallengeId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
+
+  const emailValidator = useEmailValidator();
+  const phoneNumberValidator = usePhoneNumberValidator();
 
   const onValuesChange = useCallback(
     (_, { phoneNumber, tan }) => setIsReady(challengeId ? tan : phoneNumber),
@@ -144,25 +149,13 @@ export function ContactInformationInputStep({ onSubmit }) {
           <>
             <TextInput
               autoFocus
-              type="email"
               name="email"
               tabIndex="1"
               defaultValue={email}
               autocomplete="email"
+              rules={emailValidator}
               label={formatMessage({ id: 'Form.Email.Label' })}
               placeholder={formatMessage({ id: 'Form.Email.Placeholder' })}
-              rules={[
-                {
-                  type: 'email',
-                  message: formatMessage({
-                    id: 'Form.Validation.email',
-                  }),
-                },
-                {
-                  max: MAX_EMAIL_LENGTH,
-                  message: formatMessage({ id: 'Form.Validation.toLong' }),
-                },
-              ]}
             />
             <TextInput
               type="tel"
@@ -170,25 +163,9 @@ export function ContactInformationInputStep({ onSubmit }) {
               autocomplete="tel"
               name="phoneNumber"
               defaultValue={phone}
+              rules={phoneNumberValidator}
               label={formatMessage({ id: 'Form.Phone.Label' })}
               placeholder={formatMessage({ id: 'Form.Phone.Placeholder' })}
-              rules={[
-                {
-                  validator: (_, value) => {
-                    return checkPhoneNumber(value)
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          formatMessage({
-                            id: 'Form.Validation.unsupportedFormat',
-                          })
-                        );
-                  },
-                },
-                {
-                  max: MAX_PHONE_LENGTH,
-                  message: formatMessage({ id: 'Form.Validation.toLong' }),
-                },
-              ]}
             />
           </>
         )}

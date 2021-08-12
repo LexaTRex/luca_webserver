@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Explain = styled.div`
   font-size: 16px;
   font-weight: 500;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 `;
 
 export const ButtonRow = styled.div`

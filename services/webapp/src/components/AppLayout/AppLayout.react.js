@@ -10,15 +10,18 @@ export function AppLayout({
   header,
   footer,
   children,
+  showBorder = true,
   footerHeight = '64px',
   bgColor = 'transparent',
 }) {
   return (
     <StyledContainer bgColor={bgColor}>
-      {header && <StyledHeader>{header}</StyledHeader>}
+      {header && <StyledHeader showBorder={showBorder}>{header}</StyledHeader>}
       <StyledMain>{children}</StyledMain>
       {footer && (
-        <StyledFooter footerHeight={footerHeight}>{footer}</StyledFooter>
+        <StyledFooter showBorder={showBorder} footerHeight={footerHeight}>
+          {footer}
+        </StyledFooter>
       )}
     </StyledContainer>
   );

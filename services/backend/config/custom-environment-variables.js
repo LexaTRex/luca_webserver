@@ -45,7 +45,7 @@ module.exports = {
   keys: {
     badge: {
       targetKeyId: 'BADGE_TARGET_KEY_ID',
-      private: 'BADGE_KEY_PRIVATE',
+      keyLength: 'BADGE_GENERATOR_KEY_LENGTH',
       attestation: {
         v3: 'BADGE_ATTESTATION_KEY_PUBLIC_V3',
         v4: 'BADGE_ATTESTATION_KEY_PUBLIC_V4',

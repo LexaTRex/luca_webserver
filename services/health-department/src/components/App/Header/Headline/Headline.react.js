@@ -18,7 +18,7 @@ export const Headline = ({ onlyLogo }) => {
         })}
       </SubTitle>
       {!onlyLogo && (
-        <VerificationWrapper data-testid="headline-verification-tag">
+        <VerificationWrapper data-cy="headline-verification-tag">
           <VerificationTag />
         </VerificationWrapper>
       )}

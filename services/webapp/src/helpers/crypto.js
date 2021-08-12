@@ -41,6 +41,8 @@ import {
   MAX_POSTAL_CODE_LENGTH,
   MAX_HOUSE_NUMBER_LENGTH,
 } from 'constants/valueLength';
+import { CURRENT_TERMS_AND_CONDITIONS_VERSION } from 'constants/termsAndConditions';
+
 import {
   indexDB,
   USER_DATA_SECRET,
@@ -196,6 +198,7 @@ export async function registerDevice({
       userId,
       version: 3,
       useWebApp: true,
+      lastTermsAndConditionsVersion: CURRENT_TERMS_AND_CONDITIONS_VERSION,
     });
     await indexDB.secrets.bulkAdd([
       {

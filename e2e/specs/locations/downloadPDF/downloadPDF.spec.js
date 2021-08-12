@@ -10,7 +10,7 @@ import {
 
 import { removeLocation } from '../location/location.helper';
 
-describe('Download QR Codes PDF', () => {
+describe('Download QR Codes PDF', {retries: 3}, () => {
   beforeEach(() => login());
   after(() => removeLocation(NEW_RESTAURANT_LOCATION));
 
@@ -18,7 +18,7 @@ describe('Download QR Codes PDF', () => {
     it('downloads the Group PDF', () => {
       cy.getByCy('createGroup').click();
       cy.getByCy('restaurant').click();
-      cy.get('#groupName').type(RESTAURANT_NAME);
+      cy.get('#groupName', {timeout: 20000}).type(RESTAURANT_NAME);
       cy.get('form').submit();
       cy.get('#locationSearch').type(RESTAURANT_ADDRESS);
       cy.get('.pac-container > div:first-of-type').click({ force: true });
@@ -34,7 +34,7 @@ describe('Download QR Codes PDF', () => {
       cy.get('.ant-message-notice').should('exist');
       cy.get('.ant-message-notice', { timeout: 20000 }).should('not.exist');
       cy.readFile(
-        './downloads/luca_QRCode_Test Restaurant_Test Restaurant.pdf'
+        './downloads/luca_QRCode_Test Restaurant_Test Restaurant.pdf', {timeout: 30000}
       );
       cy.task('deleteFileIfExists', './downloads/luca_QRCode_Test Restaurant_Test Restaurant.pdf');
     });
@@ -72,7 +72,7 @@ describe('Download QR Codes PDF', () => {
       cy.getByCy('activateTableSubdivision').click();
       cy.getByCy('locationCard-generateQRCodes').click();
       cy.getByCy('qrCodeDownload').click();
-      cy.get('.ant-message-notice', { timeout: 40000 }).should('not.exist');
+      cy.get('.ant-message-notice', { timeout: 60000 }).should('not.exist');
       cy.readFile(
         './downloads/luca_QRCodes_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION_Tables.pdf'
       );

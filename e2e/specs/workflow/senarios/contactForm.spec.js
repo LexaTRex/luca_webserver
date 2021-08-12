@@ -20,6 +20,7 @@ import { clean } from '../helpers/functions';
 import {
   E2E_COMPLETE_EMAIL,
   E2E_COMPLETE_PASSWORD,
+  WORKFLOW_LOCATION_PRIVATE_KEY_NAME,
   WORKFLOW_LOCATION_PRIVATE_KEY_PATH,
 } from '../helpers/users';
 import {
@@ -53,12 +54,18 @@ context('Workflow', () => {
       cy.visit(APP_ROUTE);
       downloadLocationPrivateKeyFile();
       cy.wait(1000);
+      uploadLocationPrivateKeyFile(
+        WORKFLOW_LOCATION_PRIVATE_KEY_PATH,
+        WORKFLOW_LOCATION_PRIVATE_KEY_NAME
+      );
+      cy.getByCy('complete', { timeout: 1000 }).click();
+      cy.get('.ant-modal-body').should('not.exist');
+      cy.wait(1000);
       createGroup({
         ...createGroupPayload,
         name: FORM_WORKFLOW_TESTING_GROUP_NAME,
       });
 
-      cy.get('.ant-modal-close-x').click();
       // Checkin with contact form
       cy.log('Checkin with in testing Location with Contact Form');
       cy.stubNewWindow();
@@ -104,7 +111,10 @@ context('Workflow', () => {
       cy.getByCy('dataRequests').click();
       cy.stubNewWindow();
       cy.getByCy('completeDataTransfer').first().click();
-      uploadLocationPrivateKeyFile(WORKFLOW_LOCATION_PRIVATE_KEY_PATH);
+      uploadLocationPrivateKeyFile(
+        WORKFLOW_LOCATION_PRIVATE_KEY_PATH,
+        WORKFLOW_LOCATION_PRIVATE_KEY_NAME
+      );
       cy.getByCy('next').click();
       cy.getByCy('finish').click();
 

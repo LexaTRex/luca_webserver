@@ -28,20 +28,13 @@ paths:
       summary: Create badge user
       operationId: post-users-badge
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  signature:
-                    type: string
-        '400':
+        204:
+          description: Success
+        400:
           $ref: '#/components/schemas/BadRequest'
-        '403':
+        403:
           description: Signature not valid
-        '409':
+        409:
           description: User already present
       tags:
         - Users

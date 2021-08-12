@@ -2,12 +2,15 @@ import React from 'react';
 import moment from 'moment';
 import FileSaver from 'file-saver';
 import { useIntl } from 'react-intl';
-import sanitize from 'sanitize-filename';
 
 import { createCSV } from 'utils/exports/csv';
 import { getFormattedDateTime } from 'utils/time';
 
-import { showErrorNotification, formatAdditionalData } from './helpers';
+import {
+  showErrorNotification,
+  formatAdditionalData,
+  getSanitizedFilename,
+} from './helpers';
 
 import { DownloadButton } from '../Export.styled';
 
@@ -211,9 +214,7 @@ export const SormasDownload = ({ traces, location }) => {
         getSormasDownloadDataFromTraces(traces, location, intl),
         true
       );
-      const filename = sanitize(
-        `${location.groupName} - ${location.name}_sormas.csv`
-      );
+      const filename = getSanitizedFilename(location.name, 'sormas.csv');
       const blob = new Blob(
         [
           new Uint8Array([0xef, 0xbb, 0xbf]), // UTF-8 BOM

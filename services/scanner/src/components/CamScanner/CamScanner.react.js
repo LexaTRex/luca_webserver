@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import moment from 'moment';
 import { Helmet } from 'react-helmet';
 import { useQueryClient, useQuery } from 'react-query';
-import QrReader from 'react-qr-reader';
+import QrReader from 'modern-react-qr-reader';
 import * as UAParser from 'ua-parser-js';
 import { RedoOutlined } from '@ant-design/icons';
 
@@ -146,7 +146,6 @@ export const CamScanner = ({ scanner }) => {
                     delay={SCAN_TIMEOUT}
                     onError={error => notifyScanError(error, intl)}
                     onScan={handleScan}
-                    resolution={1200}
                   />
                 )}
                 {isSuccess && (

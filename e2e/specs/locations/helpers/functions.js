@@ -138,12 +138,18 @@ export const undoAccountDeletion = () => {
   return cy.request('POST', 'api/v3/operators/restore');
 };
 
-export const uploadLocationPrivateKeyFile = filename => {
+export const downloadLocationPrivateKeyFile = () => {
+  cy.getByCy('downloadPrivateKey', { timeout: 8000 }).click();
+  cy.getByCy('checkPrivateKeyIsDownloaded').click();
+  cy.getByCy('next').should('exist').click();
+};
+
+export const uploadLocationPrivateKeyFile = (filename, name) => {
   cy.readFile(filename).then(fileContent => {
     cy.get('input[type=file]').attachFile({
       fileContent,
       mimeType: 'text/plain',
-      fileName: 'luca_locations_Simon_Tester_privateKey.luca',
+      fileName: name,
     });
   });
 };
@@ -155,12 +161,6 @@ export const skipLocationPrivateKeyFile = () => {
       .should('be.visible')
       .click();
   });
-};
-
-export const downloadLocationPrivateKeyFile = () => {
-  cy.getByCy('downloadPrivateKey', { timeout: 8000 }).click();
-  cy.getByCy('checkPrivateKeyIsDownloaded').click();
-  cy.getByCy('finish').should('exist').click();
 };
 
 export const checkoutGuests = () => {

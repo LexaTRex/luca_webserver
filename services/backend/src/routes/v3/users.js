@@ -123,7 +123,7 @@ router.get(
     };
 
     if (userIsHealthDepartment) {
-      return response.send(userDTO);
+      return response.send({ ...userDTO, deviceType: user.deviceType });
     }
 
     if (user.deletedAt) {

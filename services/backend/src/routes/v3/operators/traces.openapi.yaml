@@ -2,6 +2,8 @@ paths:
   /operators/traces/checkin:
     post:
       summary: Check in
+      tags:
+        - Operators
       responses:
         201:
           description: Success
@@ -47,5 +49,31 @@ paths:
                   mac: F0553F39354373442EXAMPLE0553F393354373442A3A
                   publicKey: BLMsCG/sWLvwQseEWMR4WBFQqqId6mgGLYuFLGWObMT5IsJTGJGl8n1BT+KgALdA+dCb7MYQEBAbY9e9PxP2qI8=
                   deviceType: 0
+  /operators/traces/checkout:
+    parameters: []
+    post:
       tags:
         - Operators
+      summary: Performs a checkout for the given trace id.
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: '#/components/schemas/BadRequest'
+        401:
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
+        404:
+          description:
+            Trace not found, not owned by Operator or has declined device type
+        409:
+          description: Checkout time is not after checkin time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceId:
+                  type: string
+                timestamp:
+                  type: integer

@@ -28,6 +28,9 @@ paths:
                   groupName:
                     type: string
                     minLength: 1
+                  groupType:
+                    type: string
+                    minLength: 1
                   locationName:
                     type: string
                     minLength: 1

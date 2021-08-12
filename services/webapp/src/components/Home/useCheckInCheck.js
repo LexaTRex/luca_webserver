@@ -20,6 +20,11 @@ function getDecodedData(hash) {
     decodedData = JSON.parse(
       decodeUtf8(base64UrlToBytes((hash || '').replace('#', '')))
     );
+
+    if (decodedData?.table) {
+      decodedData.table = Number(decodedData.table);
+      if (Number.isNaN(decodedData.table)) delete decodedData.table;
+    }
   } catch {
     decodedData = null;
   }

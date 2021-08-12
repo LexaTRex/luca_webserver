@@ -1,9 +1,6 @@
 import { useIntl } from 'react-intl';
 import { useCallback, useMemo } from 'react';
 
-import { useQuery } from 'react-query';
-import { getProcesses } from 'network/api';
-
 import { ALL_PROCESS_STATUS, ALL_PROCESS_ASSIGNEE } from 'constants/filters';
 
 import {
@@ -132,29 +129,4 @@ export function useListFilters(
     status: { ...status, active: filters.status },
     assignee: { ...assignee, active: filters.assignee },
   };
-}
-
-// get assignees from processes
-export function useGetAssigneeNameOptions() {
-  const { isLoading, error, data: processes } = useQuery('processes', () =>
-    getProcesses()
-  );
-
-  if (isLoading || error) return null;
-
-  const duplicates = new Set();
-  const assigneesWithDup = processes
-    .filter(process => process.assignee)
-    .map(process => {
-      return {
-        value: process.assignee.uuid,
-        name: `${process.assignee.firstName} ${process.assignee.lastName}`,
-      };
-    });
-
-  return assigneesWithDup.filter(assignee => {
-    const duplicate = duplicates.has(assignee.value);
-    duplicates.add(assignee.value);
-    return !duplicate;
-  });
 }

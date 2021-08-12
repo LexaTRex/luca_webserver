@@ -33,6 +33,7 @@ import { LinkButton } from './Location/LocationOverview/TableAllocation/TableAll
 export const Dashboard = ({ operator }) => {
   const intl = useIntl();
   const history = useHistory();
+
   const [openModal, closeModal] = useModal();
   const { avvAccepted } = useWhatsNew(operator);
 
@@ -51,11 +52,11 @@ export const Dashboard = ({ operator }) => {
     }
     if (operator && !operator.publicKey) {
       openModal({
-        title: intl.formatMessage({
-          id: 'modal.registerOperator.title',
-        }),
         content: (
-          <RegisterOperatorModal onClose={closeModal} operator={operator} />
+          <RegisterOperatorModal
+            privateKeySecret={privateKeySecret}
+            operator={operator}
+          />
         ),
         closable: false,
       });

@@ -3,11 +3,7 @@ import moment from 'moment';
 import { DELETE_E2E_TRACE_QUERY } from '../helpers/dbQueries';
 import { checkin, login, checkoutGuests } from '../helpers/functions';
 import { traceDataPayload, DEVICE_TYPES } from '../helpers/functions.helper';
-import {
-  verifyCheckinGuestTime,
-  verifyCheckoutGuestTime,
-  verifyGuestsCount,
-} from '../helpers/inputValidation.helper';
+import { verifyCheckinGuestTime, verifyCheckoutGuestTime, verifyGuestsCount } from '../helpers/inputValidation.helper';
 
 const CURRENT_DATE = moment().format('DD.MM.YYYY');
 

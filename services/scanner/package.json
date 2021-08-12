@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/scanner",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -26,6 +26,7 @@
     "generate-json-webpack-plugin": "1.0.0",
     "history": "5.0.0",
     "license-webpack-plugin": "2.3.16",
+    "modern-react-qr-reader": "1.0.12",
     "moment": "2.29.1",
     "react": "17.0.1",
     "react-app-polyfill": "2.0.0",
@@ -33,7 +34,6 @@
     "react-dom": "17.0.1",
     "react-helmet": "6.1.0",
     "react-intl": "5.13.3",
-    "react-qr-reader": "2.2.1",
     "react-query": "3.12.2",
     "react-redux": "7.2.2",
     "react-router": "5.2.0",

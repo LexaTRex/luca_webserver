@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+
 import { useIntl } from 'react-intl';
 import { notification } from 'antd';
 import { Helmet } from 'react-helmet';
@@ -7,30 +8,30 @@ import parsePhoneNumber from 'libphonenumber-js/max';
 
 import { indexDB } from 'db';
 import { SETTINGS_PATH } from 'constants/routes';
-import { checkPhoneNumber } from 'utils/parsePhoneNumber';
-import { sendSMSTAN, verifySMSTAN } from 'network/api';
 import { changeUserInformation } from 'helpers/crypto';
+import { sendSMSTAN, verifySMSTAN } from 'network/api';
+
+import {
+  useCityValidator,
+  useNameValidator,
+  useEmailValidator,
+  useStreetValidator,
+  useZipCodeValidator,
+  useHouseNumberValidator,
+  usePhoneNumberValidator,
+} from 'hooks/useValidators';
 
 import { TextInput } from 'components/TextInput';
 import { AppHeadline, AppLayout } from 'components/AppLayout';
 
 import {
-  MAX_CITY_LENGTH,
-  MAX_NAME_LENGTH,
-  MAX_EMAIL_LENGTH,
-  MAX_PHONE_LENGTH,
-  MAX_STREET_LENGTH,
-  MAX_POSTAL_CODE_LENGTH,
-  MAX_HOUSE_NUMBER_LENGTH,
-} from 'constants/valueLength';
-import {
   StyledForm,
+  StyledLink,
+  StyledFooter,
   StyledContent,
   StyledSaveButton,
   StyledPlaceholder,
   StyledDescription,
-  StyledLink,
-  StyledFooter,
 } from './ContactInformation.styled';
 
 const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
@@ -73,7 +74,15 @@ const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
 };
 
 function UserInformationFormContent(user) {
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
+  const nameValidator = useNameValidator();
+  const cityValidator = useCityValidator();
+  const emailValidator = useEmailValidator();
+  const streetValidator = useStreetValidator();
+  const postalCodeValidator = useZipCodeValidator();
+  const phoneNumberValidator = usePhoneNumberValidator();
+  const houseNumberValidator = useHouseNumberValidator();
+
   return (
     <>
       <StyledContent>
@@ -81,136 +90,72 @@ function UserInformationFormContent(user) {
           isRequired
           bgColor="#000"
           name="firstName"
+          rules={nameValidator}
           autocomplete="given-name"
           defaultValue={user?.firstName || ''}
-          placeholder={formatMessage({ id: 'Form.FirstName.Placeholder' })}
-          label={formatMessage({ id: 'Form.FirstName.Label' })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_NAME_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
+          label={intl.formatMessage({ id: 'Form.FirstName.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.FirstName.Placeholder' })}
         />
         <TextInput
           isRequired
           bgColor="#000"
           name="lastName"
+          rules={nameValidator}
           autocomplete="family-name"
           defaultValue={user?.lastName || ''}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_NAME_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
-          label={formatMessage({ id: 'Form.LastName.Label' })}
-          placeholder={formatMessage({ id: 'Form.LastName.Placeholder' })}
+          label={intl.formatMessage({ id: 'Form.LastName.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.LastName.Placeholder' })}
         />
         <TextInput
           isRequired
           name="street"
           bgColor="#000"
+          rules={streetValidator}
           autocomplete="street-address1"
           defaultValue={user?.street || ''}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_STREET_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
-          label={formatMessage({ id: 'Form.Street.Label' })}
-          placeholder={formatMessage({ id: 'Form.Street.Placeholder' })}
+          label={intl.formatMessage({ id: 'Form.Street.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.Street.Placeholder' })}
         />
         <TextInput
           isRequired
           bgColor="#000"
           name="houseNumber"
+          rules={houseNumberValidator}
           autocomplete="street-address2"
           defaultValue={user?.houseNumber || ''}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_HOUSE_NUMBER_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
-          label={formatMessage({ id: 'Form.HouseNumber.Label' })}
-          placeholder={formatMessage({ id: 'Form.HouseNumber.Placeholder' })}
+          label={intl.formatMessage({ id: 'Form.HouseNumber.Label' })}
+          placeholder={intl.formatMessage({
+            id: 'Form.HouseNumber.Placeholder',
+          })}
         />
         <TextInput
           name="zip"
           isRequired
           bgColor="#000"
+          rules={postalCodeValidator}
           autocomplete="postal-code"
           defaultValue={user?.zip || ''}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_POSTAL_CODE_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
-          label={formatMessage({ id: 'Form.Zip.Label' })}
-          placeholder={formatMessage({ id: 'Form.Zip.Placeholder' })}
+          label={intl.formatMessage({ id: 'Form.Zip.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.Zip.Placeholder' })}
         />
         <TextInput
           isRequired
           name="city"
           bgColor="#000"
+          rules={cityValidator}
           autocomplete="country-name"
           defaultValue={user?.city || ''}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_CITY_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
-          label={formatMessage({ id: 'Form.City.Label' })}
-          placeholder={formatMessage({ id: 'Form.City.Placeholder' })}
+          label={intl.formatMessage({ id: 'Form.City.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.City.Placeholder' })}
         />
         <TextInput
-          isRequired
           name="email"
           bgColor="#000"
           autocomplete="email"
+          rules={emailValidator}
           defaultValue={user?.email || ''}
-          label={formatMessage({ id: 'Form.Email.Label' })}
-          placeholder={formatMessage({ id: 'Form.Email.Placeholder' })}
-          rules={[
-            {
-              type: 'email',
-              message: formatMessage({
-                id: 'Form.Validation.email',
-              }),
-            },
-            {
-              max: MAX_EMAIL_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
+          label={intl.formatMessage({ id: 'Form.Email.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.Email.Placeholder' })}
         />
         <TextInput
           type="tel"
@@ -218,26 +163,10 @@ function UserInformationFormContent(user) {
           bgColor="#000"
           name="phoneNumber"
           autocomplete="tel"
+          rules={phoneNumberValidator}
           defaultValue={user?.phoneNumber || ''}
-          label={formatMessage({ id: 'Form.Phone.Label' })}
-          placeholder={formatMessage({ id: 'Form.Phone.Placeholder' })}
-          rules={[
-            {
-              validator: (_, value) => {
-                return checkPhoneNumber(value)
-                  ? Promise.resolve()
-                  : Promise.reject(
-                      formatMessage({
-                        id: 'Form.Validation.unsupportedFormat',
-                      })
-                    );
-              },
-            },
-            {
-              max: MAX_PHONE_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
+          label={intl.formatMessage({ id: 'Form.Phone.Label' })}
+          placeholder={intl.formatMessage({ id: 'Form.Phone.Placeholder' })}
         />
       </StyledContent>
     </>

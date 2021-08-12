@@ -166,5 +166,21 @@
     "HistoryShareConsentModal.Link": "data privacy - app",
     "Settings.Repository": "GitLab Repository",
     "version.version": "Version",
-    "version.modal.title": "Version"
+    "version.modal.title": "Version",
+    "Settings.CertificateChain.PageTitle": "HD Encryption",
+    "Settings.CertificateChain.TransferKey": "TRANSFER KEY",
+    "Settings.CertificateChain.Date": "Date",
+    "Settings.CertificateChain.Author": "Author",
+    "Settings.CertificateChain.isSigned": "Signed",
+    "Settings.CertificateChain": "HD Encryption",
+    "Settings.CertificateChain.Download": "Download certificate chain",
+    "UpdatedTermsAndConditions.Headline": "Hello",
+    "UpdatedTermsAndConditions.InfoPart1": "We are updating our terms of use and our privacy policy.",
+    "UpdatedTermsAndConditions.InfoPart2": "We have updated our service description in favour of better transparency and comprehensibility.",
+    "UpdatedTermsAndConditions.Overview": "Tap \"AGREE\" to accept the updated {termsAndConditionsLink} and the {privacyLink}.",
+    "UpdatedTermsAndConditions.TermsAndConditionsLink": "Terms and conditions",
+    "UpdatedTermsAndConditions.PrivacyLink": "privacy policy",
+    "UpdatedTermsAndConditions.Button": "AGREE",
+    "UpdatedTermsAndConditions.AriaDeleteAccountLabel": "Delete Account",
+    "Form.Validation.invalidCharacter": "Please enter only supported characters."
 }

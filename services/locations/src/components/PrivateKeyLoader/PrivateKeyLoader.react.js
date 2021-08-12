@@ -17,7 +17,7 @@ import {
   UploadMessage,
   UploadProgress,
 } from './PrivateKeyLoader.styled';
-import { uploadMessages } from './PrivateKeyLoader.helper';
+import { uploadMessages, statusProgress } from './PrivateKeyLoader.helper';
 
 export const PrivateKeyLoader = ({
   publicKey,
@@ -28,12 +28,16 @@ export const PrivateKeyLoader = ({
 }) => {
   const intl = useIntl();
   const [progressPercent, setProgressPercent] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState('');
+  const [uploadStatus, setUploadStatus] = useState(statusProgress.initial);
   const [uploadMessageId, setUploadMessageId] = useState(
     uploadMessages.initial
   );
 
-  const uploadException = 'exception';
+  const setStatus = (percent, exception, messageId) => {
+    setProgressPercent(percent);
+    setUploadStatus(exception);
+    setUploadMessageId(messageId);
+  };
 
   const { data: privateKeySecret, isLoading } = useQuery(
     'privateKeySecret',
@@ -51,18 +55,23 @@ export const PrivateKeyLoader = ({
   const [existingPrivateKey, setPrivateKey] = usePrivateKey(privateKeySecret);
 
   const processPrivateKey = (privateKey, fileData) => {
-    setProgressPercent(100);
-    const keyPair = EC_KEYPAIR_FROM_PRIVATE_KEY(privateKey);
-    const isKeyCorrect = keyPair?.publicKey === base64ToHex(publicKey);
+    try {
+      const keyPair = EC_KEYPAIR_FROM_PRIVATE_KEY(privateKey);
+      if (keyPair?.publicKey !== base64ToHex(publicKey)) {
+        setStatus(100, statusProgress.exception, uploadMessages.error);
 
-    if (isKeyCorrect) {
-      setUploadMessageId(uploadMessages.done);
-      setUploadStatus('');
+        notification.error({
+          message: intl.formatMessage({
+            id: 'shareData.privkey.error.description',
+          }),
+        });
+        return;
+      }
+      setStatus(100, statusProgress.success, uploadMessages.done);
       setPrivateKey(fileData);
       onSuccess(privateKey);
-    } else {
-      setUploadStatus(uploadException);
-      setUploadMessageId(uploadMessages.error);
+    } catch {
+      setStatus(100, statusProgress.exception, uploadMessages.error);
 
       notification.error({
         message: intl.formatMessage({
@@ -76,6 +85,7 @@ export const PrivateKeyLoader = ({
     if (!file) return;
 
     if (file.size > MAX_PRIVATE_KEY_FILE_SIZE) {
+      setStatus(100, statusProgress.exception, uploadMessages.size);
       notification.error({
         message: intl.formatMessage({
           id: 'notification.shareData.keySize.error',
@@ -95,9 +105,7 @@ export const PrivateKeyLoader = ({
   };
 
   const reset = () => {
-    setProgressPercent(0);
-    setUploadStatus('');
-    setUploadMessageId(uploadMessages.initial);
+    setStatus(0, statusProgress.initial, uploadMessages.initial);
   };
 
   useEffect(() => {
@@ -113,7 +121,9 @@ export const PrivateKeyLoader = ({
   return (
     <>
       <RequestContent>
-        <InfoBlock>{intl.formatMessage({ id: infoTextId })}</InfoBlock>
+        <InfoBlock>
+          {intl.formatMessage({ id: infoTextId }, { br: <br /> })}
+        </InfoBlock>
         <Upload
           type="file"
           accept=".luca"
@@ -141,13 +151,15 @@ export const PrivateKeyLoader = ({
       </RequestContent>
       <FinishButtonWrapper
         align={
-          uploadStatus !== uploadException ? 'flex-start' : 'space-between'
+          uploadStatus !== statusProgress.exception
+            ? 'flex-start'
+            : 'space-between'
         }
       >
         {footerItem}
         <PrimaryButton
           onClick={reset}
-          hidden={uploadStatus !== uploadException}
+          hidden={uploadStatus !== statusProgress.exception}
         >
           {intl.formatMessage({ id: 'shareData.tryAgain' })}
         </PrimaryButton>

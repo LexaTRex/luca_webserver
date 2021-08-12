@@ -6,7 +6,14 @@ import { useIntl } from 'react-intl';
 
 import { shareData } from 'network/api';
 
-import { reencryptAdditionalData, decryptTrace } from 'utils/crypto';
+import {
+  reencryptAdditionalData,
+  reencryptWithHDEKP,
+  decryptTrace,
+} from 'utils/crypto';
+
+import { SUPPORT_EMAIL } from 'constants/links';
+
 import {
   SubHeader,
   StepLabel,
@@ -43,6 +50,10 @@ export const ShareDataStep = ({
           .map(trace => {
             try {
               const decryptedTrace = decryptTrace(trace, privateKey);
+              const hdEncryptedTraceData = reencryptWithHDEKP(
+                decryptedTrace.data,
+                transfer.department.publicHDEKP
+              );
               const reencryptedAdditionalData = reencryptAdditionalData(
                 trace.additionalData,
                 privateKey,
@@ -50,12 +61,13 @@ export const ShareDataStep = ({
               );
 
               return {
+                isHDEncrypted: true,
                 traceId: trace.traceId,
                 version: decryptedTrace.version,
                 keyId: decryptedTrace.keyId,
                 publicKey: decryptedTrace.publicKey,
                 verification: decryptedTrace.verification,
-                data: decryptedTrace.data,
+                data: hdEncryptedTraceData,
                 additionalData: reencryptedAdditionalData,
               };
             } catch (error) {
@@ -65,18 +77,31 @@ export const ShareDataStep = ({
           })
           .filter(decryptedTrace => decryptedTrace !== null);
 
-        try {
-          await shareData({
-            traces: { traces },
-            locationTransferId: transfer.transferId,
-          });
-          next();
-        } catch {
+        const result = await shareData({
+          traces: { traces },
+          locationTransferId: transfer.transferId,
+        });
+        if (result.status !== 204) {
+          const emailLink = `mailto:${SUPPORT_EMAIL}`;
           notification.error({
-            message: intl.formatMessage({
-              id: 'notification.shareData.error',
-            }),
+            message: intl.formatMessage(
+              {
+                id: 'notification.shareData.error',
+              },
+              {
+                // eslint-disable-next-line react/display-name
+                a: (...chunks) => (
+                  <a href={emailLink} rel="noopener noreferrer">
+                    {chunks}
+                  </a>
+                ),
+                status: result.status,
+                email: SUPPORT_EMAIL,
+              }
+            ),
           });
+        } else {
+          next();
         }
       })
     );

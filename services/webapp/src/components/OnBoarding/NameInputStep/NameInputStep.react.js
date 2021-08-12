@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { TextInput } from 'components/TextInput';
-import { MAX_NAME_LENGTH } from 'constants/valueLength';
+import { useNameValidator } from 'hooks/useValidators';
 
 import {
   StyledForm,
@@ -16,6 +16,7 @@ import {
 export function NameInputStep({ onSubmit }) {
   const { formatMessage } = useIntl();
   const [isReady, setIsReady] = useState(false);
+  const nameValidator = useNameValidator();
 
   const onValuesChange = useCallback(
     (_, { firstName, lastName }) => setIsReady(firstName && lastName),
@@ -35,36 +36,18 @@ export function NameInputStep({ onSubmit }) {
           autoFocus
           tabIndex="1"
           name="firstName"
+          rules={nameValidator}
           autocomplete="given-name"
           label={formatMessage({ id: 'Form.FirstName.Label' })}
           placeholder={formatMessage({ id: 'Form.FirstName.Placeholder' })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_NAME_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
         />
         <TextInput
           tabIndex="2"
           name="lastName"
+          rules={nameValidator}
           autocomplete="family-name"
           label={formatMessage({ id: 'Form.LastName.Label' })}
           placeholder={formatMessage({ id: 'Form.LastName.Placeholder' })}
-          rules={[
-            {
-              required: true,
-              message: formatMessage({ id: 'Form.Validation.isRequired' }),
-            },
-            {
-              max: MAX_NAME_LENGTH,
-              message: formatMessage({ id: 'Form.Validation.toLong' }),
-            },
-          ]}
         />
       </StyledContent>
       <StyledFooter>

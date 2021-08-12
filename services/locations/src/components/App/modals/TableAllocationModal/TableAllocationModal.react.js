@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 // Api
-import { getTraces, forceCheckoutSingleTrace } from 'network/api';
+import { getTraces, forceCheckoutByOperator } from 'network/api';
 
 // Components
 import { TableHeader } from './TableHeader';
@@ -45,7 +45,7 @@ export const TableAllocationModal = ({ privateKey, location }) => {
   };
 
   const onCheckoutTable = traceIds => {
-    Promise.all(traceIds.map(traceId => forceCheckoutSingleTrace(traceId)))
+    Promise.all(traceIds.map(traceId => forceCheckoutByOperator(traceId)))
       .then(responses => {
         if (responses.some(response => response.status !== 204)) {
           throw new Error('checkout failed');

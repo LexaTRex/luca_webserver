@@ -24,6 +24,8 @@ import {
 } from './cryptoKeyOperations';
 import { sanitizeObject, sanitizeForCSV } from './sanitizer';
 
+const STATIC_USER_TYPE = 'static';
+
 const userDataSchema = z.object({
   fn: z.string().transform(sanitizeForCSV),
   ln: z.string().transform(sanitizeForCSV),
@@ -37,8 +39,24 @@ const userDataSchema = z.object({
   v: z.number(),
 });
 
+const getEncryptedTraceData = encryptedTrace =>
+  encryptedTrace.isHDEncrypted
+    ? DECRYPT_DLIES_USING_HDEKP(
+        base64ToHex(encryptedTrace.data.publicKey),
+        base64ToHex(encryptedTrace.data.data),
+        base64ToHex(encryptedTrace.data.iv),
+        base64ToHex(encryptedTrace.data.mac)
+      )
+    : base64ToHex(encryptedTrace.data);
+
 export const additionalDataSchema = z
-  .object({ table: z.number().optional() })
+  .object({
+    table: z
+      .string()
+      .refine(tableNr => tableNr.length && !Number.isNaN(Number(tableNr)))
+      .or(z.number())
+      .optional(),
+  })
   .catchall(z.string())
   .transform(sanitizeObject);
 
@@ -81,11 +99,10 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
   if (encryptedTrace.version === 4) {
     encKey = encKey.slice(0, 32);
   }
-  const traceData = DECRYPT_AES_CTR(
-    base64ToHex(encryptedTrace.data),
-    encKey,
-    iv
-  );
+
+  const hdDecryptedData = getEncryptedTraceData(encryptedTrace);
+
+  const traceData = DECRYPT_AES_CTR(hdDecryptedData, encKey, iv);
 
   const userId = hexToUuid(traceData.slice(0, 32));
   const userDataKey = traceData.slice(32, 64);
@@ -101,7 +118,7 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
   }
 
   const expectedMac = HMAC_SHA256(
-    int32ToHex(encryptedTrace.checkin) + base64ToHex(encryptedTrace.data),
+    int32ToHex(encryptedTrace.checkin) + hdDecryptedData,
     base64ToHex(verificationSecret)
   ).slice(0, 16);
 
@@ -141,10 +158,12 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
     };
   }
 
+  const hdDecryptedData = getEncryptedTraceData(encryptedTrace);
+
   const traceData = DECRYPT_DLIES_WITHOUT_MAC(
     privateKey,
     base64ToHex(encryptedTrace.publicKey),
-    base64ToHex(encryptedTrace.data),
+    hdDecryptedData,
     base64ToHex(encryptedTrace.publicKey).slice(0, 32)
   );
 
@@ -156,7 +175,7 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
   const authKey = KDF_SHA256(userDataSecret, '02');
 
   const expectedMac = HMAC_SHA256(
-    int32ToHex(encryptedTrace.checkin) + base64ToHex(encryptedTrace.data),
+    int32ToHex(encryptedTrace.checkin) + hdDecryptedData,
     authKey
   ).slice(0, 16);
 
@@ -173,6 +192,13 @@ export async function decryptDynamicDeviceTrace(encryptedTrace) {
   const { userData, isInvalid } = decryptUser(encryptedUser, encKey);
 
   if (isInvalid) {
+    return { userData: null, isInvalid: true, isDynamicDevice: false };
+  }
+
+  if (encryptedUser.deviceType === STATIC_USER_TYPE) {
+    console.error(
+      'Device type mismatch for encrypted trace and decrypted user data'
+    );
     return { userData: null, isInvalid: true, isDynamicDevice: false };
   }
 
