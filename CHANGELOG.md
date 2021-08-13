@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.8.1 (2021-08-13)
+* **health-department:** fix: dependency resolution jszip
+
 ### 1.8.0 (2021-08-12)
 * **backend:** fix: limit number of locations in location transfers
 * **backend:** feat: check integrity of device types in tracing processes

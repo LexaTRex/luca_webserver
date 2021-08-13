@@ -2,7 +2,7 @@
 # https://nvd.nist.gov/vuln/detail/CVE-2021-23368
 # Regular Expression Denial of Service (ReDoS)
 # can only be leveraged during source map parsing
-# there is currently no version of stylelint which supports a fixed version of postcss
+# There is currently no version of stylelint which supports a fixed version of postcss
 1693
 
 # ws
@@ -36,3 +36,9 @@
 # Open Redirect
 # This is only used by react-scripts for development purposes.
 1776
+
+# react-data-export
+# https://nvd.nist.gov/vuln/detail/CVE-2021-23413
+# Insufficient Information
+# There is currently no version of react-data-export which supports a fixed version of jszip.
+1774
