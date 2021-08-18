@@ -475,7 +475,7 @@
     "autocomplete.fill.notSupported.description": "Dieser Ort kann leider nicht benutzt werden. Bitte wende dich an den Support.",
     "error.registerBadge.alreadyRegistered": "Schlüsselanhänger ist bereits registriert.",
     "registration.server.error.tooManyRequests.title": "Zu viele Anfragen!",
-    "registration.server.error.tooManyRequests.desc": "Das waren etwas zu viele Anfragen. Bitte warte einige Zeit und versuche er erneut.",
+    "registration.server.error.tooManyRequests.desc": "Das waren etwas zu viele Anfragen. Bitte warte einige Zeit und versuche es später erneut.",
     "settings.location.checkin.additionalData.input.error": "Zusätzliche informationen können nicht mit \"_\" starten.",
     "registration.server.error.notActivated.title": "Account nicht aktiviert.",
     "registration.server.error.notActivated.desc": "Dein Account ist noch nicht aktiviert. Bitte gehe zu deinem E-Mail Postfach und bestätige deine E-Mail Adresse.",
@@ -649,7 +649,16 @@
     "modal.registerOperator.keyTestGenerateKey": "Neuen Schlüssel generieren",
     "modal.registerOperator.keyTestConfirm": "Bestätigen",
     "header.dataRequests": "Datenanfragen",
-    "profile": "Profil",
     "helpCenter.tooltip.copy": "Kopieren",
-    "helpCenter.tooltip.supportCode": "Support Code"
+    "helpCenter.tooltip.supportCode": "Support Code",
+    "dataTransfers.list.complete.table.header.approvedAt": "Freigegeben",
+    "modal.createGroup.googlePlacesInput.title": "Verwendung von Google-Diensten für die Adressangabe erlauben",
+    "modal.createGroup.googlePlacesInput.description": "Möchtest du bei der Angabe deiner Adresse auf Google-Dienste zugreifen? Die Verwendung von Google-Diensten vereinfacht die Adresssuche und ist Voraussetzung für die Nutzung des automatischen Check-outs in deinem luca-Standort.",
+    "location.checkout.confirmSingleCheckoutText": "Möchtest du diesen Gast wirklich aus diesem Bereich auschecken? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "location.checkout.confirmTableCheckoutText": "Möchtest du wirklich alle Gäste von diesem Tisch auschecken? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "shareData.finish.closeTab": "Du kannst diesen Tab jetzt schließen.",
+    "settings.location.editAddressLink": "Addresse ändern",
+    "browserWarning.headline": "Fehler!",
+    "browserWarning.description1": "Dieser Browser wird leider nicht unterstützt.",
+    "browserWarning.description2": "Am besten funktionieren Chrome oder Safari."
 }

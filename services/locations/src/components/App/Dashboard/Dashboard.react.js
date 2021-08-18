@@ -101,22 +101,20 @@ export const Dashboard = ({ operator }) => {
       <LocationSider width={300}>
         <LocationList />
       </LocationSider>
-      <Layout>
-        <MainContent>
-          <Switch>
-            <Route path={LOCATION_ROUTE}>
-              <Location isOperatorTrusted={isOperatorTrusted} />
-            </Route>
-            <Route path={GROUP_ROUTE}>
-              <EmptyGroup />
-            </Route>
-            <Route path={BASE_GROUP_ROUTE}>
-              <EmptyGroup />
-            </Route>
-            <Redirect to={BASE_GROUP_ROUTE} />
-          </Switch>
-        </MainContent>
-      </Layout>
+      <MainContent>
+        <Switch>
+          <Route path={LOCATION_ROUTE}>
+            <Location isOperatorTrusted={isOperatorTrusted} />
+          </Route>
+          <Route path={GROUP_ROUTE}>
+            <EmptyGroup />
+          </Route>
+          <Route path={BASE_GROUP_ROUTE}>
+            <EmptyGroup />
+          </Route>
+          <Redirect to={BASE_GROUP_ROUTE} />
+        </Switch>
+      </MainContent>
     </Layout>
   );
 };

@@ -84,6 +84,8 @@ paths:
               $ref: '#/components/schemas/UpdatableUser'
     delete:
       summary: mark the user object for deletion
+      description:
+        requestBody needs to contain an object with the signature key/value
       parameters:
         - in: path
           name: userId
@@ -93,15 +95,6 @@ paths:
           required: true
       tags:
         - Users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                signature:
-                  type: string
       responses:
         '204':
           description: Success

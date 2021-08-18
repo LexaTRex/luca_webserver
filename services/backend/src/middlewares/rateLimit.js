@@ -3,7 +3,7 @@ const moment = require('moment');
 const RateLimit = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis');
 const parsePhoneNumber = require('libphonenumber-js/max');
-const { SHA256 } = require('@lucaapp/crypto');
+const { SHA256, bytesToHex } = require('@lucaapp/crypto');
 const { client } = require('../utils/redis');
 
 const { isInternalIp, isRateLimitExemptIp } = require('../utils/ipChecks');
@@ -21,7 +21,9 @@ const DEFAULT_RATE_LIMIT_HOUR = config.get(
 const DEFAULT_RATE_LIMIT_DAY = config.get(`rate_limits.default_rate_limit_day`);
 
 const ipKeyGenerator = request => {
-  return `${request.ip}:${request.baseUrl}${request.route.path}`.toLowerCase();
+  return `${SHA256(bytesToHex(request.ip))}:${request.baseUrl}${
+    request.route.path
+  }`.toLowerCase();
 };
 
 const globalKeyGenerator = request => {
@@ -30,7 +32,7 @@ const globalKeyGenerator = request => {
 
 const phoneNumberKeyGenerator = request => {
   const phone = parsePhoneNumber(request.body.phone, 'DE');
-  const hashedPhoneNumber = SHA256(phone.number);
+  const hashedPhoneNumber = SHA256(bytesToHex(phone.number));
   return `phone:${hashedPhoneNumber}`;
 };
 

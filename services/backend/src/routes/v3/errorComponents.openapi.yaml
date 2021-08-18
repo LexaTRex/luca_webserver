@@ -2,33 +2,6 @@ components:
   schemas:
     BadRequest:
       description: Bad Request
-      content:
-        application/json:
-          schema:
-            properties:
-              errors:
-                type: array
-                uniqueItems: true
-                minItems: 1
-                items:
-                  required:
-                    - validation
-                    - code
-                    - message
-                  properties:
-                    validation:
-                      type: string
-                      minLength: 1
-                    code:
-                      type: string
-                      minLength: 1
-                    path:
-                      type: array
-                      items:
-                        properties: {}
-                    message:
-                      type: string
-                      minLength: 1
     TooManyRequestsDay:
       description: Too many requests per Day
     TooManyRequestsHour:

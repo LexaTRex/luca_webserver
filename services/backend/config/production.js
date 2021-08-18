@@ -1,3 +1,5 @@
+const version = require('../version.json');
+
 module.exports = {
   e2e: false,
   debug: false,
@@ -5,4 +7,5 @@ module.exports = {
   loglevel: 'info',
   hostname: 'app.luca-app.de',
   shutdownDelay: 15,
+  version,
 };

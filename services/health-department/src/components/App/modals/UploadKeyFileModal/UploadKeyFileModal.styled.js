@@ -1,20 +1,36 @@
 import styled from 'styled-components';
+import { Upload } from 'antd';
 
-export const Info = styled.div`
-  margin-bottom: 24px;
+export const InfoBlock = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 21px;
 `;
 
-export const ButtonRow = styled.div`
+export const RequestContent = styled.div`
+  margin-bottom: 40px;
+`;
+
+export const UploadMessage = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px !important;
+  text-align: center;
+`;
+
+export const UploadProgress = styled.div`
   display: flex;
-  justify-content: center;
+  width: 200px;
 `;
 
-export const HiddenUpload = styled.input`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+export const FileUpload = styled(Upload)`
+  display: flex;
   width: 100%;
-  opacity: 0;
-  z-index: 2;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  text-align: center;
+  height: 172px;
+  border: 2px solid rgb(151, 151, 151);
+  border-radius: 0;
 `;

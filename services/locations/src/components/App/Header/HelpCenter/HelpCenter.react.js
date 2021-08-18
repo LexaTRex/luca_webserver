@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Menu, Dropdown, notification } from 'antd';
+import { Menu, Dropdown, notification, Tooltip } from 'antd';
 import Icon, {
   CopyOutlined,
   PhoneOutlined,
@@ -34,6 +34,10 @@ export const HelpCenter = ({ supportCode }) => {
       message: intl.formatMessage({ id: 'tooltip.copy' }),
     });
   };
+  const copyTooltipTitle = intl.formatMessage({
+    id: 'helpCenter.tooltip.copy',
+  });
+
   const menu = (
     <Menu data-cy="dropdownMenu">
       <Menu.ItemGroup
@@ -42,17 +46,29 @@ export const HelpCenter = ({ supportCode }) => {
         <Menu.Item onClick={() => onCopy(HELPCENTER.mail)}>
           <MailOutlined style={iconStyle} />
           <MenuText>{HELPCENTER.mail}</MenuText>
-          <CopyOutlined style={{ ...iconStyle, float: 'right' }} />
+          <Tooltip title={copyTooltipTitle}>
+            <CopyOutlined style={{ ...iconStyle, float: 'right' }} />
+          </Tooltip>
         </Menu.Item>
         <Menu.Item onClick={() => onCopy(HELPCENTER.phone)}>
           <PhoneOutlined style={iconStyle} />
           <MenuText>{HELPCENTER.phone}</MenuText>
-          <CopyOutlined style={{ ...iconStyle, float: 'right' }} />
+          <Tooltip title={copyTooltipTitle}>
+            <CopyOutlined style={{ ...iconStyle, float: 'right' }} />
+          </Tooltip>
         </Menu.Item>
         <Menu.Item onClick={() => onCopy(supportCode)}>
           <KeyOutlined style={iconStyle} />
-          <MenuText>{supportCode}</MenuText>
-          <CopyOutlined style={{ ...iconStyle, float: 'right' }} />
+          <Tooltip
+            title={intl.formatMessage({
+              id: 'helpCenter.tooltip.supportCode',
+            })}
+          >
+            <MenuText>{supportCode}</MenuText>
+          </Tooltip>
+          <Tooltip title={copyTooltipTitle}>
+            <CopyOutlined style={{ ...iconStyle, float: 'right' }} />
+          </Tooltip>
         </Menu.Item>
       </Menu.ItemGroup>
       <Menu.ItemGroup title={intl.formatMessage({ id: 'general.information' })}>

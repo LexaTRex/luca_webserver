@@ -18,6 +18,7 @@ import {
   getMaxLengthRule,
   getTableNoRule,
   getCheckoutRadiusRule,
+  getNoNumericRule,
 } from 'utils/validatorRules';
 import { useMemo } from 'react';
 
@@ -39,6 +40,7 @@ export const usePersonNameValidator = fieldName => {
     () => [
       getRequiredRule(intl, fieldName),
       getSafeStringRule(intl, fieldName),
+      getNoNumericRule(intl, fieldName),
       getMaxLengthRule(intl, MAX_NAME_LENGTH),
     ],
     [intl, fieldName]
@@ -51,6 +53,7 @@ export const useStreetValidator = fieldName => {
     () => [
       getRequiredRule(intl, fieldName),
       getSafeStringRule(intl, fieldName),
+      getNoNumericRule(intl, fieldName),
       getMaxLengthRule(intl, MAX_STREET_LENGTH),
     ],
     [intl, fieldName]
@@ -82,6 +85,7 @@ export const useCityValidator = fieldName => {
     () => [
       getRequiredRule(intl, fieldName),
       getSafeStringRule(intl, fieldName),
+      getNoNumericRule(intl, fieldName),
       getMaxLengthRule(intl, MAX_CITY_LENGTH),
     ],
     [intl, fieldName]

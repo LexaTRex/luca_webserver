@@ -26,19 +26,6 @@ paths:
     delete:
       summary: Delete a redeemed test
       tags: [Tests]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                hash:
-                  type: string
-                tag:
-                  type: string
-              required:
-                - hash
-                - tag
       responses:
         '204':
           description: Success
@@ -47,4 +34,6 @@ paths:
         '404':
           description: Test with the given hash not found
       description:
-        'Delete a test from database to enable users to redeem a test after e.g. they changed the phone.'
+        'Delete a test from database to enable users to redeem a test after e.g.
+        they changed the phone. requestBody needs to be an object with hash,tag
+        key/value'

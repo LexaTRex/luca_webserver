@@ -1,5 +1,33 @@
 # Changelog
 
+### 1.9.0 (2021-08-18)
+
+* **backend:** fix: openAPI JSON
+* **backend:** feat: send email to operator after approved location transfer
+* **backend:** feat: add note to tracing proccess
+* **backend:** feat: add rate limit for change operator email
+* **backend:** feat: hash IP addresses in rate-limit redis
+* **locations:** fix: area list not scrollable
+* **locations:** fix: native tooltips for icons
+* **locations:** fix: popconfirm texts for checkout guests
+* **locations:** feat: notify that luca does not support IE
+* **locations:** feat: add timestamp of answered data request to data requests view
+* **locations:** feat: add tooltip for support code in help center
+* **health-department:** fix: button alignment in track infection modal
+* **health-department:** fix: native tooltips for icons
+* **health-department:** feat: notify that luca does not support IE
+* **health-department:** feat: improved wording in process details table
+* **health-department:** feat: add help center
+* **health-department:** feat: update design of private key modal
+* **contact-form:** fix: possibility to enter a streetname with only numbers
+* **contact-form:** fix: native tooltips for icons
+* **scanner:** fix: native tooltips for icons
+* **scanner:** fix: use correct camera depending on the used device
+* **webapp:** fix: possibility to enter a streetname with only numbers
+* **webapp:** fix: native tooltips for icons
+* **webapp:** feat: extend check-in history to 28 days
+* **webapp:** feat: remove Checkbox for privacy policy
+
 ### 1.8.1 (2021-08-13)
 * **health-department:** fix: dependency resolution jszip
 

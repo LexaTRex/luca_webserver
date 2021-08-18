@@ -31,6 +31,10 @@ const MAIL_TEMPLATE_IDS = {
     de: 3008045,
     en: 3023695,
   },
+  locationTransferApprovalNotification: {
+    de: 3040874,
+    en: 3041093,
+  },
 };
 
 const MAIL_TEMPLATE_TITLES = {
@@ -66,6 +70,12 @@ const MAIL_TEMPLATE_TITLES = {
     de: 'Passwort erfolgreich geändert',
     en: 'Password successfully changed',
   },
+  locationTransferApprovalNotification: {
+    de: ({ departmentName }) =>
+      `Bestätigung der Datenfreigabe an das Gesundheitsamt ${departmentName}`,
+    en: ({ departmentName }) =>
+      `Data Sharing for Health Department ${departmentName} Completed`,
+  },
 };
 
 const getMailId = (id, lang) => {
@@ -75,11 +85,17 @@ const getMailId = (id, lang) => {
   return MAIL_TEMPLATE_IDS[`${id}`][`${lang || 'de'}`];
 };
 
-const getMailTitle = (id, lang) => {
+const getMailTitle = (id, lang, parameters = {}) => {
   if (!(id in MAIL_TEMPLATE_TITLES)) {
     throw new Error('Invalid email template title');
   }
-  return MAIL_TEMPLATE_TITLES[`${id}`][`${lang || 'de'}`];
+  const title = MAIL_TEMPLATE_TITLES[`${id}`][`${lang || 'de'}`];
+
+  if (typeof title === 'function') {
+    return title(parameters);
+  }
+
+  return title;
 };
 
 module.exports = {

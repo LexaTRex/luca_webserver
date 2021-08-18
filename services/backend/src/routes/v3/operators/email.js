@@ -33,6 +33,7 @@ router.patch(
   '/',
   requireOperator,
   requireNonDeletedUser,
+  limitRequestsPerHour('operator_email_patch_ratelimit_hour'),
   validateSchema(updateMailSchema),
   async (request, response) => {
     const operator = request.user;

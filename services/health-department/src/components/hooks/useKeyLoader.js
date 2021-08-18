@@ -31,6 +31,7 @@ const promptForKeyFile = (openModal, intl, keysData) =>
       content: (
         <UploadKeyFileModal keysData={keysData} onFinish={() => resolve()} />
       ),
+      wide: false,
       closable: false,
     });
   });

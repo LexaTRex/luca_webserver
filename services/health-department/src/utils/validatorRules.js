@@ -1,8 +1,9 @@
 import {
   validateEmail,
+  validateNoNumeric,
   validatePhoneNumber,
   validateSafeString,
-} from './validators.helper';
+} from './validatorRules.helper';
 
 export const getRequiredRule = (intl, fieldName) => ({
   required: true,
@@ -17,6 +18,13 @@ export const getPhoneRule = intl => ({
 
 export const getSafeStringRule = (intl, fieldName) => ({
   validator: validateSafeString,
+  message: intl.formatMessage({
+    id: `userManagement.error.${fieldName}.invalid`,
+  }),
+});
+
+export const getNoNumericRule = (intl, fieldName) => ({
+  validator: validateNoNumeric,
   message: intl.formatMessage({
     id: `userManagement.error.${fieldName}.invalid`,
   }),

@@ -56,35 +56,40 @@ export const DECRYPTION_FAILED = 'DECRYPTION_FAILED';
  * @returns Contact data of the guest
  */
 export const decryptUserTransfer = async userTransferId => {
-  // also referred to as guest data transfer object
-  const userDataTransferObject = await getUserTransferById(userTransferId);
-  const dailyPrivateKey = await getDailyPrivateKey(
-    userDataTransferObject.keyId
-  );
-  const userSecrets = JSON.parse(
-    hexToBytes(
-      DECRYPT_DLIES(
-        dailyPrivateKey,
-        base64ToHex(userDataTransferObject.publicKey),
-        base64ToHex(userDataTransferObject.data),
-        base64ToHex(userDataTransferObject.iv),
-        base64ToHex(userDataTransferObject.mac)
+  try {
+    // also referred to as guest data transfer object
+    const userDataTransferObject = await getUserTransferById(userTransferId);
+    const dailyPrivateKey = await getDailyPrivateKey(
+      userDataTransferObject.keyId
+    );
+    const userSecrets = JSON.parse(
+      hexToBytes(
+        DECRYPT_DLIES(
+          dailyPrivateKey,
+          base64ToHex(userDataTransferObject.publicKey),
+          base64ToHex(userDataTransferObject.data),
+          base64ToHex(userDataTransferObject.iv),
+          base64ToHex(userDataTransferObject.mac)
+        )
       )
-    )
-  );
+    );
 
-  const userId = userSecrets.uid;
-  const userDataSecret = base64ToHex(userSecrets.uds);
-  const encryptedUser = await getEncryptedUserContactData(userId);
+    const userId = userSecrets.uid;
+    const userDataSecret = base64ToHex(userSecrets.uds);
+    const encryptedUser = await getEncryptedUserContactData(userId);
 
-  const userDataEncryptionKey =
-    userSecrets.qrv === QR_V4
-      ? base64ToHex(userSecrets.uds)
-      : KDF_SHA256(userDataSecret, '01').slice(0, 32);
+    const userDataEncryptionKey =
+      userSecrets.qrv === QR_V4
+        ? base64ToHex(userSecrets.uds)
+        : KDF_SHA256(userDataSecret, '01').slice(0, 32);
 
-  const { userData } = decryptUser(encryptedUser, userDataEncryptionKey);
+    const { userData } = decryptUser(encryptedUser, userDataEncryptionKey);
 
-  return { ...userData, uuid: userId };
+    return { ...userData, uuid: userId };
+  } catch (error) {
+    console.error('Error in decryptUserTransfer:', error);
+    throw error;
+  }
 };
 
 /**
@@ -99,23 +104,28 @@ export const decryptUserTransfer = async userTransferId => {
  * @returns Decrypted trace with user and additional data
  */
 export const decryptTrace = async encryptedTrace => {
-  const isStaticDevice = encryptedTrace.deviceType === STATIC_DEVICE_TYPE;
+  try {
+    const isStaticDevice = encryptedTrace.deviceType === STATIC_DEVICE_TYPE;
 
-  const { userData, isInvalid } = isStaticDevice
-    ? await decryptStaticDeviceTrace(encryptedTrace)
-    : await decryptDynamicDeviceTrace(encryptedTrace);
+    const { userData, isInvalid } = isStaticDevice
+      ? await decryptStaticDeviceTrace(encryptedTrace)
+      : await decryptDynamicDeviceTrace(encryptedTrace);
 
-  const additionalData = decryptAdditionalData(encryptedTrace, isInvalid);
-  // santize data here
+    const additionalData = decryptAdditionalData(encryptedTrace, isInvalid);
+    // santize data here
 
-  return {
-    traceId: encryptedTrace.traceId,
-    checkin: encryptedTrace.checkin,
-    checkout: encryptedTrace.checkout,
-    userData: sanitizeObject(userData),
-    additionalData: sanitizeObject(additionalData),
-    isInvalid,
-  };
+    return {
+      traceId: encryptedTrace.traceId,
+      checkin: encryptedTrace.checkin,
+      checkout: encryptedTrace.checkout,
+      userData: sanitizeObject(userData),
+      additionalData: sanitizeObject(additionalData),
+      isInvalid,
+    };
+  } catch (error) {
+    console.error('Error in decryptTrace', error);
+    throw error;
+  }
 };
 
 /**
@@ -174,56 +184,61 @@ const getUserTracesV3 = (userSecrets, userId) => {
  * @returns Id of the tracing process
  */
 export const initiateUserTracingProcess = async (tan, lang) => {
-  // also referred to as guest data transfer object
-  const userDataTransferObject = await getUserTransferByTan(tan);
-  const dailyPrivateKey = await getDailyPrivateKey(
-    userDataTransferObject.keyId
-  );
-  if (!dailyPrivateKey) {
-    console.error('invalid dailyPrivateKey');
-  }
-
-  let userSecrets;
   try {
-    userSecrets = JSON.parse(
-      hexToBytes(
-        DECRYPT_DLIES(
-          dailyPrivateKey,
-          base64ToHex(userDataTransferObject.publicKey),
-          base64ToHex(userDataTransferObject.data),
-          base64ToHex(userDataTransferObject.iv),
-          base64ToHex(userDataTransferObject.mac)
-        )
-      )
+    // also referred to as guest data transfer object
+    const userDataTransferObject = await getUserTransferByTan(tan);
+    const dailyPrivateKey = await getDailyPrivateKey(
+      userDataTransferObject.keyId
     );
-  } catch {
-    return DECRYPTION_FAILED;
+    if (!dailyPrivateKey) {
+      console.error('invalid dailyPrivateKey');
+    }
+
+    let userSecrets;
+    try {
+      userSecrets = JSON.parse(
+        hexToBytes(
+          DECRYPT_DLIES(
+            dailyPrivateKey,
+            base64ToHex(userDataTransferObject.publicKey),
+            base64ToHex(userDataTransferObject.data),
+            base64ToHex(userDataTransferObject.iv),
+            base64ToHex(userDataTransferObject.mac)
+          )
+        )
+      );
+    } catch {
+      return DECRYPTION_FAILED;
+    }
+
+    let userTraces;
+    const userId = userSecrets.uid.replaceAll('-', '');
+    switch (userSecrets.v) {
+      case 2:
+        userTraces = await getUserTracesV2(userSecrets, userId);
+        break;
+      case 3:
+        userTraces = await getUserTracesV3(userSecrets, userId);
+        break;
+      default:
+        return INVALID_VERSION;
+    }
+
+    if (userTraces.length === 0) {
+      return EMPTY_HISTORY;
+    }
+
+    const { tracingProcessId } = await createLocationTransfer({
+      locations: userTraces,
+      userTransferId: userDataTransferObject.uuid,
+      lang,
+    });
+
+    return tracingProcessId;
+  } catch (error) {
+    console.error('Error in initiateUserTracingProcess:', error);
+    throw error;
   }
-
-  let userTraces;
-  const userId = userSecrets.uid.replaceAll('-', '');
-  switch (userSecrets.v) {
-    case 2:
-      userTraces = await getUserTracesV2(userSecrets, userId);
-      break;
-    case 3:
-      userTraces = await getUserTracesV3(userSecrets, userId);
-      break;
-    default:
-      return INVALID_VERSION;
-  }
-
-  if (userTraces.length === 0) {
-    return EMPTY_HISTORY;
-  }
-
-  const { tracingProcessId } = await createLocationTransfer({
-    locations: userTraces,
-    userTransferId: userDataTransferObject.uuid,
-    lang,
-  });
-
-  return tracingProcessId;
 };
 
 const isStaticV3 = serialNumber => {
@@ -251,79 +266,84 @@ const isStaticV4 = serialNumber => {
  * @returns Id of the tracing process
  */
 export const initiateStaticUserTracingProcess = async (serialNumber, lang) => {
-  let userId;
-  let userDataSecret;
-  let userTracingSecret;
-  let qrVersion;
+  try {
+    let userId;
+    let userDataSecret;
+    let userTracingSecret;
+    let qrVersion;
 
-  if (isStaticV3(serialNumber)) {
-    qrVersion = QR_V3;
-    const entropy = base32CrockfordToHex(serialNumber);
+    if (isStaticV3(serialNumber)) {
+      qrVersion = QR_V3;
+      const entropy = base32CrockfordToHex(serialNumber);
 
-    userDataSecret = KDF_SHA256(entropy, '01');
-    const tracingSeed = KDF_SHA256(entropy, '02').slice(0, 32);
+      userDataSecret = KDF_SHA256(entropy, '01');
+      const tracingSeed = KDF_SHA256(entropy, '02').slice(0, 32);
 
-    const rawUserId = KDF_SHA256(tracingSeed, '01').slice(0, 32);
-    userTracingSecret = KDF_SHA256(tracingSeed, '03').slice(0, 32);
+      const rawUserId = KDF_SHA256(tracingSeed, '01').slice(0, 32);
+      userTracingSecret = KDF_SHA256(tracingSeed, '03').slice(0, 32);
 
-    const hexUserId = `${rawUserId.slice(0, 8)}f${rawUserId.slice(9, 32)}`;
-    userId = hexToUuid(hexUserId);
-  } else if (isStaticV4(serialNumber)) {
-    qrVersion = QR_V4;
-    const realSerialNumber = serialNumber
-      .toLowerCase()
-      .replace(/h$/, 'g')
-      .replace(/2$/, '0');
-    const entropy = base32CrockfordToHex(realSerialNumber);
+      const hexUserId = `${rawUserId.slice(0, 8)}f${rawUserId.slice(9, 32)}`;
+      userId = hexToUuid(hexUserId);
+    } else if (isStaticV4(serialNumber)) {
+      qrVersion = QR_V4;
+      const realSerialNumber = serialNumber
+        .toLowerCase()
+        .replace(/h$/, 'g')
+        .replace(/2$/, '0');
+      const entropy = base32CrockfordToHex(realSerialNumber);
 
-    const argon2hash = await argon2.hash({
-      pass: bytesToUint8Array(hexToBytes(entropy)),
-      salt: ARGON_SALT,
-      time: 11,
-      mem: 32 * 1024,
-      hashLen: 16,
-      parallelism: 1,
-      type: argon2.ArgonType.Argon2id,
+      const argon2hash = await argon2.hash({
+        pass: bytesToUint8Array(hexToBytes(entropy)),
+        salt: ARGON_SALT,
+        time: 11,
+        mem: 32 * 1024,
+        hashLen: 16,
+        parallelism: 1,
+        type: argon2.ArgonType.Argon2id,
+      });
+
+      const seed = argon2hash.hashHex;
+
+      const l1 = await HKDF_SHA256(seed, 64, L1_INFO, '');
+      userDataSecret = l1.slice(0, 32);
+      const tracingSeed = l1.slice(32, 64);
+
+      const l2 = await HKDF_SHA256(tracingSeed, 48, L2_INFO, '');
+
+      const rawUserId = l2.slice(0, 32);
+      userTracingSecret = l2.slice(64, 96);
+
+      const hexUserId = hexToUuid4(rawUserId);
+      userId = hexToUuid(hexUserId);
+    }
+
+    // create user transfer
+    const userSecrets = {
+      v: 2,
+      qrv: qrVersion,
+      uid: userId,
+      uds: hexToBase64(userDataSecret),
+      uts: hexToBase64(userTracingSecret),
+    };
+
+    const dailyKey = await getCurrentDailyKey();
+
+    const userTransferData = ENCRYPT_DLIES(
+      base64ToHex(dailyKey.publicKey),
+      bytesToHex(JSON.stringify(userSecrets))
+    );
+
+    const { tan } = await createUserTransfer({
+      data: hexToBase64(userTransferData.data),
+      iv: hexToBase64(userTransferData.iv),
+      mac: hexToBase64(userTransferData.mac),
+      publicKey: hexToBase64(userTransferData.publicKey),
+      keyId: dailyKey.keyId,
     });
 
-    const seed = argon2hash.hashHex;
-
-    const l1 = await HKDF_SHA256(seed, 64, L1_INFO, '');
-    userDataSecret = l1.slice(0, 32);
-    const tracingSeed = l1.slice(32, 64);
-
-    const l2 = await HKDF_SHA256(tracingSeed, 48, L2_INFO, '');
-
-    const rawUserId = l2.slice(0, 32);
-    userTracingSecret = l2.slice(64, 96);
-
-    const hexUserId = hexToUuid4(rawUserId);
-    userId = hexToUuid(hexUserId);
+    return initiateUserTracingProcess(tan, lang);
+  } catch (error) {
+    console.error('Error in initiateStaticUserTracingProcess:', error);
+    throw error;
   }
-
-  // create user transfer
-  const userSecrets = {
-    v: 2,
-    qrv: qrVersion,
-    uid: userId,
-    uds: hexToBase64(userDataSecret),
-    uts: hexToBase64(userTracingSecret),
-  };
-
-  const dailyKey = await getCurrentDailyKey();
-
-  const userTransferData = ENCRYPT_DLIES(
-    base64ToHex(dailyKey.publicKey),
-    bytesToHex(JSON.stringify(userSecrets))
-  );
-
-  const { tan } = await createUserTransfer({
-    data: hexToBase64(userTransferData.data),
-    iv: hexToBase64(userTransferData.iv),
-    mac: hexToBase64(userTransferData.mac),
-    publicKey: hexToBase64(userTransferData.publicKey),
-    keyId: dailyKey.keyId,
-  });
-
-  return initiateUserTracingProcess(tan, lang);
 };

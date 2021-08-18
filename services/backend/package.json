@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/backend",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -8,21 +8,23 @@
     "node": ">=14.0.0 <15.0.0"
   },
   "scripts": {
+    "build": "tsc -p . && tsconfig-replace-paths -p tsconfig.json && yarn generate:version",
     "start": "node build/src/index.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --files src/index.ts",
-    "build": "tsc -p .",
+    "migrate-dev": "yarn migrate && yarn seed && yarn dev",
     "lint": "eslint src",
     "test": "NODE_ENV=test ts-mocha --paths",
     "coverage": "NODE_ENV=test nyc ts-mocha",
     "db": "yarn sequelize",
     "migrate": "yarn sequelize db:migrate",
+    "migrate:undo": "yarn sequelize db:migrate:undo",
     "seed": "yarn sequelize db:seed:all",
     "drop": "yarn sequelize db:seed:undo:all",
-    "migrate-dev": "yarn migrate && yarn seed && yarn dev",
-    "generate-licenses": "yarn licenses generate-disclaimer > ./licenses-full.txt",
-    "generate-version": "echo \"{\\\"commit\\\":\\\"$GIT_COMMIT\\\", \\\"version\\\":\\\"$GIT_VERSION\\\"}\" > version.json"
+    "generate:disclaimer": "yarn --silent licenses generate-disclaimer > licenses.txt",
+    "generate:version": "echo \"{\\\"commit\\\":\\\"$GIT_COMMIT\\\", \\\"version\\\":\\\"$GIT_VERSION\\\"}\" > version.json"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "10.0.2",
     "@lucaapp/crypto": "2.0.3",
     "@tsconfig/node14": "1.0.1",
     "@types/config": "0.0.39",

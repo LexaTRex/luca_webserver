@@ -6,7 +6,10 @@ const status = require('http-status');
 const { Op } = require('sequelize');
 
 const database = require('../../database');
-const { sendShareDataRequestNotification } = require('../../utils/mailClient');
+const {
+  sendShareDataRequestNotification,
+  locationTransferApprovalNotification,
+} = require('../../utils/mailClient');
 const {
   validateSchema,
   validateParametersSchema,
@@ -545,7 +548,33 @@ router.get(
  */
 const validateTransferId = async (request, response, next) => {
   const transfer = await database.LocationTransfer.findByPk(
-    request.params.transferId
+    request.params.transferId,
+    {
+      include: [
+        {
+          required: true,
+          model: database.Location,
+          attributes: ['name'],
+          include: [
+            {
+              model: database.LocationGroup,
+              attributes: ['name'],
+              paranoid: false,
+            },
+            {
+              model: database.Operator,
+              attributes: ['email', 'firstName', 'lastName'],
+              paranoid: false,
+            },
+          ],
+          paranoid: false,
+        },
+        {
+          model: database.HealthDepartment,
+          attributes: ['name'],
+        },
+      ],
+    }
   );
 
   if (!transfer) {
@@ -630,10 +659,30 @@ router.post(
       .filter(updateTransfer => updateTransfer !== null);
 
     await Promise.all(updatePromises);
-    await transfer.update({
-      isCompleted: true,
-    });
 
+    try {
+      const dateFormat = 'DD.MM.YYYY HH:mm';
+      locationTransferApprovalNotification(
+        transfer.Location.Operator.email,
+        `${transfer.Location.Operator.firstName} ${transfer.Location.Operator.lastName}`,
+        null,
+        {
+          id: transfer.uuid,
+          createdAt: moment(transfer.createdAt).format(dateFormat),
+          updatedAt: moment(transfer.updatedAt).format(dateFormat),
+          departmentName: transfer.HealthDepartment.name,
+          timeFrameFrom: moment(transfer.time[0].value).format(dateFormat),
+          timeFrameTo: moment(transfer.time[1].value).format(dateFormat),
+          locationName:
+            transfer.Location.name || transfer.Location.LocationGroup.name,
+        }
+      );
+      await transfer.update({
+        isCompleted: true,
+      });
+    } catch (error) {
+      logger.error({ message: 'failed to send email', error });
+    }
     return response.sendStatus(status.NO_CONTENT);
   }
 );

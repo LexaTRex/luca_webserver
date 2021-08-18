@@ -6,6 +6,7 @@ import { getHealthDepartment } from 'network/api';
 import { Profile } from './Profile';
 import { LinkMenu } from './LinkMenu';
 import { Headline } from './Headline';
+import { HelpCenter } from './HelpCenter';
 import { LogoutButton } from './LogoutButton';
 import { HeaderWrapper, MenuWrapper } from './Header.styled';
 
@@ -24,6 +25,7 @@ export const Header = ({ profileData }) => {
       <Headline data-cy="header-headline" />
       <MenuWrapper data-cy="header-menu-wrapper">
         <Profile healthDepartment={healthDepartment} />
+        <HelpCenter />
         <LinkMenu />
         <LogoutButton />
       </MenuWrapper>

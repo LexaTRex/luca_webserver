@@ -42,6 +42,7 @@ export const Header = ({ operator }) => {
       <Title>
         <Link
           to={groupId ? `${BASE_GROUP_ROUTE}${groupId}` : `${BASE_GROUP_ROUTE}`}
+          style={{ lineHeight: 0 }}
         >
           <Logo src={LucaLogo} data-cy="home" />
         </Link>

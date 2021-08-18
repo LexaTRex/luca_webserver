@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
+  position: sticky;
+  bottom: 0;
   display: flex;
-  padding: 8px 0 8px 42px;
+  padding: 24px 0 20px 42px;
   cursor: pointer;
+  background-color: #f3f5f7;
 `;
 
 export const CreateText = styled.div`

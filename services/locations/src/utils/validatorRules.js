@@ -10,10 +10,10 @@ import {
   validateSafeString,
   validateZipCode,
   validateEmail,
+  validateNoNumeric,
 } from './validatorRules.helper';
 import { MAX_TABLE_NUMBER, MIN_TABLE_NUMBER } from '../constants/tableNumber';
 
-// Basic validation
 export const getRequiredRule = (intl, fieldName) => ({
   required: true,
   whitespace: true,
@@ -25,12 +25,16 @@ export const getSafeStringRule = (intl, fieldName) => ({
   message: intl.formatMessage({ id: `error.${fieldName}.invalid` }),
 });
 
+export const getNoNumericRule = (intl, fieldName) => ({
+  validator: validateNoNumeric,
+  message: intl.formatMessage({ id: `error.${fieldName}.invalid` }),
+});
+
 export const getMaxLengthRule = (intl, max) => ({
   max,
   message: intl.formatMessage({ id: 'error.length' }),
 });
 
-//
 export const getPhoneRule = intl => ({
   validator: validatePhoneNumber,
   message: intl.formatMessage({ id: 'error.phone.invalid' }),

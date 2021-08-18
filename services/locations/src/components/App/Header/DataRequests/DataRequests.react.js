@@ -1,4 +1,5 @@
 import React from 'react';
+import { useIntl } from 'react-intl';
 import { useHistory, useLocation } from 'react-router';
 import { useQuery } from 'react-query';
 import { Badge } from 'antd';
@@ -26,6 +27,7 @@ const DataRequestsIcon = isActive => (
 export const DataRequests = () => {
   const history = useHistory();
   const currentRoute = useLocation();
+  const intl = useIntl();
 
   const isDataRequestsRoute =
     currentRoute.pathname === BASE_DATA_TRANSFER_ROUTE;
@@ -42,7 +44,11 @@ export const DataRequests = () => {
 
   return (
     <Badge style={badgeStyle} count={getIncompletedTransfers(transfers).length}>
-      <DataRequestsComp data-cy="dataRequests" onClick={navigate}>
+      <DataRequestsComp
+        title={intl.formatMessage({ id: 'shareData.title' })}
+        data-cy="dataRequests"
+        onClick={navigate}
+      >
         {DataRequestsIcon(isDataRequestsRoute)}
       </DataRequestsComp>
     </Badge>

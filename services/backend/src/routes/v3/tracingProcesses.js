@@ -4,6 +4,10 @@ const moment = require('moment');
 const { pick } = require('lodash');
 
 const {
+  base64ToHex,
+  VERIFY_EC_SHA256_DER_SIGNATURE,
+} = require('@lucaapp/crypto');
+const {
   validateSchema,
   validateParametersSchema,
 } = require('../../middlewares/validateSchema');
@@ -130,6 +134,11 @@ router
         isCompleted: tracingProcess.isCompleted,
         createdAt: moment(tracingProcess.createdAt).unix(),
         assignee: tracingProcess.HealthDepartmentEmployee,
+        note: tracingProcess.note,
+        noteIV: tracingProcess.noteIV,
+        noteMAC: tracingProcess.noteMAC,
+        noteSignature: tracingProcess.noteSignature,
+        notePublicKey: tracingProcess.notePublicKey,
         deletedAt:
           tracingProcess.deletedAt && moment(tracingProcess.deletedAt).unix(),
       });
@@ -164,10 +173,34 @@ router
           return response.sendStatus(status.NOT_FOUND);
         }
       }
+
+      const { body, user } = request;
+
+      if (body.note) {
+        const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
+          base64ToHex(user.HealthDepartment.publicHDSKP),
+          base64ToHex(body.note) +
+            base64ToHex(body.noteMAC) +
+            base64ToHex(body.noteIV),
+          base64ToHex(body.noteSignature)
+        );
+
+        if (!isValidSignature) {
+          return response.sendStatus(status.FORBIDDEN);
+        }
+      }
+
       await tracingProcess.update({
-        didRequestLocations: request.body.didRequestLocations,
-        isCompleted: request.body.isCompleted,
-        assigneeId: request.body.assigneeId,
+        didRequestLocations: body.didRequestLocations,
+        isCompleted: body.isCompleted,
+        assigneeId: body.assigneeId,
+        ...(body.note && {
+          note: body.note,
+          noteIV: body.noteIV,
+          noteMAC: body.noteMAC,
+          noteSignature: body.noteSignature,
+          notePublicKey: body.notePublicKey,
+        }),
       });
       return response.sendStatus(status.NO_CONTENT);
     }

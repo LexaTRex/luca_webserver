@@ -1,0 +1,1 @@
+export const NUMBER_OF_HISTORY_SHARED_DAYS = 28;

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import useInterval from '@use-it/interval';
+import useInterval from 'use-interval';
 import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';

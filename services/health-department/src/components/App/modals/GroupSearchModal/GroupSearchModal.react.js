@@ -10,7 +10,7 @@ import { findGroups } from 'network/api';
 import { DEFAULT_SEARCH_LIMIT } from 'constants/search';
 
 // Utils
-import { validateZipCode } from 'utils/validators.helper';
+import { validateZipCode } from 'utils/validatorRules.helper';
 
 // Components
 import { DataRequestModal } from 'components/App/modals/GroupSearchModal/DataRequestModal';

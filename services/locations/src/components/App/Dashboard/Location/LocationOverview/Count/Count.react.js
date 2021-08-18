@@ -44,7 +44,10 @@ export const Count = ({ location }) => {
   return (
     <Wrapper>
       <Counter data-cy="guestCount">{getCount()}</Counter>
-      <Refresh onClick={refetch}>
+      <Refresh
+        title={intl.formatMessage({ id: 'location.count.refresh' })}
+        onClick={refetch}
+      >
         <RefreshIcon />
       </Refresh>
     </Wrapper>

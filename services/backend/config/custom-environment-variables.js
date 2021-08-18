@@ -102,5 +102,7 @@ module.exports = {
     operators_post_ratelimit_day: 'OPERATORS_POST_RATELIMIT_DAY',
     dummy_max_tracings: 'DUMMY_MAX_TRACINGS',
     dummy_max_traces: 'DUMMY_MAX_TRACES',
+    badges_post_ratelimit_hour: 'BADGES_POST_RATELIMIT_HOUR',
+    operator_email_patch_ratelimit_hour: 'OPERATOR_EMAIL_PATCH_RATELIMIT_HOUR',
   },
 };

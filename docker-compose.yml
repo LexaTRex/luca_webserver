@@ -33,9 +33,11 @@ services:
     build:
       context: "services/health-department"
       args:
-        - NPM_CONFIG__AUTH
-        - GIT_VERSION
         - GIT_COMMIT
+        - GIT_VERSION
+        - NPM_CONFIG__AUTH
+        - REACT_APP_SUPPORT_EMAIL
+        - REACT_APP_SUPPORT_PHONE_NUMBER
   contact-form:
     image: lucaapp/contact-form:${IMAGE_TAG}
     build:
@@ -79,7 +81,5 @@ services:
   redis:
     image: redis:6.0.9-alpine3.12
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
-    ports:
-      - "6379:6379"
     volumes:
       - ./services/redis/redis.conf:/usr/local/etc/redis/redis.conf

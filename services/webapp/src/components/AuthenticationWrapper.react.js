@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
+import useInterval from 'use-interval';
 import { useSelector } from 'react-redux';
-import useInterval from '@use-it/interval';
 import { useHistory } from 'react-router-dom';
 import { getLocation } from 'connected-react-router';
 import { indexDB } from 'db';
@@ -32,7 +32,7 @@ export function AuthenticationWrapper({ children }) {
   const checkLocation = useCallback(
     appLocation => {
       (async () => {
-        if ((await indexDB.users.count()) === 0) {
+        if ((await indexDB.users.count().catch(() => 0)) === 0) {
           if (
             !appLocation.pathname.includes(ON_BOARDING_PATH) &&
             !appLocation.pathname.includes(APPOINTMENT_PATH) &&

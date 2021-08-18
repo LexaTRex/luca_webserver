@@ -17,11 +17,11 @@ import { deleteEmployee } from 'network/api';
 import { RenewEmployeePasswordModal } from 'components/App/modals/RenewEmployeePasswordModal';
 import { IconWrapper, Icon } from './EmployeeActions.styled';
 
-const CrossIcon = () => <Icon component={CrossSvg} />;
+const CrossIcon = ({ title }) => <Icon title={title} component={CrossSvg} />;
 
-const LockIcon = () => <Icon component={LockSvg} />;
+const LockIcon = ({ title }) => <Icon title={title} component={LockSvg} />;
 
-const EditIcon = () => <Icon component={EditSvg} />;
+const EditIcon = ({ title }) => <Icon title={title} component={EditSvg} />;
 
 export const EmployeeActions = ({ employee, refetch, setEditing, editing }) => {
   const intl = useIntl();
@@ -77,10 +77,18 @@ export const EmployeeActions = ({ employee, refetch, setEditing, editing }) => {
       {!editing ? (
         <>
           <IconWrapper onClick={onRenewPassword}>
-            <LockIcon />
+            <LockIcon
+              title={intl.formatMessage({
+                id: 'modal.renewEmployeePassword.title',
+              })}
+            />
           </IconWrapper>
           <IconWrapper onClick={onEdit}>
-            <EditIcon />
+            <EditIcon
+              title={intl.formatMessage({
+                id: 'processDetails.updateProcessNote',
+              })}
+            />
           </IconWrapper>
           <Popconfirm
             placement="topLeft"
@@ -96,7 +104,11 @@ export const EmployeeActions = ({ employee, refetch, setEditing, editing }) => {
             })}
           >
             <IconWrapper>
-              <CrossIcon />
+              <CrossIcon
+                title={intl.formatMessage({
+                  id: 'userManagement.deleteUser',
+                })}
+              />
             </IconWrapper>
           </Popconfirm>
         </>

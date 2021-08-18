@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import useInterval from '@use-it/interval';
+import useInterval from 'use-interval';
 
 import { generateQRCode } from 'helpers/crypto';
 import { isLocalTimeCorrect } from 'helpers/time';

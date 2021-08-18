@@ -128,6 +128,8 @@ Closure buildAndPushContainer(String service, String tag) {
                             usernameVariable: 'DOCKER_USERNAME',
                             passwordVariable: 'DOCKER_PASSWORD'),
           string(credentialsId: 'luca-docker-registry', variable: 'DOCKER_REGISTRY'),
+          string(credentialsId: 'luca-hd-support-mail', variable: 'REACT_APP_SUPPORT_EMAIL'),
+          string(credentialsId: 'luca-hd-support-phone', variable: 'REACT_APP_SUPPORT_PHONE_NUMBER'),
           usernamePassword( credentialsId: 'jenkins-docker-public-registry',
                             usernameVariable:'DOCKER_PUBLIC_USERNAME',
                             passwordVariable:'DOCKER_PUBLIC_PASSWORD'),

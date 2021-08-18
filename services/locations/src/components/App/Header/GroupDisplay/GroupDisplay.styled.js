@@ -7,6 +7,7 @@ export const Wrapper = styled.div`
   overflow: hidden;
   margin-right: 16px;
   align-items: flex-end;
+  line-height: 1.5;
 `;
 
 export const GroupName = styled.span`

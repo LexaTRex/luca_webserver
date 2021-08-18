@@ -197,6 +197,7 @@ export const TrackInfectionModal = () => {
         <SubmitWrapper>
           <Form.Item style={{ margin: '0 0 0 12px' }}>
             <Popconfirm
+              overlayInnerStyle={{ maxWidth: '450px' }}
               placement="top"
               onConfirm={onSubmit}
               title={intl.formatMessage({

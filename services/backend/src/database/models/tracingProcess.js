@@ -25,6 +25,21 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null,
       },
+      note: {
+        type: DataTypes.STRING(1000),
+      },
+      noteIV: {
+        type: DataTypes.STRING(24),
+      },
+      noteMAC: {
+        type: DataTypes.STRING(44),
+      },
+      noteSignature: {
+        type: DataTypes.STRING,
+      },
+      notePublicKey: {
+        type: DataTypes.STRING(88),
+      },
     },
     {
       paranoid: true,

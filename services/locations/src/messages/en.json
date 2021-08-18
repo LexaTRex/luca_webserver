@@ -649,7 +649,16 @@
     "modal.registerOperator.keyTestGenerateKey": "Generate new key",
     "modal.registerOperator.keyTestConfirm": "Confirm",
     "header.dataRequests": "Share data requests",
-    "profile": "Profile",
     "helpCenter.tooltip.copy": "Copy",
-    "helpCenter.tooltip.supportCode": "Support Code"
+    "helpCenter.tooltip.supportCode": "Support Code",
+    "dataTransfers.list.complete.table.header.approvedAt": "Approved",
+    "modal.createGroup.googlePlacesInput.title": "Allow use of Google services for address information",
+    "modal.createGroup.googlePlacesInput.description": "Do you want to access Google services when you provide your address? The use of Google services simplifies the address search and is a prerequisite for the use of the automatic check-out in your luca location.",
+    "location.checkout.confirmSingleCheckoutText": "Do you really want to check out this guest at this location? This action cannot be undone.",
+    "location.checkout.confirmTableCheckoutText": "Do you really want to check out all guests from this table? This action cannot be undone.",
+    "shareData.finish.closeTab": "You can close the tab now.",
+    "settings.location.editAddressLink": "Change address",
+    "browserWarning.headline": "Error!",
+    "browserWarning.description1": "Unfortunately, your browser is not supported.",
+    "browserWarning.description2": "It will work best with Chrome or Safari."
 }

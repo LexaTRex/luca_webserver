@@ -1,19 +1,20 @@
 import styled from 'styled-components';
 import { Media } from 'utils/media';
+import { Header } from 'antd/es/layout/layout';
 
-export const HeaderWrapper = styled.div`
+export const HeaderWrapper = styled(Header)`
+  background: rgb(0, 0, 0);
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+  height: 80px;
   padding: 16px 40px;
-  background: rgb(0, 0, 0);
 `;
 
 export const SubTitle = styled.div`
-  display: flex;
-  align-items: flex-end;
   margin-left: 16px;
-  margin-bottom: -6px;
+  line-height: 5;
   color: rgb(255, 255, 255);
   font-size: 16px;
 
@@ -28,14 +29,20 @@ export const SubTitle = styled.div`
 export const Title = styled.div`
   flex: 1;
   display: flex;
+  justify-content: flex-start;
+  align-content: center;
   overflow: hidden;
+  height: 48px;
 `;
 
 export const Logo = styled.img`
   height: 48px;
+  padding: 0;
+  margin: 0;
 `;
 
 export const MenuWrapper = styled.div`
   margin-top: 10px;
   display: flex;
+  line-height: 0;
 `;

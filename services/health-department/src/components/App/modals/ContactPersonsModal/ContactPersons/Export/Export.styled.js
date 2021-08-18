@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   display: flex;
-  justify-content: flex-end;
-  margin-top: 48px;
+  margin-left: auto;
 `;
 
 export const StyledLink = styled.a`

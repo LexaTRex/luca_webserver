@@ -23,7 +23,6 @@ describe('WebApp / Register', () => {
         cy.getByCy('ignoreWarning').click();
         cy.getByCy('welcomeStep').should('exist');
         cy.getByCy('termsConsCheckbox').click();
-        cy.getByCy('privacyCheckbox').click();
         cy.getByCy('welcomeSubmit').click();
         // Privacy step
         cy.getByCy('dataContent').should('exist');

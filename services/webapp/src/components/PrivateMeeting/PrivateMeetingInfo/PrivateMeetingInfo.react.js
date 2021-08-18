@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import moment from 'moment';
 import { useIntl } from 'react-intl';
-import useInterval from '@use-it/interval';
+import useInterval from 'use-interval';
 
 import {
   StyledText,

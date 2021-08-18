@@ -17,6 +17,13 @@ export const validateSafeString = (_, value) => {
   return Promise.resolve();
 };
 
+export const validateNoNumeric = (_, value) => {
+  if (value?.trim() && validator.isNumeric(value.replace(/\s/g, ''))) {
+    return Promise.reject();
+  }
+  return Promise.resolve();
+};
+
 export const validatePhoneNumber = (_, value) => {
   if (value?.trim() && !isValidPhoneNumber(value)) {
     return Promise.reject();

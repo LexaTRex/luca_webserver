@@ -41,6 +41,7 @@ import {
   MAX_POSTAL_CODE_LENGTH,
   MAX_HOUSE_NUMBER_LENGTH,
 } from 'constants/valueLength';
+import { NUMBER_OF_HISTORY_SHARED_DAYS } from 'constants/share';
 import { CURRENT_TERMS_AND_CONDITIONS_VERSION } from 'constants/termsAndConditions';
 
 import {
@@ -106,12 +107,12 @@ export async function getUserTracingSecret() {
       createdAt: moment().seconds(0).unix(),
     });
 
-    const last14Days = [timestamp.format('DD-MM-YYYY')];
-    for (let index = 0; index < 14; index++) {
-      last14Days.push(timestamp.subtract(1, 'days').format('DD-MM-YYYY'));
+    const lastDays = [timestamp.format('DD-MM-YYYY')];
+    for (let index = 0; index < NUMBER_OF_HISTORY_SHARED_DAYS; index++) {
+      lastDays.push(timestamp.subtract(1, 'days').format('DD-MM-YYYY'));
     }
 
-    indexDB.userTracingSecret.where('date').noneOf(last14Days).delete();
+    indexDB.userTracingSecret.where('date').noneOf(lastDays).delete();
     return secret;
   }
 

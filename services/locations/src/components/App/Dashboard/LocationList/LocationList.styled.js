@@ -4,11 +4,13 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 40px;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
 `;
 
 export const ListWrapper = styled.div`
   padding: 8px 0;
-  margin: 0 0 16px 42px;
+  margin: 0 0 0 42px;
   border-bottom: 1px solid rgb(151, 151, 151);
 `;
 

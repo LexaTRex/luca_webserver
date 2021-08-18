@@ -25,7 +25,6 @@ export function WelcomeStep({ onSubmit = () => {} }) {
     isTermsAndConditionsChecked,
     setIsTermsAndConditionsChecked,
   ] = useState(false);
-  const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
   const [canAccessCam] = useState(hasMobileCamAccess);
 
   return (
@@ -43,6 +42,24 @@ export function WelcomeStep({ onSubmit = () => {} }) {
             {formatMessage({ id: 'OnBoarding.WelcomeStep.Warning' })}
           </StyledWarning>
         ) : null}
+        <StyledInfoText>
+          {formatMessage(
+            { id: 'OnBoarding.acceptPrivacy' },
+            {
+              // eslint-disable-next-line react/display-name
+              a: (...chunks) => (
+                <StyledLink
+                  tabIndex="4"
+                  href={PRIVACY_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {chunks}
+                </StyledLink>
+              ),
+            }
+          )}
+        </StyledInfoText>
         <CheckBoxWithText
           tabIndex="1"
           id="termsConsCheckbox"
@@ -68,38 +85,15 @@ export function WelcomeStep({ onSubmit = () => {} }) {
             }
           )}
         />
-        <CheckBoxWithText
-          tabIndex="3"
-          id="privacyCheckbox"
-          testId="privacyCheckbox"
-          checked={isPrivacyChecked}
-          onChange={() => setIsPrivacyChecked(!isPrivacyChecked)}
-          description={formatMessage(
-            { id: 'OnBoarding.acceptPrivacy' },
-            {
-              // eslint-disable-next-line react/display-name
-              a: (...chunks) => (
-                <StyledLink
-                  tabIndex="4"
-                  href={PRIVACY_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {chunks}
-                </StyledLink>
-              ),
-            }
-          )}
-        />
       </StyledContent>
       <StyledFooter>
         <StyledPrimaryButton
           id="next"
           tabIndex="5"
           data-cy="welcomeSubmit"
-          disabled={!(isPrivacyChecked && isTermsAndConditionsChecked)}
+          disabled={!isTermsAndConditionsChecked}
           onClick={() => {
-            if (isPrivacyChecked && isTermsAndConditionsChecked) {
+            if (isTermsAndConditionsChecked) {
               onSubmit();
             }
           }}

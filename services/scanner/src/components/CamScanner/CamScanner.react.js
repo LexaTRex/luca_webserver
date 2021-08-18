@@ -140,12 +140,18 @@ export const CamScanner = ({ scanner }) => {
                     onError={error => notifyScanError(error, intl)}
                     onScan={() => {}}
                     showViewFinder={false}
+                    constraints={{
+                      facingMode: { ideal: 'environment' },
+                    }}
                   />
                 ) : (
                   <QrReader
                     delay={SCAN_TIMEOUT}
                     onError={error => notifyScanError(error, intl)}
                     onScan={handleScan}
+                    constraints={{
+                      facingMode: { ideal: 'environment' },
+                    }}
                   />
                 )}
                 {isSuccess && (

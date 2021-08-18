@@ -19,6 +19,7 @@ import { Login } from 'components/Login';
 import { App } from 'components/App';
 import { Licenses } from 'components/Licenses';
 import { ErrorWrapper } from 'components/ErrorWrapper';
+import { UnsupportedBrowserWrapper } from 'components/UnsupportedBrowserWrapper';
 
 // Misc
 import { configureStore } from './configureStore';
@@ -42,12 +43,14 @@ export const Main = () => {
         <QueryClientProvider client={queryClient}>
           <ConnectedRouter history={history}>
             <ErrorWrapper>
-              <Switch>
-                <Route path={LICENSES_ROUTE} component={Licenses} />
-                <Route path={LOGIN_ROUTE} component={Login} />
-                <Route path={APP_ROUTE} component={App} />
-                <Redirect to={LOGIN_ROUTE} />
-              </Switch>
+              <UnsupportedBrowserWrapper>
+                <Switch>
+                  <Route path={LICENSES_ROUTE} component={Licenses} />
+                  <Route path={LOGIN_ROUTE} component={Login} />
+                  <Route path={APP_ROUTE} component={App} />
+                  <Redirect to={LOGIN_ROUTE} />
+                </Switch>
+              </UnsupportedBrowserWrapper>
             </ErrorWrapper>
           </ConnectedRouter>
         </QueryClientProvider>

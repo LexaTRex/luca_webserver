@@ -4,7 +4,7 @@ paths:
       - schema:
           type: string
           format: uuid
-        name: id
+        name: locationId
         in: path
         required: true
     get:
@@ -12,7 +12,7 @@ paths:
       tags:
         - Locations
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
@@ -29,7 +29,7 @@ paths:
                       type: string
                     isRequired:
                       type: boolean
-        '400':
+        400:
           $ref: '#/components/schemas/BadRequest'
       operationId: get-locations-additionalDataSchema-locationId
       description: Get additional data schemas for the location.
@@ -38,7 +38,7 @@ paths:
       description: Create new additional data schema.
       operationId: post-locations-additionalDataSchema-locationId
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
@@ -53,13 +53,13 @@ paths:
                     type: string
                   isRequired:
                     type: boolean
-        '400':
+        400:
           $ref: '#/components/schemas/BadRequest'
-        '401':
+        401:
           $ref: '#/components/schemas/RequiredUserOfTypeOperator'
-        '403':
-        description: The account has been deactivated
-        '404':
+        403:
+          description: The account has been deactivated
+        404:
           description: Location not found
       requestBody:
         content:
@@ -87,15 +87,15 @@ paths:
       summary: Change schema
       operationId: patch-locations-additionalDataSchema-additionalDataId
       responses:
-        '200':
+        200:
           description: OK
-        '400':
+        400:
           $ref: '#/components/schemas/BadRequest'
-        '401':
+        401:
           $ref: '#/components/schemas/RequiredUserOfTypeOperator'
-        '403':
+        403:
           description: The account has been deactivated
-        '404':
+        404:
           description: Additional Data not found
       tags:
         - Locations
@@ -118,13 +118,13 @@ paths:
       tags:
         - Locations
       responses:
-        '200':
+        200:
           description: OK
-        '400':
+        400:
           $ref: '#/components/schemas/BadRequest'
-        '401':
+        401:
           $ref: '#/components/schemas/RequiredUserOfTypeOperator'
-        '403':
+        403:
           description: The account has been deactivated
-        '404':
+        404:
           description: Additional Data not found

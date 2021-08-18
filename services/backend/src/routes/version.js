@@ -1,9 +1,8 @@
 const router = require('express').Router();
-
-// eslint-disable-next-line node/no-missing-require, import/no-unresolved, node/no-unpublished-require
-const version = require('../../version.json');
+const config = require('config');
 
 router.get('/', (request, response) => {
-  response.send(version);
+  response.send(config.get('version'));
 });
+
 module.exports = router;

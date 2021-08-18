@@ -4,7 +4,6 @@ paths:
       tags:
         - Operators
       summary: Register a new operator
-      operationId: post-locationTransfers
       responses:
         '204':
           description: Success

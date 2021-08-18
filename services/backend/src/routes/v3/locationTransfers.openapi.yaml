@@ -67,21 +67,19 @@ paths:
         - LocationTransfers
       summary: ''
       parameters:
-        - type: string
-          in: query
+        - in: query
           name: completed
           required: false
           schema:
-            type: string
-            enum: ['true', 'false']
+            type: boolean
+          allowEmptyValue: true
           description: Filter by completed or uncompleted
-        - type: string
-          in: query
+        - in: query
           name: deleted
           required: false
           schema:
-            type: string
-            enum: ['true', 'false']
+            type: boolean
+          allowEmptyValue: true
           description: Filter by deleted
       responses:
         '200':
@@ -211,14 +209,14 @@ paths:
                             type: object
                         data:
                           oneOf:
-                          - type: string
-                            minLength: 1
-                          - type: object
-                            required:
-                              - data
-                              - iv
-                              - mac
-                              - publicKey
+                            - type: string
+                              minLength: 1
+                            - type: object
+                              required:
+                                - data
+                                - iv
+                                - mac
+                                - publicKey
                         publicKey:
                           type: string
                           minLength: 1
@@ -276,15 +274,14 @@ paths:
                         type: boolean
                       data:
                         oneOf:
-                        - type: string
-                          minLength: 1
-                        - type: object
-                          required:
-                            - data
-                            - iv
-                            - mac
-                            - publicKey                      traceId:
-                        type: string
+                          - type: string
+                            minLength: 1
+                          - type: object
+                            required:
+                              - data
+                              - iv
+                              - mac
+                              - publicKey
                       publicKey:
                         type: string
                       keyId:
@@ -354,14 +351,14 @@ paths:
                           type: boolean
                         data:
                           oneOf:
-                          - type: string
-                            minLength: 1
-                          - type: object
-                            required:
-                              - data
-                              - iv
-                              - mac
-                              - publicKey
+                            - type: string
+                              minLength: 1
+                            - type: object
+                              required:
+                                - data
+                                - iv
+                                - mac
+                                - publicKey
                         publicKey:
                           type: string
                           minLength: 1

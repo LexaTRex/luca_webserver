@@ -168,9 +168,9 @@ export function History() {
             </StyledFooterContainer>
             <StyledFooterContainer>
               <StyledFooterItem
+                isActive
                 id="history"
                 tabIndex="3"
-                isActive
                 aria-label={formatMessage({
                   id: 'History.AriaLabel',
                 })}

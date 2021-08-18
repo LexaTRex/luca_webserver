@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/locations",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -64,7 +64,7 @@
     "secure-json-parse": "2.4.0",
     "styled-components": "5.2.1",
     "tinycolor2": "1.4.2",
-    "ua-parser-js": "0.7.24",
+    "ua-parser-js": "0.7.28",
     "uuid": "8.3.2",
     "validator": "13.6.0",
     "worker-plugin": "5.0.0",

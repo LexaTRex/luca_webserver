@@ -2,18 +2,18 @@ import React from 'react';
 import { replace } from 'connected-react-router';
 import { useDispatch } from 'react-redux';
 import { useQuery } from 'react-query';
+import { useIntl } from 'react-intl';
 import { Tooltip } from 'antd';
 
 import settings from 'assets/Edit.svg';
-
 import { getGroup } from 'network/api';
 
 import { BASE_GROUP_SETTINGS_ROUTE } from 'constants/routes';
-
 import { Wrapper, GroupName, HomeIcon } from './GroupDisplay.styled';
 
 export const GroupDisplay = ({ groupId }) => {
   const dispatch = useDispatch();
+  const intl = useIntl();
 
   const { isLoading, error, data: group } = useQuery(`group/${groupId}`, () =>
     getGroup(groupId)
@@ -29,7 +29,10 @@ export const GroupDisplay = ({ groupId }) => {
       <Tooltip title={group.name}>
         <GroupName>{group.name}</GroupName>
       </Tooltip>
-      <HomeIcon src={settings} />
+      <HomeIcon
+        title={intl.formatMessage({ id: 'location.edit' })}
+        src={settings}
+      />
     </Wrapper>
   );
 };

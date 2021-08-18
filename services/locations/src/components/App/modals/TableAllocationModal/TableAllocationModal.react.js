@@ -100,7 +100,7 @@ export const TableAllocationModal = ({ privateKey, location }) => {
                     placement="topLeft"
                     onConfirm={() => onCheckoutTable(activeTables[table])}
                     title={intl.formatMessage({
-                      id: 'location.checkout.confirmText',
+                      id: 'location.checkout.confirmTableCheckoutText',
                     })}
                     okText={intl.formatMessage({
                       id: 'location.checkout.confirmButton',

@@ -15,7 +15,7 @@ export const CheckoutButton = ({ trace, onCheckoutSingleGuest }) => {
       placement="topLeft"
       onConfirm={() => onCheckoutSingleGuest(trace.traceId)}
       title={intl.formatMessage({
-        id: 'location.checkout.confirmText',
+        id: 'location.checkout.confirmSingleCheckoutText',
       })}
       okText={intl.formatMessage({
         id: 'location.checkout.confirmButton',

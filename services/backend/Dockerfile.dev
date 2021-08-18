@@ -1,24 +1,29 @@
 FROM node:14.17.3-alpine3.14
-WORKDIR /app
 
-ARG GIT_COMMIT
-ARG GIT_VERSION
-ARG NPM_CONFIG__AUTH
+# set timezone
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+WORKDIR /app
 ENV NODE_ENV=development
 
+# install dependencies
+ARG NPM_CONFIG__AUTH
 COPY package.json tsconfig.json yarn.lock .npmrc .yarnrc ./
 RUN yarn install --production --check-files && yarn cache clean
-RUN yarn licenses generate-disclaimer > ./licenses-full.txt
-RUN echo "{\"commit\":\"$GIT_COMMIT\", \"version\":\"$GIT_VERSION\"}" >> version.json
 
+# copy source files
 COPY .sequelizerc ./
 COPY certs/  ./certs/
 COPY config/  ./config/
 COPY src/  ./src/
 
+# change user
 RUN adduser -D worker
 USER worker
 
+# expose ports
 EXPOSE 8080
 EXPOSE 9229
+
 CMD ["yarn", "migrate-dev"]

@@ -4,6 +4,7 @@ import { injectIntl } from 'react-intl';
 import error from 'assets/error.svg';
 import LucaLogo from 'assets/LucaLogo.svg';
 
+import { HEALTH_DEPARTMENT_SUPPORT_PHONE_NUMBER } from 'constants/environment';
 import {
   Wrapper,
   HeaderLogo,
@@ -50,7 +51,10 @@ class ErrorWrapperComponent extends Component {
               {intl.formatMessage({ id: 'error.headline' })}
             </ErrorHeadline>
             <ErrorDescription>
-              {intl.formatMessage({ id: 'error.description' })}
+              {intl.formatMessage(
+                { id: 'error.description' },
+                { supportPhone: HEALTH_DEPARTMENT_SUPPORT_PHONE_NUMBER }
+              )}
             </ErrorDescription>
             <ErrorGraphic src={error} />
           </ContentWrapper>

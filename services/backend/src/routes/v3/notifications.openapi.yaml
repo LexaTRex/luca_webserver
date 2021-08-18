@@ -4,7 +4,6 @@ paths:
       tags:
         - Notifications
       summary: List of relevant trace IDs by health department
-      operationId: post-locationTransfers
       responses:
         '200':
           description: OK

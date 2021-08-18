@@ -1,10 +1,11 @@
 import {
   getMaxLengthRule,
   getRequiredRule,
-  getSafeStringRule,
   getPhoneRule,
   getEmailRule,
-} from 'utils/validators';
+  getSafeStringRule,
+  getNoNumericRule,
+} from 'utils/validatorRules';
 import { MAX_EMAIL_LENGTH, MAX_NAME_LENGTH } from 'constants/valueLength';
 
 export const getFormElements = intl => [
@@ -13,6 +14,7 @@ export const getFormElements = intl => [
     rules: [
       getRequiredRule(intl, 'firstName'),
       getSafeStringRule(intl, 'firstName'),
+      getNoNumericRule(intl, 'firstName'),
       getMaxLengthRule(intl, MAX_NAME_LENGTH),
     ],
   },
@@ -21,6 +23,7 @@ export const getFormElements = intl => [
     rules: [
       getRequiredRule(intl, 'lastName'),
       getSafeStringRule(intl, 'lastName'),
+      getNoNumericRule(intl, 'lastName'),
       getMaxLengthRule(intl, MAX_NAME_LENGTH),
     ],
   },

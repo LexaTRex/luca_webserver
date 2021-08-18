@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from '@ant-design/icons';
+import { useIntl } from 'react-intl';
 
 import { ReactComponent as CreateGroupSvg } from 'assets/CreateGroup.svg';
 
@@ -14,6 +15,7 @@ const CreateGroupIcon = () => (
 
 export const CreateGroup = () => {
   const [openModal] = useModal();
+  const intl = useIntl();
 
   const onCreate = () => {
     openModal({
@@ -22,7 +24,11 @@ export const CreateGroup = () => {
     });
   };
   return (
-    <CreateGroupComp data-cy="createGroup" onClick={onCreate}>
+    <CreateGroupComp
+      title={intl.formatMessage({ id: 'header.createGroup' })}
+      data-cy="createGroup"
+      onClick={onCreate}
+    >
       <CreateGroupIcon />
     </CreateGroupComp>
   );

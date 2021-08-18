@@ -7,16 +7,18 @@ import { INITIAL_OVERLAP_VALUE } from 'constants/timeOverlap';
 import { IncompleteDataError } from 'errors/incompleteDataError';
 
 import { GuestListTable } from './GuestListTable';
-import { Export } from './Export';
 import { OverlappingTime } from './OverlappingTime';
 import { filterForTimeOverlap } from './GuestList.helper';
 
-export const GuestList = ({ encryptedTraces, location, indexPersonData }) => {
+export const GuestList = ({
+  encryptedTraces,
+  indexPersonData,
+  setSelectedTraces,
+}) => {
   const intl = useIntl();
   const [traces, setTraces] = useState(null);
   const [filteredTraces, setFilteredTraces] = useState(null);
   const [minTimeOverlap, setMinTimeOverlap] = useState(INITIAL_OVERLAP_VALUE);
-  const [selectedTraces, setSelectedTraces] = useState(null);
 
   useEffect(() => {
     async function decryptTraces() {
@@ -69,7 +71,6 @@ export const GuestList = ({ encryptedTraces, location, indexPersonData }) => {
         indexPersonData={indexPersonData}
         setSelectedTraces={setSelectedTraces}
       />
-      <Export traces={selectedTraces} location={location} />
     </>
   );
 };

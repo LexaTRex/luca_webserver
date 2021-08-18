@@ -1,11 +1,16 @@
 const fs = require('fs');
 const router = require('express').Router();
 
-const fullLicenses = fs.readFileSync('./licenses-full.txt');
+let licenses;
+try {
+  licenses = fs.readFileSync('./licenses.txt');
+} catch {
+  licenses = 'Licenses not found.';
+}
 
 router.get('/', (request, response) => {
   response.type('text/plain');
-  response.send(fullLicenses);
+  response.send(licenses);
 });
 
 module.exports = router;

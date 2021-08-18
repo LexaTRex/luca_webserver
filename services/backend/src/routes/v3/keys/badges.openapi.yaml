@@ -28,7 +28,9 @@ paths:
                       - v4
                 required:
                   - publicKeys
-      description: 'Get the current badge attestation public keys, by version. These attest that a badge was issued by Luca.'
+      description:
+        'Get the current badge attestation public keys, by version. These attest
+        that a badge was issued by Luca.'
     parameters: []
   /keys/badge/targetKeyId:
     get:
@@ -245,36 +247,6 @@ paths:
         for more information.'
 components:
   schemas:
-    EncryptedKeyPair:
-      title: EncryptedKeyPair
-      type: object
-      required:
-        - healthDepartmentId
-        - data
-        - iv
-        - mac
-        - publicKey
-        - signature
-      properties:
-        healthDepartmentId:
-          type: string
-          minLength: 1
-        data:
-          type: string
-          minLength: 1
-        iv:
-          type: string
-          minLength: 1
-        mac:
-          type: string
-          minLength: 1
-        publicKey:
-          type: string
-          minLength: 1
-        signature:
-          type: string
-          minLength: 1
-      description: Public key and private key encrypted for a health department.
     BadgePublicKey:
       title: BadgePublicKey
       type: object

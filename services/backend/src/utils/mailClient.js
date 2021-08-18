@@ -163,6 +163,24 @@ const hdUpdatePasswordNotification = (toEmail, toName, lang, variables) => {
   );
 };
 
+const locationTransferApprovalNotification = (
+  toEmail,
+  toName,
+  lang,
+  variables
+) => {
+  const { departmentName } = variables;
+  return sendTemplate(
+    getMailId('locationTransferApprovalNotification', lang),
+    getMailTitle('locationTransferApprovalNotification', lang, {
+      departmentName,
+    }),
+    toEmail,
+    toName,
+    variables
+  );
+};
+
 module.exports = {
   sendShareDataRequestNotification,
   sendRegistrationConfirmation,
@@ -172,4 +190,5 @@ module.exports = {
   updateEmailNotification,
   operatorUpdatePasswordNotification,
   hdUpdatePasswordNotification,
+  locationTransferApprovalNotification,
 };

@@ -26,6 +26,16 @@ paths:
                       type: boolean
                     createdAt:
                       type: number
+                    note:
+                      type: string
+                    noteIV:
+                      type: string
+                    noteMAC:
+                      type: string
+                    noteSignature:
+                      type: string
+                    notePublicKey:
+                      type: string
                     assignee:
                       type: object
                       properties:
@@ -79,6 +89,8 @@ paths:
                     type: boolean
                   createdAt:
                     type: integer
+                  note:
+                    type: string
                   assignee:
                     type: object
                     properties:
@@ -93,14 +105,14 @@ paths:
                         minLength: 1
                   deletedAt:
                     type: integer
-                  required:
-                    - uuid
-                    - status
-                    - userTransferId
-                    - didRequestLocations
-                    - isCompleted
-                    - createdAt
-                    - assignee
+                required:
+                  - uuid
+                  - status
+                  - userTransferId
+                  - didRequestLocations
+                  - isCompleted
+                  - createdAt
+                  - assignee
         '400':
           $ref: '#/components/schemas/BadRequest'
         '401':
@@ -130,6 +142,8 @@ paths:
                   type: boolean
                 isCompleted:
                   type: boolean
+                note:
+                  type: string
                 assigneeId:
                   type: string
       tags:

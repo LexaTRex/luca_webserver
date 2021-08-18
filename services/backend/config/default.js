@@ -20,6 +20,10 @@ module.exports = {
   skipSmsVerification: true,
   shutdownDelay: 0,
   port: 8080,
+  version: {
+    commit: 'dev',
+    version: 'dev',
+  },
   cookies: {
     // DEV ONLY TOKEN
     secret: 'NJrbMwHlI2uILDVkN0w6Aw==',
@@ -170,5 +174,6 @@ module.exports = {
     tests_redeem_post_ratelimit_minute: 50,
     tests_redeem_delete_ratelimit_minute: 50,
     badges_post_ratelimit_hour: 10,
+    operator_email_patch_ratelimit_hour: 5,
   },
 };
