@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.9.1 (2021-08-25)
+* **health-department:** fix: handling of unregistered badges in tracing processes
+
 ### 1.9.0 (2021-08-18)
 
 * **backend:** fix: openAPI JSON

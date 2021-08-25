@@ -38,7 +38,7 @@ export const GuestList = ({
       );
 
       const validDecrypedTraces = decryptedTraces.filter(
-        user => !user.isInvalid
+        user => !(user.isInvalid || user.isUnregistered)
       );
 
       setTraces(validDecrypedTraces);
