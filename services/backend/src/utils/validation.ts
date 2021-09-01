@@ -69,7 +69,6 @@ export const z = {
           allow_utf8_local_part: true,
           require_tld: true,
           allow_ip_domain: false,
-          domain_specific_validation: true,
           // @ts-ignore: double escape  as this is passed into new RegExp("[${blacklisted_chars}]")
           blacklisted_chars: "=',\\\\",
         })

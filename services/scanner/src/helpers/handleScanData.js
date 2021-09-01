@@ -12,9 +12,7 @@ import { decode, STATIC_DEVICE_TYPE } from 'utils/qr';
 import { reloadFilter, bloomFilterContainsUUID } from 'utils/bloomFilter';
 
 import {
-  getV3BadgeRawUserId,
   getV4BadgeRawUserId,
-  getV3BadgeCheckinPayload,
   getV4BadgeCheckinPayload,
   getV3AppCheckinPayload,
 } from './checkin';
@@ -30,49 +28,18 @@ import {
 } from './errorHandling';
 
 /**
- * Handles the scan of a version 3 badge qr code to create a check-in for the user.
+ * The scan of a version 3 badge qr code to create a check-in for the user is denied starting 1.9.21.
  *
  * @see https://www.luca-app.de/securityoverview/badge/check_in.html
  */
 const handleV3StaticData = parameters => {
-  const {
-    intl,
-    scanner,
-    setIsSuccess,
-    checkForAdditionalData,
-    qrData,
-    refetch,
-  } = parameters;
+  const { intl } = parameters;
 
-  const uuid = hexToUuid4(getV3BadgeRawUserId(qrData));
-  if (bloomFilterContainsUUID(uuid)) {
-    notifyScanError(NO_USER_DATA, intl);
-    reloadFilter(true);
-    return;
-  }
-
-  const v3BagdePayload = getV3BadgeCheckinPayload(qrData, scanner);
-
-  notification.warning({
+  notification.error({
     message: intl.formatMessage({
-      id: 'warning.badgeV3Unsupported',
+      id: 'error.badgeV3Unsupported',
     }),
   });
-
-  createCheckinV3(scanner.scannerAccessId, v3BagdePayload)
-    .then(response => {
-      if (response.status === 409) {
-        notifyScanError(DUPLICATE_CHECKIN, intl);
-        return;
-      }
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, SCAN_TIMEOUT);
-      checkForAdditionalData(v3BagdePayload.traceId);
-      refetch();
-    })
-    .catch(error => notifyScanError(error, intl));
 };
 
 /**

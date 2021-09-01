@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.9.2 (2021-09-01)
+* **locations:** fix: domain specific email validation
+* **scanner:** feat: deny check ins of v3 badges
+
 ### 1.9.1 (2021-08-25)
 * **health-department:** fix: handling of unregistered badges in tracing processes
 

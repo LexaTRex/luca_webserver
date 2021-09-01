@@ -37,9 +37,8 @@ export const de = {
     'Dein System scheint eine falsche Zeit zu haben. Bitte überprüfe deine Zeiteinstellungen.',
   'error.accountDeleted':
     'Dein Account wurde gelöscht. Du kannst keine Gäste mehr einchecken.',
-  // WARNING
-  'warning.badgeV3Unsupported':
-    'Dieser Schlüsselanhänger (v3) wird zum 31.08.2021 entwertet. Danach kann dieser nicht mehr verwendet werden. Es muss ein Neuer angefordert werden. Bitte teile es dem Gast mit.',
+  'error.badgeV3Unsupported':
+    'Dieser Schlüsselanhänger (v3) wird ab dem 1.9.21 nicht mehr unterstützt. Es muss ein neuer Schlüsselanhänger angefordert werden. Bitte teile es dem Gast mit.',
   // ADDITIONAL DATA
   'additionalData.isRequired':
     'Dieses Feld wird benötigt, um einen Gast einzuchecken.',

@@ -34,9 +34,8 @@ export const en = {
     'Your system clock seems to be out of sync. Please check your time settings.',
   'error.accountDeleted':
     'Your account has been deleted. You cannot check in any more guests.',
-  // WARNINGS
-  'warning.badgeV3Unsupported':
-    'This badge (v3) will be voided by 08/31/2021. After that date, you can no longer use it. Please let your guest know.',
+  'error.badgeV3Unsupported':
+    'This badge (v3) is denied starting 09/01/2021. You can no longer use it for checkins. Please let your guest know.',
   // ADDITIONAL DATA
   'additionalData.isRequired': 'This field is required for your check-in.',
   'additionalData.info':

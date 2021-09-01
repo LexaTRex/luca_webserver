@@ -28,58 +28,6 @@ export const getTraceId = tracingSeed => {
   return HMAC_SHA256(userId + int32ToHex(now), userTracingSecret).slice(0, 32);
 };
 
-// V3 BADGE
-export const getV3BadgeRawUserId = qrData => {
-  return KDF_SHA256(base64ToHex(qrData.tracingSeed), '01').slice(0, 32);
-};
-
-export const getV3BadgeCheckinPayload = (qrData, scanner) => {
-  // static qr codes
-  const rawUserId = KDF_SHA256(base64ToHex(qrData.tracingSeed), '01').slice(
-    0,
-    32
-  );
-  const userVerificationSecret = KDF_SHA256(
-    base64ToHex(qrData.tracingSeed),
-    '02'
-  );
-  const userTracingSecret = KDF_SHA256(
-    base64ToHex(qrData.tracingSeed),
-    '03'
-  ).slice(0, 32);
-  const userId = `${rawUserId.slice(0, 8)}f${rawUserId.slice(9, 32)}`;
-  const now = moment().seconds(0).unix();
-  const traceId = HMAC_SHA256(
-    userId + int32ToHex(now),
-    userTracingSecret
-  ).slice(0, 32);
-
-  const verificationTag = HMAC_SHA256(
-    int32ToHex(now) + base64ToHex(qrData.data),
-    userVerificationSecret
-  ).slice(0, 16);
-
-  const encodedData = `03${int8ToHex(qrData.keyId)}${base64ToHex(
-    qrData.publicKey
-  )}${verificationTag}${base64ToHex(qrData.data)}`;
-
-  const { publicKey, data: encryptedData, iv, mac } = ENCRYPT_DLIES(
-    base64ToHex(scanner.publicKey),
-    encodedData
-  );
-
-  return {
-    traceId: hexToBase64(traceId),
-    scannerId: scanner.scannerId,
-    timestamp: now,
-    data: hexToBase64(encryptedData),
-    iv: hexToBase64(iv),
-    mac: hexToBase64(mac),
-    publicKey: hexToBase64(publicKey),
-    deviceType: qrData.deviceType,
-  };
-};
-
 // V3 APP
 export const getV3AppCheckinPayload = (scanner, qrData) => {
   const data = `03${int8ToHex(qrData.keyId)}${base64ToHex(
