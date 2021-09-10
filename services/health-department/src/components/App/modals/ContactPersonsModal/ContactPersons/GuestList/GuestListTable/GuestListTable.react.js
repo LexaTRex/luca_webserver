@@ -1,8 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { Table } from 'antd';
+import { getWarningLevelsForLocationTransfer, getMe } from 'network/api';
 
+import { useQuery } from 'react-query';
+
+import { DEVICE_TYPES } from '../../Notify/Notify.helper';
 import { AdditionalData } from './AdditionalData';
+import { Notified } from './Notified';
 import { Name } from './Name';
 import { Address } from './Address';
 import { Phone } from './Phone';
@@ -14,8 +19,22 @@ export const GuestListTable = ({
   traces,
   indexPersonData,
   setSelectedTraces,
+  location,
 }) => {
   const intl = useIntl();
+
+  const { transferId } = location;
+  const {
+    data: riskLevels,
+  } = useQuery(
+    `getWarningLevelsForLocationTransfer${transferId}`,
+    () => getWarningLevelsForLocationTransfer(transferId),
+    { refetchOnWindowFocus: false }
+  );
+
+  const { data: healthDepartmentEmployee } = useQuery('me', getMe, {
+    refetchOnWindowFocus: false,
+  });
 
   const updateAllCheckboxes = useCallback(
     checked =>
@@ -27,6 +46,7 @@ export const GuestListTable = ({
       }),
     [traces]
   );
+
   const [tracesChecked, updateTracesChecked] = useState(
     updateAllCheckboxes(true)
   );
@@ -70,6 +90,30 @@ export const GuestListTable = ({
   };
 
   const columns = [
+    {
+      key: 'Notified',
+      render: function renderBell(notificationTrace) {
+        if (
+          !riskLevels ||
+          !healthDepartmentEmployee ||
+          !healthDepartmentEmployee.notificationsEnabled ||
+          !(
+            notificationTrace.deviceType === DEVICE_TYPES.IOS ||
+            notificationTrace.deviceType === DEVICE_TYPES.ANDROID
+          )
+        )
+          return null;
+
+        const traceRiskLevels = riskLevels.find(
+          riskLevelObject =>
+            riskLevelObject.traceId === notificationTrace.traceId
+        )?.riskLevels;
+
+        if (!traceRiskLevels?.length) return null;
+
+        return <Notified />;
+      },
+    },
     {
       title: intl.formatMessage({ id: 'contactPersonTable.name' }),
       key: 'name',

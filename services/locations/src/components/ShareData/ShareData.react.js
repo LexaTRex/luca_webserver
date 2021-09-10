@@ -4,11 +4,9 @@ import { Alert } from 'antd';
 import { useIntl } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
-import { useHistory } from 'react-router';
 import { useParams } from 'react-router-dom';
 
 import { usePrivateKey } from 'utils/privateKey';
-import { BASE_SHARE_DATA_ROUTE } from 'constants/routes';
 import {
   getAllUncompletedTransfers,
   getLocationTransfer,
@@ -26,7 +24,6 @@ import { LocationFooter } from '../App/LocationFooter';
 
 export const ShareData = () => {
   const intl = useIntl();
-  const history = useHistory();
   const { transferId } = useParams();
   const [privateKey, setPrivateKey] = useState();
   const [isPrivateKeyPreloaded, setIsPrivateKeyPreloaded] = useState(false);
@@ -73,8 +70,6 @@ export const ShareData = () => {
 
   const setKey = key => setPrivateKey(key);
 
-  const onDone = () => history.push(BASE_SHARE_DATA_ROUTE);
-
   if (isLoading || error) return null;
 
   const steps = [
@@ -103,7 +98,7 @@ export const ShareData = () => {
     },
     {
       id: '2',
-      content: <FinishStep done={onDone} />,
+      content: <FinishStep />,
     },
   ];
 

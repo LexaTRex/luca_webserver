@@ -28,7 +28,7 @@ export const Header = ({ setSorting, sorting }) => {
         {intl.formatMessage({ id: 'processTable.name' })}
         <SortingSelector onClick={() => toggleNameSorting()} />
       </Column>
-      <Column flex="15%">
+      <Column flex="10%">
         {intl.formatMessage({ id: 'processTable.createdAt' })}
         <SortingSelector onClick={() => toggleTimeSorting()} />
       </Column>
@@ -38,6 +38,7 @@ export const Header = ({ setSorting, sorting }) => {
       <Column flex="10%">
         {intl.formatMessage({ id: 'processTable.status' })}
       </Column>
+      <Column flex="5%" />
     </TableHeader>
   );
 };

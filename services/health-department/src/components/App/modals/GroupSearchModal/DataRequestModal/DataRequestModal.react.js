@@ -18,12 +18,14 @@ import {
   DatePickerRow,
 } from './DataRequestModal.styled';
 
+const START_TIME = 'START_TIME';
+
 export const DataRequestModal = ({ group, back }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const [, closeModal] = useModal();
   const { streetName, streetNr, zipCode, city } = group.baseLocation;
-
+  const [form] = Form.useForm();
   const requiredFieldMessage = intl.formatMessage({
     id: 'modal.dataRequest.form.error.required',
   });
@@ -75,6 +77,18 @@ export const DataRequestModal = ({ group, back }) => {
       });
   };
 
+  const setTime = (time, field) => {
+    form.setFieldsValue(
+      field === START_TIME
+        ? {
+            startTime: time,
+          }
+        : {
+            endTime: time,
+          }
+    );
+  };
+
   return (
     <>
       <GroupText>{group.name}</GroupText>
@@ -82,7 +96,7 @@ export const DataRequestModal = ({ group, back }) => {
       <InfoText>
         {intl.formatMessage({ id: 'modal.dataRequest.info.timeframe' })}
       </InfoText>
-      <Form onFinish={onFinish}>
+      <Form onFinish={onFinish} form={form}>
         <DateSelectorWrapper>
           <DateText>
             {intl.formatMessage({ id: 'modal.dataRequest.from' })}
@@ -126,6 +140,9 @@ export const DataRequestModal = ({ group, back }) => {
                   id: 'modal.dataRequest.time.placeholder',
                 })}
                 showNow={false}
+                onSelect={time => {
+                  setTime(time, START_TIME);
+                }}
                 id="startTime"
               />
             </Form.Item>
@@ -138,7 +155,7 @@ export const DataRequestModal = ({ group, back }) => {
           <DatePickerRow>
             <Form.Item
               name="endDate"
-              style={{ paddingRight: '24px' }}
+              style={{ paddingRight: 24 }}
               rules={[
                 {
                   required: true,
@@ -173,6 +190,9 @@ export const DataRequestModal = ({ group, back }) => {
                 placeholder={intl.formatMessage({
                   id: 'modal.dataRequest.time.placeholder',
                 })}
+                onSelect={time => {
+                  setTime(time);
+                }}
                 showNow={false}
                 id="endTime"
               />

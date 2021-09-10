@@ -3,6 +3,9 @@
 
 const LocalStrategy = require('passport-local').Strategy;
 const database = require('../database');
+const { logEvent } = require('../utils/hdAuditLog');
+const { AuditLogEvents, AuditStatusType } = require('../constants/auditLog');
+const { UserTypes } = require('../middlewares/requireUser');
 
 const localStrategy = new LocalStrategy(
   {
@@ -21,10 +24,21 @@ const localStrategy = new LocalStrategy(
     const isValidPassword = await user.checkPassword(password);
 
     if (!isValidPassword) {
+      logEvent(user, {
+        type: AuditLogEvents.LOGIN,
+        status: AuditStatusType.ERROR_INVALID_PASSWORD,
+      });
+
       return done(null, false);
     }
 
-    user.type = 'HealthDepartmentEmployee';
+    user.type = UserTypes.HD_EMPLOYEE;
+
+    logEvent(user, {
+      type: AuditLogEvents.LOGIN,
+      status: AuditStatusType.SUCCESS,
+    });
+
     return done(null, user);
   }
 );

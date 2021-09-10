@@ -16,6 +16,7 @@ const client = redis.createClient({
   password: config.get('redis.password'),
   enable_offline_queue: true,
   detect_buffers: true,
+  db: config.get('redis.database'),
   retry_strategy: retryStrategy,
 });
 

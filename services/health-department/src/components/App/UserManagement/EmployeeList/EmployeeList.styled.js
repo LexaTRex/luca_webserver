@@ -4,7 +4,7 @@ export const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
-  padding: 0 32px;
+  padding: 0 32px 32px 32px;
   height: 100%;
   overflow: auto;
 `;

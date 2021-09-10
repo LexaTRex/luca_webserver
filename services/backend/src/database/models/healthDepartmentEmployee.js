@@ -23,11 +23,11 @@ module.exports = (Sequelize, DataTypes) => {
       },
       firstName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.CITEXT,
@@ -36,7 +36,7 @@ module.exports = (Sequelize, DataTypes) => {
       },
       phone: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       departmentId: {
         type: DataTypes.UUID,
@@ -71,6 +71,10 @@ module.exports = (Sequelize, DataTypes) => {
 
     HealthDepartmentEmployee.hasMany(models.TracingProcess, {
       foreignKey: 'assigneeId',
+    });
+
+    HealthDepartmentEmployee.hasMany(models.HealthDepartmentAuditLog, {
+      foreignKey: 'employeeId',
     });
   };
 

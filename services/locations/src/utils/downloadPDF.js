@@ -16,13 +16,14 @@ export const downloadPDF = async ({
   isCWAEventEnabled,
 }) => {
   const messageText = intl.formatMessage({ id: 'message.generatingPDF' });
-  const locationName = `${location.groupName}${
-    location.name ? ` - ${location.name}` : ''
-  }`;
   const showLoadingProgress = percentage =>
     openLoadingMessage(percentage, messageText);
   setIsDownloading(true);
   showLoadingProgress(0);
+  const locationName = `_${location.name}`;
+  const fileName = `${location.groupName.replace(' ', '_')}${
+    location.name ? locationName.replace(' ', '_') : ''
+  }`;
   const { getPDF } = pdfWorkerApiReference.current;
   const pdf = await getPDF(
     location,
@@ -42,11 +43,9 @@ export const downloadPDF = async ({
     : 'downloadFile.locations.generalQrCode';
 
   const filename = sanitize(
-    intl.formatMessage(
-      { id: fileNameLocale },
-      { groupName: location.groupName, locationName }
-    )
+    intl.formatMessage({ id: fileNameLocale }, { fileName })
   );
+
   FileSaver.saveAs(pdf, filename);
   setIsDownloading(false);
   message.destroy(LOADING_MESSAGE);

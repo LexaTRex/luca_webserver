@@ -9,7 +9,13 @@ const departmentIdParametersSchema = z.object({
   departmentId: z.uuid(),
 });
 
+const contactParametersSchema = z.object({
+  email: z.email().optional(),
+  phone: z.phoneNumber().optional(),
+});
+
 module.exports = {
   storeKeysSchema,
   departmentIdParametersSchema,
+  contactParametersSchema,
 };

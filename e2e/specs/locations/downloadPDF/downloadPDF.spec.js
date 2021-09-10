@@ -10,7 +10,7 @@ import {
 
 import { removeLocation } from '../location/location.helper';
 
-describe('Download QR Codes PDF', {retries: 3}, () => {
+describe('Download QR Codes PDF', { retries: 3 }, () => {
   beforeEach(() => login());
   after(() => removeLocation(NEW_RESTAURANT_LOCATION));
 
@@ -18,7 +18,7 @@ describe('Download QR Codes PDF', {retries: 3}, () => {
     it('downloads the Group PDF', () => {
       cy.getByCy('createGroup').click();
       cy.getByCy('restaurant').click();
-      cy.get('#groupName', {timeout: 20000}).type(RESTAURANT_NAME);
+      cy.get('#groupName', { timeout: 20000 }).type(RESTAURANT_NAME);
       cy.get('form').submit();
       cy.get('#locationSearch').type(RESTAURANT_ADDRESS);
       cy.get('.pac-container > div:first-of-type').click({ force: true });
@@ -33,10 +33,13 @@ describe('Download QR Codes PDF', {retries: 3}, () => {
       cy.getByCy('download').click();
       cy.get('.ant-message-notice').should('exist');
       cy.get('.ant-message-notice', { timeout: 20000 }).should('not.exist');
-      cy.readFile(
-        './downloads/luca_QRCode_Test Restaurant_Test Restaurant.pdf', {timeout: 30000}
+      cy.readFile('./downloads/luca_QRCode_Test_Restaurant.pdf', {
+        timeout: 30000,
+      });
+      cy.task(
+        'deleteFileIfExists',
+        './downloads/luca_QRCode_Test_Restaurant.pdf'
       );
-      cy.task('deleteFileIfExists', './downloads/luca_QRCode_Test Restaurant_Test Restaurant.pdf');
     });
   });
 
@@ -59,9 +62,12 @@ describe('Download QR Codes PDF', {retries: 3}, () => {
       cy.getByCy('qrCodeDownload').click();
       cy.get('.ant-message-notice', { timeout: 20000 }).should('not.exist');
       cy.readFile(
-        './downloads/luca_QRCode_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION.pdf'
+        './downloads/luca_QRCode_Nexenio_1_e2e_NEW_RESTAURANT_LOCATION.pdf'
       );
-      cy.task('deleteFileIfExists', './downloads/luca_QRCode_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION.pdf');
+      cy.task(
+        'deleteFileIfExists',
+        './downloads/luca_QRCode_Nexenio_1_e2e_NEW_RESTAURANT_LOCATION.pdf'
+      );
     });
   });
 
@@ -74,9 +80,12 @@ describe('Download QR Codes PDF', {retries: 3}, () => {
       cy.getByCy('qrCodeDownload').click();
       cy.get('.ant-message-notice', { timeout: 60000 }).should('not.exist');
       cy.readFile(
-        './downloads/luca_QRCodes_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION_Tables.pdf'
+        './downloads/luca_QRCodes_Nexenio_1_e2e_NEW_RESTAURANT_LOCATION_Tables.pdf'
       );
-      cy.task('deleteFileIfExists', './downloads/luca_QRCodes_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION_Tables.pdf');
+      cy.task(
+        'deleteFileIfExists',
+        './downloads/luca_QRCodes_Nexenio_1_e2e_NEW_RESTAURANT_LOCATION_Tables.pdf'
+      );
     });
 
     it('downloads the Location PDF if tables are configured', () => {
@@ -92,10 +101,13 @@ describe('Download QR Codes PDF', {retries: 3}, () => {
       cy.getByCy('qrCodeDownload').click();
       cy.get('.ant-message-notice', { timeout: 20000 }).should('not.exist');
       cy.readFile(
-        './downloads/luca_QRCode_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION.pdf',
+        './downloads/luca_QRCode_Nexenio_1_e2e_NEW_RESTAURANT_LOCATION.pdf',
         { timeout: 20000 }
       );
-      cy.task('deleteFileIfExists', './downloads/luca_QRCode_Nexenio_1 e2e_Nexenio_1 e2e - NEW_RESTAURANT_LOCATION.pdf');
+      cy.task(
+        'deleteFileIfExists',
+        './downloads/luca_QRCode_Nexenio_1_e2e_NEW_RESTAURANT_LOCATION.pdf'
+      );
     });
   });
 });

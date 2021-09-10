@@ -11,8 +11,14 @@ const { GET_RANDOM_BYTES, hexToBase64 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
 const featureFlag = require('../../utils/featureFlag');
-const { generateNotifications } = require('../../utils/notifications.js');
-const { updateBloomFilter } = require('../../utils/bloomFilter.js');
+const {
+  generateNotifications,
+} = require('../../utils/notifications/notificationsV3');
+const {
+  generateActiveChunk,
+  generateArchiveChunk,
+} = require('../../utils/notifications/notificationsV4');
+const { updateBloomFilter } = require('../../utils/bloomFilter');
 
 router.post('/deleteOldTraces', async (request, response) => {
   const t0 = performance.now();
@@ -263,9 +269,69 @@ router.post('/regenerateNotifications', async (request, response) => {
   });
 });
 
+router.post(
+  '/regenerateV4NotificationsActiveChunk',
+  async (request, response) => {
+    const t0 = performance.now();
+    await generateActiveChunk();
+
+    response.send({
+      time: performance.now() - t0,
+    });
+  }
+);
+
+router.post(
+  '/generateV4NotificationsArchiveChunk',
+  async (request, response) => {
+    const t0 = performance.now();
+    await generateArchiveChunk();
+
+    response.send({
+      time: performance.now() - t0,
+    });
+  }
+);
+
+router.post('/deleteOldV4NotificationChunks', async (request, response) => {
+  const t0 = performance.now();
+  const earliestTimeToKeep = moment().subtract(
+    config.get('luca.notificationChunks.maxAge'),
+    'hours'
+  );
+  const affectedRows = await database.NotificationsChunk.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: earliestTimeToKeep,
+      },
+    },
+    paranoid: false,
+    force: true,
+  });
+
+  response.send({ affectedRows, time: performance.now() - t0 });
+});
+
 router.post('/regenerateBloomFilter', async (request, response) => {
   updateBloomFilter();
   response.sendStatus(status.NO_CONTENT);
+});
+
+router.post('/deleteOldAuditLogs', async (request, response) => {
+  const t0 = performance.now();
+  const maxAge = config.get('luca.auditLogs.maxAge');
+  const affectedRows = await database.HealthDepartmentAuditLog.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: moment().subtract(maxAge, 'hours'),
+      },
+    },
+  });
+
+  response.send({
+    affectedRows,
+    time: performance.now() - t0,
+  });
 });
 
 module.exports = router;

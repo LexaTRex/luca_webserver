@@ -1,6 +1,6 @@
 {
   "name": "e2e",
-  "version": "1.9.2",
+  "version": "2.0.0",
   "main": "index.js",
   "private": true,
   "engines": {
@@ -19,9 +19,12 @@
     "faker": "5.5.3",
     "fluent-ffmpeg": "2.1.2",
     "fs-extra": "10.0.0",
-    "moment": "2.29.1"
+    "jsonwebtoken": "8.5.1",
+    "moment": "2.29.1",
+    "node-forge": "0.10.0"
   },
   "devDependencies": {
+    "cypress-fail-fast": "3.1.0",
     "cypress-postgres": "1.1.1",
     "eslint-plugin-sonarjs": "0.5.0",
     "prettier": "2.2.1"

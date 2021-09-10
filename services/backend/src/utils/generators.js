@@ -24,9 +24,9 @@ const generateSupportCode = () => {
   return supportCode.join('');
 };
 
-const generatePassword = () => {
+const generatePassword = (length = 12) => {
   const password = [];
-  for (let count = 0; count < 12; count += 1) {
+  for (let count = 0; count < length; count += 1) {
     password.push(PASSWORD_CHARSET[crypto.randomInt(PASSWORD_CHARSET.length)]);
   }
   return password.join('');

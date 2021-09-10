@@ -8,7 +8,7 @@ import { sortByNameAsc } from 'utils/string';
 import { contactLocation } from 'network/api';
 
 import { useModal } from 'components/hooks/useModal';
-import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
+import { useLocationTransfers } from 'components/hooks/useLocationTransfers';
 import { ContactPersonsModal } from 'components/App/modals/ContactPersonsModal';
 
 import { Time, Contact } from './HistoryTable.styled';
@@ -18,22 +18,24 @@ export const HistoryTable = ({ process }) => {
   const intl = useIntl();
   const [openModal] = useModal();
   const queryClient = useQueryClient();
-  const locations = useLocationWithTransfers(process.uuid);
+  const locationTransfers = useLocationTransfers(process.uuid);
 
-  if (!locations) return null;
+  if (!locationTransfers) return null;
 
   const formattedContactInfo = (firstName, lastName) =>
     `${firstName} ${lastName}`;
 
-  const handleAction = location => {
-    if (location.isCompleted) {
+  const handleAction = locationTransfer => {
+    if (locationTransfer.isCompleted) {
       openModal({
-        content: <ContactPersonsModal location={location} process={process} />,
+        content: (
+          <ContactPersonsModal location={locationTransfer} process={process} />
+        ),
         wide: true,
       });
     }
-    if (!location.contactedAt) {
-      contactLocation(location.transferId)
+    if (!locationTransfer.contactedAt) {
+      contactLocation(locationTransfer.transferId)
         .then(() => {
           notification.success({
             message: intl.formatMessage({
@@ -76,13 +78,16 @@ export const HistoryTable = ({ process }) => {
       title: intl.formatMessage({ id: 'history.label.contactInfo' }),
 
       key: 'contactInfo',
-      render: function renderContact(location) {
+      render: function renderContact(locationTransfer) {
         return (
           <>
             <Contact>
-              {formattedContactInfo(location.firstName, location.lastName)}
+              {formattedContactInfo(
+                locationTransfer.firstName,
+                locationTransfer.lastName
+              )}
             </Contact>
-            <Contact>{location.phone}</Contact>
+            <Contact>{locationTransfer.phone}</Contact>
           </>
         );
       },
@@ -117,10 +122,10 @@ export const HistoryTable = ({ process }) => {
     {
       title: intl.formatMessage({ id: 'history.label.confirmStatus' }),
       key: 'confirmStatus',
-      render: function renderConfirmStatus(location) {
+      render: function renderConfirmStatus(locationTransfer) {
         return (
           <ContactConfirmationButton
-            location={location}
+            location={locationTransfer}
             callback={handleAction}
           />
         );
@@ -134,8 +139,8 @@ export const HistoryTable = ({ process }) => {
       columns={columns}
       dataSource={
         process.userTransferId
-          ? sortByTimeAsc(locations)
-          : sortByNameAsc(locations)
+          ? sortByTimeAsc(locationTransfers)
+          : sortByNameAsc(locationTransfers)
       }
       pagination={false}
       rowKey={record => record.transferId}

@@ -3,8 +3,8 @@ import { RESTAURANT_TYPE } from '../components/App/modals/CreateLocationModal/Cr
 
 export const getLocationName = location =>
   location.name === null || location.name === undefined
-    ? `${location.LocationGroup?.name}`
-    : `${location.LocationGroup?.name} ${location.name}`;
+    ? `${location.groupName}`
+    : `${location.groupName} ${location.name}`;
 
 const generateLocationCWAContentPart = location => {
   const address = `${location.streetName} ${location.streetNr}, ${location.zipCode} ${location.city}`;

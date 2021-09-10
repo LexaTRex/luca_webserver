@@ -118,6 +118,7 @@ export const decryptTrace = async encryptedTrace => {
       traceId: encryptedTrace.traceId,
       checkin: encryptedTrace.checkin,
       checkout: encryptedTrace.checkout,
+      deviceType: encryptedTrace.deviceType,
       userData: sanitizeObject(userData),
       additionalData: sanitizeObject(additionalData),
       isInvalid,

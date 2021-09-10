@@ -129,10 +129,25 @@ const limitRequestsByFixedLinePhoneNumberPerDay = key =>
     }
   );
 
+const limitRequestsByUserPerHour = key =>
+  limitRequestsByFeatureFlag(
+    key || DEFAULT_RATE_LIMIT_HOUR,
+    {},
+    {
+      store: hourStore,
+      windowMs: hourDuration.as('ms'),
+      keyGenerator: request => {
+        const { user } = request;
+        return !user ? ipKeyGenerator(request) : user.uuid;
+      },
+    }
+  );
+
 module.exports = {
   limitRequestsPerMinute,
   limitRequestsPerHour,
   limitRequestsPerDay,
   limitRequestsByPhoneNumberPerDay,
   limitRequestsByFixedLinePhoneNumberPerDay,
+  limitRequestsByUserPerHour,
 };

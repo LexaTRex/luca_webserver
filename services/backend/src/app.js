@@ -57,18 +57,16 @@ const configureApp = () => {
   const requestLogger = expressWinston.logger({
     winstonInstance: logger,
     statusLevels: true,
-    ignoredRoutes: [
-      '/api/v3/health',
-      '/api/v3/health/ready',
-      '/api/internal/metrics',
-    ],
+    ignoredRoutes: ['/api/v3/health', '/api/v3/health/ready'],
   });
   const errorLogger = expressWinston.errorLogger({
     winstonInstance: logger,
   });
 
   app.disable('x-powered-by');
+  app.disable('etag');
   app.enable('strict routing');
+
   app.set('trust proxy', 2);
 
   // Global Middlewares

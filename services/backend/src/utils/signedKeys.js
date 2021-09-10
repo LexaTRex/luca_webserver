@@ -19,14 +19,16 @@ const loadCertificates = () => {
   ROOT_CA_STORE = forge.pki.createCaStore([D_TRUST_ROOT_CA]);
 };
 
-const jwtSchema = z.object({
-  sub: z.uuid(),
-  iss: z.string().length(40),
-  name: z.string().max(255),
-  key: z.ecPublicKey(),
-  type: z.enum(['publicHDEKP', 'publicHDSKP']),
-  iat: z.unixTimestamp(),
-});
+const jwtSchema = z
+  .object({
+    sub: z.uuid(),
+    iss: z.string().length(40),
+    name: z.string().max(255),
+    key: z.ecPublicKey(),
+    type: z.enum(['publicHDEKP', 'publicHDSKP']),
+    iat: z.unixTimestamp(),
+  })
+  .strict();
 
 const getFingerprint = certificate => {
   const certDer = forge.asn1.toDer(forge.pki.certificateToAsn1(certificate));

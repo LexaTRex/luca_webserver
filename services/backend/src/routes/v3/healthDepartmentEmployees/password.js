@@ -13,6 +13,11 @@ const { generatePassword } = require('../../../utils/generators');
 const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
 
 const { changePasswordSchema, renewSchema } = require('./password.schemas');
+const {
+  AuditLogEvents,
+  AuditStatusType,
+} = require('../../../constants/auditLog');
+const { logEvent } = require('../../../utils/hdAuditLog');
 
 // change password
 router.post(
@@ -31,6 +36,11 @@ router.post(
     );
 
     if (!isCurrentPasswordCorrect) {
+      logEvent(employee, {
+        type: AuditLogEvents.CHANGE_PASSWORD,
+        status: AuditStatusType.ERROR_INVALID_PASSWORD,
+      });
+
       return response.sendStatus(status.FORBIDDEN);
     }
 
@@ -46,6 +56,14 @@ router.post(
         email: employee.email,
       }
     );
+
+    logEvent(employee, {
+      type: AuditLogEvents.CHANGE_PASSWORD,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        target: employee.uuid,
+      },
+    });
 
     return response.sendStatus(status.NO_CONTENT);
   }
@@ -64,12 +82,28 @@ router.patch(
     );
 
     if (employee.departmentId !== request.user.departmentId) {
+      logEvent(request.user, {
+        type: AuditLogEvents.RESET_PASSWORD,
+        status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
+        meta: {
+          target: employee.uuid,
+        },
+      });
+
       return response.sendStatus(status.FORBIDDEN);
     }
 
     const newPassword = generatePassword(8);
 
     employee.update({ password: newPassword });
+
+    logEvent(request.user, {
+      type: AuditLogEvents.RESET_PASSWORD,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        target: employee.uuid,
+      },
+    });
 
     response.status(status.OK);
     return response.send({ password: newPassword });

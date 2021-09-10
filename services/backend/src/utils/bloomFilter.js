@@ -1,3 +1,5 @@
+import cache from 'utils/redisCache';
+
 const moment = require('moment');
 const { Worker } = require('worker_threads');
 const { Op } = require('sequelize');
@@ -9,7 +11,6 @@ const {
   set: redisSet,
   get: redisGet,
 } = require('./redis');
-const cache = require('./redisCache');
 const database = require('../database');
 
 const BLOOM_FILTER_BUFFER_KEY = 'BadgeBloomFilterBuffer';

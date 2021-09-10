@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
+import { useLocationTransfers } from 'components/hooks/useLocationTransfers';
 
 import {
   Wrapper,
@@ -12,7 +12,7 @@ import {
 
 export const Header = ({ process }) => {
   const intl = useIntl();
-  const locations = useLocationWithTransfers(process.uuid);
+  const locations = useLocationTransfers(process.uuid);
 
   if (!locations) return null;
 

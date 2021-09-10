@@ -108,7 +108,16 @@ export async function decryptStaticDeviceTrace(encryptedTrace) {
     const userId = hexToUuid(traceData.slice(0, 32));
     const userDataKey = traceData.slice(32, 64);
 
-    const encryptedUser = await getEncryptedUserContactData(userId);
+    let encryptedUser;
+    try {
+      encryptedUser = await getEncryptedUserContactData(userId);
+    } catch (error) {
+      console.error(
+        `Error while getting contact data (TraceId: ${encryptedTrace.traceId})`
+      );
+      throw error;
+    }
+
     const { userData, verificationSecret, isInvalid } = decryptUser(
       encryptedUser,
       userDataKey

@@ -37,6 +37,7 @@ const filterHeaders = format(info => {
       'accept',
       'referer',
       'accept-encoding',
+      'ssl-client-subject-dn',
     ]);
   }
   return info;

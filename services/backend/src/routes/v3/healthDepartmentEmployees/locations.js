@@ -10,6 +10,7 @@ const {
 const {
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
+
 const { locationIdParametersSchema } = require('./locations.schemas');
 
 router.get(

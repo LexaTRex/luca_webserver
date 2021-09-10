@@ -11,16 +11,18 @@ import { registerDevice } from '../helpers/functions';
 import { clean } from '../../workflow/helpers/functions';
 import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/login.helper';
 import { loginHealthDepartment } from '../../health-department/helper/api/auth.helper';
+import { signHealthDepartment } from '../../health-department/helper/signHealthDepartment';
 import { WEBAPP_ROUTE, LOCATIONS_ROUTE } from '../helpers/routes';
-import {E2E_EMAIL, E2E_PASSWORD} from "../../locations/helpers/users";
+import { E2E_EMAIL, E2E_PASSWORD } from '../../locations/helpers/users';
 
-describe('WebApp / CheckIn', {retries: 3}, () => {
+describe('WebApp / CheckIn', { retries: 3 }, () => {
   before(() => {
     clean();
     basicLocationLogin();
     createGroup(createGroupPayload, false);
     logout();
     loginHealthDepartment();
+    signHealthDepartment();
     addHealthDepartmentPrivateKeyFile();
     cy.wait(1000);
     registerDevice();
@@ -39,7 +41,7 @@ describe('WebApp / CheckIn', {retries: 3}, () => {
       cy.get('@scannerId').then(scannerId => {
         cy.visit(`${WEBAPP_ROUTE}/${scannerId}`);
       });
-      cy.url({timeout: 4000}).should('contain', '/checkout');
+      cy.url({ timeout: 4000 }).should('contain', '/checkout');
       cy.getByCy('locationName').should('contain', createGroupPayload.name);
 
       // Simulate clock

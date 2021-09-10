@@ -34,6 +34,11 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null,
       },
+      approvedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
     },
     {
       paranoid: true,

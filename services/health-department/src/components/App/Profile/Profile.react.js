@@ -7,17 +7,21 @@ import { getHealthDepartment } from 'network/api';
 // Components
 import { VerificationTag } from 'components/App/VerificationTag';
 import { VersionFooter } from 'components/App/VersionFooter';
+import { Divider } from 'components/general';
 import { BackButton } from './BackButton';
 import { ProfileOverview } from './ProfileOverview';
 import { DownloadSigningTool } from './DownloadSigningTool';
+import { AuditLogsDownloads } from './AuditLogsDownloads';
 import { ChangePasswordView } from './ChangePasswordView';
 import {
   ProfileWrapper,
   StyledChildWrapper,
-  ProfileHeader,
+  Header,
   VerificationTagWrapper,
   VersionFooterWrapper,
+  InformationWrapper,
 } from './Profile.styled';
+import { ContactInformation } from './ContactInformation';
 
 export const Profile = ({ profileData }) => {
   const intl = useIntl();
@@ -39,22 +43,39 @@ export const Profile = ({ profileData }) => {
       <ProfileWrapper>
         <StyledChildWrapper>
           <BackButton />
-          <ProfileHeader>
+          <Header>
             {intl.formatMessage({ id: 'navigation.profile' })}
             <VerificationTagWrapper>
               <VerificationTag />
             </VerificationTagWrapper>
-          </ProfileHeader>
+          </Header>
           <DownloadSigningTool department={department} />
           <ProfileOverview me={profileData} department={department} />
         </StyledChildWrapper>
+        <Divider />
         <StyledChildWrapper>
           <ChangePasswordView />
         </StyledChildWrapper>
+      </ProfileWrapper>
+
+      <InformationWrapper>
+        {profileData.isAdmin && (
+          <>
+            <Header>
+              {intl.formatMessage({
+                id: 'navigation.comprehensiveInformation',
+              })}
+            </Header>
+            <ContactInformation department={department} />
+            <StyledChildWrapper>
+              <AuditLogsDownloads />
+            </StyledChildWrapper>
+          </>
+        )}
         <VersionFooterWrapper>
           <VersionFooter />
         </VersionFooterWrapper>
-      </ProfileWrapper>
+      </InformationWrapper>
     </>
   );
 };

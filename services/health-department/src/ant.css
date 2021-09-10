@@ -75,6 +75,10 @@ input:-webkit-autofill:active {
   background-color: #f5f5f5 !important;
 }
 
+.ant-switch-checked {
+  background-color: #b2c596;
+}
+
 .filter.ant-select {
   width: 180px;
 }
@@ -389,4 +393,8 @@ input:-webkit-autofill:active {
   font-family: Montserrat-Bold, sans-serif;
   font-weight: bold;
   font-size: 32px;
+}
+
+.ant-picker-dropdown .ant-picker-time-panel + .ant-picker-footer {
+  display: none;
 }

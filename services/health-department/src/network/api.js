@@ -163,8 +163,10 @@ export const createLocationTransfer = data => {
 
 // USER MANAGEMENT
 
-export const getEmployees = () => {
-  return getRequest(`${API_PATH}/v3/healthDepartmentEmployees/`);
+export const getEmployees = (includeDeleted = false) => {
+  return getRequest(
+    `${API_PATH}/v3/healthDepartmentEmployees/?includeDeleted=${includeDeleted}`
+  );
 };
 
 export const renewEmployeePassword = data => {
@@ -290,3 +292,40 @@ export const createUserTransfer = payload => {
     headers,
   }).then(response => response.json());
 };
+
+// NOTIFICATIONS
+export const notifyLocationGuests = locationTransferId =>
+  fetch(`${API_PATH}/v4/riskLevels`, {
+    method: 'POST',
+    body: JSON.stringify({
+      locationTransferId,
+    }),
+    headers,
+  });
+
+export const notifyLocationTracesGuests = payload =>
+  fetch(`${API_PATH}/v4/riskLevels/traces`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers,
+  });
+
+export const getWarningLevelsForLocationTransfer = locationTransferId =>
+  getRequest(`${API_PATH}/v4/riskLevels/${locationTransferId}`);
+
+export const getNotificationConfig = () =>
+  getRequest(`${API_PATH}/v4/notifications/config`);
+
+// AUDITS
+export const getAuditLog = data =>
+  getRequest(
+    `${API_PATH}/v4/healthDepartments/auditlog/download/?timeframe[0]=${data.timeframe[0]}&timeframe[1]=${data.timeframe[1]}`
+  );
+
+// PROFILE
+export const setContactInformation = payload =>
+  fetch(`${API_PATH}/v3/healthDepartments/contact`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+    headers,
+  });

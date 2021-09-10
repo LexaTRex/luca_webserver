@@ -5,11 +5,11 @@ const patchSchema = z
     didRequestLocations: z.boolean().optional(),
     isCompleted: z.boolean().optional(),
     assigneeId: z.uuid().nullable().optional(),
-    note: z.base64({ max: 1000 }).optional(),
-    noteIV: z.iv().optional(),
-    noteMAC: z.mac().optional(),
-    noteSignature: z.ecSignature().optional(),
-    notePublicKey: z.ecPublicKey().optional(),
+    note: z.base64({ max: 1000 }).nullable().optional(),
+    noteIV: z.iv().nullable().optional(),
+    noteMAC: z.mac().nullable().optional(),
+    noteSignature: z.ecSignature().nullable().optional(),
+    notePublicKey: z.ecPublicKey().nullable().optional(),
   })
   .refine(value => {
     // check if note property exists all other required properties also exist
@@ -19,7 +19,9 @@ const patchSchema = z
           'noteMAC',
           'noteSignature',
           'notePublicKey',
-        ].every(property => Object.hasOwn(value, property))
+        ].every(property =>
+          Object.prototype.hasOwnProperty.call(value, property)
+        )
       : true;
   });
 

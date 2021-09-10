@@ -34,5 +34,4 @@ const set = (key: string, value: string | Buffer) => {
 };
 
 const cache = { get, set };
-
-module.exports = cache;
+export default cache;

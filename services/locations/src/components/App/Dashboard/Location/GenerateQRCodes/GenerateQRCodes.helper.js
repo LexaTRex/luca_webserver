@@ -79,10 +79,8 @@ const getCSVFileContentFromLocation = (
 
 const getQRCodeCSVFileName = location =>
   location.name === null
-    ? sanitize(`QR_Codes_${location.LocationGroup?.name}_luca.csv`)
-    : sanitize(
-        `QR_Codes_${location.LocationGroup?.name}_${location.name}_luca.csv`
-      );
+    ? sanitize(`QR_Codes_${location.groupName}_luca.csv`)
+    : sanitize(`QR_Codes_${location.groupName}_${location.name}_luca.csv`);
 
 export const QRCodeCSVDownload = ({
   location,

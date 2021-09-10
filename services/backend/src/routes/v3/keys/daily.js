@@ -18,6 +18,12 @@ const {
 } = require('@lucaapp/crypto');
 
 const {
+  AuditLogEvents,
+  AuditStatusType,
+} = require('../../../constants/auditLog');
+const { logEvent } = require('../../../utils/hdAuditLog');
+
+const {
   validateSchema,
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
@@ -27,6 +33,9 @@ const logger = require('../../../utils/logger');
 const {
   requireHealthDepartmentEmployee,
 } = require('../../../middlewares/requireUser');
+const {
+  limitRequestsByUserPerHour,
+} = require('../../../middlewares/rateLimit');
 
 const {
   keyIdParametersSchema,
@@ -171,15 +180,17 @@ router.get(
 router.post(
   '/rotate',
   requireHealthDepartmentEmployee,
+  limitRequestsByUserPerHour('keys_daily_rotate_post_ratelimit_hour'),
   validateSchema(rotateSchema, '600kb'),
   // eslint-disable-next-line sonarjs/cognitive-complexity
   async (request, response) => {
-    const healthDepartment = await database.HealthDepartment.findByPk(
-      request.user.departmentId
-    );
+    const healthDepartment = request.user.HealthDepartment;
+    const auditLogMeta = {
+      keyId: request.body.keyId,
+    };
 
-    if (!healthDepartment) {
-      return response.sendStatus(status.NOT_FOUND);
+    if (!healthDepartment.signedPublicHDSKP) {
+      return response.sendStatus(status.FORBIDDEN);
     }
 
     // verify signature of daily key
@@ -194,6 +205,12 @@ router.post(
     );
 
     if (!isValidDailyKeySignature) {
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+        status: AuditStatusType.ERROR_INVALID_SIGNATURE,
+        meta: auditLogMeta,
+      });
+
       return response.sendStatus(status.FORBIDDEN);
     }
 
@@ -211,6 +228,12 @@ router.post(
       );
 
       if (!isValidSignature) {
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_SIGNATURE,
+          meta: auditLogMeta,
+        });
+
         return response.sendStatus(status.FORBIDDEN);
       }
     }
@@ -219,6 +242,12 @@ router.post(
     const now = moment();
     const createdAt = moment.unix(request.body.createdAt);
     if (moment.duration(now.diff(createdAt)).as('minutes') > 5) {
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+        status: AuditStatusType.ERROR_TIMEFRAME,
+        meta: auditLogMeta,
+      });
+
       return response.sendStatus(status.CONFLICT);
     }
 
@@ -236,6 +265,12 @@ router.post(
 
       // initial keyId should be 0
       if (!dailyPublicKey && request.body.keyId !== 0) {
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_KEYID,
+          meta: auditLogMeta,
+        });
+
         await transaction.rollback();
         return response.sendStatus(status.CONFLICT);
       }
@@ -247,6 +282,13 @@ router.post(
           request.body.keyId
       ) {
         await transaction.rollback();
+
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+          status: AuditStatusType.ERROR_LIMIT_EXCEEDED,
+          meta: auditLogMeta,
+        });
+
         return response.sendStatus(status.CONFLICT);
       }
 
@@ -255,6 +297,11 @@ router.post(
 
         // old key should be at least 1 day old before rotation
         if (keyAge.asHours() < config.get('keys.daily.minKeyAge')) {
+          logEvent(request.user, {
+            type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+            status: AuditStatusType.ERROR_LIMIT_EXCEEDED,
+            meta: auditLogMeta,
+          });
           await transaction.rollback();
           return response.sendStatus(status.CONFLICT);
         }
@@ -292,10 +339,23 @@ router.post(
       );
 
       await transaction.commit();
+
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+        status: AuditStatusType.SUCCESS,
+        meta: auditLogMeta,
+      });
+
       return response.sendStatus(status.OK);
     } catch (error) {
       await transaction.rollback();
       logger.error(error);
+
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_DAILY_KEYPAIR,
+        status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
+        meta: auditLogMeta,
+      });
 
       // Transaction error
       if (
@@ -322,20 +382,20 @@ router.post(
   requireHealthDepartmentEmployee,
   validateSchema(rekeySchema, '600kb'),
   async (request, response) => {
-    const healthDepartment = await database.HealthDepartment.findByPk(
-      request.user.departmentId
-    );
+    const healthDepartment = request.user.HealthDepartment;
+    const { encryptedDailyPrivateKeys, keyId, createdAt } = request.body;
 
-    if (!healthDepartment) {
-      return response.sendStatus(status.NOT_FOUND);
+    const auditLogMeta = { keyId };
+
+    if (!healthDepartment.signedPublicHDSKP) {
+      return response.sendStatus(status.FORBIDDEN);
     }
 
     // verify signatures of encryptedKeys
-    for (const encryptedDailyPrivateKey of request.body
-      .encryptedDailyPrivateKeys) {
+    for (const encryptedDailyPrivateKey of encryptedDailyPrivateKeys) {
       const signedData =
-        int32ToHex(request.body.keyId) +
-        int32ToHex(request.body.createdAt) +
+        int32ToHex(keyId) +
+        int32ToHex(createdAt) +
         base64ToHex(encryptedDailyPrivateKey.publicKey);
       const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
         base64ToHex(healthDepartment.publicHDSKP),
@@ -344,30 +404,73 @@ router.post(
       );
 
       if (!isValidSignature) {
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_DAILY_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_SIGNATURE,
+          meta: auditLogMeta,
+        });
+
         return response.sendStatus(status.FORBIDDEN);
       }
     }
 
-    const encryptedDailyPrivateKeys = request.body.encryptedDailyPrivateKeys.map(
-      // eslint-disable-next-line sonarjs/no-identical-functions
-      key => ({
-        keyId: request.body.keyId,
-        createdAt: moment.unix(request.body.createdAt),
-        issuerId: request.user.departmentId,
-        healthDepartmentId: key.healthDepartmentId,
-        data: key.data,
-        iv: key.iv,
-        mac: key.mac,
-        publicKey: key.publicKey,
-        signature: key.signature,
-      })
-    );
+    const dailyPublicKey = await database.DailyPublicKey.findOne({
+      where: { keyId, createdAt: moment.unix(createdAt) },
+    });
 
-    await Promise.all(
-      encryptedDailyPrivateKeys.map(key =>
-        database.EncryptedDailyPrivateKey.upsert(key)
-      )
-    );
+    if (!dailyPublicKey) {
+      logEvent(request.user, {
+        type: AuditLogEvents.REKEY_DAILY_KEYPAIR,
+        status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
+        meta: auditLogMeta,
+      });
+
+      return response.sendStatus(status.CONFLICT);
+    }
+
+    for (const encryptedDailyPrivateKey of encryptedDailyPrivateKeys) {
+      const newKey = {
+        keyId,
+        createdAt: moment.unix(createdAt),
+        issuerId: request.user.departmentId,
+        healthDepartmentId: encryptedDailyPrivateKey.healthDepartmentId,
+        data: encryptedDailyPrivateKey.data,
+        iv: encryptedDailyPrivateKey.iv,
+        mac: encryptedDailyPrivateKey.mac,
+        publicKey: encryptedDailyPrivateKey.publicKey,
+        signature: encryptedDailyPrivateKey.signature,
+      };
+      const oldKey = await database.EncryptedDailyPrivateKey.findOne({
+        where: {
+          keyId,
+          healthDepartmentId: encryptedDailyPrivateKey.healthDepartmentId,
+        },
+      });
+
+      if (!oldKey) {
+        await database.EncryptedDailyPrivateKey.create(newKey);
+      } else if (oldKey.createdAt === dailyPublicKey.createdAt) {
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_DAILY_KEYPAIR,
+          status: AuditStatusType.ERROR_CONFLICT_KEY,
+          meta: auditLogMeta,
+        });
+
+        logger.warn('key already current.');
+      } else {
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_DAILY_KEYPAIR,
+          status: AuditStatusType.SUCCESS,
+          meta: {
+            oldKeyHd: oldKey.healthDepartmentId,
+            newKeyId: keyId,
+            oldKeyId: oldKey.keyId,
+          },
+        });
+
+        oldKey.update(newKey);
+      }
+    }
 
     return response.sendStatus(status.OK);
   }

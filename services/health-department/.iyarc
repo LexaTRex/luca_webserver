@@ -18,6 +18,12 @@
 # This is only used by react-scripts for development purposes.
 1755
 
+# jszip
+# https://nvd.nist.gov/vuln/detail/CVE-2021-23413
+# Crafting a new zip file with filenames set to Object prototype values (e.g proto,
+# toString, etc) results in a returned object with a modified prototype instance.
+1774
+
 # tar
 # https://nvd.nist.gov/vuln/detail/CVE-2021-32804
 # Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization

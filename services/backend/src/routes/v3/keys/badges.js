@@ -31,6 +31,11 @@ const {
   rotateSchema,
   rekeySchema,
 } = require('./badges.schemas');
+const {
+  AuditLogEvents,
+  AuditStatusType,
+} = require('../../../constants/auditLog');
+const { logEvent } = require('../../../utils/hdAuditLog');
 
 const UNABLE_TO_SERIALIZE_ERROR_CODE = '40001';
 
@@ -171,20 +176,19 @@ router.post(
   requireHealthDepartmentEmployee,
   validateSchema(rekeySchema, '600kb'),
   async (request, response) => {
-    const healthDepartment = await database.HealthDepartment.findByPk(
-      request.user.departmentId
-    );
+    const healthDepartment = request.user.HealthDepartment;
+    const { encryptedBadgePrivateKeys, keyId, createdAt } = request.body;
+    const auditLogMeta = { keyId };
 
-    if (!healthDepartment) {
-      return response.sendStatus(status.NOT_FOUND);
+    if (!healthDepartment.signedPublicHDSKP) {
+      return response.sendStatus(status.FORBIDDEN);
     }
 
     // verify signatures of encryptedKeys
-    for (const encryptedBadgePrivateKey of request.body
-      .encryptedBadgePrivateKeys) {
+    for (const encryptedBadgePrivateKey of encryptedBadgePrivateKeys) {
       const signedData =
-        int32ToHex(request.body.keyId) +
-        int32ToHex(request.body.createdAt) +
+        int32ToHex(keyId) +
+        int32ToHex(createdAt) +
         base64ToHex(encryptedBadgePrivateKey.publicKey);
       const isValidSignature = VERIFY_EC_SHA256_DER_SIGNATURE(
         base64ToHex(healthDepartment.publicHDSKP),
@@ -193,36 +197,79 @@ router.post(
       );
 
       if (!isValidSignature) {
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_BADGE_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_SIGNATURE,
+          meta: auditLogMeta,
+        });
+
         return response.sendStatus(status.FORBIDDEN);
       }
     }
 
-    const encryptedBadgePrivateKeys = request.body.encryptedBadgePrivateKeys.map(
-      key => ({
-        keyId: request.body.keyId,
-        createdAt: moment.unix(request.body.createdAt),
-        issuerId: request.user.departmentId,
-        healthDepartmentId: key.healthDepartmentId,
-        data: key.data,
-        iv: key.iv,
-        mac: key.mac,
-        publicKey: key.publicKey,
-        signature: key.signature,
-      })
-    );
+    const badgePublicKey = await database.BadgePublicKey.findOne({
+      where: { keyId, createdAt: moment.unix(createdAt) },
+    });
 
-    await Promise.all(
-      encryptedBadgePrivateKeys.map(key =>
-        database.EncryptedBadgePrivateKey.upsert(key)
-      )
-    );
+    if (!badgePublicKey) {
+      logEvent(request.user, {
+        type: AuditLogEvents.REKEY_BADGE_KEYPAIR,
+        status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
+        meta: auditLogMeta,
+      });
+
+      return response.sendStatus(status.CONFLICT);
+    }
+
+    for (const encryptedBadgePrivateKey of encryptedBadgePrivateKeys) {
+      const newKey = {
+        keyId,
+        createdAt: moment.unix(createdAt),
+        issuerId: request.user.departmentId,
+        healthDepartmentId: encryptedBadgePrivateKey.healthDepartmentId,
+        data: encryptedBadgePrivateKey.data,
+        iv: encryptedBadgePrivateKey.iv,
+        mac: encryptedBadgePrivateKey.mac,
+        publicKey: encryptedBadgePrivateKey.publicKey,
+        signature: encryptedBadgePrivateKey.signature,
+      };
+
+      const oldKey = await database.EncryptedBadgePrivateKey.findOne({
+        where: {
+          keyId,
+          healthDepartmentId: encryptedBadgePrivateKey.healthDepartmentId,
+        },
+      });
+
+      if (!oldKey) {
+        await database.EncryptedBadgePrivateKey.create(newKey);
+      } else if (oldKey.createdAt === badgePublicKey.createdAt) {
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_BADGE_KEYPAIR,
+          status: AuditStatusType.ERROR_CONFLICT_KEY,
+          meta: auditLogMeta,
+        });
+        logger.warn('key already current.');
+      } else {
+        await oldKey.update(newKey);
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_BADGE_KEYPAIR,
+          status: AuditStatusType.SUCCESS,
+          meta: {
+            oldKeyHd: oldKey.healthDepartmentId,
+            newKeyId: keyId,
+            oldKeyId: oldKey.keyId,
+          },
+        });
+      }
+    }
 
     return response.sendStatus(status.OK);
   }
 );
 
 /**
- * Rotate the badge keypair, similarly to the daily keypair, ensuring future
+ * Rotate the badge keypair, similarly to the badge keypair, ensuring future
  * badges will be generated using this new key
  * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-badge-keypair
  * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html
@@ -233,15 +280,16 @@ router.post(
   validateSchema(rotateSchema, '600kb'),
   // eslint-disable-next-line sonarjs/cognitive-complexity
   async (request, response) => {
-    const healthDepartment = await database.HealthDepartment.findByPk(
-      request.user.departmentId
-    );
+    const healthDepartment = request.user.HealthDepartment;
+    const auditLogMeta = {
+      keyId: request.body.keyId,
+    };
 
-    if (!healthDepartment) {
-      return response.sendStatus(status.NOT_FOUND);
+    if (!healthDepartment.signedPublicHDSKP) {
+      return response.sendStatus(status.FORBIDDEN);
     }
 
-    // verify signature of daily key
+    // verify signature of badge key
     const signedBadgeKeyData =
       int32ToHex(request.body.keyId) +
       int32ToHex(request.body.createdAt) +
@@ -253,6 +301,12 @@ router.post(
     );
 
     if (!isValidBadgeKeySignature) {
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+        status: AuditStatusType.ERROR_INVALID_SIGNATURE,
+        meta: auditLogMeta,
+      });
+
       return response.sendStatus(status.FORBIDDEN);
     }
 
@@ -270,6 +324,12 @@ router.post(
       );
 
       if (!isValidSignature) {
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_SIGNATURE,
+          meta: auditLogMeta,
+        });
+
         return response.sendStatus(status.FORBIDDEN);
       }
     }
@@ -278,6 +338,12 @@ router.post(
     const now = moment();
     const createdAt = moment.unix(request.body.createdAt);
     if (moment.duration(now.diff(createdAt)).as('minutes') > 5) {
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+        status: AuditStatusType.ERROR_TIMEFRAME,
+        meta: auditLogMeta,
+      });
+
       return response.sendStatus(status.CONFLICT);
     }
 
@@ -296,11 +362,23 @@ router.post(
       // initial keyId should be 0
       if (!badgePublicKey && request.body.keyId !== 0) {
         await transaction.rollback();
+
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_KEYID,
+          meta: auditLogMeta,
+        });
+
         return response.sendStatus(status.CONFLICT);
       }
 
       // new keyId should +1 the old keyId
       if (badgePublicKey && badgePublicKey.keyId + 1 !== request.body.keyId) {
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_KEYID,
+          meta: auditLogMeta,
+        });
         await transaction.rollback();
         return response.sendStatus(status.CONFLICT);
       }
@@ -310,6 +388,12 @@ router.post(
         badgePublicKey &&
         request.body.keyId > config.get('keys.badge.targetKeyId')
       ) {
+        logEvent(request.user, {
+          type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+          status: AuditStatusType.ERROR_INVALID_KEYID,
+          meta: auditLogMeta,
+        });
+
         await transaction.rollback();
         return response.sendStatus(status.CONFLICT);
       }
@@ -347,10 +431,23 @@ router.post(
       );
 
       await transaction.commit();
+
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+        status: AuditStatusType.SUCCESS,
+        meta: auditLogMeta,
+      });
+
       return response.sendStatus(status.OK);
     } catch (error) {
       await transaction.rollback();
       logger.error(error);
+
+      logEvent(request.user, {
+        type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,
+        status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
+        meta: auditLogMeta,
+      });
 
       // Transaction error
       if (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { PrimaryButton } from 'components/general';
+import { PrimaryButton, Divider } from 'components/general';
 
 // Api
 import { getSigningTool } from 'network/api';
@@ -31,32 +31,38 @@ export const DownloadSigningTool = ({ department }) => {
     return null;
 
   return (
-    <Wrapper>
-      <ChildWrapper>
-        <StyledHeadline>
-          {intl.formatMessage({ id: 'profile.signingTool.download.title' })}
-        </StyledHeadline>
-        <StyledText>
-          {intl.formatMessage(
-            { id: 'profile.signingTool.download.info' },
-            { br: <br /> }
-          )}
-        </StyledText>
-        <ButtonWrapper>
-          <PrimaryButton href={`${signingTool[0].downloadUrl}`} target="_blank">
+    <>
+      <Wrapper>
+        <ChildWrapper>
+          <StyledHeadline>
+            {intl.formatMessage({ id: 'profile.signingTool.download.title' })}
+          </StyledHeadline>
+          <StyledText>
             {intl.formatMessage(
-              { id: 'profile.signingTool.download.button' },
-              { version: `v${signingTool[0].version}` }
+              { id: 'profile.signingTool.download.info' },
+              { br: <br /> }
             )}
-          </PrimaryButton>
-          <VersionTag>
-            {intl.formatMessage(
-              { id: 'profile.signingTool.download.hash' },
-              { hash: signingTool[0].hash }
-            )}
-          </VersionTag>
-        </ButtonWrapper>
-      </ChildWrapper>
-    </Wrapper>
+          </StyledText>
+          <ButtonWrapper>
+            <PrimaryButton
+              href={`${signingTool[0].downloadUrl}`}
+              target="_blank"
+            >
+              {intl.formatMessage(
+                { id: 'profile.signingTool.download.button' },
+                { version: `v${signingTool[0].version}` }
+              )}
+            </PrimaryButton>
+            <VersionTag>
+              {intl.formatMessage(
+                { id: 'profile.signingTool.download.hash' },
+                { hash: signingTool[0].hash }
+              )}
+            </VersionTag>
+          </ButtonWrapper>
+        </ChildWrapper>
+      </Wrapper>
+      <Divider />
+    </>
   );
 };

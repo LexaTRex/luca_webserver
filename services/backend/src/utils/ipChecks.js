@@ -7,9 +7,9 @@ const database = require('../database');
 const CLASS_A_CIDR = new IPCIDR('10.0.0.0/8');
 const CLASS_B_CIDR = new IPCIDR('172.16.0.0/12');
 const CLASS_C_CIDR = new IPCIDR('192.168.0.0/16');
-const CLASS_A_IPV6_CIDR = new IPCIDR('::ffff:10.0.0.0/8');
-const CLASS_B_IPV6_CIDR = new IPCIDR('::ffff:172.16.0.0/12');
-const CLASS_C_IPV6_CIDR = new IPCIDR('::ffff:192.168.0.0/16');
+const CLASS_A_IPV6_CIDR = new IPCIDR('::ffff:10.0.0.0/104');
+const CLASS_B_IPV6_CIDR = new IPCIDR('::ffff:172.16.0.0/108');
+const CLASS_C_IPV6_CIDR = new IPCIDR('::ffff:192.168.0.0/112');
 
 const isInternalIp = ipAddress => {
   return (

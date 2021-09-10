@@ -66,18 +66,22 @@ router.post(
   }
 );
 
-router.get('/bloomFilter', async (request, response) => {
-  const [bloomFilter, bloomFilterEtag] = await getBloomFilterAndEtag();
-  if (bloomFilterEtag === request.headers['If-None-Match']) {
-    return response.sendStatus(status.NOT_MODIFIED);
-  }
+router.get(
+  '/bloomFilter',
+  limitRequestsPerHour('badges_bloomfilter_get_ratelimit_hour'),
+  async (request, response) => {
+    const [bloomFilter, bloomFilterEtag] = await getBloomFilterAndEtag();
+    if (bloomFilterEtag === request.headers['If-None-Match']) {
+      return response.sendStatus(status.NOT_MODIFIED);
+    }
 
-  if (!bloomFilter) {
-    return response.sendStatus(status.NOT_FOUND);
-  }
+    if (!bloomFilter) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
 
-  response.setHeader('ETag', bloomFilterEtag);
-  return response.send(bloomFilter);
-});
+    response.setHeader('ETag', bloomFilterEtag);
+    return response.send(bloomFilter);
+  }
+);
 
 module.exports = router;

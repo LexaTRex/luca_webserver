@@ -1,5 +1,9 @@
 const { z } = require('../../utils/validation');
 
+const getSchema = z.object({
+  includeDeleted: z.enum(['true', 'false']).optional(),
+});
+
 const createSchema = z.object({
   email: z.email(),
   firstName: z.safeString().max(255),
@@ -19,6 +23,7 @@ const employeeIdParametersSchema = z.object({
 });
 
 module.exports = {
+  getSchema,
   createSchema,
   updateSchema,
   employeeIdParametersSchema,

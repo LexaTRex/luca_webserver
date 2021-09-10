@@ -8,6 +8,7 @@ PFX_PASS="testing"
 if [ -f "$CERTS_DIR/ca_root.pem" ]; then
   echo "Root CA already exists."
 else
+
   mkdir -p $CERTS_DIR
 
   # generate self-signed root ca
@@ -25,10 +26,10 @@ else
   cfssl genkey $CA_DIR/ssl.json | cfssljson -bare $CERTS_DIR/ssl
   cfssl sign -config $CA_DIR/config.json -profile server -ca $CERTS_DIR/ca_basic.pem -ca-key $CERTS_DIR/ca_basic-key.pem $CERTS_DIR/ssl.csr | cfssljson -bare $CERTS_DIR/ssl
 
-  # generate client certificates
+ # generate client certificates
   openssl pkcs12 -export -inkey $CERTS_DIR/health-key.pem  -in $CERTS_DIR/health.pem -name health -passout pass:$PFX_PASS -out $CERTS_DIR/health.pfx
+
 fi
-echo "Copying certs..."
 # copy certificates to services
 # nginx
 cp $CERTS_DIR/ssl.pem services/elb/ssl/ssl.crt.pem
@@ -42,3 +43,7 @@ chmod 644 services/elb/ssl/*.pem
 cp $CERTS_DIR/ca_root.pem services/backend/certs/root.pem
 cp $CERTS_DIR/ca_basic.pem services/backend/certs/basic.pem
 chmod 644 services/backend/certs/*.pem
+
+# e2e
+cp $CERTS_DIR/health.pfx e2e/certs/health.pfx
+chmod 644  e2e/certs/health.pfx

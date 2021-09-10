@@ -22,6 +22,7 @@ module.exports = {
   redis: {
     hostname: 'REDIS_HOSTNAME',
     password: 'REDIS_PASSWORD',
+    database: 'REDIS_DATABASE',
   },
   mailer: {
     apiUrl: 'MAILER_API_URL',
@@ -103,6 +104,22 @@ module.exports = {
     dummy_max_tracings: 'DUMMY_MAX_TRACINGS',
     dummy_max_traces: 'DUMMY_MAX_TRACES',
     badges_post_ratelimit_hour: 'BADGES_POST_RATELIMIT_HOUR',
+    badges_bloomfilter_get_ratelimit_hour:
+      'BADGES_BLOOMFILTER_GET_RATELIMIT_HOUR',
     operator_email_patch_ratelimit_hour: 'OPERATOR_EMAIL_PATCH_RATELIMIT_HOUR',
+    keys_daily_rotate_post_ratelimit_hour:
+      'KEYS_DAILY_ROTATE_POST_RATELIMIT_HOUR',
+    location_transfer_post_ratelimit_hour:
+      'LOCATION_TRANSFER_POST_RATELIMIT_HOUR',
+    notifications_traces_get_ratelimit_hour:
+      'NOTIFICATIONS_TRACES_GET_RATELIMIT_HOUR',
+    notifications_v4_health_departments_get_ratelimit_hour:
+      'NOTIFICATIONS_V4_HEALTH_DEPARTMENTS_GET_RATELIMIT_HOUR',
+    notifications_v4_traces_active_chunk_get_ratelimit_hour:
+      'NOTIFICATIONS_V4_TRACES_ACTIVE_CHUNK_GET_RATELIMIT_HOUR',
+    notifications_v4_traces_archived_chunk_get_ratelimit_hour:
+      'NOTIFICATIONS_V4_TRACES_ARCHIVED_CHUNK_GET_RATELIMIT_HOUR',
+    notifications_v4_config_get_ratelimit_hour:
+      'NOTIFICATIONS_V4_CONFIG_GET_RATELIMIT_HOUR',
   },
 };

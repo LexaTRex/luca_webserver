@@ -4,6 +4,11 @@ const config = require('config');
 const { combineMiddlewares } = require('../utils/middlewares');
 const { verifyCertificateAgainstDTrustChain } = require('../utils/signedKeys');
 
+const UserTypes = {
+  HD_EMPLOYEE: 'HealthDepartmentEmployee',
+  OPERATOR: 'Operator',
+};
+
 const isUserOfType = (type, request) =>
   request.user && request.user.type === type;
 
@@ -18,7 +23,7 @@ const hasValidClientCertificate = (user, request) => {
 };
 
 const requireOperator = (request, response, next) => {
-  if (isUserOfType('Operator', request)) {
+  if (isUserOfType(UserTypes.OPERATOR, request)) {
     return next();
   }
   return response.sendStatus(status.UNAUTHORIZED);
@@ -26,7 +31,7 @@ const requireOperator = (request, response, next) => {
 
 const requireHealthDepartmentEmployee = (request, response, next) => {
   if (
-    isUserOfType('HealthDepartmentEmployee', request) &&
+    isUserOfType(UserTypes.HD_EMPLOYEE, request) &&
     (hasValidClientCertificate(request.user, request) || config.get('e2e'))
   ) {
     return next();
@@ -61,4 +66,6 @@ module.exports = {
   requireHealthDepartmentEmployee,
   requireHealthDepartmentAdmin,
   requireNonDeletedUser,
+  isUserOfType,
+  UserTypes,
 };

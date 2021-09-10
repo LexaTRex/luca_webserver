@@ -14,11 +14,13 @@ const {
 } = require('../../middlewares/validateSchema');
 const {
   requireHealthDepartmentEmployee,
+  requireHealthDepartmentAdmin,
 } = require('../../middlewares/requireUser');
 
 const {
   storeKeysSchema,
   departmentIdParametersSchema,
+  contactParametersSchema,
 } = require('./healthDepartments.schemas');
 
 /**
@@ -113,7 +115,30 @@ router.get(
       name: department.name,
       publicHDEKP: department.publicHDEKP,
       publicHDSKP: department.publicHDSKP,
+      email: department.email,
+      phone: department.phone,
     });
+  }
+);
+
+router.patch(
+  '/contact',
+  requireHealthDepartmentAdmin,
+  validateSchema(contactParametersSchema),
+  async (request, response) => {
+    const department = await database.HealthDepartment.findByPk(
+      request.user.departmentId
+    );
+
+    if (!department) {
+      return response.send(status.NOT_FOUND);
+    }
+    const {
+      body: { email = '', phone = '' },
+    } = request;
+
+    await department.update({ email, phone });
+    return response.sendStatus(status.NO_CONTENT);
   }
 );
 

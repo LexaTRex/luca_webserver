@@ -119,6 +119,8 @@ paths:
                       type: integer
                     deletedAt:
                       type: integer
+                    approvedAt:
+                      type: integer
                   required:
                     - uuid
                     - groupName
@@ -243,6 +245,8 @@ paths:
                   - traces
         '400':
           $ref: '#/components/schemas/BadRequest'
+        '403':
+          description: Requesting user is not owner
         '404':
           description: Transfer or Department not found
         '410':
@@ -257,6 +261,8 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: Requesting user is not owner
         '400':
           $ref: '#/components/schemas/BadRequest'
       requestBody:

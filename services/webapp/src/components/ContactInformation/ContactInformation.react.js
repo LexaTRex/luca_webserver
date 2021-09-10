@@ -34,7 +34,7 @@ import {
   StyledDescription,
 } from './ContactInformation.styled';
 
-const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
+const ChallengeFormContent = ({ newPhoneNumber, setChallengeId }) => {
   const { formatMessage } = useIntl();
   return (
     <StyledContent>
@@ -73,7 +73,7 @@ const ChallengeFormContent = (newPhoneNumber, setChallengeId) => {
   );
 };
 
-function UserInformationFormContent(user) {
+function UserInformationFormContent({ user }) {
   const intl = useIntl();
   const nameValidator = useNameValidator();
   const cityValidator = useCityValidator();
@@ -218,27 +218,34 @@ export function ContactInformation() {
       .then(() => history.push(SETTINGS_PATH))
       .catch(() => changeUserInfoError());
 
-  const onSubmit = values => {
+  const onSubmit = async values => {
     if (challengeId) {
-      verifySMSTAN(challengeId, values.tan)
-        .then(() => changeUser(user.userId, temporaryUser))
-        .catch(() => verificationFailedError());
+      try {
+        await verifySMSTAN(challengeId, values.tan);
+        changeUser(user.userId, temporaryUser);
+      } catch {
+        verificationFailedError();
+      }
     } else if (values.phoneNumber !== user.phoneNumber) {
-      const formattedPhoneNumber = parsePhoneNumber(
-        values.phoneNumber,
-        'DE'
-      ).formatInternational();
-      sendSMSTAN(formattedPhoneNumber)
-        .then(id => {
-          setChallengeId(id);
-          setTemporaryUser(values);
-          setNewPhoneNumber(values.phoneNumber);
-        })
-        .catch(() => setChallengeId(null));
+      try {
+        const formattedPhoneNumber = parsePhoneNumber(
+          values.phoneNumber,
+          'DE'
+        ).formatInternational();
+        const id = await sendSMSTAN(formattedPhoneNumber);
+        setChallengeId(id);
+        setTemporaryUser(values);
+        setNewPhoneNumber(values.phoneNumber);
+      } catch {
+        setChallengeId(null);
+      }
     } else {
-      changeUserInformation(user.userId, values)
-        .then(() => history.push(SETTINGS_PATH))
-        .catch(() => changeUserInfoError());
+      try {
+        await changeUserInformation(user.userId, values);
+        history.push(SETTINGS_PATH);
+      } catch {
+        changeUserInfoError();
+      }
     }
   };
 
@@ -277,9 +284,14 @@ export function ContactInformation() {
             </StyledFooter>
           }
         >
-          {challengeId
-            ? ChallengeFormContent(newPhoneNumber, setChallengeId)
-            : UserInformationFormContent(user)}
+          {challengeId ? (
+            <ChallengeFormContent
+              newPhoneNumber={newPhoneNumber}
+              setChallengeId={setChallengeId}
+            />
+          ) : (
+            <UserInformationFormContent user={user} />
+          )}
         </AppLayout>
       </StyledForm>
     </>

@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 import Icon from '@ant-design/icons';
 
 // Api
-import { getHealthDepartment, getMe } from 'network/api';
+import { getMe } from 'network/api';
 
 // Assets
 import { ReactComponent as VerificationSVG } from 'assets/verification.svg';
@@ -19,21 +19,13 @@ const VerificationIcon = () => (
 export const VerificationTag = () => {
   const intl = useIntl();
 
-  const { isLoading, error, data: healthDepartment } = useQuery(
-    'healthDepartment',
-    () =>
-      getMe().then(response => {
-        return getHealthDepartment(response.departmentId);
-      })
-  );
+  const {
+    isLoading,
+    error,
+    data: healthDepartmentUser,
+  } = useQuery('healthDepartmentUser', () => getMe());
 
-  if (
-    isLoading ||
-    error ||
-    !healthDepartment.signedPublicHDEKP ||
-    !healthDepartment.signedPublicHDSKP
-  )
-    return null;
+  if (isLoading || error || !healthDepartmentUser.isSigned) return null;
 
   return (
     <Tooltip title={intl.formatMessage({ id: 'verificationTag.info' })}>

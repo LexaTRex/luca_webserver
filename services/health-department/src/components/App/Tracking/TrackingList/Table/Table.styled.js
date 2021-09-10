@@ -22,7 +22,7 @@ export const Row = styled.div`
 
 export const RowWrapper = styled.div`
   display: block;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   max-height: 550px;
 `;

@@ -14,6 +14,8 @@ export const GuestList = ({
   encryptedTraces,
   indexPersonData,
   setSelectedTraces,
+  setDecryptedTraces,
+  location,
 }) => {
   const intl = useIntl();
   const [traces, setTraces] = useState(null);
@@ -42,11 +44,12 @@ export const GuestList = ({
       );
 
       setTraces(validDecrypedTraces);
+      setDecryptedTraces(validDecrypedTraces);
       hideMessage();
     }
 
     decryptTraces();
-  }, [encryptedTraces, intl]);
+  }, [encryptedTraces, intl, setDecryptedTraces]);
 
   useEffect(() => {
     if (!traces) return;
@@ -67,6 +70,7 @@ export const GuestList = ({
         <OverlappingTime setMinTimeOverlap={setMinTimeOverlap} />
       )}
       <GuestListTable
+        location={location}
         traces={filteredTraces}
         indexPersonData={indexPersonData}
         setSelectedTraces={setSelectedTraces}

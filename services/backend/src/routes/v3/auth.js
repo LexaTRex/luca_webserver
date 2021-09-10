@@ -3,14 +3,20 @@ const status = require('http-status');
 const passport = require('passport');
 const moment = require('moment');
 
+const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
+
 const { validateSchema } = require('../../middlewares/validateSchema');
 const { restrictOrigin } = require('../../middlewares/restrictOrigin');
 const {
   requireOperator,
   requireHealthDepartmentEmployee,
+  isUserOfType,
+  UserTypes,
 } = require('../../middlewares/requireUser');
 
 const { limitRequestsPerMinute } = require('../../middlewares/rateLimit');
+
+const { logEvent } = require('../../utils/hdAuditLog');
 
 const { authSchema } = require('./auth.schemas');
 
@@ -65,16 +71,36 @@ router.get(
       email: request.user.email,
       departmentId: request.user.departmentId,
       isAdmin: request.user.isAdmin,
+      isSigned: !!request.user.HealthDepartment.signedPublicHDSKP,
+      notificationsEnabled: request.user.HealthDepartment.notificationsEnabled,
     });
   }
 );
 
 router.post('/logout', restrictOrigin, (request, response) => {
-  request.logout();
-  request.session.destroy(error => {
+  const { user, logout, session } = request;
+  const isHDUser = isUserOfType(UserTypes.HD_EMPLOYEE, request);
+
+  logout();
+  session.destroy(error => {
     if (error) {
+      if (isHDUser) {
+        logEvent(user, {
+          type: AuditLogEvents.LOGOUT,
+          status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
+        });
+      }
+
       throw error;
     }
+
+    if (isHDUser) {
+      logEvent(user, {
+        type: AuditLogEvents.LOGOUT,
+        status: AuditStatusType.SUCCESS,
+      });
+    }
+
     response.clearCookie('connect.sid');
     response.sendStatus(status.NO_CONTENT);
   });

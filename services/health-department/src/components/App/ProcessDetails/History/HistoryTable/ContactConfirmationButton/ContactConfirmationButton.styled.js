@@ -11,3 +11,7 @@ export const Expiry = styled.div`
 export const ButtonWrapper = styled.div`
   text-align: left;
 `;
+
+export const Wrapper = styled.div`
+  display: flex;
+`;

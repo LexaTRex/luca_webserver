@@ -1,5 +1,7 @@
 const router = require('express').Router();
+const moment = require('moment');
 const status = require('http-status');
+const { Op } = require('sequelize');
 
 const database = require('../../database');
 const ApiError = require('../../utils/apiError');
@@ -7,17 +9,22 @@ const ApiError = require('../../utils/apiError');
 const {
   validateSchema,
   validateParametersSchema,
+  validateQuerySchema,
 } = require('../../middlewares/validateSchema');
 const {
   requireHealthDepartmentEmployee,
   requireHealthDepartmentAdmin,
 } = require('../../middlewares/requireUser');
+
+const { verifySignedPublicKeys } = require('../../utils/signedKeys');
+const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
+const { logEvent, entriesToPlainText } = require('../../utils/hdAuditLog');
+
 const {
   storeSignedKeysSchema,
   departmentIdParametersSchema,
+  auditLogDownloadQuerySchema,
 } = require('./healthDepartments.schemas');
-
-const { verifySignedPublicKeys } = require('../../utils/signedKeys');
 
 // set signed keys
 router.post(
@@ -82,7 +89,39 @@ router.get(
       publicCertificate: department.publicCertificate,
       signedPublicHDEKP: department.signedPublicHDEKP,
       signedPublicHDSKP: department.signedPublicHDSKP,
+      email: department.email,
+      phone: department.phone,
     });
+  }
+);
+
+router.get(
+  '/auditlog/download',
+  requireHealthDepartmentAdmin,
+  validateQuerySchema(auditLogDownloadQuerySchema),
+  async (request, response) => {
+    const entries = await database.HealthDepartmentAuditLog.findAll({
+      where: {
+        departmentId: request.user.departmentId,
+        createdAt: {
+          [Op.lt]: moment.unix(request.query.timeframe[0]),
+          [Op.gt]: moment.unix(request.query.timeframe[1]),
+        },
+      },
+    });
+
+    logEvent(request.user, {
+      type: AuditLogEvents.DOWNLOAD_AUDITLOG,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        timeframe: request.query.timeframe.map(time =>
+          moment.unix(time).format()
+        ),
+      },
+    });
+
+    response.set('Content-Type', 'text/plain');
+    return response.send(entriesToPlainText(entries));
   }
 );
 

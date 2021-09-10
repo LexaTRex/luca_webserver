@@ -1,3 +1,4 @@
+const config = require('config');
 const { z } = require('../../../utils/validation');
 
 const keyIdParametersSchema = z.object({
@@ -9,31 +10,35 @@ const rotateSchema = z.object({
   signature: z.ecSignature(),
   createdAt: z.unixTimestamp(),
   keyId: z.number().int().min(0),
-  encryptedBadgePrivateKeys: z.array(
-    z.object({
-      healthDepartmentId: z.uuid(),
-      data: z.base64({ rawLength: 32 }),
-      iv: z.iv(),
-      mac: z.mac(),
-      publicKey: z.ecPublicKey(),
-      signature: z.ecSignature(),
-    })
-  ),
+  encryptedBadgePrivateKeys: z
+    .array(
+      z.object({
+        healthDepartmentId: z.uuid(),
+        data: z.base64({ rawLength: 32 }),
+        iv: z.iv(),
+        mac: z.mac(),
+        publicKey: z.ecPublicKey(),
+        signature: z.ecSignature(),
+      })
+    )
+    .max(config.get('luca.healthDepartments.maxAmount')),
 });
 
 const rekeySchema = z.object({
   keyId: z.badgeKeyId(),
   createdAt: z.unixTimestamp(),
-  encryptedBadgePrivateKeys: z.array(
-    z.object({
-      healthDepartmentId: z.uuid(),
-      data: z.base64({ rawLength: 32 }),
-      iv: z.iv(),
-      mac: z.mac(),
-      publicKey: z.ecPublicKey(),
-      signature: z.ecSignature(),
-    })
-  ),
+  encryptedBadgePrivateKeys: z
+    .array(
+      z.object({
+        healthDepartmentId: z.uuid(),
+        data: z.base64({ rawLength: 32 }),
+        iv: z.iv(),
+        mac: z.mac(),
+        publicKey: z.ecPublicKey(),
+        signature: z.ecSignature(),
+      })
+    )
+    .max(config.get('luca.healthDepartments.maxAmount')),
 });
 
 module.exports = {

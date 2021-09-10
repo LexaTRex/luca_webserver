@@ -1,3 +1,5 @@
+import cache from 'utils/redisCache';
+
 const { Op } = require('sequelize');
 const moment = require('moment');
 const uniq = require('lodash/uniq');
@@ -10,15 +12,14 @@ const {
   HMAC_SHA256,
 } = require('@lucaapp/crypto');
 
-const cache = require('./redisCache');
-const database = require('../database');
+const database = require('../../database');
 
 const NOTIFICATIONS_CACHE_KEY = 'notifications';
 const {
   DEVICE_TYPE_IOS,
   DEVICE_TYPE_ANDROID,
   DEVICE_TYPE_WEBAPP,
-} = require('../constants/deviceTypes');
+} = require('../../constants/deviceTypes');
 
 const generateNotifications = async () => {
   const twoWeeksAgo = moment().subtract(2, 'weeks');

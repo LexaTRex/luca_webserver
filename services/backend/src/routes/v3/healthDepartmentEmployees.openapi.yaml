@@ -46,7 +46,7 @@ paths:
       summary: Create new employee
       operationId: post-healthDepartmentEmployees
       responses:
-        '201':
+        201:
           description: Success
           content:
             application/json:
@@ -59,11 +59,13 @@ paths:
                     minLength: 1
                 required:
                   - password
-        '400':
+        400:
           $ref: '#/components/schemas/BadRequest'
-        '401':
+        401:
           $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployeeAdmin'
-        '404':
+        409:
+          description: Employee already exists
+        404:
           description: Health Department not found
       description: Create a new employee in the current user's department.
       requestBody:
@@ -147,3 +149,36 @@ paths:
         'Delete a [health
         department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)
         employee from the HealthDepartmentEmployee database table.'
+  /healthDepartmentEmployees/auditmapping:
+    get:
+      summary: Health department employee list for Audit Log mapping
+      tags:
+        - HealthDepartmentEmployees
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      minLength: 1
+                    email:
+                      type: string
+                      minLength: 1
+                  required:
+                    - uuid
+        401:
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+      description:
+        "Returns mapping of employee UUID´s and email of the current user's
+        [health
+        department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department),
+        including the current user."

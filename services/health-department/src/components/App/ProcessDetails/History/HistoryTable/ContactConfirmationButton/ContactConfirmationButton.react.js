@@ -4,11 +4,17 @@ import { Popconfirm } from 'antd';
 import moment from 'moment';
 
 import { PrimaryButton, SuccessButton } from 'components/general';
-import { Expiry, ButtonWrapper } from './ContactConfirmationButton.styled';
+import { FlexWrapper } from 'components/App/modals/ContactPersonsModal/ContactPersons/ContactPersons.styled';
+import { NotificationTrigger } from './NotificationTrigger';
+import {
+  Expiry,
+  ButtonWrapper,
+  Wrapper,
+} from './ContactConfirmationButton.styled';
 
 export const ContactConfirmationButton = ({ location, callback }) => {
   const intl = useIntl();
-  const { contactedAt, isCompleted, time } = location;
+  const { contactedAt, isCompleted, time, name: locationName } = location;
 
   const renderExpiration = () => (
     <Expiry>{`${intl.formatMessage({
@@ -18,59 +24,68 @@ export const ContactConfirmationButton = ({ location, callback }) => {
 
   if (!isCompleted && !!contactedAt) {
     return (
-      <ButtonWrapper>
-        <PrimaryButton disabled>
-          {intl.formatMessage({ id: 'history.contacted' })}
-        </PrimaryButton>
-        {renderExpiration()}
-      </ButtonWrapper>
+      <FlexWrapper>
+        <ButtonWrapper>
+          <PrimaryButton disabled>
+            {intl.formatMessage({ id: 'history.contacted' })}
+          </PrimaryButton>
+          {renderExpiration()}
+        </ButtonWrapper>
+        <NotificationTrigger location={location} />
+      </FlexWrapper>
     );
   }
 
   if (isCompleted) {
     return (
-      <ButtonWrapper>
-        <SuccessButton
-          data-cy={`confirmedLocation_${location.name}`}
-          onClick={() => callback(location)}
-        >
-          {intl.formatMessage({ id: 'history.confirmed' })}
-        </SuccessButton>
-        {renderExpiration()}
-      </ButtonWrapper>
+      <FlexWrapper>
+        <ButtonWrapper>
+          <SuccessButton
+            data-cy={`confirmedLocation_${locationName}`}
+            onClick={() => callback(location)}
+          >
+            {intl.formatMessage({ id: 'history.confirmed' })}
+          </SuccessButton>
+          {renderExpiration()}
+        </ButtonWrapper>
+        <NotificationTrigger location={location} />
+      </FlexWrapper>
     );
   }
 
   return (
-    <Popconfirm
-      placement="top"
-      disabled={isCompleted}
-      onConfirm={() => callback(location)}
-      title={intl.formatMessage(
-        {
-          id: 'modal.dataRequest.confirmation',
-        },
-        { venue: location.name }
-      )}
-      okText={intl.formatMessage({
-        id: 'modal.dataRequest.confirmButton',
-      })}
-      cancelText={intl.formatMessage({
-        id: 'modal.dataRequest.declineButton',
-      })}
-    >
-      <ButtonWrapper>
-        <PrimaryButton
-          disabled={!isCompleted && !!contactedAt}
-          data-cy={`contactLocation_${location.name}`}
-          onClick={() => {
-            if (contactedAt) callback(location);
-          }}
-        >
-          {intl.formatMessage({ id: 'history.contact' })}
-        </PrimaryButton>
-        {renderExpiration()}
-      </ButtonWrapper>
-    </Popconfirm>
+    <Wrapper>
+      <Popconfirm
+        placement="top"
+        disabled={isCompleted}
+        onConfirm={() => callback(location)}
+        title={intl.formatMessage(
+          {
+            id: 'modal.dataRequest.confirmation',
+          },
+          { venue: locationName }
+        )}
+        okText={intl.formatMessage({
+          id: 'modal.dataRequest.confirmButton',
+        })}
+        cancelText={intl.formatMessage({
+          id: 'modal.dataRequest.declineButton',
+        })}
+      >
+        <ButtonWrapper>
+          <PrimaryButton
+            disabled={!isCompleted && !!contactedAt}
+            data-cy={`contactLocation_${locationName}`}
+            onClick={() => {
+              if (contactedAt) callback(location);
+            }}
+          >
+            {intl.formatMessage({ id: 'history.contact' })}
+          </PrimaryButton>
+          {renderExpiration()}
+        </ButtonWrapper>
+      </Popconfirm>
+      <NotificationTrigger location={location} />
+    </Wrapper>
   );
 };

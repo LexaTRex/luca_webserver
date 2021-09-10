@@ -3,6 +3,7 @@ import moment from 'moment';
 import { fillForm } from '../../contact-form/helpers/functions';
 
 import { loginHealthDepartment } from '../../health-department/helper/api/auth.helper';
+import { signHealthDepartment } from '../../health-department/helper/signHealthDepartment';
 
 import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/login.helper';
 
@@ -43,6 +44,7 @@ context('Workflow', () => {
       // SETUP Health department
       cy.log('Setup Health department');
       loginHealthDepartment();
+      signHealthDepartment();
       addHealthDepartmentPrivateKeyFile();
       // We need to wait for the key rotation logic
       cy.wait(1000);
@@ -116,7 +118,6 @@ context('Workflow', () => {
         WORKFLOW_LOCATION_PRIVATE_KEY_NAME
       );
       cy.getByCy('next').click();
-      cy.getByCy('finish').click();
 
       // Check requested data in Health department
       cy.log('Check requested data in Health department');

@@ -31,7 +31,6 @@ export const basicLocationLogin = (
       origin: 'https://localhost',
     },
   });
-  cy.server();
   cy.intercept({ method: 'GET', url: '**/me' }).as('me');
   cy.visit(APP_ROUTE);
   cy.window().then(window => {
@@ -139,7 +138,10 @@ export const undoAccountDeletion = () => {
 };
 
 export const downloadLocationPrivateKeyFile = () => {
-  cy.getByCy('downloadPrivateKey', { timeout: 8000 }).click();
+  cy.getByCy('downloadPrivateKey', { timeout: 8000 })
+    .should('exist')
+    .should('be.visible')
+    .click();
   cy.getByCy('checkPrivateKeyIsDownloaded').click();
   cy.getByCy('next').should('exist').click();
 };

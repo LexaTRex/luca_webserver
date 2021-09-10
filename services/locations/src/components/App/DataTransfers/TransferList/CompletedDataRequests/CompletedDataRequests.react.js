@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { useIntl } from 'react-intl';
 
+import { getFormattedDate, getFormattedTime } from 'utils/time';
 import { Wrapper, Header } from '../TransferList.styled';
 import {
   TableHeader,
@@ -15,9 +16,6 @@ export const CompletedDataRequests = ({ tracingProcesses }) => {
 
   const intl = useIntl();
 
-  const formatDate = timestamp =>
-    `${moment.unix(timestamp).format('DD.MM.YYYY')}`;
-
   return (
     <Wrapper>
       <Header>
@@ -29,50 +27,53 @@ export const CompletedDataRequests = ({ tracingProcesses }) => {
         <div>{tracingProcesses.length}</div>
       </Header>
       <TableHeader>
-        <TableHeaderEntry style={{ flex: '15%' }}>
+        <TableHeaderEntry style={{ flex: '14%' }}>
           {intl.formatMessage({
             id: 'dataTransfers.list.complete.table.header.date',
           })}
         </TableHeaderEntry>
-        <TableHeaderEntry style={{ flex: '15%' }}>
+        <TableHeaderEntry style={{ flex: '14%' }}>
           {intl.formatMessage({
             id: 'dataTransfers.list.complete.table.header.timeFrom',
           })}
         </TableHeaderEntry>
-        <TableHeaderEntry style={{ flex: '15%' }}>
+        <TableHeaderEntry style={{ flex: '14%' }}>
           {intl.formatMessage({
             id: 'dataTransfers.list.complete.table.header.timeUntil',
           })}
         </TableHeaderEntry>
-        <TableHeaderEntry style={{ flex: '30%' }}>
+        <TableHeaderEntry style={{ flex: '28%' }}>
           {intl.formatMessage({
             id: 'dataTransfers.list.complete.table.header.location',
           })}
         </TableHeaderEntry>
-        <TableHeaderEntry style={{ flex: '25%' }}>
+        <TableHeaderEntry style={{ flex: '16%' }}>
           {intl.formatMessage({
             id: 'dataTransfers.list.complete.table.header.healthDepartment',
+          })}
+        </TableHeaderEntry>
+        <TableHeaderEntry style={{ flex: '14%' }}>
+          {intl.formatMessage({
+            id: 'dataTransfers.list.complete.table.header.approvedAt',
           })}
         </TableHeaderEntry>
       </TableHeader>
       {tracingProcesses.map(tracingProcess => (
         <TableRow key={tracingProcess.tracingProcessId}>
-          <TableEntry style={{ flex: '15%' }}>
-            {formatDate(tracingProcess.createdAt)}
+          <TableEntry style={{ flex: '14%' }}>
+            {getFormattedDate(tracingProcess.createdAt)}
           </TableEntry>
-          <TableEntry style={{ flex: '15%' }}>
-            <div>{formatDate(tracingProcess.timeSpan[0])}</div>
+          <TableEntry style={{ flex: '14%' }}>
+            <div>{getFormattedDate(tracingProcess.timeSpan[0])}</div>
             <div>
               {`${moment.unix(tracingProcess.timeSpan[0]).format('HH:mm')}`}
             </div>
           </TableEntry>
-          <TableEntry style={{ flex: '15%' }}>
-            <div>{formatDate(tracingProcess.timeSpan[1])}</div>
-            <div>
-              {`${moment.unix(tracingProcess.timeSpan[1]).format('HH:mm')}`}
-            </div>
+          <TableEntry style={{ flex: '14%' }}>
+            <div>{getFormattedDate(tracingProcess.timeSpan[1])}</div>
+            <div>{getFormattedTime(tracingProcess.timeSpan[1])}</div>
           </TableEntry>
-          <TableEntry style={{ flex: '30%' }}>
+          <TableEntry style={{ flex: '28%' }}>
             {tracingProcess.transfers.map(transfer => (
               <div key={transfer.uuid}>
                 {`${transfer.groupName} - ${
@@ -82,8 +83,16 @@ export const CompletedDataRequests = ({ tracingProcesses }) => {
               </div>
             ))}
           </TableEntry>
-          <TableEntry style={{ flex: '25%' }}>
+          <TableEntry style={{ flex: '16%' }}>
             {tracingProcess.healthDepartment}
+          </TableEntry>
+          <TableEntry style={{ flex: '14%' }}>
+            <div>
+              {getFormattedDate(tracingProcess.transfers[0].approvedAt)}
+            </div>
+            <div>
+              {getFormattedTime(tracingProcess.transfers[0].approvedAt)}
+            </div>
           </TableEntry>
         </TableRow>
       ))}

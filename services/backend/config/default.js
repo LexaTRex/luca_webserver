@@ -42,6 +42,7 @@ module.exports = {
   },
   redis: {
     hostname: 'redis',
+    database: 0,
     password:
       // DEV ONLY TOKEN
       'ConqsCqWd]eaR82wv%C.iDdRybor8Ms2bM*h=m?V3@x2w^UxKA9pEjMjHn^y7?78',
@@ -93,10 +94,22 @@ module.exports = {
     },
     tracingProcess: {
       maxAge: moment.duration(28, 'days').as('hours'),
+      maxRiskLevel: 2,
     },
     testRedeems: {
       defaultMaxAge: moment.duration(72, 'hours').as('hours'),
       maxAge: moment.duration(1, 'years').as('hours'),
+    },
+    notificationChunks: {
+      initialChunkCoverage: moment.duration(14, 'days').as('hours'),
+      maxAge: moment.duration(14, 'days').as('hours'),
+      cacheTTL: moment.duration(2, 'hours').as('seconds'),
+    },
+    auditLogs: {
+      maxAge: moment.duration(1, 'years').as('hours'),
+    },
+    healthDepartments: {
+      maxAmount: 450,
     },
   },
   emails: {
@@ -174,6 +187,14 @@ module.exports = {
     tests_redeem_post_ratelimit_minute: 50,
     tests_redeem_delete_ratelimit_minute: 50,
     badges_post_ratelimit_hour: 10,
+    badges_bloomfilter_get_ratelimit_hour: 10,
     operator_email_patch_ratelimit_hour: 5,
+    keys_daily_rotate_post_ratelimit_hour: 5,
+    location_transfer_post_ratelimit_hour: 5,
+    notifications_traces_get_ratelimit_hour: 5,
+    notifications_v4_health_departments_get_ratelimit_hour: 1000,
+    notifications_v4_traces_active_chunk_get_ratelimit_hour: 1000,
+    notifications_v4_traces_archived_chunk_get_ratelimit_hour: 7500,
+    notifications_v4_config_get_ratelimit_hour: 1000,
   },
 };

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   padding-bottom: 32px;
   margin-bottom: 24px;
-  border-bottom: 1px solid black;
 `;
 
 export const ChildWrapper = styled.div`

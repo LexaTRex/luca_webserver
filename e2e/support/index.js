@@ -17,6 +17,7 @@
 import './commands';
 
 import 'cypress-file-upload';
+import "cypress-fail-fast";
 
 beforeEach(() => {
   cy.intercept('/', req => {

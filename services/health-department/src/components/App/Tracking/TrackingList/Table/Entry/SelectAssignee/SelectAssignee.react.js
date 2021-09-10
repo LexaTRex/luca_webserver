@@ -19,9 +19,8 @@ export const SelectAssignee = ({ process }) => {
     setCurrentAssignee(process?.assignee?.uuid || null);
   }, [process, setCurrentAssignee]);
 
-  const { isLoading, error, data: employees } = useQuery(
-    'employees',
-    getEmployees
+  const { isLoading, error, data: employees } = useQuery('employees', () =>
+    getEmployees()
   );
 
   const handleSelectAssignee = useCallback(

@@ -4,14 +4,14 @@ import { useIntl } from 'react-intl';
 
 import { decryptUserTransfer } from 'utils/cryptoOperations';
 import { IncompleteDataError } from 'errors/incompleteDataError';
-import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
+import { useLocationTransfers } from 'components/hooks/useLocationTransfers';
 
 import { ToggleCompleted } from './ToggleCompleted';
 import { Wrapper, ProcessName, ButtonRow } from './HeaderRow.styled';
 
 export const HeaderRow = ({ process }) => {
   const intl = useIntl();
-  const locations = useLocationWithTransfers(process.uuid);
+  const locations = useLocationTransfers(process.uuid);
 
   const {
     isLoading: isUserLoading,
@@ -29,7 +29,7 @@ export const HeaderRow = ({ process }) => {
 
   const processName = (() => {
     if (!process.userTransferId) {
-      return locations?.[0]?.name || '–';
+      return locations?.[0]?.groupName || '–';
     }
     if (userData) {
       return `${userData.fn} ${userData.ln}`;

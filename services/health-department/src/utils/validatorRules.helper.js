@@ -40,7 +40,6 @@ export const validateEmail = (_, value) => {
       allow_utf8_local_part: true,
       require_tld: true,
       allow_ip_domain: false,
-      domain_specific_validation: true,
       blacklisted_chars: "=',\\\\",
     })
   ) {

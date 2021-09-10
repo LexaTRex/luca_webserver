@@ -1,10 +1,10 @@
 import React from 'react';
 import moment from 'moment';
 
-import { useLocationWithTransfers } from 'components/hooks/useLocationWithTransfers';
+import { useLocationTransfers } from 'components/hooks/useLocationTransfers';
 
 export const ManualSearchNameDisplay = ({ processId, onProcessName }) => {
-  const locations = useLocationWithTransfers(processId);
+  const locations = useLocationTransfers(processId);
 
   if (!locations.length) return null;
   const baseLocation = locations.find(location => !location.locationName);

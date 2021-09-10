@@ -1,12 +1,12 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Input, Form, notification } from 'antd';
-import { PrimaryButton } from 'components/general';
+import { SecondaryButton } from 'components/general';
 import { changePassword } from 'network/api';
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 import { handleResponse } from './ChangePasswordView.helper';
 import { Wrapper, StyledHeadline } from './ChangePasswordView.styled';
-import { inputStyle, StyledButtonRow } from '../Profile.styled';
+import { StyledInput, StyledButtonRow } from '../Profile.styled';
 
 export const ChangePasswordView = () => {
   const intl = useIntl();
@@ -52,7 +52,7 @@ export const ChangePasswordView = () => {
             },
           ]}
         >
-          <Input.Password style={inputStyle} />
+          <StyledInput as={Input.Password} />
         </Form.Item>
         <Form.Item
           colon={false}
@@ -82,7 +82,7 @@ export const ChangePasswordView = () => {
             }),
           ]}
         >
-          <Input.Password style={inputStyle} />
+          <StyledInput as={Input.Password} />
         </Form.Item>
         <Form.Item
           colon={false}
@@ -113,15 +113,15 @@ export const ChangePasswordView = () => {
             }),
           ]}
         >
-          <Input.Password style={inputStyle} />
+          <StyledInput as={Input.Password} />
         </Form.Item>
         <StyledButtonRow>
           <Form.Item>
-            <PrimaryButton htmlType="submit">
+            <SecondaryButton htmlType="submit">
               {intl.formatMessage({
                 id: 'profile.changePassword',
               })}
-            </PrimaryButton>
+            </SecondaryButton>
           </Form.Item>
         </StyledButtonRow>
       </Form>

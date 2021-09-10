@@ -28,13 +28,14 @@ function generateCameraStream(path) {
 }
 
 function getConfigurationByFile(file) {
-  const pathToConfigFile = path.resolve('..', 'e2e/config', `${file}.json`)
+  const pathToConfigFile = path.resolve('..', 'e2e/config', `${file}.json`);
   console.log('Path to config:' + pathToConfigFile);
   console.log('Read config:' + pathToConfigFile);
-  return fse.readJson(pathToConfigFile)
+  return fse.readJson(pathToConfigFile);
 }
 
 module.exports = (on, config) => {
+  require('cypress-fail-fast/plugin')(on, config);
   on('task', {
     setCameraImage: async path => {
       await generateCameraStream(path);
@@ -52,7 +53,7 @@ module.exports = (on, config) => {
       }
       return false;
     },
-    dbQuery: query => postgres(query.query, query.connection)
+    dbQuery: query => postgres(query.query, query.connection),
   });
 
   on('before:browser:launch', async (browser = {}, launchOptions) => {
@@ -63,7 +64,7 @@ module.exports = (on, config) => {
       launchOptions.args.push(
         '--use-file-for-fake-video-capture=/tmp/luca/stream.mjpeg'
       );
-      launchOptions.preferences.default["download"] = {
+      launchOptions.preferences.default['download'] = {
         default_directory: path.join(__dirname, 'downloads'),
       };
     }
@@ -71,6 +72,6 @@ module.exports = (on, config) => {
   });
 
   //switching between envs
-  const file = config.env.configFile || 'local'
-  return getConfigurationByFile(file)
+  const file = config.env.configFile || 'local';
+  return getConfigurationByFile(file);
 };

@@ -2,50 +2,41 @@ const responseTime = require('response-time');
 
 const { client } = require('../utils/metrics');
 
-const labelNames = ['method', 'statusCode', 'path'];
+const labelNames = ['method', 'statusCode', 'path', 'host'];
 
-const histogram = new client.Histogram({
+const requestDuration = new client.Histogram({
   name: 'http_request_duration_seconds',
   help: 'A histogram of the HTTP request durations in seconds.',
   buckets: [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10],
   labelNames,
 });
 
-const summary = new client.Summary({
-  name: 'summary_http_request_duration_seconds',
-  help: 'A summary of the HTTP request durations in seconds.',
-  percentiles: [0.5, 0.75, 0.95, 0.98, 0.99, 0.999],
-  labelNames,
-});
-
-const counter = new client.Counter({
-  name: 'http_requests_total',
-  help: 'The total number of handled HTTP requests.',
+const responseSize = new client.Histogram({
+  name: 'http_response_size_bytes',
+  help: 'A histogram of the HTTP response size in bytes.',
+  buckets: [100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000],
   labelNames,
 });
 
 module.exports = responseTime((request, response, time) => {
-  const { method, route, baseUrl } = request;
-  const { statusCode } = response;
+  const {
+    method,
+    route,
+    baseUrl,
+    headers: { host },
+  } = request;
+  const { statusCode, _contentLength } = response;
 
   if (!route) return;
   const path = `${baseUrl}${route.path}`.toLowerCase();
 
-  histogram.observe(
-    {
-      method,
-      path,
-      statusCode,
-    },
-    time / 1000
-  );
-  summary.observe(
-    {
-      method,
-      path,
-      statusCode,
-    },
-    time / 1000
-  );
-  counter.inc({ method, path, statusCode });
+  const labels = {
+    method,
+    path,
+    statusCode,
+    host,
+  };
+
+  requestDuration.observe(labels, time / 1000);
+  responseSize.observe(labels, _contentLength || 0);
 });

@@ -61,10 +61,17 @@ export function History() {
     setCurrentHistoryShareStep(0);
   };
 
-  const showShareTAN = () => setCurrentHistoryShareStep(SHARE_TAN_MODAL_STEP);
+  const shareTan = () =>
+    reportInfection()
+      .then(tan => {
+        setShareTAN(tan);
+        setCurrentHistoryShareStep(SHARE_TAN_MODAL_STEP);
+      })
+      .catch(() => setShareTAN(null));
+
   const historyShareSteps = [
     <HistoryShareConsentModal
-      next={showShareTAN}
+      next={shareTan}
       key="share-consent"
       onClose={closeModal}
     />,
@@ -129,18 +136,6 @@ export function History() {
       })
       .catch(() => internalIndexedDBError());
   }, [userHistory, internalIndexedDBError]);
-
-  const shareHistory = useCallback(() => {
-    reportInfection()
-      .then(tan => {
-        setShareTAN(tan);
-        setShowShareModal(true);
-      })
-      .catch(() => {
-        setShareTAN(null);
-        setShowShareModal(false);
-      });
-  }, [setShareTAN, setShowShareModal]);
 
   return (
     <>
@@ -263,12 +258,17 @@ export function History() {
           </StyledSteps>
         </AppContent>
         <StyledFooter flex="unset">
-          <StyledSecondaryButton tabIndex="4" onClick={shareHistory}>
+          <StyledSecondaryButton
+            tabIndex="4"
+            onClick={() => {
+              setShowShareModal(true);
+            }}
+          >
             {formatMessage({ id: 'History.ShareHistory' })}
           </StyledSecondaryButton>
         </StyledFooter>
       </AppLayout>
-      {showShareModal && shareTAN && historyShareSteps[currentHistoryShareStep]}
+      {showShareModal && historyShareSteps[currentHistoryShareStep]}
       {activePrivateMeeting && (
         <HistoryPrivateMeetingInfoModal
           locationId={activePrivateMeeting}

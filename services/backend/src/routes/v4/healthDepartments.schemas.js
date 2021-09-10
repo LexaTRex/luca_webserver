@@ -10,7 +10,12 @@ const departmentIdParametersSchema = z.object({
   departmentId: z.uuid(),
 });
 
+const auditLogDownloadQuerySchema = z.object({
+  timeframe: z.array(z.string()).length(2),
+});
+
 module.exports = {
   storeSignedKeysSchema,
   departmentIdParametersSchema,
+  auditLogDownloadQuerySchema,
 };

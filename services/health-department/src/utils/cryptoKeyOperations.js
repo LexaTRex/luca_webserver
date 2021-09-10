@@ -7,6 +7,7 @@ import {
   getCurrentBadgeKey,
   getBadgeKeyedList,
   getBadgeTargetKeyId,
+  getMe,
   getIssuers,
   sendBadgeKeyRotation,
   sendDailyKeyRotation,
@@ -17,14 +18,18 @@ import {
 } from 'network/api';
 
 import {
-  SIGN_EC_SHA256_DER,
+  VERIFY_EC_SHA256_DER_SIGNATURE,
+  EC_KEYPAIR_FROM_PRIVATE_KEY,
   EC_KEYPAIR_GENERATE,
+  SIGN_EC_SHA256_DER,
   ENCRYPT_DLIES,
   DECRYPT_DLIES,
   int32ToHex,
   base64ToHex,
   hexToBase64,
 } from '@lucaapp/crypto';
+
+import { InvalidNoteSignatureError } from 'errors/InvalidNoteSignatureError';
 
 const MIN_DAILY_KEY_AGE_BEFORE_ROTATION_DAYS = 1;
 const MAX_DAILY_KEYS = 28;
@@ -92,6 +97,12 @@ export const rotateDailyKeypair = async () => {
     dailyKey = { createdAt: 0, keyId: -1 };
   }
 
+  const me = await getMe();
+
+  if (!me.isSigned) {
+    return false;
+  }
+
   const currentDailyKeypairAge = moment.duration(
     moment().diff(moment.unix(dailyKey.createdAt))
   );
@@ -154,6 +165,12 @@ export const rotateDailyKeypair = async () => {
 export const rekeyDailyKeypairs = async () => {
   const dailyKeys = await getAllDailyKeys();
   const issuers = await getIssuers();
+
+  const me = await getMe();
+
+  if (!me.isSigned) {
+    return;
+  }
 
   const rekeyPromises = dailyKeys.map(async dailyKey => {
     const keyedList = await getDailyKeyedList(dailyKey.keyId);
@@ -338,3 +355,33 @@ export const rekeyBadgeKeypairs = async () => {
 
   sendRekeyBadgeKeys(serverPayload);
 };
+
+export const generateSignature = data => SIGN_EC_SHA256_DER(hdskp, data);
+
+export const verifyNoteSignature = (encryptedData, iv, mac, signature) => {
+  const keyPair = EC_KEYPAIR_FROM_PRIVATE_KEY(hdskp);
+  if (
+    !VERIFY_EC_SHA256_DER_SIGNATURE(
+      keyPair.publicKey,
+      encryptedData + mac + iv,
+      signature
+    )
+  ) {
+    throw new InvalidNoteSignatureError(
+      keyPair.publicKey,
+      signature,
+      encryptedData,
+      iv,
+      mac
+    );
+  }
+};
+
+export const decryptNote = (publicKey, iv, mac, note) =>
+  DECRYPT_DLIES(
+    hdekp,
+    base64ToHex(publicKey),
+    base64ToHex(note),
+    base64ToHex(iv),
+    base64ToHex(mac)
+  );

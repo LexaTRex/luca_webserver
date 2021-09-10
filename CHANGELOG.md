@@ -1,5 +1,30 @@
 # Changelog
 
+### 2.0.0 (2021-09-10)
+* **backend:** fix: strict JWT schema check for signing app
+* **backend:** fix: netmask of ipv6 addresses
+* **backend:** feat: add v4 notification endpoint
+* **backend:** feat: restrict location transfers endpoint
+* **backend:** feat: add health department account based rate limits
+* **backend:** feat: add rate limits for notifications and bloomfilter endpoints
+* **backend:** feat: add phone number and email to health departments
+* **backend:** feat: deny daily key rotation from unsigned health departments
+* **backend:** perf: disable default etag generation
+* **locations:** fix: redirection to login after successful share data request
+* **locations:** fix: typo in authentication footer
+* **locations:** fix: time display in completed share data requests
+* **locations:** fix: values in csv download for qr codes
+* **health-department:** fix: mismatch between list entries and counter
+* **health-department:** fix: view update after venue owner completes share data request
+* **health-department:** fix: misleading location name property in proccess details
+* **health-department:** feat: improved usability in the timepicker when searching for locations
+* **health-department:** feat: add note to tracing processes
+* **health-department:** feat: possibility to trigger notifications for a specific location
+* **health-department:** feat: possibility to trigger notifications for specific contacts
+* **health-department:** feat: possibility to add public contact informations
+* **health-department:** feat: possibility for admins to download the audit logfile
+* **webapp:** fix: user transfer creation before approval
+
 ### 1.9.2 (2021-09-01)
 * **locations:** fix: domain specific email validation
 * **scanner:** feat: deny check ins of v3 badges
@@ -8,7 +33,6 @@
 * **health-department:** fix: handling of unregistered badges in tracing processes
 
 ### 1.9.0 (2021-08-18)
-
 * **backend:** fix: openAPI JSON
 * **backend:** feat: send email to operator after approved location transfer
 * **backend:** feat: add note to tracing proccess

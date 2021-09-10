@@ -1,9 +1,9 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-import { CreationDate } from '../../Tracking/TrackingList/Table/Entry/CreationDate';
-import { SelectAssignee } from '../../Tracking/TrackingList/Table/Entry/SelectAssignee';
-import { CheckDone } from '../../Tracking/TrackingList/Table/Entry/CheckDone';
+import { CreationDate } from 'components/App/Tracking/TrackingList/Table/Entry/CreationDate';
+import { SelectAssignee } from 'components/App/Tracking/TrackingList/Table/Entry/SelectAssignee';
+import { CheckDone } from 'components/App/Tracking/TrackingList/Table/Entry/CheckDone';
 import { Wrapper, Title, Value, AttributeWrapper } from './InfoRow.styled';
 
 export const InfoRow = ({ process }) => {

@@ -24,7 +24,7 @@ export const Footer = () => {
       <Link href={TERMS_CONDITIONS_LINK} target="_blank">
         {intl.formatMessage({ id: 'authentication.background.legal.agb' })}
       </Link>
-      <Version>{isSuccess ? 'luca location' : ''}</Version>
+      <Version>{isSuccess ? 'luca Locations' : ''}</Version>
       <Version title={isSuccess ? `(${info.version}#${info.commit})` : ''}>
         {isSuccess ? `(${info.version}#${info.commit})` : ''}
       </Version>

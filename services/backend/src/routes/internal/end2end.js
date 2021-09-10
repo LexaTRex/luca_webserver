@@ -1,7 +1,30 @@
 const router = require('express').Router();
+const status = require('http-status');
 const { performance } = require('perf_hooks');
-
+const { validateSchema } = require('../../middlewares/validateSchema');
 const database = require('../../database');
+
+const { storeKeysSchema } = require('./en2end.schema');
+
+router.post(
+  '/signHealthDepartment',
+  validateSchema(storeKeysSchema),
+  async (request, response) => {
+    const healthDepartment = await database.HealthDepartment.findOne({
+      where: {
+        name: 'neXenio Testing',
+      },
+    });
+
+    await healthDepartment.update({
+      publicCertificate: request.body.publicCertificate,
+      signedPublicHDEKP: request.body.signedPublicHDEKP,
+      signedPublicHDSKP: request.body.signedPublicHDSKP,
+    });
+
+    response.sendStatus(status.NO_CONTENT);
+  }
+);
 
 router.post('/clean', async (request, response) => {
   const t0 = performance.now();
@@ -37,6 +60,9 @@ router.post('/clean', async (request, response) => {
       {
         publicHDEKP: null,
         publicHDSKP: null,
+        publicCertificate: null,
+        signedPublicHDEKP: null,
+        signedPublicHDSKP: null,
       },
       { where: {} }
     ),

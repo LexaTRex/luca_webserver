@@ -17,6 +17,14 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: null,
       },
+      email: {
+        type: DataTypes.CITEXT,
+        allowNull: true,
+      },
+      phone: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       publicHDEKP: {
         type: DataTypes.STRING(88),
       },
@@ -35,6 +43,11 @@ module.exports = (Sequelize, DataTypes) => {
       signedPublicHDSKP: {
         type: DataTypes.STRING(2048),
       },
+      notificationsEnabled: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
       paranoid: true,
@@ -51,6 +64,14 @@ module.exports = (Sequelize, DataTypes) => {
     });
 
     HealthDepartment.hasMany(models.HealthDepartmentEmployee, {
+      foreignKey: 'departmentId',
+    });
+
+    HealthDepartment.hasMany(models.HealthDepartmentAuditLog, {
+      foreignKey: 'departmentId',
+    });
+
+    HealthDepartment.hasMany(models.NotificationMessage, {
       foreignKey: 'departmentId',
     });
   };

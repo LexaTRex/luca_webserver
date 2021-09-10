@@ -19,9 +19,14 @@ const { requireOperator } = require('../../middlewares/requireUser');
 
 const {
   requireHealthDepartmentEmployee,
+  isUserOfType,
+  UserTypes,
 } = require('../../middlewares/requireUser');
+const { limitRequestsByUserPerHour } = require('../../middlewares/rateLimit');
 const logger = require('../../utils/logger');
 const { formatLocationName } = require('../../utils/format');
+const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
+const { logEvent } = require('../../utils/hdAuditLog');
 
 const {
   createSchema,
@@ -52,12 +57,25 @@ const mapTraceEncryptedData = trace => ({
 router.post(
   '/',
   requireHealthDepartmentEmployee,
+  limitRequestsByUserPerHour('location_transfer_post_ratelimit_hour'),
   validateSchema(createSchema),
   async (request, response) => {
     const transaction = await database.transaction();
     const maxLocations = config.get('luca.locationTransfers.maxLocations');
-    if (request.body.locations.length > maxLocations)
+
+    const isUserTransfer = !!request.body.userTransferId;
+
+    if (request.body.locations.length > maxLocations) {
+      logEvent(request.user, {
+        type: AuditLogEvents.CREATE_TRACING_PROCESS,
+        status: AuditStatusType.ERROR_LIMIT_EXCEEDED,
+        meta: {
+          viaTan: isUserTransfer,
+        },
+      });
+
       return response.sendStatus(status.REQUEST_ENTITY_TOO_LARGE);
+    }
 
     try {
       const tracingProcess = await database.TracingProcess.create(
@@ -68,7 +86,7 @@ router.post(
         { transaction }
       );
 
-      if (request.body.userTransferId) {
+      if (isUserTransfer) {
         const userTransfer = await database.UserTransfer.findByPk(
           request.body.userTransferId,
           { transaction }
@@ -76,6 +94,15 @@ router.post(
 
         if (!userTransfer) {
           await transaction.rollback();
+
+          logEvent(request.user, {
+            type: AuditLogEvents.CREATE_TRACING_PROCESS,
+            status: AuditStatusType.ERROR_INVALID_USER,
+            meta: {
+              viaTan: isUserTransfer,
+            },
+          });
+
           return response.sendStatus(status.NOT_FOUND);
         }
 
@@ -106,6 +133,15 @@ router.post(
             logger.error({
               message: 'Missing location for location transfer',
               locations: request.body.locations,
+            });
+
+            logEvent(request.user, {
+              type: AuditLogEvents.CREATE_TRACING_PROCESS,
+              status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
+              meta: {
+                locationId: locationRequest?.locationId || location?.uuid,
+                viaTan: isUserTransfer,
+              },
             });
             return null;
           }
@@ -145,6 +181,15 @@ router.post(
             { transaction }
           );
 
+          logEvent(request.user, {
+            type: AuditLogEvents.CREATE_TRACING_PROCESS,
+            status: AuditStatusType.SUCCESS,
+            meta: {
+              transferId: locationTransfer.uuid,
+              viaTan: isUserTransfer,
+            },
+          });
+
           return { location, locationTransfer };
         })
       );
@@ -154,6 +199,15 @@ router.post(
       return response.send({ tracingProcessId: tracingProcess.uuid });
     } catch (error) {
       await transaction.rollback();
+
+      logEvent(request.user, {
+        type: AuditLogEvents.CREATE_TRACING_PROCESS,
+        status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
+        meta: {
+          viaTan: isUserTransfer,
+        },
+      });
+
       throw error;
     }
   }
@@ -232,6 +286,7 @@ router.get(
         contactedAt: transfer.contactedAt,
         createdAt: moment(transfer.createdAt).unix(),
         deletedAt: transfer.deletedAt && moment(transfer.deletedAt).unix(),
+        approvedAt: transfer.approvedAt && moment(transfer.approvedAt).unix(),
       }))
     );
   }
@@ -337,11 +392,23 @@ router.get(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),
   async (request, response) => {
+    if (!request.user) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
     const transfer = await database.LocationTransfer.findByPk(
       request.params.transferId
     );
+
     if (!transfer) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+
+    if (
+      isUserOfType(UserTypes.HD_EMPLOYEE, request) &&
+      transfer.departmentId !== request.user.departmentId
+    ) {
+      return response.sendStatus(status.FORBIDDEN);
     }
 
     if (transfer.isCompleted) {
@@ -364,6 +431,13 @@ router.get(
       },
       paranoid: false,
     });
+
+    if (
+      isUserOfType(UserTypes.OPERATOR, request) &&
+      location.operator !== request.user.uuid
+    ) {
+      return response.sendStatus(status.FORBIDDEN);
+    }
 
     const transferTraces = await database.LocationTransferTrace.findAll({
       where: {
@@ -462,6 +536,12 @@ router.post(
       ],
     });
 
+    const amount = await database.LocationTransferTrace.count({
+      where: {
+        locationTransferId: transfer.uuid,
+      },
+    });
+
     if (!transfer) {
       return response.sendStatus(status.NOT_FOUND);
     }
@@ -469,6 +549,18 @@ router.post(
     if (transfer.isCompleted) {
       return response.sendStatus(status.GONE);
     }
+
+    logEvent(request.user, {
+      type: AuditLogEvents.REQUEST_DATA,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        processId: transfer.tracingProcessId,
+        transferId: transfer.uuid,
+        locationId: transfer.locationId,
+        timeframe: transfer.time,
+        amountOfTraces: amount,
+      },
+    });
 
     try {
       sendShareDataRequestNotification(
@@ -505,16 +597,35 @@ router.get(
       where: {
         uuid: request.params.transferId,
         departmentId: request.user.departmentId,
-        isCompleted: true,
       },
     });
     if (!transfer) {
+      logEvent(request.user, {
+        type: AuditLogEvents.VIEW_DATA,
+        status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
+        meta: {
+          transferId: request.params.transferId,
+        },
+      });
+
       return response.sendStatus(status.NOT_FOUND);
     }
 
     const traces = await database.LocationTransferTrace.findAll({
       where: {
         locationTransferId: request.params.transferId,
+      },
+    });
+
+    logEvent(request.user, {
+      type: AuditLogEvents.VIEW_DATA,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        processId: transfer.tracingProcessId,
+        transferId: request.params.transferId,
+        locationId: transfer.locationId,
+        timeframe: transfer.time,
+        amountOfTraces: traces.length,
       },
     });
 
@@ -554,6 +665,9 @@ const validateTransferId = async (request, response, next) => {
         {
           required: true,
           model: database.Location,
+          where: {
+            operator: request.user.uuid,
+          },
           attributes: ['name'],
           include: [
             {
@@ -595,6 +709,7 @@ const validateTransferId = async (request, response, next) => {
 router.post(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),
+  requireOperator,
   validateTransferId,
   validateSchema(sendSchema, '20mb'),
   async (request, response) => {
@@ -677,12 +792,29 @@ router.post(
             transfer.Location.name || transfer.Location.LocationGroup.name,
         }
       );
-      await transfer.update({
-        isCompleted: true,
-      });
     } catch (error) {
       logger.error({ message: 'failed to send email', error });
     }
+    await transfer.update({
+      isCompleted: true,
+      approvedAt: moment(),
+    });
+
+    logEvent(
+      {
+        uuid: transfer.HealthDepartment.uuid,
+        departmentId: transfer.HealthDepartment.uuid,
+      },
+      {
+        type: AuditLogEvents.RECEIVE_DATA,
+        status: AuditStatusType.SUCCESS,
+        meta: {
+          transferId: transfer.uuid,
+          locationId: transfer.Location.uuid,
+        },
+      }
+    );
+
     return response.sendStatus(status.NO_CONTENT);
   }
 );

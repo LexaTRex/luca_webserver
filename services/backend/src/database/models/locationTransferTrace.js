@@ -73,6 +73,10 @@ module.exports = (Sequelize, DataTypes) => {
       sourceKey: 'traceId',
       foreignKey: 'traceId',
     });
+
+    LocationTransferTrace.hasMany(models.RiskLevel, {
+      foreignKey: 'locationTransferTraceId',
+    });
   };
 
   return LocationTransferTrace;

@@ -194,7 +194,7 @@ router
         didRequestLocations: body.didRequestLocations,
         isCompleted: body.isCompleted,
         assigneeId: body.assigneeId,
-        ...(body.note && {
+        ...(body.note !== undefined && {
           note: body.note,
           noteIV: body.noteIV,
           noteMAC: body.noteMAC,

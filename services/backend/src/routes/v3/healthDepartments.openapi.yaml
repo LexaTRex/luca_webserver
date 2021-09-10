@@ -2,7 +2,10 @@ paths:
   /healthDepartments/keys:
     get:
       summary: Retrieve keys
-      description: 'Get the current user''s [health department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)''s public keys.'
+      description:
+        "Get the current user's [health
+        department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department)'s
+        public keys."
       tags:
         - HealthDepartments
       responses:
@@ -96,6 +99,10 @@ paths:
                     type: string
                   name:
                     type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
                   publicHDEKP:
                     type: string
                     nullable: true
@@ -113,10 +120,33 @@ paths:
         name: departmentId
         in: path
         required: true
+  '/healthDepartments/contact':
+    patch:
+      summary: Update contact information department
+      tags:
+        - HealthDepartments
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Department not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                phone:
+                  type: string
   /healthDepartments/privateKeySecret:
     get:
       summary: Get privateKeySecret
-      description: Get privateKeySecret for the current user's health department.
+      description:
+        Get privateKeySecret for the current user's health department.
       tags:
         - HealthDepartments
       responses:
