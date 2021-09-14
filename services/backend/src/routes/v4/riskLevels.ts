@@ -8,63 +8,11 @@ import {
 } from 'middlewares/validateSchema';
 import { requireHealthDepartmentEmployee } from 'middlewares/requireUser';
 import {
-  addRiskLevelSchema,
   getRiskLevelParameterSchema,
   addRiskLevelTracesSchema,
 } from './riskLevels.schemas';
 
-const RISK_LEVEL_2 = 2;
-const RISK_LEVEL_3 = 3;
-
 const router = Router();
-
-router.post(
-  '/',
-  requireHealthDepartmentEmployee,
-  validateSchema(addRiskLevelSchema),
-  async (request, response) => {
-    const user = request.user as IHealthDepartmentEmployee;
-
-    const locationTransfer = await database.LocationTransfer.findOne({
-      where: {
-        uuid: request.body.locationTransferId,
-        departmentId: user.departmentId,
-      },
-    });
-
-    if (!locationTransfer) return response.sendStatus(status.NOT_FOUND);
-
-    const locationTransferTraces = await database.LocationTransferTrace.findAll(
-      {
-        where: { locationTransferId: locationTransfer.uuid },
-        include: {
-          model: database.RiskLevel,
-        },
-      }
-    );
-
-    const duplicateRiskLevel = locationTransferTraces.some(
-      // @ts-ignore - any until models are typed
-      locationTransferTrace =>
-        locationTransferTrace.RiskLevels.some(
-          // @ts-ignore - any until models are typed
-          riskLevel => riskLevel.level === RISK_LEVEL_2
-        )
-    );
-
-    if (duplicateRiskLevel) return response.sendStatus(status.CONFLICT);
-
-    // @ts-ignore - any until models are typed
-    const riskLevels = locationTransferTraces.map(locationTransferTrace => ({
-      level: RISK_LEVEL_2,
-      locationTransferTraceId: locationTransferTrace.uuid,
-    }));
-
-    await database.RiskLevel.bulkCreate(riskLevels);
-
-    return response.sendStatus(status.NO_CONTENT);
-  }
-);
 
 router.get(
   '/:locationTransferId',
@@ -127,30 +75,16 @@ router.post(
           locationTransferId: locationTransfer.uuid,
           traceId: { [Op.in]: request.body.traceIds },
         },
-        include: {
-          model: database.RiskLevel,
-        },
       }
     );
 
-    const duplicateRiskLevel = locationTransferTraces.some(
-      // @ts-ignore - any until models are typed
-      locationTransferTrace =>
-        locationTransferTrace.RiskLevels.some(
-          // @ts-ignore - any until models are typed
-          riskLevel => riskLevel.level === RISK_LEVEL_3
-        )
-    );
-
-    if (duplicateRiskLevel) return response.sendStatus(status.CONFLICT);
-
     // @ts-ignore - any until models are typed
     const riskLevels = locationTransferTraces.map(locationTransferTrace => ({
-      level: RISK_LEVEL_3,
+      level: request.body.riskLevel,
       locationTransferTraceId: locationTransferTrace.uuid,
     }));
 
-    database.RiskLevel.bulkCreate(riskLevels);
+    database.RiskLevel.bulkCreate(riskLevels, { ignoreDuplicates: true });
 
     return response.sendStatus(status.NO_CONTENT);
   }

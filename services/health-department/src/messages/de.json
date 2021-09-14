@@ -382,15 +382,15 @@
     "notification.notification.success": "Benachrichtigungen gesendet.",
     "notification.notification.error": "Benachrichtigungen konnten nicht gesendet werden.",
     "ContactPerson.notify.title": "AUSWAHL BENACHRICHTIGEN",
-    "profile.contactInformation.required": "Bitte gib wenigstens eine Telefonnummer und/oder eine E-Mail-Adresse an.",
+    "profile.contactInformation.required": "Bitte gib eine Telefonnummer und/oder eine E-Mail-Adresse an.",
     "modal.notification.section3": "Alle luca App-Nutzer:innen, die in diesem Zeitraum bei {locationName} eingecheckt waren, erhalten die Benachrichtigung.\n{br}Von: {from}\n{br}Bis: {till}",
     "modal.notification.section3.title": "Zeitraum",
     "processDetails.note.invalidSignature": "Die Signatur der Notiz ist falsch!",
     "modal.notification.notSpecified": "Keine Angabe",
     "modal.notification.selection.potentialInfectionRisk": "Mögliches Infektionsrisiko",
     "modal.notification.selection.elevatedInfectionRisk": "Erhöhtes Infektionsrisiko",
-    "modal.notification.button.alreadyNotified": "Bereits informiert",
+    "modal.notification.button.alreadyNotified": "Bereits benachrichtigt",
     "contactperson.notified": "Hinweis ausgelöst",
-    "modal.notification.selectionWarning": "Diese Warnmeldung kann nur an alle Personen in der Kontaktliste ausgespielt werden.",
-    "modal.notification.selection.countNoNotification": "{amount} Personen werden nicht benachrichtigt, da der Check-in via Schlüsselanhänger, Kontaktformular oder Web App erfolgte"
+    "modal.notification.selectionWarning": "Wichtige Information: Der Hinweis \"Mögliches Infektionsrisiko\" wird an alle Personen ausgespielt, die im jeweiligen Zeitrahmen in der Location eingecheckt waren. Ihre Auswahl aus dem vorherigen Schritt ist nicht mehr gültig.",
+    "modal.notification.selection.countNoNotification": "{amount} Personen werden nicht benachrichtigt, da der Check-in via Schlüsselanhänger, Kontaktformular oder Web App erfolgte oder weil diese Person bereits benachrichtigt wurde."
 }

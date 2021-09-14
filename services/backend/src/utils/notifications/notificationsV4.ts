@@ -138,7 +138,7 @@ export const generateChunk = async () => {
 
   const dummyTraces = await database.DummyTrace.findAll({
     attributes: ['healthDepartmentId', 'traceId'],
-    where: { createdAt: { [Op.gt]: startTime } },
+    where: { updatedAt: { [Op.gt]: startTime } },
   });
 
   const completedHashHexStrings: string[] = completedLocationTransfers.flatMap(

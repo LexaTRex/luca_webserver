@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl';
 import { Popconfirm, notification } from 'antd';
 import { useQuery, useQueryClient } from 'react-query';
 import {
-  notifyLocationGuests,
   notifyLocationTracesGuests,
   getNotificationConfig,
   getContactPersons,
@@ -13,7 +12,6 @@ import { formattedTimeLabel } from 'utils/time';
 import { useModal } from 'components/hooks/useModal';
 import { PrimaryButton } from 'components/general';
 import { RISK_LEVEL_2, RISK_LEVEL_3 } from 'constants/riskLevels';
-import { filterByDeviceType } from '../ContactPersonsModal/ContactPersons/Notify/Notify.helper';
 import {
   Wrapper,
   SectionTitle,
@@ -22,25 +20,25 @@ import {
   SwitchDescription,
   StyledSwitch,
   SwitchWrapper,
-  Warning,
 } from './NotificationModal.styled';
 import {
-  filterLevel3RiskLevels,
+  filterRiskLevels,
   getLocaleObject,
+  filterByDeviceType,
 } from './NotificationModal.helper';
 
 // eslint-disable-next-line complexity
 export const NotificationModal = ({
   locationName,
   locationTransferId,
-  traceIds,
+  traces,
   time,
   departmentId,
 }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const [, closeModal] = useModal();
-  const [level, setLevel] = useState(traceIds ? RISK_LEVEL_3 : RISK_LEVEL_2);
+  const [level, setLevel] = useState(RISK_LEVEL_2);
 
   const setRiskLevel2 = checked =>
     checked ? setLevel(RISK_LEVEL_2) : setLevel(RISK_LEVEL_3);
@@ -82,17 +80,29 @@ export const NotificationModal = ({
 
   if (!config || !contactPersons || !riskLevels) return null;
 
-  const contactPersonFiltered = filterByDeviceType(contactPersons.traces);
+  const triggeredWithoutSelection = !traces;
+  const filteredContactPersons = filterByDeviceType(
+    triggeredWithoutSelection ? contactPersons.traces : traces
+  );
+  const localeObject = getLocaleObject(config, departmentId, level, intl);
+  const traceIdsToNotify = filterRiskLevels(
+    filteredContactPersons.map(trace => trace.traceId),
+    riskLevels,
+    level
+  );
+  const completeTracesLength = triggeredWithoutSelection
+    ? contactPersons.traces.length
+    : traces.length;
+  const amountOfNotifyableTraces = traceIdsToNotify.length;
+  const amountOfNonNotifyableTraces =
+    completeTracesLength - amountOfNotifyableTraces;
 
   const notify = () => {
-    const notificationRequest =
-      level === RISK_LEVEL_2
-        ? notifyLocationGuests(locationTransferId)
-        : notifyLocationTracesGuests({
-            traceIds:
-              traceIds || contactPersonFiltered.map(trace => trace.traceId),
-            locationTransferId,
-          });
+    const notificationRequest = notifyLocationTracesGuests({
+      traceIds: traceIdsToNotify,
+      locationTransferId,
+      riskLevel: level,
+    });
 
     notificationRequest
       .then(response => {
@@ -113,17 +123,6 @@ export const NotificationModal = ({
       .catch(() => triggerNotificationError());
   };
 
-  const localeObject = getLocaleObject(config, departmentId, level, intl);
-  const level3TraceIds = filterLevel3RiskLevels(
-    traceIds || contactPersonFiltered.map(trace => trace.traceId),
-    riskLevels
-  );
-  const wasLevel2Triggered = riskLevels.some(traceRisk =>
-    traceRisk.riskLevels.includes(RISK_LEVEL_2)
-  );
-  const isButtonDisabled =
-    level3TraceIds.length === 0 && level === RISK_LEVEL_3;
-
   return (
     <Wrapper>
       <SectionTitle>
@@ -136,38 +135,30 @@ export const NotificationModal = ({
         {intl.formatMessage({ id: 'modal.notification.section1' })}
       </Section>
 
-      {!wasLevel2Triggered && (
-        <Section>
-          <SwitchWrapper>
-            <StyledSwitch
-              checked={level === RISK_LEVEL_2}
-              onChange={setRiskLevel2}
-            />
-            <SwitchDescription>
-              {intl.formatMessage({
-                id: 'modal.notification.selection.potentialInfectionRisk',
-              })}
-            </SwitchDescription>
-          </SwitchWrapper>
-          <SwitchWrapper>
-            <StyledSwitch
-              checked={level === RISK_LEVEL_3}
-              onChange={setRiskLevel3}
-            />
-            <SwitchDescription>
-              {intl.formatMessage({
-                id: 'modal.notification.selection.elevatedInfectionRisk',
-              })}
-            </SwitchDescription>
-          </SwitchWrapper>
-        </Section>
-      )}
-
-      {traceIds && level === RISK_LEVEL_2 && (
-        <Warning>
-          {intl.formatMessage({ id: 'modal.notification.selectionWarning' })}
-        </Warning>
-      )}
+      <Section>
+        <SwitchWrapper>
+          <StyledSwitch
+            checked={level === RISK_LEVEL_2}
+            onChange={setRiskLevel2}
+          />
+          <SwitchDescription>
+            {intl.formatMessage({
+              id: 'modal.notification.selection.potentialInfectionRisk',
+            })}
+          </SwitchDescription>
+        </SwitchWrapper>
+        <SwitchWrapper>
+          <StyledSwitch
+            checked={level === RISK_LEVEL_3}
+            onChange={setRiskLevel3}
+          />
+          <SwitchDescription>
+            {intl.formatMessage({
+              id: 'modal.notification.selection.elevatedInfectionRisk',
+            })}
+          </SwitchDescription>
+        </SwitchWrapper>
+      </Section>
 
       <SectionTitle>
         {intl.formatMessage({ id: 'modal.notification.section2.title' })}
@@ -199,7 +190,6 @@ export const NotificationModal = ({
           }
         )}
       </Section>
-
       <SectionTitle>
         {intl.formatMessage({ id: 'modal.notification.section3.title' })}
       </SectionTitle>
@@ -218,23 +208,22 @@ export const NotificationModal = ({
         {intl.formatMessage(
           { id: 'modal.notification.section4.title' },
           {
-            guestCount:
-              level === RISK_LEVEL_2
-                ? contactPersonFiltered.length
-                : level3TraceIds.length,
+            guestCount: amountOfNotifyableTraces,
           }
         )}
       </SectionTitle>
-      <SectionTitle>
-        {intl.formatMessage(
-          { id: 'modal.notification.selection.countNoNotification' },
-          {
-            amount: contactPersons.traces.length - contactPersonFiltered.length,
-          }
-        )}
-      </SectionTitle>
+      {amountOfNonNotifyableTraces !== 0 && (
+        <SectionTitle>
+          {intl.formatMessage(
+            { id: 'modal.notification.selection.countNoNotification' },
+            {
+              amount: amountOfNonNotifyableTraces,
+            }
+          )}
+        </SectionTitle>
+      )}
       <ButtonWrapper>
-        {isButtonDisabled ? (
+        {amountOfNotifyableTraces === 0 ? (
           <PrimaryButton disabled>
             {intl.formatMessage({
               id: 'modal.notification.button.alreadyNotified',
@@ -249,10 +238,7 @@ export const NotificationModal = ({
                 id: 'modal.notification.confirmation',
               },
               {
-                guestCount:
-                  level === RISK_LEVEL_2
-                    ? contactPersonFiltered.length
-                    : level3TraceIds.length,
+                guestCount: traceIdsToNotify.length,
               }
             )}
             okText={intl.formatMessage({

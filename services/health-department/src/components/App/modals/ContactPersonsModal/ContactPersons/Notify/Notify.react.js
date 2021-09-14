@@ -5,7 +5,6 @@ import { useModal } from 'components/hooks/useModal';
 import { getMe } from 'network/api';
 import { NotificationModal } from 'components/App/modals/NotificationModal';
 import { StyledLink, Wrapper, BellOutlinedIcon } from './Notify.styled';
-import { filterByDeviceType } from './Notify.helper';
 
 export const Notify = ({ traces, location }) => {
   const intl = useIntl();
@@ -23,9 +22,6 @@ export const Notify = ({ traces, location }) => {
 
   if (!traces || traces.length === 0) return null;
 
-  const selectedFilteredTraces = filterByDeviceType(traces);
-  const selectedTracesIds = selectedFilteredTraces.map(trace => trace.traceId);
-
   const openNotificationModal = () => {
     openModal({
       title: intl.formatMessage({
@@ -36,7 +32,7 @@ export const Notify = ({ traces, location }) => {
           locationId={locationId}
           locationName={locationName}
           locationTransferId={locationTransferId}
-          traceIds={selectedTracesIds}
+          traces={traces}
           time={time}
           departmentId={healthDepartmentEmployee.departmentId}
         />

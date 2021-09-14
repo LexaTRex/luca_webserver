@@ -294,15 +294,6 @@ export const createUserTransfer = payload => {
 };
 
 // NOTIFICATIONS
-export const notifyLocationGuests = locationTransferId =>
-  fetch(`${API_PATH}/v4/riskLevels`, {
-    method: 'POST',
-    body: JSON.stringify({
-      locationTransferId,
-    }),
-    headers,
-  });
-
 export const notifyLocationTracesGuests = payload =>
   fetch(`${API_PATH}/v4/riskLevels/traces`, {
     method: 'POST',

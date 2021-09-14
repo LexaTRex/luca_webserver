@@ -27,6 +27,8 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
     'max-lines': [2, { max: 250, skipBlankLines: true, skipComments: true }],
     complexity: 2,
     'no-await-in-loop': 0,

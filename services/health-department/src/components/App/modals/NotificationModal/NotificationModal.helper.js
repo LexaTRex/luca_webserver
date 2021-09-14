@@ -1,11 +1,17 @@
-import { RISK_LEVEL_3 } from 'constants/riskLevels';
+import { NOTIFIEABLE_DEVICE_TYPES } from 'constants/deviceTypes';
 
-export const filterLevel3RiskLevels = (traceIdsToFilter, riskLevels) =>
+export const filterByDeviceType = contactPersons =>
+  contactPersons.filter(
+    contact =>
+      contact.deviceType === NOTIFIEABLE_DEVICE_TYPES.IOS ||
+      contact.deviceType === NOTIFIEABLE_DEVICE_TYPES.ANDROID
+  );
+
+export const filterRiskLevels = (traceIdsToFilter, riskLevels, level) =>
   traceIdsToFilter.filter(traceId =>
     riskLevels.some(
       riskLevel =>
-        riskLevel.traceId === traceId &&
-        !riskLevel.riskLevels.includes(RISK_LEVEL_3)
+        riskLevel.traceId === traceId && !riskLevel.riskLevels.includes(level)
     )
   );
 

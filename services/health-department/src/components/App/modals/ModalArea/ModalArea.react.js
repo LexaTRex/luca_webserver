@@ -22,7 +22,7 @@ export const ModalArea = () => {
 
   // Use a copy of the modal content in order to complete the closing animation of the modal with content
   useEffect(() => {
-    if (stateModal) setModalContent(stateModal);
+    if (stateModal) setModalContent([...stateModal].pop());
   }, [stateModal]);
 
   if (!modalContent) return null;

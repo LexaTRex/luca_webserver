@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { message } from 'antd';
+import { useQuery } from 'react-query';
 
 import { decryptTrace } from 'utils/cryptoOperations';
 import { INITIAL_OVERLAP_VALUE } from 'constants/timeOverlap';
@@ -18,12 +19,12 @@ export const GuestList = ({
   location,
 }) => {
   const intl = useIntl();
-  const [traces, setTraces] = useState(null);
   const [filteredTraces, setFilteredTraces] = useState(null);
   const [minTimeOverlap, setMinTimeOverlap] = useState(INITIAL_OVERLAP_VALUE);
 
-  useEffect(() => {
-    async function decryptTraces() {
+  const { data: traces } = useQuery(
+    `decryptedTraces${location.transferId}`,
+    async () => {
       const hideMessage = message.loading(
         intl.formatMessage({ id: 'message.decryptingData' }),
         0
@@ -38,18 +39,17 @@ export const GuestList = ({
           })
         )
       );
-
-      const validDecrypedTraces = decryptedTraces.filter(
+      hideMessage();
+      return decryptedTraces.filter(
         user => !(user.isInvalid || user.isUnregistered)
       );
+    },
+    { staleTime: Number.POSITIVE_INFINITY }
+  );
 
-      setTraces(validDecrypedTraces);
-      setDecryptedTraces(validDecrypedTraces);
-      hideMessage();
-    }
-
-    decryptTraces();
-  }, [encryptedTraces, intl, setDecryptedTraces]);
+  useEffect(() => {
+    if (traces) setDecryptedTraces(traces);
+  }, [traces, setDecryptedTraces]);
 
   useEffect(() => {
     if (!traces) return;

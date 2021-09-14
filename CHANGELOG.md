@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.0.1 (2021-09-14)
+* **backend:** feat: allow notification of individual users with level 2 notifications
+
 ### 2.0.0 (2021-09-10)
 * **backend:** fix: strict JWT schema check for signing app
 * **backend:** fix: netmask of ipv6 addresses

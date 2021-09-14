@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl';
 import { Tooltip } from 'antd';
 import { useQuery } from 'react-query';
 
-import { RISK_LEVEL_2 } from 'constants/riskLevels';
+import { RISK_LEVEL_2, RISK_LEVEL_3 } from 'constants/riskLevels';
+import { NOTIFIEABLE_DEVICE_TYPES } from 'constants/deviceTypes';
 
 import {
   getWarningLevelsForLocationTransfer,
@@ -15,6 +16,27 @@ import { useModal } from 'components/hooks/useModal';
 import { NotificationModal } from 'components/App/modals/NotificationModal';
 
 import { BellIcon, ButtonWrapper } from './NotificationTrigger.styled';
+
+const checkIfAnyContactPersonsAreNotifyable = (contactPersons, riskLevels) => {
+  const allowedDeviceTypes = new Set([
+    NOTIFIEABLE_DEVICE_TYPES.IOS,
+    NOTIFIEABLE_DEVICE_TYPES.ANDROID,
+  ]);
+  const riskLevelsToCheck = [RISK_LEVEL_2, RISK_LEVEL_3];
+
+  const tracesOfNotifyableDevices = contactPersons.traces.filter(
+    contactPerson => allowedDeviceTypes.has(contactPerson.deviceType)
+  );
+  return tracesOfNotifyableDevices.some(({ traceId }) => {
+    const riskLevelsForTrace = riskLevels.find(
+      riskLevel => riskLevel.traceId === traceId
+    );
+    if (!riskLevelsForTrace.riskLevels.length) return true;
+    return riskLevelsToCheck.some(
+      level => !riskLevelsForTrace.riskLevels.includes(level)
+    );
+  });
+};
 
 export const NotificationTrigger = ({ location }) => {
   const intl = useIntl();
@@ -71,16 +93,17 @@ export const NotificationTrigger = ({ location }) => {
   )
     return null;
 
-  const isNotificationDisabled =
-    contactPersons.traces.length === 0 ||
-    riskLevels.some(traceRisk => traceRisk.riskLevels.includes(RISK_LEVEL_2));
+  const isNotificationEnabled = checkIfAnyContactPersonsAreNotifyable(
+    contactPersons,
+    riskLevels
+  );
 
   return (
     <ButtonWrapper
-      onClick={isNotificationDisabled ? () => {} : openNotificationModal}
+      onClick={isNotificationEnabled ? openNotificationModal : () => {}}
     >
       <Tooltip title={intl.formatMessage({ id: 'modal.notification.button' })}>
-        <BellIcon disabled={isNotificationDisabled} />
+        <BellIcon disabled={!isNotificationEnabled} />
       </Tooltip>
     </ButtonWrapper>
   );
