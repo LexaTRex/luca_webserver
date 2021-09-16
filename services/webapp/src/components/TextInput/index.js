@@ -1,1 +1,1 @@
-export * from './TextInput.react.js';
+export * from './TextInput.react';

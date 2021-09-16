@@ -5,6 +5,7 @@ module.exports = {
   debug: 'DEBUG',
   e2e: 'E2E',
   skipSmsVerification: 'SKIP_SMS_VERIFICATION',
+  tz: 'TZ',
   cookies: {
     secret: 'COOKIES_SECRET',
     name: 'COOKIE_NAME',

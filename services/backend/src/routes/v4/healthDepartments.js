@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const moment = require('moment');
+const config = require('config');
+const moment = require('moment-timezone');
 const status = require('http-status');
 const { Op } = require('sequelize');
 
@@ -115,7 +116,7 @@ router.get(
       status: AuditStatusType.SUCCESS,
       meta: {
         timeframe: request.query.timeframe.map(time =>
-          moment.unix(time).format()
+          moment.unix(time).tz(config.get('tz')).format()
         ),
       },
     });

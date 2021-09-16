@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.0.2 (2021-09-15)
+* **backend:** perf: add bloomfilter generation metrics
+* **backend:** fix: set timezone via config
+* **backend:** fix: remove duplicate term
+* chore: update dependencies
+
 ### 2.0.1 (2021-09-14)
 * **backend:** feat: allow notification of individual users with level 2 notifications
 

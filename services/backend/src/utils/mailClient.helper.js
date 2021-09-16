@@ -72,7 +72,7 @@ const MAIL_TEMPLATE_TITLES = {
   },
   locationTransferApprovalNotification: {
     de: ({ departmentName }) =>
-      `Bestätigung der Datenfreigabe an das Gesundheitsamt ${departmentName}`,
+      `Bestätigung der Datenfreigabe an das ${departmentName}`,
     en: ({ departmentName }) =>
       `Data Sharing for Health Department ${departmentName} Completed`,
   },

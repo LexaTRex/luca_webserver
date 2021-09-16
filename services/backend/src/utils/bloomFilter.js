@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 
 const logger = require('./logger');
 const lifecycle = require('./lifecycle');
+const { client } = require('./metrics');
 const {
   client: redisClient,
   set: redisSet,
@@ -125,7 +126,18 @@ const updateBloomFilter = async () => {
 
 const getBloomFilterAndEtag = () => cache.get(BLOOM_FILTER_BUFFER_KEY, true);
 
-worker.on('message', async bloomFilterArrayDump => {
+const bloomFilterGenerationTotalCounter = new client.Counter({
+  name: 'bloom_filter_generation_duration_seconds_count',
+  help: 'Count of bloom filter generation runs.',
+});
+const bloomFilterGenerationDurationCounter = new client.Counter({
+  name: 'bloom_filter_generation_duration_seconds_sum',
+  help: 'Sum of bloom filter generation duration.',
+});
+
+worker.on('message', async ({ bloomFilterArrayDump, time }) => {
+  bloomFilterGenerationTotalCounter.inc();
+  bloomFilterGenerationDurationCounter.inc(time / 1000);
   const emptyBadgeCount = await getEmptyBadgeCount();
   const totalBadgeCount = await getTotalBadgeCount();
   const bloomFilterBuffer = Buffer.from(bloomFilterArrayDump);

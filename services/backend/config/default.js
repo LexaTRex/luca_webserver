@@ -20,6 +20,7 @@ module.exports = {
   skipSmsVerification: true,
   shutdownDelay: 0,
   port: 8080,
+  tz: 'Europe/Berlin',
   version: {
     commit: 'dev',
     version: 'dev',

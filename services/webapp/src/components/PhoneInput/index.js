@@ -1,1 +1,1 @@
-export * from './PhoneInput.react.js';
+export * from './PhoneInput.react';

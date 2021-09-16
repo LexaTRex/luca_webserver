@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
-
+import config from 'config';
 import database from 'database';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
 import logger from './logger';
 
@@ -166,7 +166,7 @@ export async function logEvent(employee: any, event: LogEvent) {
 }
 
 export const toReadableDate = (date: string) => {
-  return moment(date).format('YYYY-MM-DD HH:mm:ss');
+  return moment(date).tz(config.get('tz')).format('YYYY-MM-DD HH:mm:ss');
 };
 
 const MESSAGES = {
@@ -280,7 +280,8 @@ export function toReadableEvent(event: LogEvent) {
       }
     }
   } catch (error) {
-    logger.error(`Event not processable: ${error.message}`);
+    if (error instanceof Error)
+      logger.error(`Event not processable: ${error.message}`);
     return null;
   }
 

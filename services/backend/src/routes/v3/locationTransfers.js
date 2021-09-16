@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 const router = require('express').Router();
-const moment = require('moment');
+const moment = require('moment-timezone');
 const config = require('config');
 const status = require('http-status');
 const { Op } = require('sequelize');
@@ -783,11 +783,17 @@ router.post(
         null,
         {
           id: transfer.uuid,
-          createdAt: moment(transfer.createdAt).format(dateFormat),
-          updatedAt: moment(transfer.updatedAt).format(dateFormat),
+          createdAt: moment(transfer.contactedAt)
+            .tz(config.get('tz'))
+            .format(dateFormat),
+          updatedAt: moment().tz(config.get('tz')).format(dateFormat),
           departmentName: transfer.HealthDepartment.name,
-          timeFrameFrom: moment(transfer.time[0].value).format(dateFormat),
-          timeFrameTo: moment(transfer.time[1].value).format(dateFormat),
+          timeFrameFrom: moment(transfer.time[0].value)
+            .tz(config.get('tz'))
+            .format(dateFormat),
+          timeFrameTo: moment(transfer.time[1].value)
+            .tz(config.get('tz'))
+            .format(dateFormat),
           locationName:
             transfer.Location.name || transfer.Location.LocationGroup.name,
         }
