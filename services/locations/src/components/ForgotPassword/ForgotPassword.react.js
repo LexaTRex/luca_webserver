@@ -119,7 +119,7 @@ export const ForgotPassword = ({ location }) => {
               <ButtonWrapper>
                 <PrimaryButton
                   htmlType="submit"
-                  isButtonWhite
+                  $isButtonWhite
                   data-cy="sentResetLinkSubmit"
                 >
                   {intl.formatMessage({

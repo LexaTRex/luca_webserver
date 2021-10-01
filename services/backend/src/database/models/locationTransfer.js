@@ -34,6 +34,11 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null,
       },
+      signedLocationTransfer: {
+        type: DataTypes.STRING(1024),
+        allowNull: true,
+        defaultValue: null,
+      },
       approvedAt: {
         type: DataTypes.DATE,
         allowNull: true,

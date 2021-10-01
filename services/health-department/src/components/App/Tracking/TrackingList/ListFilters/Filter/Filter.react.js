@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Checkbox, Tag } from 'antd';
+import { Checkbox } from 'antd';
 import { useIntl } from 'react-intl';
 import { truncateString } from 'utils/string';
 
@@ -8,13 +8,11 @@ import {
   StyledFilterTitle,
   StyledOptionTitle,
   StyledOptionContainer,
+  StyledSelect,
+  StyledTag,
 } from './Filter.styled';
 
-const SelectStyles = {
-  marginBottom: 24,
-};
-
-const { Option } = Select;
+const { Option } = StyledSelect;
 
 function FilterTagRender({ label, closable, onClose }) {
   const onPreventMouseDown = event => {
@@ -22,15 +20,14 @@ function FilterTagRender({ label, closable, onClose }) {
     event.stopPropagation();
   };
   return (
-    <Tag
+    <StyledTag
       color="#4e6180"
       onMouseDown={onPreventMouseDown}
       closable={closable}
       onClose={onClose}
-      style={{ display: 'inline-flex', alignItems: 'center', marginRight: 3 }}
     >
       {label}
-    </Tag>
+    </StyledTag>
   );
 }
 export const Filter = ({
@@ -47,11 +44,10 @@ export const Filter = ({
   return (
     <StyledContainer>
       <StyledFilterTitle>{title}</StyledFilterTitle>
-      <Select
+      <StyledSelect
         showArrow
         value={active}
         onChange={onChange}
-        style={SelectStyles}
         showSearch={showSearch}
         optionFilterProp={optionFilterProp}
         filterOption={filterOption}
@@ -79,7 +75,7 @@ export const Filter = ({
             </StyledOptionContainer>
           </Option>
         ))}
-      </Select>
+      </StyledSelect>
     </StyledContainer>
   );
 };

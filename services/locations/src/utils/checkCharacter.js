@@ -6,3 +6,6 @@ export const isValidCharacter = value =>
   SAFE_CHARACTERS_REGEX.test(value) &&
   NO_HTTP_REGEX.test(value) &&
   NO_FTP_REGEX.test(value);
+
+export const isValidTextCharacter = value =>
+  NO_HTTP_REGEX.test(value) && NO_FTP_REGEX.test(value);

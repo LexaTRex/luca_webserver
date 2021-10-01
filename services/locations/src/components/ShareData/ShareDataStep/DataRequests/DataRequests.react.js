@@ -17,7 +17,7 @@ const REQUEST_TIME_WARINING = 72;
 export const DataRequests = ({ transfers }) => {
   const intl = useIntl();
 
-  const timestampFormat = 'DD.MM.YYYY hh:mm';
+  const timestampFormat = 'DD.MM.YYYY HH:mm';
 
   const formatTimeStamp = timestamp =>
     `${moment.unix(timestamp).format(timestampFormat)} ${intl.formatMessage({

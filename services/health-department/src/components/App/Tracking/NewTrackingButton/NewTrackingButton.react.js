@@ -22,7 +22,7 @@ export const NewTrackingButton = () => {
   };
 
   return (
-    <PrimaryButton isButtonWhite onClick={trackInfection}>
+    <PrimaryButton $isButtonWhite onClick={trackInfection}>
       {intl.formatMessage({ id: 'startTracking.button' })}
     </PrimaryButton>
   );

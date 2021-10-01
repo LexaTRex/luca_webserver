@@ -9,10 +9,11 @@ import { createEmployee } from 'network/api';
 
 import { getFormattedPhoneNumber } from 'utils/checkPhoneNumber';
 import { Wrapper, ButtonRow, Info } from '../AddEmployeeModal.styled';
-import { getFormElements } from '../AddEmployeeModal.helper';
+import { useFormElements } from '../useAddEmployee';
 
 export const AddEmployeeForm = ({ setNewUserPassword }) => {
   const intl = useIntl();
+  const formElements = useFormElements();
   const [, closeModal] = useModal();
 
   const handleServerError = () =>
@@ -47,7 +48,7 @@ export const AddEmployeeForm = ({ setNewUserPassword }) => {
         })}
       </Info>
       <Form onFinish={onFinish}>
-        {getFormElements(intl).map(element => (
+        {formElements.map(element => (
           <Form.Item
             key={element.key}
             rules={element.rules}

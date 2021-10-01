@@ -5,7 +5,7 @@ import { Select, notification } from 'antd';
 import { useIntl } from 'react-intl';
 
 import { getEmployees, updateProcess } from 'network/api';
-import { selectStyle } from './SelectAssignee.styled';
+import { StyledSelect } from './SelectAssignee.styled';
 
 const { Option } = Select;
 
@@ -73,11 +73,10 @@ export const SelectAssignee = ({ process }) => {
   }
 
   return (
-    <Select
+    <StyledSelect
       showSearch
       labelInValue
       value={{ value: currentAssignee }}
-      style={selectStyle}
       optionFilterProp="children"
       onSelect={handleSelectAssignee}
       onClick={event => event.stopPropagation()}
@@ -94,6 +93,6 @@ export const SelectAssignee = ({ process }) => {
           {`${employee.firstName} ${employee.lastName}`}
         </Option>
       ))}
-    </Select>
+    </StyledSelect>
   );
 };

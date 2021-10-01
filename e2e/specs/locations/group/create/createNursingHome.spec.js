@@ -1,5 +1,16 @@
 import { login } from '../../helpers/functions';
-import { checkRadiusInput } from '../../helpers/inputValidation.helper';
+
+import {
+  openCreateGroupModal,
+  selectGroupType,
+  setGroupName,
+  setGroupAddress,
+  setGroupPhone,
+  setGroupRadius,
+  checkForExistingFields,
+  checkForDisabledFields,
+  addressFields,
+} from '../../helpers/createGroup.helper';
 
 const NURSING_HOME_NAME = 'Test Nursing Home';
 const NURSING_HOME_ADDRESS = 'Nexenio';
@@ -9,44 +20,20 @@ describe('Group creation', () => {
   beforeEach(() => login());
   describe('Create Nursing Home', () => {
     it('creates group of type nursing_home', { retries: 3 }, () => {
-      // Modal create group modal
-      cy.getByCy('createGroup').should('exist');
-      cy.getByCy('createGroup').click();
-      // Select nursing home
-      cy.getByCy('nursing_home').click();
-      // Enter name
-      cy.get('#groupName').type(NURSING_HOME_NAME);
-      // Proceed
-      cy.get('button[type=submit]').click();
-      // Enter location
-      cy.get('#locationSearch').type(NURSING_HOME_ADDRESS);
-      // Select from googleApi
-      cy.get('.pac-container > div:first-of-type').should('be.visible');
-      cy.get('.pac-container > div:first-of-type').click();
-      // Expect fields to be filled out and disabled
-      cy.get('#streetName').should('exist');
-      cy.get('#streetNr').should('exist');
-      cy.get('#zipCode').should('exist');
-      cy.get('#city').should('exist');
-      cy.get('#streetName').should('be.disabled');
-      cy.get('#streetNr').should('be.disabled');
-      cy.get('#zipCode').should('be.disabled');
-      cy.get('#city').should('be.disabled');
+      openCreateGroupModal();
+      selectGroupType('nursing_home');
+      setGroupName(NURSING_HOME_NAME);
+      setGroupAddress(NURSING_HOME_ADDRESS);
+      checkForExistingFields(addressFields);
+      checkForDisabledFields(addressFields);
       // Proceed
       cy.getByCy('proceed').click();
-      // Enter phone
-      cy.get('#phone').type(NURSING_HOME_PHONE);
-      // Proceed
-      cy.get('button[type=submit]').click();
+      setGroupPhone(NURSING_HOME_PHONE);
+      // Proceed by skipping average checkin time
+      cy.getByCy('nextStep').click();
       // Select post checkin questions
       cy.getByCy('yes').click();
-      // Select automatic checkout
-      cy.getByCy('yes').click();
-      // Enter radius
-      checkRadiusInput();
-      cy.get('#radius').clear().type(NURSING_HOME_RADIUS);
-      // Proceed
-      cy.get('button[type=submit]').click();
+      setGroupRadius(NURSING_HOME_RADIUS);
       // Create group
       cy.getByCy('finishGroupCreation').click();
       // No qr download

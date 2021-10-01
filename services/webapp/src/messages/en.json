@@ -1,7 +1,7 @@
 {
     "OnBoarding.WelcomeStep.Headline": "Hello",
     "OnBoarding.WelcomeStep.Description": "luca helps you provide your contact information anonymously and securely, so you don't have to worry about your data when you visit events, cultural venues, restaurants, cafés or bars.",
-    "OnBoarding.WelcomeStep.Warning": "Note: The luca web app works best on iOS with the latest version of Safari. Other browsers might have limited functionality",
+    "OnBoarding.WelcomeStep.Warning": "Note: The luca web app works best on iOS with the latest version of Safari. Other browsers might have limited functionality.",
     "OnBoarding.WelcomeStep.Submit": "Get started!",
     "OnBoarding.DataInformationStep.Headline": "Your Data",
     "OnBoarding.DataInformationStep.Description1": "Please enter your contact information in the next step.",
@@ -77,7 +77,7 @@
     "Form.Validation.unsupportedFormat": "The entered phone number is not in the correct format. Please use the following format: +49 170 1234567",
     "Form.Validation.email": "Please provide an email address with a valid format.",
     "OnBoarding.acceptPrivacyAndTermAndCondition": "I have read and agree with the {acceptTermAndConditions} and {acceptPrivacy}.",
-    "OnBoarding.acceptPrivacy": "I accept the <a>privacy policy</a>.",
+    "OnBoarding.acceptPrivacy": "You can view our <a>privacy policy</a> at this link.",
     "OnBoarding.acceptTermAndConditions": "<a>Terms of use</a>",
     "OnBoarding.privacyLink": "https://luca-app.de/app-privacy-policy/",
     "OnBoarding.termsAndConditionsLink": "https://luca-app.de/app-terms-and-conditions/",
@@ -182,5 +182,10 @@
     "UpdatedTermsAndConditions.PrivacyLink": "privacy policy",
     "UpdatedTermsAndConditions.Button": "AGREE",
     "UpdatedTermsAndConditions.AriaDeleteAccountLabel": "Delete Account",
-    "Form.Validation.invalidCharacter": "Please enter only supported characters."
+    "Form.Validation.invalidCharacter": "Please enter only supported characters.",
+    "History.Timeline.CopyTraceId": "The trace ID was copied to your clipboard.",
+    "SelfCheckinConfirmationModal.Close": "Cancel",
+    "SelfCheckinConfirmationModal.Confirm": "Confirm",
+    "SelfCheckinConfirmationModal.notShowAgain": "Don't ask again",
+    "SelfCheckinConfirmationModal.Headline": "You want to check in at {locationName}?"
 }

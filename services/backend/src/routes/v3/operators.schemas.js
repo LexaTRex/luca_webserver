@@ -26,9 +26,16 @@ const updateOperatorSchema = z.object({
   avvAccepted: z.boolean().optional(),
   lastVersionSeen: z.string().max(32).optional(),
 });
+
+const supportSchema = z.object({
+  requestText: z.safeText().max(3000),
+  phone: z.safeString().max(255).optional(),
+});
+
 module.exports = {
   createSchema,
   activationSchema,
   storePublicKeySchema,
   updateOperatorSchema,
+  supportSchema,
 };

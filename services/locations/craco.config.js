@@ -1,6 +1,7 @@
 const CracoLessPlugin = require('craco-less');
 const { LicenseWebpackPlugin } = require('license-webpack-plugin');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 const WorkerPlugin = require('worker-plugin');
 
@@ -38,6 +39,11 @@ module.exports = {
   webpack: {
     plugins: {
       add: [
+        new CompressionPlugin({
+          algorithm: 'gzip',
+          test: /\.(js|css|html|svg|json|ico|eot|otf|ttf)$/,
+          deleteOriginalAssets: false,
+        }),
         new DefinePlugin({
           'process.env.REACT_APP_VERSION': JSON.stringify(
             require('./package.json').version

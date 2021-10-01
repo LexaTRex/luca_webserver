@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useQueries } from 'react-query';
-
 import { getLocation, getLocationTransfers } from 'network/api';
 
 /**

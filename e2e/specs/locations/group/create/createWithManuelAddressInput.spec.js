@@ -1,5 +1,17 @@
 import { login } from '../../helpers/functions';
 
+import {
+  openCreateGroupModal,
+  selectGroupType,
+  setGroupName,
+  setGroupArea,
+  setGroupPhone,
+  setGroupManualAddress,
+  checkForExistingFields,
+  checkForNonDisabledFields,
+  addressFields,
+} from '../../helpers/createGroup.helper';
+
 const HOTEL_PHONE = '+4917612345678';
 
 const BASE_NAME = 'Test Group';
@@ -13,44 +25,18 @@ const STATE = 'Berlin';
 describe('Group creation with manuell input', () => {
   beforeEach(() => login());
   it('creates group of type base', () => {
-    // Modal create group modal
-    cy.getByCy('createGroup').should('exist');
-    cy.getByCy('createGroup').click();
-    // Select base
-    cy.getByCy('base').click();
-    // Enter name
-    cy.get('#groupName').type(BASE_NAME);
-    // Proceed
-    cy.get('button[type=submit]').click();
-    // Select manuell search
-    cy.getByCy('manuellSearch').click();
-    // Expect fields to be not disabled
-    cy.get('#streetName').should('exist');
-    cy.get('#streetNr').should('exist');
-    cy.get('#zipCode').should('exist');
-    cy.get('#city').should('exist');
-    cy.get('#streetName').should('not.be.disabled');
-    cy.get('#streetNr').should('not.be.disabled');
-    cy.get('#zipCode').should('not.be.disabled');
-    cy.get('#city').should('not.be.disabled');
-    // Type address
-    cy.get('#streetName').type(STREET);
-    cy.get('#streetNr').type(STREET_NR);
-    cy.get('#zipCode').type(ZIP);
-    cy.get('#city').type(STATE);
-    // Proceed
-    cy.getByCy('proceed').click();
-    // Enter phone
-    cy.get('#phone').type(HOTEL_PHONE);
-    // Proceed
-    cy.get('button[type=submit]').click();
-    // Select more areas
-    cy.getByCy('yes').click();
-    cy.getByCy('areaNameInput').type(BASE_AREA);
-    cy.getByCy('indoorSelection').click();
-    cy.getByCy('selectIndoor').click();
-    // Proceed
-    cy.get('button[type=submit]').click();
+    openCreateGroupModal();
+    selectGroupType('base');
+    setGroupName(BASE_NAME);
+    // Decline Google API
+    cy.getByCy('no').click();
+    checkForExistingFields(addressFields);
+    checkForNonDisabledFields(addressFields);
+    setGroupManualAddress(STREET, STREET_NR, ZIP, STATE);
+    setGroupPhone(HOTEL_PHONE);
+    // Proceed by skipping average checkin time
+    cy.getByCy('nextStep').click();
+    setGroupArea(BASE_AREA);
     // Create group
     cy.getByCy('finishGroupCreation').click();
     // No qr download

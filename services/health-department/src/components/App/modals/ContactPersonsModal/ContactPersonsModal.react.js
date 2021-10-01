@@ -10,12 +10,8 @@ import { ModalWrapper } from './ContactPersonsModal.styled';
 import { ContactPersons } from './ContactPersons';
 
 export const ContactPersonsModal = ({ process, location }) => {
-  const {
-    isLoading,
-    error,
-    data: userData,
-  } = useQuery(
-    `userTransfer${process.userTransferId}`,
+  const { isLoading, error, data: indexPersonData } = useQuery(
+    ['userTransfer', { userTransferId: process.userTransferId }],
     () =>
       process.userTransferId ? decryptUserTransfer(process.userTransferId) : {},
     { retry: false, staleTime: Number.POSITIVE_INFINITY }
@@ -30,7 +26,9 @@ export const ContactPersonsModal = ({ process, location }) => {
       <ContactPersons
         location={location}
         indexPersonData={
-          Object.keys(userData || {}).length > 0 && !error ? userData : null
+          Object.keys(indexPersonData || {}).length > 0 && !error
+            ? indexPersonData
+            : null
         }
       />
     </ModalWrapper>

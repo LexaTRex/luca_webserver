@@ -21,6 +21,7 @@ export const BASE_SHARE_DATA_ROUTE = `/shareData/`;
 export const SHARE_ALL_DATA_ROUTE = `${BASE_SHARE_DATA_ROUTE}all`;
 export const SHARE_DATA_ROUTE = `${BASE_SHARE_DATA_ROUTE}:transferId`;
 export const PROFILE_ROUTE = `${APP_ROUTE}/profile`;
+export const HELP_CENTER_ROUTE = `${APP_ROUTE}/help`;
 export const LOCATIONS_ROUTE = `${APP_ROUTE}/locations`;
 export const BASE_DATA_TRANSFER_ROUTE = `${APP_ROUTE}/dataTransfers/`;
 export const ACTIVATION_BASE = '/activation/';

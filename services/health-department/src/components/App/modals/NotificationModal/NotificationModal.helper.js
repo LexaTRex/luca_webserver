@@ -29,10 +29,10 @@ export const getLocaleObject = (localeConfig, departmentId, level, intl) => {
 
   for (const [key, value] of Object.entries(localizeddepartmentMessages)) {
     localizeddepartmentMessages[key] = value
-      .replaceAll('((', '{')
-      .replaceAll('))', '}')
-      .replaceAll(/^\s*\n/gm, '{br}')
-      .replaceAll('\n', '{br}');
+      .replace(/\(\(/g, '{')
+      .replace(/\)\)/g, '}')
+      .replace(/^\s*\n/gm, '{br}')
+      .replace(/\n/g, '{br}');
   }
   return {
     messages: localizeddepartmentMessages,

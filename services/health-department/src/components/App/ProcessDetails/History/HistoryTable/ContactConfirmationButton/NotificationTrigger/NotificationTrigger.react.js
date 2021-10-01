@@ -3,9 +3,6 @@ import { useIntl } from 'react-intl';
 import { Tooltip } from 'antd';
 import { useQuery } from 'react-query';
 
-import { RISK_LEVEL_2, RISK_LEVEL_3 } from 'constants/riskLevels';
-import { NOTIFIEABLE_DEVICE_TYPES } from 'constants/deviceTypes';
-
 import {
   getWarningLevelsForLocationTransfer,
   getContactPersons,
@@ -16,27 +13,7 @@ import { useModal } from 'components/hooks/useModal';
 import { NotificationModal } from 'components/App/modals/NotificationModal';
 
 import { BellIcon, ButtonWrapper } from './NotificationTrigger.styled';
-
-const checkIfAnyContactPersonsAreNotifyable = (contactPersons, riskLevels) => {
-  const allowedDeviceTypes = new Set([
-    NOTIFIEABLE_DEVICE_TYPES.IOS,
-    NOTIFIEABLE_DEVICE_TYPES.ANDROID,
-  ]);
-  const riskLevelsToCheck = [RISK_LEVEL_2, RISK_LEVEL_3];
-
-  const tracesOfNotifyableDevices = contactPersons.traces.filter(
-    contactPerson => allowedDeviceTypes.has(contactPerson.deviceType)
-  );
-  return tracesOfNotifyableDevices.some(({ traceId }) => {
-    const riskLevelsForTrace = riskLevels.find(
-      riskLevel => riskLevel.traceId === traceId
-    );
-    if (!riskLevelsForTrace.riskLevels.length) return true;
-    return riskLevelsToCheck.some(
-      level => !riskLevelsForTrace.riskLevels.includes(level)
-    );
-  });
-};
+import { checkIfAnyContactPersonsAreNotifyable } from './NotificationTrigger.helper';
 
 export const NotificationTrigger = ({ location }) => {
   const intl = useIntl();
@@ -48,18 +25,14 @@ export const NotificationTrigger = ({ location }) => {
     time,
   } = location;
 
-  const {
-    data: riskLevels,
-  } = useQuery(
-    `getWarningLevelsForLocationTransfer${locationTransferId}`,
+  const { data: riskLevels } = useQuery(
+    ['getWarningLevelsForLocationTransfer', { locationTransferId }],
     () => getWarningLevelsForLocationTransfer(locationTransferId),
     { refetchOnWindowFocus: false }
   );
 
-  const {
-    data: contactPersons,
-  } = useQuery(
-    `contactPersons${locationTransferId}`,
+  const { data: contactPersons } = useQuery(
+    ['contactPersons', { locationTransferId }],
     () => getContactPersons(locationTransferId),
     { refetchOnWindowFocus: false }
   );

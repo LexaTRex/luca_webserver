@@ -133,6 +133,14 @@ export const registerOperator = data => {
   });
 };
 
+export const sendSupportMail = data => {
+  return fetch(`${API_PATH}/v3/operators/support`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers,
+  });
+};
+
 export const storePublicKey = data => {
   return fetch(`${API_PATH}/v3/operators/publicKey`, {
     method: 'POST',

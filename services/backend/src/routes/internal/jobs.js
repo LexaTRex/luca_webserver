@@ -239,22 +239,12 @@ router.post('/addDummyTraces', async (request, response) => {
 
 router.post('/deleteOldTestRedeems', async (request, response) => {
   const t0 = performance.now();
-  const defaultMaxAge = config.get('luca.testRedeems.defaultMaxAge');
+  const maxAge = config.get('luca.testRedeems.maxAge');
   const affectedRows = await database.TestRedeem.destroy({
     where: {
-      [Op.or]: [
-        {
-          expireAt: {
-            [Op.lt]: moment(),
-          },
-        },
-        {
-          expireAt: null,
-          createdAt: {
-            [Op.lt]: moment().subtract(defaultMaxAge, 'hours'),
-          },
-        },
-      ],
+      createdAt: {
+        [Op.lt]: moment().subtract(maxAge, 'hours'),
+      },
     },
   });
   response.send({ affectedRows, time: performance.now() - t0 });
@@ -299,7 +289,7 @@ router.post('/deleteOldV4NotificationChunks', async (request, response) => {
     config.get('luca.notificationChunks.maxAge'),
     'hours'
   );
-  const affectedRows = await database.NotificationsChunk.destroy({
+  const affectedRows = await database.NotificationChunk.destroy({
     where: {
       createdAt: {
         [Op.lt]: earliestTimeToKeep,

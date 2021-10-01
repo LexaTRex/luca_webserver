@@ -158,6 +158,7 @@ router.post(
           tableCount: request.body.tableCount,
           type: request.body.type,
           isIndoor: request.body.isIndoor,
+          averageCheckinTime: request.body.averageCheckinTime || null,
         },
         { transaction }
       );
@@ -199,6 +200,7 @@ router.post(
                 shouldProvideGeoLocation: request.body.radius > 0,
                 isIndoor: area.isIndoor,
                 type: request.body.type,
+                averageCheckinTime: request.body.averageCheckinTime || null,
               },
               { transaction }
             )

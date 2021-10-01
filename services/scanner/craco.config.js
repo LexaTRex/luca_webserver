@@ -1,6 +1,7 @@
 const CracoLessPlugin = require('craco-less');
 const { LicenseWebpackPlugin } = require('license-webpack-plugin');
 const GenerateJsonPlugin = require('generate-json-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const { THEME } = require('./ant.theme');
 
@@ -15,6 +16,11 @@ module.exports = {
   webpack: {
     plugins: {
       add: [
+        new CompressionPlugin({
+          algorithm: 'gzip',
+          test: /\.(js|css|html|svg|json|ico|eot|otf|ttf)$/,
+          deleteOriginalAssets: false,
+        }),
         new LicenseWebpackPlugin({
           perChunkOutput: false,
           outputFilename: 'licenses.json',

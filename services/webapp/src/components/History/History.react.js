@@ -137,6 +137,19 @@ export function History() {
       .catch(() => internalIndexedDBError());
   }, [userHistory, internalIndexedDBError]);
 
+  const copyToClipboard = traceId => {
+    navigator.clipboard
+      .writeText(`Trace ID: ${traceId}`)
+      .then(() =>
+        alert(
+          `Trace ID: ${traceId}\n${formatMessage({
+            id: 'History.Timeline.CopyTraceId',
+          })}`
+        )
+      )
+      .catch(error => console.error('Error', error));
+  };
+
   return (
     <>
       <Helmet>
@@ -212,7 +225,9 @@ export function History() {
                   <Step
                     key={historyEntry.traceId}
                     title={
-                      <StyledHistoryStepContainer>
+                      <StyledHistoryStepContainer
+                        onClick={() => copyToClipboard(historyEntry.traceId)}
+                      >
                         <StyledHistoryInfoContainer>
                           {(entryType === PRIVATE_MEETING_HOST_TYPE ||
                             entryType === PRIVATE_MEETING_CHECK_IN_TYPE) && (
@@ -225,8 +240,8 @@ export function History() {
                           {historyEntry.type === PRIVATE_MEETING_HOST_TYPE && (
                             <InfoIcon
                               inverted
-                              id={`PrivateMeeting${title.replaceAll(
-                                ' ',
+                              id={`PrivateMeeting${title.replace(
+                                / /g,
                                 '_'
                               )}Info`}
                               onClick={() =>

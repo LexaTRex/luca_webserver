@@ -130,7 +130,7 @@ export const GroupSearchModal = () => {
             <PrimaryButton
               data-cy="startGroupSearch"
               htmlType="submit"
-              floatRight
+              $floatRight
               disabled={!inputValid.zipCode || !inputValid.groupName}
             >
               {intl.formatMessage({

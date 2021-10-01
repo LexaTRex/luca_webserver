@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/scanner",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -12,7 +12,8 @@
     "build": "GENERATE_SOURCEMAP=false craco build",
     "lint": "yarn eslint && yarn stylelint",
     "eslint": "eslint src",
-    "stylelint": "stylelint 'src/**/*.js'"
+    "stylelint": "stylelint 'src/**/*.js'",
+    "update:locales": "./scripts/updateLocales.sh"
   },
   "dependencies": {
     "@ant-design/icons": "4.6.4",
@@ -20,6 +21,7 @@
     "@lucaapp/crypto": "2.1.2",
     "antd": "4.16.13",
     "bloomit": "1.1.1",
+    "compression-webpack-plugin": "6.1.1",
     "connected-react-router": "6.9.1",
     "craco-less": "1.20.0",
     "dexie": "3.0.3",

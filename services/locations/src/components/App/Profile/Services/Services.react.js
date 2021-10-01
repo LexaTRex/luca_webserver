@@ -2,17 +2,15 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Tooltip } from 'antd';
 
-import { TERMS_CONDITIONS_LINK, FAQ_LINK } from 'constants/links';
-import { LICENSES_ROUTE } from 'constants/routes';
-import AVV from 'assets/documents/AVV_Luca.pdf';
-import TOMS from 'assets/documents/TOMS_Luca.pdf';
-import PRIVACY_MANDATORY from 'assets/documents/DSE_Luca_mandatory.pdf';
-import PRIVACY_OPTIONAL from 'assets/documents/DSE_Luca_optional.pdf';
-
+import { getDownloadLinks, getExternalLinks } from './Services.helper';
 import { Content, Heading, Wrapper, Link, Text } from './Services.styled';
 
 export const Services = ({ supportCode }) => {
   const intl = useIntl();
+
+  const downloadLinks = getDownloadLinks(intl);
+
+  const externalLinks = getExternalLinks(intl);
 
   return (
     <Content>
@@ -20,66 +18,32 @@ export const Services = ({ supportCode }) => {
         {intl.formatMessage({ id: 'profile.services.overview' })}
       </Heading>
       <Wrapper>
-        <Link
-          data-cy="privacyLinkMandatory"
-          download={intl.formatMessage({
-            id: 'downloadFile.profile.privacy',
-          })}
-          href={PRIVACY_MANDATORY}
-        >
-          {intl.formatMessage({
-            id: 'profile.services.download.dataPrivacyMandatory',
-          })}
-        </Link>
-        <Link
-          data-cy="privacyLinkOptional"
-          download={intl.formatMessage({
-            id: 'downloadFile.profile.privacy',
-          })}
-          href={PRIVACY_OPTIONAL}
-        >
-          {intl.formatMessage({
-            id: 'profile.services.download.dataPrivacyOptional',
-          })}
-        </Link>
-        <Link
-          download={intl.formatMessage({ id: 'downloadFile.profile.avv' })}
-          href={AVV}
-          data-cy="dpaLink"
-        >
-          {intl.formatMessage({ id: 'profile.services.download.avv' })}
-        </Link>
-        <Link
-          download={intl.formatMessage({ id: 'downloadFile.profile.toms' })}
-          href={TOMS}
-          data-cy="tomsLink"
-        >
-          {intl.formatMessage({ id: 'profile.services.download.toms' })}
-        </Link>
-        <Link
-          data-cy="termsLink"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={TERMS_CONDITIONS_LINK}
-        >
-          {intl.formatMessage({ id: 'profile.services.agb' })}
-        </Link>
-        <Link target="_blank" rel="noopener noreferrer" href={LICENSES_ROUTE}>
-          {intl.formatMessage({ id: 'license.license' })}
-        </Link>
+        {downloadLinks.map(downloadLink => (
+          <Link
+            key={downloadLink.intlId}
+            data-cy={downloadLink.dataCy}
+            download={downloadLink.download}
+            href={downloadLink.href}
+          >
+            {downloadLink.intlId}
+          </Link>
+        ))}
+        {externalLinks.map(externalLink => (
+          <Link
+            key={externalLink.intlId}
+            data-cy={externalLink.dataCy}
+            target="_blank"
+            rel="noopener noreferrer"
+            href={externalLink.href}
+          >
+            {externalLink.intlId}
+          </Link>
+        ))}
         <Tooltip placement="topLeft" title={supportCode}>
           <Text>
             {intl.formatMessage({ id: 'profile.services.supportCode' })}
           </Text>
         </Tooltip>
-        <Link
-          data-cy="faqLink"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={FAQ_LINK}
-        >
-          {intl.formatMessage({ id: 'profile.services.faq' })}
-        </Link>
       </Wrapper>
     </Content>
   );

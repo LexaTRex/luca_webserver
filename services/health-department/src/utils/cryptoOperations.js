@@ -9,6 +9,7 @@ import {
   getUserTraces,
   getUserTransferById,
   getUserTransferByTan,
+  getMe,
 } from 'network/api';
 
 import {
@@ -28,7 +29,10 @@ import {
   KDF_SHA256,
 } from '@lucaapp/crypto';
 
-import { getDailyPrivateKey } from './cryptoKeyOperations';
+import {
+  getDailyPrivateKey,
+  signLocationTransfer,
+} from './cryptoKeyOperations';
 import {
   decryptAdditionalData,
   decryptDynamicDeviceTrace,
@@ -112,7 +116,7 @@ export const decryptTrace = async encryptedTrace => {
       : await decryptDynamicDeviceTrace(encryptedTrace);
 
     const additionalData = decryptAdditionalData(encryptedTrace, isInvalid);
-    // santize data here
+    // sanitize data here
 
     return {
       traceId: encryptedTrace.traceId,
@@ -213,7 +217,7 @@ export const initiateUserTracingProcess = async (tan, lang) => {
     }
 
     let userTraces;
-    const userId = userSecrets.uid.replaceAll('-', '');
+    const userId = userSecrets.uid.replace(/-/g, '');
     switch (userSecrets.v) {
       case 2:
         userTraces = await getUserTracesV2(userSecrets, userId);
@@ -229,8 +233,20 @@ export const initiateUserTracingProcess = async (tan, lang) => {
       return EMPTY_HISTORY;
     }
 
+    const healthDepartmentUUID = await getMe().then(
+      response => response.departmentId
+    );
+
+    const userTracesWithSignature = userTraces.map(userTrace => ({
+      ...userTrace,
+      signedLocationTransfer: signLocationTransfer({
+        locationId: userTrace.locationId,
+        time: userTrace.time,
+        iss: healthDepartmentUUID,
+      }),
+    }));
     const { tracingProcessId } = await createLocationTransfer({
-      locations: userTraces,
+      locations: userTracesWithSignature,
       userTransferId: userDataTransferObject.uuid,
       lang,
     });

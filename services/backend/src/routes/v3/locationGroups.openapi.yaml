@@ -159,6 +159,10 @@ paths:
                 radius:
                   type: integer
                   minimum: 0
+                averageCheckinTime:
+                  type: integer
+                  minimum: 15
+                  maximum: 1440
                 tableCount:
                   type: integer
                 additionalData:

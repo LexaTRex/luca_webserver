@@ -41,7 +41,7 @@ export const PatientInput = ({ setPatientRequired, next, back }) => {
         <div>
           <PrimaryButton
             style={{ marginRight: 24 }}
-            isButtonWhite
+            $isButtonWhite
             onClick={next}
           >
             {intl.formatMessage({

@@ -102,6 +102,8 @@ module.exports = {
       'LOCATIONS_PRIVATE_POST_RATELIMIT_DAY',
     locations_delete_ratelimit_day: 'LOCATIONS_DELETE_RATELIMIT_DAY',
     operators_post_ratelimit_day: 'OPERATORS_POST_RATELIMIT_DAY',
+    operators_support_email_post_ratelimit_day:
+      'OPERATORS_SUPPORT_MAIL_POSTRATELIMIT_DAY',
     dummy_max_tracings: 'DUMMY_MAX_TRACINGS',
     dummy_max_traces: 'DUMMY_MAX_TRACES',
     badges_post_ratelimit_hour: 'BADGES_POST_RATELIMIT_HOUR',

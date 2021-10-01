@@ -84,7 +84,7 @@ export const AddressInput = ({
             <div>
               <PrimaryButton
                 data-cy="no"
-                isButtonWhite
+                $isButtonWhite
                 style={{ marginRight: 24 }}
                 onClick={() => setIsNewAddress(true)}
               >

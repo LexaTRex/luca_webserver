@@ -13,17 +13,17 @@ export const sanitizeForCSV = value => {
   // sanitze general
   const sanitizedStringGeneral = value
     // limit to standard characters
-    .replaceAll(
+    .replace(
       /[^0-9A-Za-zçæœŒßäëïöüÿãñõâêîôûáéíóúýàèìòùÄËÏÖÜŸÃÑÕÂÊÎÔÛÁÉÍÓÚÝÀÈÌÒÙÇÆŒŒ.\-@+:]+/gi,
       ' '
     )
     // remove new lines
-    .replaceAll(/[\n\r]/g, ' ')
+    .replace(/[\n\r]/g, ' ')
     // replace leading + with 00 for phone numbers
     .replace(/^\+/, '00');
 
   // remove leading special characters to avoid formulars
-  return sanitizedStringGeneral.replaceAll(/^[\t\r"'+=@`-\s]+/g, '_');
+  return sanitizedStringGeneral.replace(/^[\t\r"'+=@`-\s]+/g, '_');
 };
 
 export const sanitizeObject = object => mapValues(object, sanitizeForCSV);

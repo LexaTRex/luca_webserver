@@ -122,7 +122,7 @@ export const GuestListModal = ({ location }) => {
       title: intl.formatMessage({ id: 'modal.guestList.guest' }),
       key: 'guest',
       render: function renderCheckin(trace) {
-        return <>{base64ToHex(trace.traceId)}</>;
+        return <>{base64ToHex(trace.traceId).slice(0, 7)}</>;
       },
     },
     {

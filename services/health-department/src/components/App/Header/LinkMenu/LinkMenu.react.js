@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Menu, Dropdown } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import Icon from '@ant-design/icons';
 
 import { LICENSES_ROUTE } from 'constants/routes';
 
-import { ReactComponent as MenuSvg } from 'assets/menu.svg';
+import { ReactComponent as MenuActiveSvg } from 'assets/MenuActive.svg';
+import { ReactComponent as MenuInactiveSvg } from 'assets/MenuInactive.svg';
 
-const MenuIcon = () => <Icon component={MenuSvg} style={{ color: 'black' }} />;
+const MenuIcon = active => (
+  <Icon
+    data-cy="linkMenu"
+    component={active ? MenuActiveSvg : MenuInactiveSvg}
+    style={{ fontSize: 32, marginRight: 24 }}
+  />
+);
 
 export const LinkMenu = () => {
   const intl = useIntl();
+  const [isOpen, setIsOpen] = useState(false);
   const menu = (
     <Menu>
       <Menu.Item>
@@ -37,15 +45,12 @@ export const LinkMenu = () => {
   );
 
   return (
-    <Dropdown overlay={menu} placement="bottomCenter">
-      <Button
-        icon={<MenuIcon />}
-        style={{
-          marginRight: 24,
-          backgroundColor: 'transparent',
-          border: '1px solid #b8c0ca',
-        }}
-      />
+    <Dropdown
+      onVisibleChange={() => setIsOpen(!isOpen)}
+      overlay={menu}
+      placement="bottomCenter"
+    >
+      {MenuIcon(isOpen)}
     </Dropdown>
   );
 };

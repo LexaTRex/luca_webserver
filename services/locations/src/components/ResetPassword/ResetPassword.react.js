@@ -178,7 +178,7 @@ export const ResetPassword = () => {
                   <Input.Password style={inputStyle} />
                 </Form.Item>
                 <ButtonWrapper>
-                  <PrimaryButton isButtonWhite htmlType="submit">
+                  <PrimaryButton $isButtonWhite htmlType="submit">
                     {intl.formatMessage({
                       id: 'resetPassword.form.button',
                     })}

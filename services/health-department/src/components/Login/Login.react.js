@@ -134,7 +134,7 @@ export const Login = () => {
                 >
                   <PrimaryButton
                     htmlType="submit"
-                    isButtonWhite
+                    $isButtonWhite
                     style={{
                       marginTop: '24px',
                     }}

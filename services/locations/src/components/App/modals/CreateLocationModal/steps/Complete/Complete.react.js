@@ -5,7 +5,7 @@ import {
   SecondaryButton,
 } from 'components/general/Buttons.styled';
 
-import { Success } from '../../../generalOnboarding/Success';
+import { Success } from 'components/general';
 import {
   Wrapper,
   Header,
@@ -55,7 +55,7 @@ export const Complete = ({ back, next, location, createLocation, done }) => {
             <PrimaryButton
               style={{ marginRight: 24 }}
               onClick={done}
-              isButtonWhite
+              $isButtonWhite
               data-cy="no"
             >
               {intl.formatMessage({

@@ -9,8 +9,5 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING(24),
       allowNull: false,
     },
-    expireAt: {
-      type: DataTypes.DATE,
-    },
   });
 };

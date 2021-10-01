@@ -98,8 +98,7 @@ module.exports = {
       maxRiskLevel: 2,
     },
     testRedeems: {
-      defaultMaxAge: moment.duration(72, 'hours').as('hours'),
-      maxAge: moment.duration(1, 'years').as('hours'),
+      maxAge: moment.duration(72, 'hours').as('hours'),
     },
     notificationChunks: {
       initialChunkCoverage: moment.duration(14, 'days').as('hours'),
@@ -183,6 +182,7 @@ module.exports = {
     locations_private_post_ratelimit_day: 100,
     locations_delete_ratelimit_day: 1000,
     operators_post_ratelimit_day: 10,
+    operators_support_email_post_ratelimit_day: 5,
     dummy_max_tracings: 10,
     dummy_max_traces: 20,
     tests_redeem_post_ratelimit_minute: 50,

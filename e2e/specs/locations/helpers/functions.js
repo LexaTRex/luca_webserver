@@ -3,6 +3,7 @@ import { E2E_EMAIL, E2E_PASSWORD, E2E_LASTNAME, E2E_FIRSTNAME } from './users';
 import {
   E2E_DEFAULT_LOCATION_GROUP,
   E2E_DEFAULT_GROUP_NAME,
+  E2E_DEFAULT_LOCATION_GROUP_2,
 } from './locations';
 import {
   createGroupPayload,
@@ -103,6 +104,17 @@ export const createGroup = (group = createGroupPayload, redirect = true) => {
       return response;
     }
   );
+};
+
+export const resetGroups = () => {
+  cy.request('GET', `${LOCATION_GROUPS_ROUTE}/`).then(async response => {
+    const deletableGroups = response.body.filter(
+      group =>
+        group.groupId !== E2E_DEFAULT_LOCATION_GROUP &&
+        group.groupId !== E2E_DEFAULT_LOCATION_GROUP_2
+    );
+    deletableGroups.forEach(group => deleteGroup(group.groupId));
+  });
 };
 
 export const deleteGroup = groupId => {

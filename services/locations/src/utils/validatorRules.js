@@ -8,6 +8,7 @@ import {
   checkExistingLocation,
   validatePhoneNumber,
   validateSafeString,
+  validateTextSafeString,
   validateZipCode,
   validateEmail,
   validateNoNumeric,
@@ -22,6 +23,11 @@ export const getRequiredRule = (intl, fieldName) => ({
 
 export const getSafeStringRule = (intl, fieldName) => ({
   validator: validateSafeString,
+  message: intl.formatMessage({ id: `error.${fieldName}.invalid` }),
+});
+
+export const getTextSafeStringRule = (intl, fieldName) => ({
+  validator: validateTextSafeString,
   message: intl.formatMessage({ id: `error.${fieldName}.invalid` }),
 });
 

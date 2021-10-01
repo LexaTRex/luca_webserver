@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const router = require('express').Router();
 const status = require('http-status');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const config = require('config');
 
 const database = require('../../database');
@@ -30,6 +30,7 @@ const {
   activationSchema,
   storePublicKeySchema,
   updateOperatorSchema,
+  supportSchema,
 } = require('./operators.schemas');
 
 // create operator
@@ -227,6 +228,36 @@ router.delete('/', requireOperator, async (request, response) => {
     deletionScheduledAfter,
   });
 });
+
+// support
+router.post(
+  '/support',
+  requireOperator,
+  limitRequestsPerDay('operators_support_email_post_ratelimit_day'),
+  validateSchema(supportSchema),
+  async (request, response) => {
+    const { phone, requestText } = request.body;
+
+    const requestTime = moment()
+      .tz(config.get('tz'))
+      .format('DD.MM.YYYY HH:mm');
+    mailClient.sendLocationsSupportMail(
+      'locations@luca-app.de',
+      'Locations Support Mail',
+      null,
+      {
+        userPhone: phone,
+        userEmail: request.user.email,
+        userName: request.user.fullName,
+        requestText,
+        requestTime,
+        supportCode: request.user.supportCode,
+      }
+    );
+
+    return response.sendStatus(status.NO_CONTENT);
+  }
+);
 
 // undo account deactivation
 router.post('/restore', requireOperator, async (request, response) => {

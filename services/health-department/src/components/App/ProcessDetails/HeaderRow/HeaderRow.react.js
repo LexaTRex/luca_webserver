@@ -18,10 +18,13 @@ export const HeaderRow = ({ process }) => {
     error: userError,
     data: userData,
   } = useQuery(
-    `userTransfer${process.userTransferId}`,
-    () =>
-      process.userTransferId ? decryptUserTransfer(process.userTransferId) : {},
-    { retry: false, staleTime: Number.POSITIVE_INFINITY }
+    ['userTransfer', { userTransferId: process.userTransferId }],
+    () => decryptUserTransfer(process.userTransferId),
+    {
+      retry: false,
+      staleTime: Number.POSITIVE_INFINITY,
+      enabled: !!process.userTransferId,
+    }
   );
 
   if (isUserLoading || !locations) return null;

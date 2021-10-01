@@ -5,7 +5,7 @@ import {
   SecondaryButton,
 } from 'components/general/Buttons.styled';
 
-import { Success } from '../../../generalOnboarding/Success';
+import { Success } from 'components/general';
 import {
   Wrapper,
   Header,
@@ -54,7 +54,7 @@ export const Complete = ({ back, next, group, createGroup, done }) => {
           <ButtonWrapper multipleButtons style={{ justifyContent: 'flex-end' }}>
             <PrimaryButton
               data-cy="no"
-              isButtonWhite
+              $isButtonWhite
               style={{ marginRight: 24 }}
               onClick={done}
             >

@@ -4,6 +4,8 @@ services:
     image: lucaapp/elb:${IMAGE_TAG}
     build:
       context: "services/elb"
+      args:
+        ENABLED_MODULES: brotli
     ports:
       - 80:8080
       - 443:8443

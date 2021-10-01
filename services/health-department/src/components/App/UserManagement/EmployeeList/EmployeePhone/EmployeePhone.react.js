@@ -1,13 +1,17 @@
 import React from 'react';
-import { Input, Form } from 'antd';
+import { usePhoneValidator } from 'components/hooks/useValidators';
+import { Input } from 'antd';
+import { StyledFormItem } from './EmployeePhone.styled';
 
 export const EmployeePhone = ({ editing, employee }) => {
+  const phoneValidator = usePhoneValidator('phone');
+
   return (
     <>
       {editing ? (
-        <Form.Item name="phone">
+        <StyledFormItem name="phone" rules={phoneValidator}>
           <Input />
-        </Form.Item>
+        </StyledFormItem>
       ) : (
         <>{employee.phone}</>
       )}

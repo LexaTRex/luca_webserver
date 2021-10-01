@@ -11,8 +11,9 @@ import { getBaseLocationFromGroup } from 'utils/group';
 
 import { createLocation as createLocationRequest, getGroup } from 'network/api';
 
-import { AutomaticCheckout } from '../generalOnboarding/AutomaticCheckout';
-import { TableInput } from '../generalOnboarding/TableInput';
+import { AutomaticCheckout } from 'components/App/modals/generalOnboarding/AutomaticCheckout';
+import { TableInput } from 'components/App/modals/generalOnboarding/TableInput';
+import { AverageCheckinTime } from 'components/App/modals/generalOnboarding/AverageCheckinTime';
 import {
   ADDRESS_INPUT_STEP,
   AUTOMATIC_CHECKOUT_STEP,
@@ -23,6 +24,7 @@ import {
   getBaseLocationPayload,
   getRestaurantLocationPayload,
   IS_INDOOR_STEP,
+  AVERAGE_CHECKIN_TIME_STEP,
   NAME_INPUT_STEP,
   PHONE_INPUT_STEP,
   QR_CODES_STEP,
@@ -51,6 +53,7 @@ export const CreateLocationModal = ({ groupId }) => {
   const [address, setAddress] = useState(null);
   const [phone, setPhone] = useState(null);
   const [isIndoor, setIsIndoor] = useState(true);
+  const [averageCheckinTime, setAverageCheckinTime] = useState(null);
   const [tableCount, setTableCount] = useState(null);
   const [radius, setRadius] = useState(null);
   const [location, setLocation] = useState(null);
@@ -101,7 +104,8 @@ export const CreateLocationModal = ({ groupId }) => {
       baseLocation,
       radius,
       locationType,
-      isIndoor
+      isIndoor,
+      averageCheckinTime
     );
     createLocationRequest(createBaseLocationPayload)
       .then(response => {
@@ -122,7 +126,8 @@ export const CreateLocationModal = ({ groupId }) => {
       radius,
       tableCount,
       locationType,
-      isIndoor
+      isIndoor,
+      averageCheckinTime
     );
 
     createLocationRequest(createRestaurantLocationPayload)
@@ -238,6 +243,17 @@ export const CreateLocationModal = ({ groupId }) => {
         <PhoneInput
           phone={phone}
           setPhone={setPhone}
+          next={nextStep}
+          back={previousStep}
+        />
+      ),
+    },
+    {
+      id: AVERAGE_CHECKIN_TIME_STEP,
+      content: (
+        <AverageCheckinTime
+          averageCheckinTime={averageCheckinTime}
+          setAverageCheckinTime={setAverageCheckinTime}
           next={nextStep}
           back={previousStep}
         />

@@ -78,7 +78,7 @@ export const ConfirmRegistrationStep = ({
               id: 'authentication.form.button.back',
             })}
           </SecondaryButton>
-          <PrimaryButton isButtonWhite htmlType="submit">
+          <PrimaryButton $isButtonWhite htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

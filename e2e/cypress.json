@@ -1,7 +1,21 @@
 {
   "baseUrl": "https://localhost",
   "projectId": "9qr32w",
-  "testFiles": "**/*.spec.js",
+  "testFiles": [
+    "workflow/**/*.spec.js",
+    "webapp/**/*.spec.js",
+    "locations/downloadPDF/downloadPDF.spec.js",
+    "health-department/**/*.spec.js",
+    "scanner/**/*.spec.js",
+    "locations/authentication/**/*.spec.js",
+    "locations/checkinOptions/**/*.spec.js",
+    "locations/group/**/*.spec.js",
+    "locations/location/**/*.spec.js",
+    "locations/locationOverview/*.spec.js",
+    "locations/locationSettings/*.spec.js",
+    "locations/navigation/*.spec.js",
+    "locations/profile/*.spec.js"
+  ],
   "integrationFolder": "./specs",
   "video": false,
   "supportFile": "./support",

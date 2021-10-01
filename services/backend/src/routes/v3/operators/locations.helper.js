@@ -26,6 +26,7 @@ const getOperatorLocationDTO = location => ({
   operator: location.operator,
   groupId: location.groupId,
   groupName: location.LocationGroup?.name,
+  averageCheckinTime: location.averageCheckinTime,
 });
 
 module.exports = { getOperatorLocationDTO };

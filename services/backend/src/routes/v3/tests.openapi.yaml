@@ -18,8 +18,6 @@ paths:
                   type: string
                 tag:
                   type: string
-                expireAt:
-                  type: number
               required:
                 - hash
                 - tag

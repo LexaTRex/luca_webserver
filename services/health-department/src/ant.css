@@ -6,6 +6,13 @@
   display: none !important;
 }
 
+.ant-form-item-explain.ant-form-item-explain-error {
+  white-space: pre-wrap;      /* CSS3 */
+  white-space: -moz-pre-wrap; /* Firefox */
+  white-space: -o-pre-wrap;   /* Opera 7 */
+  word-wrap: break-word;      /* IE */
+}
+
 .ant-input-password input,
 .ant-input-password input:focus {
   background-color: transparent !important;
@@ -220,6 +227,10 @@ input:-webkit-autofill:active {
   color: black;
   padding: 8px 16px;
   line-height: 24px;
+}
+
+.ant-dropdown-trigger {
+  height: 30px;
 }
 
 .ant-modal-header {

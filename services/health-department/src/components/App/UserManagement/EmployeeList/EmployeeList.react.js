@@ -10,6 +10,7 @@ import { Form, notification } from 'antd';
 import { getEmployees, updateEmployee } from 'network/api';
 
 // Components
+import { getFormattedPhoneNumber } from 'utils/checkPhoneNumber';
 import { AddEmployeeButton } from '../AddEmployeeButton';
 import { EmployeeSearch } from '../EmployeeSearch';
 import { EmptyEmployeeList } from './EmptyEmployeeList';
@@ -27,6 +28,7 @@ import {
 
 export const EmployeeList = ({ profileData }) => {
   const intl = useIntl();
+  const [form] = Form.useForm();
   const [searchTerm, setSearchTerm] = useState('');
   const [editing, setEditing] = useState(null);
   const [filteredEmployees, setFilteredEmployees] = useState(null);
@@ -74,12 +76,14 @@ export const EmployeeList = ({ profileData }) => {
   }, [employees, searchTerm, profileData.employeeId]);
 
   const onEdit = ({ firstName, lastName, phone }) => {
+    const formattedPhone = getFormattedPhoneNumber(phone);
     updateEmployee({
       employeeId: editing,
-      data: { firstName, lastName, phone },
+      data: { firstName, lastName, phone: formattedPhone },
     })
       .then(() => {
         refetch();
+        form.setFieldsValue({ phone: formattedPhone });
         setEditing(null);
         notification.success({
           message: intl.formatMessage({
@@ -150,6 +154,7 @@ export const EmployeeList = ({ profileData }) => {
                   lastName: employee.lastName,
                   phone: employee.phone,
                 }}
+                form={form}
               >
                 <Row>
                   <Column flex="25%">

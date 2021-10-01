@@ -55,18 +55,14 @@ export const NotificationModal = ({
     }
   );
 
-  const {
-    data: contactPersons,
-  } = useQuery(
-    `contactPersons${locationTransferId}`,
+  const { data: contactPersons } = useQuery(
+    ['contactPersons', { locationTransferId }],
     () => getContactPersons(locationTransferId),
     { refetchOnWindowFocus: false }
   );
 
-  const {
-    data: riskLevels,
-  } = useQuery(
-    `getWarningLevelsForLocationTransfer${locationTransferId}`,
+  const { data: riskLevels } = useQuery(
+    ['getWarningLevelsForLocationTransfer', { locationTransferId }],
     () => getWarningLevelsForLocationTransfer(locationTransferId),
     { refetchOnWindowFocus: false }
   );
@@ -112,9 +108,10 @@ export const NotificationModal = ({
               id: 'notification.notification.success',
             }),
           });
-          queryClient.invalidateQueries(
-            `getWarningLevelsForLocationTransfer${locationTransferId}`
-          );
+          queryClient.invalidateQueries([
+            'getWarningLevelsForLocationTransfer',
+            { locationTransferId },
+          ]);
           closeModal();
           return;
         }

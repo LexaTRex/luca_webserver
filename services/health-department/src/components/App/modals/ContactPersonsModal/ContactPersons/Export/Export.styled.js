@@ -27,6 +27,7 @@ export const DownloadButton = styled.button`
   padding: 5px 12px;
   color: rgb(0, 0, 0);
   font-family: Montserrat-Medium, sans-serif;
+  cursor: pointer;
 `;
 
 export const ExportButton = styled(DownloadButton)``;

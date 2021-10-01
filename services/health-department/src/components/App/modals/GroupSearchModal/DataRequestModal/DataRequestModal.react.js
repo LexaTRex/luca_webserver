@@ -4,8 +4,9 @@ import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
 import { Form, DatePicker, TimePicker, notification } from 'antd';
 import { PrimaryButton, SecondaryButton } from 'components/general';
-import { createLocationTransfer } from 'network/api';
+import { createLocationTransfer, getMe } from 'network/api';
 import { mergeTimeAndDateObject } from 'utils/moment';
+import { signLocationTransfer } from 'utils/cryptoKeyOperations';
 
 import { useModal } from 'components/hooks/useModal';
 import {
@@ -30,7 +31,7 @@ export const DataRequestModal = ({ group, back }) => {
     id: 'modal.dataRequest.form.error.required',
   });
 
-  const onFinish = values => {
+  const onFinish = async values => {
     const startTime = mergeTimeAndDateObject(
       moment(values.startDate),
       moment(values.startTime)
@@ -51,10 +52,19 @@ export const DataRequestModal = ({ group, back }) => {
 
     const time = [startTime.unix(), endTime.unix()];
 
+    const healthDepartmentUUID = await getMe().then(
+      response => response.departmentId
+    );
+
     createLocationTransfer({
       locations: group.locations.map(locationId => ({
-        time,
         locationId,
+        time,
+        signedLocationTransfer: signLocationTransfer({
+          locationId,
+          time,
+          iss: healthDepartmentUUID,
+        }),
       })),
       lang: intl.locale,
     })

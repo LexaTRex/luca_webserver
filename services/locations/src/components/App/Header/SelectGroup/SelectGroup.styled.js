@@ -1,26 +1,22 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Button } from 'antd';
 
-export const StyledLink = styled(Link)`
-  text-decoration: none;
-  padding: 8px;
-  color: #000000 !important;
+export const StyledButton = styled(Button)`
+  border-radius: 24px;
+  border: 2px solid #fff;
+  color: #fff;
+  background: transparent;
+  margin-right: 24px;
 
   &:active,
-  &:focus,
-  &:hover {
-    color: #000000 !important;
+  &:hover,
+  &:focus {
+    color: #000;
+    background: #fff;
+    border-color: #fff;
+
+    .anticon {
+      color: #000;
+    }
   }
 `;
-
-export const buttonStyle = {
-  borderRadius: 24,
-  border: '2px solid rgb(255, 255, 255)',
-  color: 'rgb(255, 255, 255)',
-  background: 'transparent',
-  marginRight: 24,
-};
-
-export const iconStyle = {
-  color: 'rgb(255, 255, 255)',
-};

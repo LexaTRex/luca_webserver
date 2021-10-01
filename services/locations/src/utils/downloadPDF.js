@@ -16,14 +16,14 @@ export const downloadPDF = async ({
   isCWAEventEnabled,
 }) => {
   const messageText = intl.formatMessage({ id: 'message.generatingPDF' });
-  const showLoadingProgress = percentage =>
-    openLoadingMessage(percentage, messageText);
-  setIsDownloading(true);
-  showLoadingProgress(0);
   const locationName = `_${location.name}`;
   const fileName = `${location.groupName.replace(' ', '_')}${
     location.name ? locationName.replace(' ', '_') : ''
   }`;
+  const showLoadingProgress = percentage =>
+    openLoadingMessage(percentage, messageText);
+  setIsDownloading(true);
+  showLoadingProgress(0);
   const { getPDF } = pdfWorkerApiReference.current;
   const pdf = await getPDF(
     location,

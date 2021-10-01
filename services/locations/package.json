@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/locations",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -29,6 +29,7 @@
     "ascii85": "1.0.2",
     "base64-loader": "1.0.0",
     "comlink": "4.3.1",
+    "compression-webpack-plugin": "6.1.1",
     "connected-react-router": "6.9.1",
     "craco-less": "1.17.1",
     "es6-promisify": "6.1.1",
@@ -92,7 +93,6 @@
     "jest-svg-transformer": "1.0.0",
     "postcss": "8.2.15",
     "prettier": "2.2.1",
-    "string.prototype.replaceall": "1.0.5",
     "stylelint": "13.12.0",
     "stylelint-config-prettier": "8.0.2",
     "stylelint-config-recommended": "4.0.0",

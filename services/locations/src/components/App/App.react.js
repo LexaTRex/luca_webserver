@@ -14,6 +14,7 @@ import { clearHasSeenPrivateKeyModal } from 'utils/storage';
 import {
   AUTHENTICATION_ROUTE,
   PROFILE_ROUTE,
+  HELP_CENTER_ROUTE,
   APP_ROUTE,
   GROUP_SETTINGS_ROUTE,
   LOCATION_SETTINGS_ROUTE,
@@ -24,6 +25,7 @@ import {
 import { ModalArea } from 'components/App/modals/ModalArea';
 import { Header } from './Header';
 import { Profile } from './Profile';
+import { HelpCenter } from './HelpCenter';
 import { Dashboard } from './Dashboard';
 import { GroupSettings } from './GroupSettings';
 import { DataTransfers } from './DataTransfers';
@@ -75,6 +77,9 @@ export const App = () => {
         <Switch>
           <Route path={PROFILE_ROUTE}>
             <Profile operator={operator} refetch={refetch} />
+          </Route>
+          <Route path={HELP_CENTER_ROUTE}>
+            <HelpCenter operator={operator} />
           </Route>
           <Route path={GROUP_SETTINGS_ROUTE}>
             <GroupSettings />

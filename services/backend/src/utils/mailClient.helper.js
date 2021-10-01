@@ -35,6 +35,10 @@ const MAIL_TEMPLATE_IDS = {
     de: 3040874,
     en: 3041093,
   },
+  locationsSupport: {
+    de: 3148836,
+    en: 3148836,
+  },
 };
 
 const MAIL_TEMPLATE_TITLES = {
@@ -65,6 +69,10 @@ const MAIL_TEMPLATE_TITLES = {
   operatorUpdatePasswordNotification: {
     de: 'Passwort erfolgreich geändert',
     en: 'Password successfully changed',
+  },
+  locationsSupport: {
+    de: 'Neue Support Anfrage eines Betreibers',
+    en: 'Neue Support Anfrage eines Betreibers',
   },
   hdUpdatePasswordNotification: {
     de: 'Passwort erfolgreich geändert',

@@ -15,6 +15,7 @@ import {
   getPhoneRule,
   getEmailRule,
   getSafeStringRule,
+  getTextSafeStringRule,
   getMaxLengthRule,
   getTableNoRule,
   getCheckoutRadiusRule,
@@ -116,4 +117,21 @@ export const useTableNumberValidator = () => {
 export const useCheckoutRadiusValidator = () => {
   const intl = useIntl();
   return useMemo(() => [getCheckoutRadiusRule(intl)], [intl]);
+};
+
+export const useOptionalPhoneValidator = () => {
+  const intl = useIntl();
+  return useMemo(() => [getPhoneRule(intl)], [intl]);
+};
+
+export const useTextAreaValidator = (fieldName, maxValue) => {
+  const intl = useIntl();
+  return useMemo(
+    () => [
+      getRequiredRule(intl, fieldName),
+      getTextSafeStringRule(intl, fieldName),
+      getMaxLengthRule(intl, maxValue),
+    ],
+    [intl, fieldName, maxValue]
+  );
 };

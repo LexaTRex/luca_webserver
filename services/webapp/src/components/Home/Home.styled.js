@@ -24,7 +24,7 @@ export const StyledHeaderMenuIconContainer = styled.button`
   background-color: transparent;
 `;
 export const StyledQRCodeWrapper = styled.div`
-  padding: 8px;
+  padding: 8px 8px 2px 8px;
   background-color: #ffffff;
 `;
 

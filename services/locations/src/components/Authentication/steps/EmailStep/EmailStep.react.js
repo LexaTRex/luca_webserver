@@ -91,7 +91,7 @@ export const EmailStep = ({
         </Form.Item>
 
         <ButtonWrapper>
-          <PrimaryButton isButtonWhite htmlType="submit">
+          <PrimaryButton $isButtonWhite htmlType="submit">
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

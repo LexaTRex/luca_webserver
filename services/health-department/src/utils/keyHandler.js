@@ -14,7 +14,9 @@ function loadKeyFile(string, keysData) {
     const keys = JSON.parse(string);
     if (
       base64ToHex(keysData.publicHDEKP) !==
-      EC_KEYPAIR_FROM_PRIVATE_KEY(keys.hdekp).publicKey
+        EC_KEYPAIR_FROM_PRIVATE_KEY(keys.hdekp).publicKey ||
+      base64ToHex(keysData.publicHDSKP) !==
+        EC_KEYPAIR_FROM_PRIVATE_KEY(keys.hdskp).publicKey
     ) {
       throw new Error('invalid key');
     }

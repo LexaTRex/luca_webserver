@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const IconWrapper = styled.div`
-  margin-right: 16px;
+  margin-right: 24px;
   cursor: pointer;
 `;
 export const badgeStyle = {

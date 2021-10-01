@@ -25,7 +25,7 @@ function updateProcessHandler(keys, note) {
     };
   }
 
-  const encodedNote = bytesToHex(encodeUtf8(note));
+  const encodedNote = encodeUtf8(bytesToHex(note));
   const { publicKey, data: encryptedData, iv, mac } = ENCRYPT_DLIES(
     base64ToHex(keys.publicHDEKP),
     encodedNote

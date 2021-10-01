@@ -1,3 +1,5 @@
+import { getMinutesFromTimeString } from 'utils/time';
+
 export const RESTAURANT_TYPE = 'restaurant';
 export const ROOM_TYPE = 'room';
 export const BUILDING_TYPE = 'building';
@@ -9,6 +11,7 @@ export const ADDRESS_INPUT_STEP = 'ADDRESS_INPUT_STEP';
 export const PHONE_INPUT_STEP = 'PHONE_INPUT_STEP';
 export const TABLE_INPUT_STEP = 'TABLE_INPUT_STEP';
 export const AUTOMATIC_CHECKOUT_STEP = 'AUTOMATIC_CHECKOUT_STEP';
+export const AVERAGE_CHECKIN_TIME_STEP = 'AVERAGE_CHECKIN_TIME_STEP';
 export const COMPLETE_STEP = 'COMPLETE_STEP';
 export const QR_CODES_STEP = 'QR_CODES_STEP';
 export const IS_INDOOR_STEP = 'IS_INDOOR_STEP';
@@ -24,7 +27,8 @@ export const getRestaurantLocationPayload = (
   radius,
   tableCount,
   locationType,
-  isIndoor
+  isIndoor,
+  averageCheckinTime
 ) => {
   const isSameAddress = address === BASE_ADDRESS_INDICATOR;
 
@@ -43,6 +47,7 @@ export const getRestaurantLocationPayload = (
     tableCount: tableCount ? parseInt(tableCount, 10) : null,
     type: locationType,
     isIndoor,
+    averageCheckinTime: getMinutesFromTimeString(averageCheckinTime),
   };
 };
 
@@ -54,7 +59,8 @@ export const getBaseLocationPayload = (
   baseLocation,
   radius,
   locationType,
-  isIndoor
+  isIndoor,
+  averageCheckinTime
 ) => {
   const isSameAddress = address === BASE_ADDRESS_INDICATOR;
 
@@ -73,5 +79,6 @@ export const getBaseLocationPayload = (
     tableCount: null,
     type: locationType,
     isIndoor,
+    averageCheckinTime: getMinutesFromTimeString(averageCheckinTime),
   };
 };

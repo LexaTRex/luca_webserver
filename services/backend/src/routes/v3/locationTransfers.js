@@ -22,14 +22,12 @@ const {
   isUserOfType,
   UserTypes,
 } = require('../../middlewares/requireUser');
-const { limitRequestsByUserPerHour } = require('../../middlewares/rateLimit');
 const logger = require('../../utils/logger');
 const { formatLocationName } = require('../../utils/format');
 const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
 const { logEvent } = require('../../utils/hdAuditLog');
 
 const {
-  createSchema,
   getSchema,
   sendSchema,
   transferIdParametersSchema,
@@ -47,171 +45,8 @@ const mapTraceEncryptedData = trace => ({
     : trace.data,
 });
 
-/**
- * Create a transfer request for venues traced by an infected guest. Preceded
- * by a user transfer of check-in history, this will check for venues an
- * infected guest has checked-in to in order to determine potential contact persons
- * @see https://www.luca-app.de/securityoverview/processes/tracing_find_contacts.html#process
- * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
- */
-router.post(
-  '/',
-  requireHealthDepartmentEmployee,
-  limitRequestsByUserPerHour('location_transfer_post_ratelimit_hour'),
-  validateSchema(createSchema),
-  async (request, response) => {
-    const transaction = await database.transaction();
-    const maxLocations = config.get('luca.locationTransfers.maxLocations');
-
-    const isUserTransfer = !!request.body.userTransferId;
-
-    if (request.body.locations.length > maxLocations) {
-      logEvent(request.user, {
-        type: AuditLogEvents.CREATE_TRACING_PROCESS,
-        status: AuditStatusType.ERROR_LIMIT_EXCEEDED,
-        meta: {
-          viaTan: isUserTransfer,
-        },
-      });
-
-      return response.sendStatus(status.REQUEST_ENTITY_TOO_LARGE);
-    }
-
-    try {
-      const tracingProcess = await database.TracingProcess.create(
-        {
-          departmentId: request.user.departmentId,
-          userTransferId: request.body.userTransferId,
-        },
-        { transaction }
-      );
-
-      if (isUserTransfer) {
-        const userTransfer = await database.UserTransfer.findByPk(
-          request.body.userTransferId,
-          { transaction }
-        );
-
-        if (!userTransfer) {
-          await transaction.rollback();
-
-          logEvent(request.user, {
-            type: AuditLogEvents.CREATE_TRACING_PROCESS,
-            status: AuditStatusType.ERROR_INVALID_USER,
-            meta: {
-              viaTan: isUserTransfer,
-            },
-          });
-
-          return response.sendStatus(status.NOT_FOUND);
-        }
-
-        await userTransfer.update(
-          {
-            departmentId: request.user.departmentId,
-            tan: null,
-          },
-          { transaction }
-        );
-      }
-
-      await Promise.all(
-        request.body.locations.map(async locationRequest => {
-          const location = await database.Location.findByPk(
-            locationRequest.locationId,
-            {
-              include: {
-                required: true,
-                model: database.Operator,
-                paranoid: false,
-              },
-              paranoid: false,
-            }
-          );
-
-          if (!locationRequest || !location) {
-            logger.error({
-              message: 'Missing location for location transfer',
-              locations: request.body.locations,
-            });
-
-            logEvent(request.user, {
-              type: AuditLogEvents.CREATE_TRACING_PROCESS,
-              status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
-              meta: {
-                locationId: locationRequest?.locationId || location?.uuid,
-                viaTan: isUserTransfer,
-              },
-            });
-            return null;
-          }
-
-          const locationTransfer = await database.LocationTransfer.create(
-            {
-              departmentId: request.user.departmentId,
-              tracingProcessId: tracingProcess.uuid,
-              locationId: location.uuid,
-              time: [
-                moment.unix(locationRequest.time[0]),
-                moment.unix(locationRequest.time[1]),
-              ],
-            },
-            { transaction }
-          );
-
-          const traces = await database.Trace.findAll({
-            where: {
-              locationId: location.uuid,
-              time: {
-                [Op.overlap]: [
-                  moment.unix(locationRequest.time[0]),
-                  moment.unix(locationRequest.time[1]),
-                ],
-              },
-            },
-          });
-
-          await database.LocationTransferTrace.bulkCreate(
-            traces.map(trace => ({
-              locationTransferId: locationTransfer.uuid,
-              traceId: trace.traceId,
-              time: trace.time,
-              deviceType: trace.deviceType,
-            })),
-            { transaction }
-          );
-
-          logEvent(request.user, {
-            type: AuditLogEvents.CREATE_TRACING_PROCESS,
-            status: AuditStatusType.SUCCESS,
-            meta: {
-              transferId: locationTransfer.uuid,
-              viaTan: isUserTransfer,
-            },
-          });
-
-          return { location, locationTransfer };
-        })
-      );
-
-      await transaction.commit();
-
-      return response.send({ tracingProcessId: tracingProcess.uuid });
-    } catch (error) {
-      await transaction.rollback();
-
-      logEvent(request.user, {
-        type: AuditLogEvents.CREATE_TRACING_PROCESS,
-        status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
-        meta: {
-          viaTan: isUserTransfer,
-        },
-      });
-
-      throw error;
-    }
-  }
-);
+const logEmailError = error =>
+  logger.error({ message: 'failed to send email', error });
 
 /**
  * Get all location transfers of the currently logged-in operator.
@@ -577,7 +412,7 @@ router.post(
       );
       transfer.update({ contactedAt: moment() });
     } catch (error) {
-      logger.error({ message: 'failed to send email', error });
+      logEmailError(error);
     }
     return response.sendStatus(status.NO_CONTENT);
   }
@@ -775,32 +610,6 @@ router.post(
 
     await Promise.all(updatePromises);
 
-    try {
-      const dateFormat = 'DD.MM.YYYY HH:mm';
-      locationTransferApprovalNotification(
-        transfer.Location.Operator.email,
-        `${transfer.Location.Operator.firstName} ${transfer.Location.Operator.lastName}`,
-        null,
-        {
-          id: transfer.uuid,
-          createdAt: moment(transfer.contactedAt)
-            .tz(config.get('tz'))
-            .format(dateFormat),
-          updatedAt: moment().tz(config.get('tz')).format(dateFormat),
-          departmentName: transfer.HealthDepartment.name,
-          timeFrameFrom: moment(transfer.time[0].value)
-            .tz(config.get('tz'))
-            .format(dateFormat),
-          timeFrameTo: moment(transfer.time[1].value)
-            .tz(config.get('tz'))
-            .format(dateFormat),
-          locationName:
-            transfer.Location.name || transfer.Location.LocationGroup.name,
-        }
-      );
-    } catch (error) {
-      logger.error({ message: 'failed to send email', error });
-    }
     await transfer.update({
       isCompleted: true,
       approvedAt: moment(),
@@ -820,6 +629,35 @@ router.post(
         },
       }
     );
+
+    try {
+      const dateFormat = 'DD.MM.YYYY HH:mm';
+      await locationTransferApprovalNotification(
+        transfer.Location.Operator.email,
+        `${transfer.Location.Operator.firstName} ${transfer.Location.Operator.lastName}`,
+        null,
+        {
+          id: transfer.uuid,
+          createdAt: moment(transfer.contactedAt)
+            .tz(config.get('tz'))
+            .format(dateFormat),
+          updatedAt: moment(transfer.approvedAt)
+            .tz(config.get('tz'))
+            .format(dateFormat),
+          departmentName: transfer.HealthDepartment.name,
+          timeFrameFrom: moment(transfer.time[0].value)
+            .tz(config.get('tz'))
+            .format(dateFormat),
+          timeFrameTo: moment(transfer.time[1].value)
+            .tz(config.get('tz'))
+            .format(dateFormat),
+          locationName:
+            transfer.Location.name || transfer.Location.LocationGroup.name,
+        }
+      );
+    } catch (error) {
+      logEmailError(error);
+    }
 
     return response.sendStatus(status.NO_CONTENT);
   }

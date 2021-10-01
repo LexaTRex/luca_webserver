@@ -27,7 +27,7 @@ export const FinishRegisterStep = ({ next, navigation }) => {
       </CardSubTitle>
 
       <ButtonWrapper>
-        <PrimaryButton isButtonWhite onClick={next}>
+        <PrimaryButton $isButtonWhite onClick={next}>
           {intl.formatMessage({
             id: 'authentication.button.ok',
           })}

@@ -1,4 +1,19 @@
 import styled from 'styled-components';
+import { Select, Tag } from 'antd';
+
+export const StyledTag = styled(Tag)`
+  display: inline-flex;
+  align-items: center;
+  margin-right: 3px;
+`;
+
+export const StyledSelect = styled(Select)`
+  margin-bottom: 24px;
+
+  & .ant-select-selector {
+    cursor: pointer !important;
+  }
+`;
 
 export const StyledContainer = styled.div`
   margin-right: 16px;

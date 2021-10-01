@@ -104,6 +104,11 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: 'other',
       },
+      averageCheckinTime: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
     },
     {
       paranoid: true,

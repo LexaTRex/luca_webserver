@@ -1,5 +1,35 @@
 # Changelog
 
+### 2.1.0 (2021-10-01)
+* **backend** feat: add signed location transfer support
+* **backend** feat: add average checkin time
+* **backend** feat: add support route
+* **backend** feat: delete redeemed vaccination certificates after 72 hours
+* **backend:** fix: extend unique constraint for notification messages
+* **backend:** fix: deletion of notification chunks
+* **health-department** fix: check public HDSKP when uploading private key
+* **health-department** fix: cursor did not change on hovering download options in contact person view
+* **health-department** fix: update contact list when value changes for location tranfers
+* **health-department** fix: warning in console concerning button properties
+* **health-department** fix: remove default icon tooltip for notification
+* **health-department** feat: sign share data requests to locations with HDSKP
+* **health-department** feat: improve edit employee fields
+* **health-department** feat: change menu button
+* **health-department** feat: add 1.63.1 to supported SORMAS versions
+* **locations** fix: timestamp in email for share data requests
+* **locations** fix: limit traceId in guest list to seven characters
+* **locations** fix: QR-Print instructions text and alignment
+* **locations** fix: wrong time format in share data modal
+* **locations** fix: make whole entry in dropdown menu clickable
+* **locations** feat: venue owners can declare an average visit duration for their venue
+* **locations** feat: new help center
+* **locations** feat: user can choose to not load the Google Places API when creating locations
+* **locations** feat: update privacy policy documents
+* **locations** feat: update data processing agreement document
+* **locations** feat: improve usablity of the dropdown to switch between locations
+* **scanner** chore: integrate PO editor
+* chore: enable static compression
+
 ### 2.0.2 (2021-09-15)
 * **backend:** perf: add bloomfilter generation metrics
 * **backend:** fix: set timezone via config
@@ -194,7 +224,7 @@
 * **health-department:** fix: order of locations changed after contacting venues
 * **health-department:** feat: add hover effect to process list for better usability
 * **health-department:** feat: new designs for location search
-* **health-department:** feat: locations can be search by zip code as additional parameter to the location name 
+* **health-department:** feat: locations can be search by zip code as additional parameter to the location name
 * **health-department:** feat: new designs for profile view
 * **health-department:** feat: select profile view got moved from tab to header
 * **health-department:** feat: improved locales
@@ -281,7 +311,7 @@
 * **health-department:** feat: include address information directly in contact person view and not only in the download files
 * **health-department:** fix: dependency tree
 * **scanner:** fix: update check ins counter after scanning badges
-* **scanner:** fix: refocus after outbounds clicks in hardware scanner   
+* **scanner:** fix: refocus after outbounds clicks in hardware scanner
 * **webapp:** feat: support international phone numbers
 * **webapp:** feat: handle unsupported deeplinks
 
@@ -294,7 +324,7 @@
 * **health-department:** fix: add more error handling in csv generation
 
 ### 1.1.13 (2021-05-26)
-* **health-department:** fix: whitlisted special characters for csv 
+* **health-department:** fix: whitlisted special characters for csv
 
 ### 1.1.12 (2021-05-26)
 * **health-department:** fix: csv sanitization

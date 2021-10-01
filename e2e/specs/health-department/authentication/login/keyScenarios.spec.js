@@ -62,15 +62,13 @@ describe('Authentication', () => {
         it('it should reject the key upload and a notification should show stating that a wrong key has been uploaded, after that the correct private key is being uploaded and a notification occurs stating the the private key has been successfully uploaded as well the modal should close', () => {
           testSetup();
           uploadWrongHealthDepartmentPrivateKeyFileTypeReUploadCorrectFile();
-          cy.getByCy('header').within($header => {
-            cy.contains('Health-Department')
-              .should('exist')
-              .should('be.visible');
-            cy.get('.ant-dropdown-trigger')
-              .should('exist')
-              .should('be.enabled');
-            cy.get('button').contains('LOG OUT').should('exist');
-          });
+          cy.getByCy('header')
+            .contains('Health-Department')
+            .should('exist')
+            .should('be.visible');
+          cy.getByCy('linkMenu').should('exist').should('be.visible');
+          cy.get('button').contains('LOG OUT').should('exist');
+
           cy.get('.ant-menu-horizontal').should('exist').should('be.visible');
           cy.getByCy('navigation').should('exist').should('be.visible');
           logout();

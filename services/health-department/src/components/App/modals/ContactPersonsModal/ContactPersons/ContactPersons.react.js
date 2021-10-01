@@ -14,12 +14,9 @@ import { ContactPersonsWrapper, FlexWrapper } from './ContactPersons.styled';
 export const ContactPersons = ({ location, indexPersonData }) => {
   const [selectedTraces, setSelectedTraces] = useState(null);
   const [decryptedTraces, setDecryptedTraces] = useState([]);
-  const {
-    isLoading,
-    error,
-    data: contactPersons,
-  } = useQuery(
-    `contactPersons${location.transferId}`,
+
+  const { isLoading, error, data: contactPersons } = useQuery(
+    ['contactPersons', { transferId: location.transferId }],
     () => getContactPersons(location.transferId),
     { refetchOnWindowFocus: false }
   );

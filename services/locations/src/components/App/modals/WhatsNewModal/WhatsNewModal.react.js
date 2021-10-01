@@ -18,7 +18,7 @@ export const WhatsNewModal = ({ headline, content, onAccept }) => {
       <Headline>{headline}</Headline>
       <Content>{content}</Content>
       <PrimaryButton
-        isButtonWhite
+        $isButtonWhite
         style={{ float: 'right' }}
         onClick={onAccept}
       >

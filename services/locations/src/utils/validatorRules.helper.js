@@ -6,10 +6,17 @@ import {
 } from 'constants/locations';
 
 import { isValidPhoneNumber } from './parsePhoneNumber';
-import { isValidCharacter } from './checkCharacter';
+import { isValidCharacter, isValidTextCharacter } from './checkCharacter';
 
 export const validateSafeString = (_, value) => {
   if (!isValidCharacter(value?.trim())) {
+    return Promise.reject();
+  }
+  return Promise.resolve();
+};
+
+export const validateTextSafeString = (_, value) => {
+  if (!isValidTextCharacter(value?.split('\n').join(' ').trim())) {
     return Promise.reject();
   }
   return Promise.resolve();

@@ -34,6 +34,14 @@ const createSchema = z.object({
     .max(20)
     .optional(),
   isIndoor: z.boolean(),
+  averageCheckinTime: z
+    .number()
+    .int()
+    .positive()
+    .max(1440)
+    .min(15)
+    .optional()
+    .nullable(),
 });
 
 const searchSchema = z.object({

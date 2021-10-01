@@ -1,4 +1,17 @@
 import moment from 'moment';
+import jwt from 'jsonwebtoken';
+import {
+  VERIFY_EC_SHA256_DER_SIGNATURE,
+  SIGN_EC_SHA256_DER,
+  EC_KEYPAIR_FROM_PRIVATE_KEY,
+  EC_KEYPAIR_GENERATE,
+  ENCRYPT_DLIES,
+  DECRYPT_DLIES,
+  int32ToHex,
+  base64ToHex,
+  hexToBase64,
+  privateKeyToECPrivateKeyPEM,
+} from '@lucaapp/crypto';
 
 import {
   getCurrentDailyKey,
@@ -16,18 +29,6 @@ import {
   getEncryptedDailyPrivateKey,
   getEncryptedBadgePrivateKey,
 } from 'network/api';
-
-import {
-  VERIFY_EC_SHA256_DER_SIGNATURE,
-  EC_KEYPAIR_FROM_PRIVATE_KEY,
-  EC_KEYPAIR_GENERATE,
-  SIGN_EC_SHA256_DER,
-  ENCRYPT_DLIES,
-  DECRYPT_DLIES,
-  int32ToHex,
-  base64ToHex,
-  hexToBase64,
-} from '@lucaapp/crypto';
 
 import { InvalidNoteSignatureError } from 'errors/InvalidNoteSignatureError';
 
@@ -77,9 +78,8 @@ export const getBadgePrivateKey = async keyId => {
   );
 };
 
-export const DECRYPT_DLIES_USING_HDEKP = (publicKey, data, iv, mac) => {
-  return DECRYPT_DLIES(hdekp, publicKey, data, iv, mac);
-};
+export const DECRYPT_DLIES_USING_HDEKP = (publicKey, data, iv, mac) =>
+  DECRYPT_DLIES(hdekp, publicKey, data, iv, mac);
 
 /**
  * Checks if the daily keypair needs to be refreshed and if so, generates it,
@@ -356,6 +356,14 @@ export const rekeyBadgeKeypairs = async () => {
   sendRekeyBadgeKeys(serverPayload);
 };
 
+export const signLocationTransfer = payload =>
+  jwt.sign(
+    { ...payload, type: 'locationTransfer' },
+    privateKeyToECPrivateKeyPEM(hdskp),
+    {
+      algorithm: 'ES256',
+    }
+  );
 export const generateSignature = data => SIGN_EC_SHA256_DER(hdskp, data);
 
 export const verifyNoteSignature = (encryptedData, iv, mac, signature) => {

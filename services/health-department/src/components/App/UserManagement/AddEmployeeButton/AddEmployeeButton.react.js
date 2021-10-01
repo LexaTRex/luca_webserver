@@ -25,7 +25,7 @@ export const AddEmployeeButton = () => {
   };
 
   return (
-    <PrimaryButton isButtonWhite data-cy="addEmployee" onClick={addEmployee}>
+    <PrimaryButton $isButtonWhite data-cy="addEmployee" onClick={addEmployee}>
       {intl.formatMessage({
         id: 'modal.addEmployee.button',
       })}

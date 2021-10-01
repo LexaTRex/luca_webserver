@@ -7,22 +7,30 @@ import {
   NEW_RESTAURANT_LOCATION,
 } from '../../helpers/locations';
 import {
-  checkRadiusInput,
   defaultLocationNameShouldBeRejected,
   checkLocationNameIsUnique,
 } from '../../helpers/inputValidation.helper';
+import {
+  openCreateLocationModal,
+  selectLocationType,
+  setLocationName,
+  setLocationPhone,
+  setLocationIndoorSelection,
+  setLocationTableCount,
+  setLocationRadius,
+} from '../../helpers/createLocation.helper';
 
 context('Create restaurant location', () => {
   describe('Location name validation', () => {
     beforeEach(() => login());
     it('checks if the location name is the default name', () => {
-      cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-      cy.getByCy(RESTAURANT_TYPE).click();
+      openCreateLocationModal(E2E_DEFAULT_LOCATION_GROUP);
+      selectLocationType(RESTAURANT_TYPE);
       defaultLocationNameShouldBeRejected();
     });
     it('checks if the location name is unique', () => {
-      cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-      cy.getByCy(RESTAURANT_TYPE).click();
+      openCreateLocationModal(E2E_DEFAULT_LOCATION_GROUP);
+      selectLocationType(RESTAURANT_TYPE);
       checkLocationNameIsUnique();
     });
   });
@@ -32,80 +40,73 @@ context('Create restaurant location', () => {
     afterEach(() => removeLocation(NEW_RESTAURANT_LOCATION));
     describe('Without extra information', () => {
       it('generate location without tables and auto checkout', () => {
-        cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-        // Select type
-        cy.getByCy(RESTAURANT_TYPE).click();
-        // Enter name
-        cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
-        cy.getByCy('nextStep').click();
-        // Same address
+        openCreateLocationModal(E2E_DEFAULT_LOCATION_GROUP);
+        selectLocationType(RESTAURANT_TYPE);
+        setLocationName(NEW_RESTAURANT_LOCATION);
+        // Keep address
         cy.getByCy('yes').click();
-        //Enter phone
-        cy.get('#phone').type(E2E_PHONE_NUMBER);
+        setLocationPhone(E2E_PHONE_NUMBER);
+        // Proceed by skipping average checkin time
         cy.getByCy('nextStep').click();
-        // Select indoor
-        cy.getByCy('indoorSelection').click();
-        cy.getByCy('selectIndoor').click();
-        cy.get('button[type=submit]').click();
-        // Select tables
+        setLocationIndoorSelection();
+        // No tables
         cy.getByCy('no').click();
-        // Select automatic checkout
+        // Disable auto checkout
         cy.getByCy('no').click();
-        // Submit
+        // Create location
         cy.getByCy('done').click();
-        cy.getByCy('yes').click();
-        cy.getByCy('done').click();
+        // No qr codes
+        cy.getByCy('no').click();
+        // Check if location got created
         cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
       });
     });
     describe('With tables', () => {
       it('with tables', () => {
-        cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-        cy.getByCy(RESTAURANT_TYPE).click();
-        cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
-        cy.getByCy('nextStep').click();
+        openCreateLocationModal(E2E_DEFAULT_LOCATION_GROUP);
+        selectLocationType(RESTAURANT_TYPE);
+        setLocationName(NEW_RESTAURANT_LOCATION);
+        // Keep address
         cy.getByCy('yes').click();
-        cy.get('#phone').type(E2E_PHONE_NUMBER);
+        setLocationPhone(E2E_PHONE_NUMBER);
+        // Proceed by skipping average checkin time
         cy.getByCy('nextStep').click();
-        // Select indoor
-        cy.getByCy('indoorSelection').click();
-        cy.getByCy('selectIndoor').click();
-        cy.get('button[type=submit]').click();
+        setLocationIndoorSelection();
+        // Enable tables
         cy.getByCy('yes').click();
-        cy.get('#tableCount').type('10');
-        cy.getByCy('nextStep').click();
+        setLocationTableCount('10');
+        // Disable auto checkout
         cy.getByCy('no').click();
+        // Create location
         cy.getByCy('done').click();
-        cy.getByCy('yes').click();
-        cy.getByCy('nextStep').click();
-        cy.getByCy('done').click();
+        // No qr codes
+        cy.getByCy('no').click();
+        // Check if location got created
         cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
       });
     });
 
     describe('With auto checkout', () => {
       it('generate location with auto checkout', () => {
-        cy.getByCy(`createLocation-${E2E_DEFAULT_LOCATION_GROUP}`).click();
-        cy.getByCy(RESTAURANT_TYPE).click();
-        cy.get('#locationName').type(NEW_RESTAURANT_LOCATION);
-        cy.getByCy('nextStep').click();
+        openCreateLocationModal(E2E_DEFAULT_LOCATION_GROUP);
+        selectLocationType(RESTAURANT_TYPE);
+        setLocationName(NEW_RESTAURANT_LOCATION);
+        // Keep address
         cy.getByCy('yes').click();
-        cy.get('#phone').type(E2E_PHONE_NUMBER);
+        setLocationPhone(E2E_PHONE_NUMBER);
+        // Proceed by skipping average checkin time
         cy.getByCy('nextStep').click();
-        // Select indoor
-        cy.getByCy('indoorSelection').click();
-        cy.getByCy('selectIndoor').click();
-        cy.get('button[type=submit]').click();
+        setLocationIndoorSelection();
+        // No tables
         cy.getByCy('no').click();
+        // Enable auto checkout
         cy.getByCy('yes').click();
-        // Invalid radius input: empty, under 50 or over 5000
-        checkRadiusInput();
-        // Valid radius input
-        cy.get('#radius').clear().type(100);
-        cy.getByCy('nextStep').click();
+        setLocationRadius(100);
+        // Create location
         cy.getByCy('done').click();
-        cy.getByCy('yes').click();
-        cy.getByCy('done').click();
+        // No qr codes
+        cy.getByCy('no').click();
+        // Check if location got created
         cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`);
       });
     });

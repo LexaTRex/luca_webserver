@@ -391,6 +391,8 @@
     "modal.notification.selection.elevatedInfectionRisk": "Erhöhtes Infektionsrisiko",
     "modal.notification.button.alreadyNotified": "Bereits benachrichtigt",
     "contactperson.notified": "Hinweis ausgelöst",
-    "modal.notification.selectionWarning": "Wichtige Information: Der Hinweis \"Mögliches Infektionsrisiko\" wird an alle Personen ausgespielt, die im jeweiligen Zeitrahmen in der Location eingecheckt waren. Ihre Auswahl aus dem vorherigen Schritt ist nicht mehr gültig.",
-    "modal.notification.selection.countNoNotification": "{amount} Personen werden nicht benachrichtigt, da der Check-in via Schlüsselanhänger, Kontaktformular oder Web App erfolgte oder weil diese Person bereits benachrichtigt wurde."
+    "modal.notification.selectionWarning": "Wichtige Information: Der Hinweis \"Mögliches Infektionsrisiko\" wird an alle Personen ausgespielt, die im jeweiligen Zeitrahmen im Standort eingecheckt waren. Ihre Auswahl aus dem vorherigen Schritt ist nicht mehr gültig.",
+    "modal.notification.selection.countNoNotification": "{amount} Personen werden nicht benachrichtigt, da der Check-in via Schlüsselanhänger, Kontaktformular oder Web App erfolgte oder weil diese Person bereits benachrichtigt wurde.",
+    "unsignedWarning.title": "Verifizierung Ihres Gesundheitsamts notwendig",
+    "unsignedWarning.description": "Um die Sicherheit des luca-Systems zu erhöhen, können nur noch verifizierte Gesundheitsämter Anfragen an luca Standorte stellen und Kontaktdaten abrufen. Gesundheitsämter werden verifiziert indem sie ihre Schlüssel mit dem Zertifikat der Bundesdruckerei signieren. {br} {br} \nDie Signierung kann nur von Admins von luca Gesundheitsamt vorgenommen werden. Sollten Sie Hilfe benötigen, steht Ihnen der Support unter {email} und unter {phone} gern zur Verfügung!"
 }

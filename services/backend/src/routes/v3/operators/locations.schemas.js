@@ -26,6 +26,14 @@ const createSchema = z.object({
     .optional(),
   isIndoor: z.boolean().optional(),
   type: z.safeString().max(128),
+  averageCheckinTime: z
+    .number()
+    .int()
+    .positive()
+    .max(1440)
+    .min(15)
+    .optional()
+    .nullable(),
 });
 
 const updateSchema = z.object({
@@ -36,6 +44,14 @@ const updateSchema = z.object({
   tableCount: z.number().int().positive().optional().nullable(),
   radius: z.number().int().nonnegative().max(5000).optional().nullable(),
   isIndoor: z.boolean().optional(),
+  averageCheckinTime: z
+    .number()
+    .int()
+    .positive()
+    .max(1440)
+    .min(15)
+    .optional()
+    .nullable(),
 });
 
 const locationIdParametersSchema = z.object({

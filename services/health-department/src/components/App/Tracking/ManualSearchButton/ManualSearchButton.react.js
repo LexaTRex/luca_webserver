@@ -21,7 +21,7 @@ export const ManualSearchButton = () => {
   return (
     <PrimaryButton
       data-cy="searchGroup"
-      isButtonWhite
+      $isButtonWhite
       style={{ marginRight: 24 }}
       onClick={searchLocations}
     >

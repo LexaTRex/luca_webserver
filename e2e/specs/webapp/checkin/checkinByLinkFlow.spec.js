@@ -29,7 +29,7 @@ describe('WebApp / CheckIn', { retries: 3 }, () => {
   });
   after(() => {
     basicLocationLogin(E2E_EMAIL, E2E_PASSWORD, false);
-    cy.get('@groupId').then(groupId => {
+    cy.get('@groupId', { timeout: 10000 }).then(groupId => {
       deleteGroup(groupId);
     });
     logout();
@@ -38,10 +38,10 @@ describe('WebApp / CheckIn', { retries: 3 }, () => {
   describe('when an user checks in by link', () => {
     it('opens the checkout screen', () => {
       cy.visit(LOCATIONS_ROUTE);
-      cy.get('@scannerId').then(scannerId => {
+      cy.get('@scannerId', { timeout: 10000 }).then(scannerId => {
         cy.visit(`${WEBAPP_ROUTE}/${scannerId}`);
       });
-      cy.url({ timeout: 4000 }).should('contain', '/checkout');
+      cy.url({ timeout: 10000 }).should('contain', '/checkout');
       cy.getByCy('locationName').should('contain', createGroupPayload.name);
 
       // Simulate clock
@@ -60,7 +60,7 @@ describe('WebApp / CheckIn', { retries: 3 }, () => {
       }
       cy.getByCy('clockMinutes').should('contain', '02');
       cy.getByCy('checkout').click().tick(1000);
-      cy.url().should('not.contain', '/checkout');
+      cy.url({ timeout: 10000 }).should('not.contain', '/checkout');
       cy.clock().then(clock => clock.restore());
     });
   });

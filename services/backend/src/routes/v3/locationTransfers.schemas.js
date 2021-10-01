@@ -1,3 +1,4 @@
+const config = require('config');
 const { z } = require('../../utils/validation');
 
 const getSchema = z.object({
@@ -13,7 +14,8 @@ const createSchema = z.object({
         locationId: z.uuid(),
       })
     )
-    .nonempty(),
+    .nonempty()
+    .max(config.get('luca.locationTransfers.maxLocations')),
   userTransferId: z.uuid().optional(),
   lang: z.supportedLanguage(),
 });

@@ -1,4 +1,14 @@
 import { login } from '../helpers/functions';
+
+import {
+  openCreateGroupModal,
+  selectGroupType,
+  setGroupName,
+  setGroupAddress,
+  setGroupPhone,
+  setGroupIndoorSelection,
+} from '../helpers/createGroup.helper';
+
 import {
   RESTAURANT_ADDRESS,
   RESTAURANT_NAME,
@@ -16,16 +26,16 @@ describe('Download QR Codes PDF', { retries: 3 }, () => {
 
   describe('On Group creation', () => {
     it('downloads the Group PDF', () => {
-      cy.getByCy('createGroup').click();
-      cy.getByCy('restaurant').click();
-      cy.get('#groupName', { timeout: 20000 }).type(RESTAURANT_NAME);
-      cy.get('form').submit();
-      cy.get('#locationSearch').type(RESTAURANT_ADDRESS);
-      cy.get('.pac-container > div:first-of-type').click({ force: true });
+      openCreateGroupModal();
+      selectGroupType('restaurant');
+      setGroupName(RESTAURANT_NAME);
+      setGroupAddress(RESTAURANT_ADDRESS);
+      // Proceed
       cy.getByCy('proceed').click();
-      cy.get('#phone').type(RESTAURANT_PHONE);
-      cy.get('form').submit();
-      cy.get('form').submit();
+      setGroupPhone(RESTAURANT_PHONE);
+      // Proceed by skipping average checkin time
+      cy.getByCy('nextStep').click();
+      setGroupIndoorSelection();
       cy.getByCy('no').click();
       cy.getByCy('no').click();
       cy.getByCy('finishGroupCreation').click();
@@ -51,6 +61,7 @@ describe('Download QR Codes PDF', { retries: 3 }, () => {
       cy.getByCy('nextStep').click();
       cy.getByCy('yes').click();
       cy.get('#phone').type(RESTAURANT_PHONE);
+      cy.getByCy('nextStep').click();
       cy.getByCy('nextStep').click();
       cy.getByCy('indoorSelection').click();
       cy.getByCy('selectIndoor').click();

@@ -11,6 +11,7 @@ import {
 } from 'constants/checkout';
 
 import { updateLocation } from 'network/api';
+import { AverageCheckinTime } from './AverageCheckinTime';
 import {
   CardSection,
   LocationCard,
@@ -55,49 +56,52 @@ export const Checkout = ({ location }) => {
       title={intl.formatMessage({ id: 'settings.location.checkout.headline' })}
       testId="checkoutRadius"
     >
-      <CardSection isLast>
-        <CardSectionTitle>
-          {intl.formatMessage({ id: 'settings.location.checkout.title' })}
-          <StyledSwitchContainer>
-            <Switch
-              data-cy="activateCheckoutRadius"
-              checked={isAutoCheckoutActive}
-              onChange={onIsAutoCheckoutChanged}
-            />
-          </StyledSwitchContainer>
-        </CardSectionTitle>
-        <CardSectionDescription>
-          {intl.formatMessage({
-            id: 'settings.location.checkout.automatic.description',
-          })}
-        </CardSectionDescription>
-        {isAutoCheckoutActive && location.radius > 0 && (
-          <Form
-            step={1}
-            style={{ width: '100%' }}
-            initialValues={location}
-            onValuesChange={({ radius }) =>
-              updateLocation({
-                locationId: location.uuid,
-                data: { radius },
-              })
-            }
-          >
-            <Form.Item
-              name="radius"
-              label={intl.formatMessage({
-                id: 'settings.location.checkout.automatic.radius',
-              })}
-              rules={checkoutRadiusValidator}
-            >
-              <InputNumber
-                min={DEFAULT_CHECKOUT_RADIUS}
-                max={MAX_CHECKOUT_RADIUS}
+      {location.lat && location.lng && (
+        <CardSection isLast>
+          <CardSectionTitle>
+            {intl.formatMessage({ id: 'settings.location.checkout.title' })}
+            <StyledSwitchContainer>
+              <Switch
+                data-cy="activateCheckoutRadius"
+                checked={isAutoCheckoutActive}
+                onChange={onIsAutoCheckoutChanged}
               />
-            </Form.Item>
-          </Form>
-        )}
-      </CardSection>
+            </StyledSwitchContainer>
+          </CardSectionTitle>
+          <CardSectionDescription>
+            {intl.formatMessage({
+              id: 'settings.location.checkout.automatic.description',
+            })}
+          </CardSectionDescription>
+          {isAutoCheckoutActive && location.radius > 0 && (
+            <Form
+              step={1}
+              style={{ width: '100%' }}
+              initialValues={location}
+              onValuesChange={({ radius }) =>
+                updateLocation({
+                  locationId: location.uuid,
+                  data: { radius },
+                })
+              }
+            >
+              <Form.Item
+                name="radius"
+                label={intl.formatMessage({
+                  id: 'settings.location.checkout.automatic.radius',
+                })}
+                rules={checkoutRadiusValidator}
+              >
+                <InputNumber
+                  min={DEFAULT_CHECKOUT_RADIUS}
+                  max={MAX_CHECKOUT_RADIUS}
+                />
+              </Form.Item>
+            </Form>
+          )}
+        </CardSection>
+      )}
+      <AverageCheckinTime location={location} />
     </LocationCard>
   );
 };

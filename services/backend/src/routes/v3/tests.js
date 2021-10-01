@@ -1,22 +1,11 @@
 const router = require('express').Router();
 const status = require('http-status');
-const moment = require('moment');
-const config = require('config');
 
 const database = require('../../database');
 const { validateSchema } = require('../../middlewares/validateSchema');
 const { limitRequestsPerMinute } = require('../../middlewares/rateLimit');
 
 const { redeemSchema, redeemDeleteSchema } = require('./tests.schemas');
-
-const REDEEM_MAX_EXPIRY = moment.duration(
-  config.get('luca.testRedeems.maxAge'),
-  'hours'
-);
-const REDEEM_DEFAULT_EXPIRY = moment.duration(
-  config.get('luca.testRedeems.defaultMaxAge'),
-  'hours'
-);
 
 // Redeem a test
 router.post(
@@ -30,12 +19,6 @@ router.post(
       await database.TestRedeem.create({
         hash: request.body.hash,
         tag: request.body.tag,
-        expireAt: request.body.expireAt
-          ? Math.min(
-              moment.unix(request.body.expireAt),
-              moment().add(REDEEM_MAX_EXPIRY)
-            )
-          : moment().add(REDEEM_DEFAULT_EXPIRY),
       });
       return response.sendStatus(status.NO_CONTENT);
     }

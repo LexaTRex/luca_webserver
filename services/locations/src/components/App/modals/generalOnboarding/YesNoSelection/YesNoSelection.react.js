@@ -20,7 +20,7 @@ export const YesNoSelection = ({ onYes, onNo, onBack }) => {
       <div>
         <PrimaryButton
           data-cy="no"
-          isButtonWhite
+          $isButtonWhite
           style={{ marginRight: 24 }}
           onClick={onNo}
         >

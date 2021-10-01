@@ -7,6 +7,7 @@ interface IOperator extends IUser {
 }
 
 interface IHealthDepartmentEmployee extends IUser {
+  HealthDepartment: unknown;
   departmentId: string;
   isAdmin: boolean;
   type: 'HealthDepartmentEmployeee';

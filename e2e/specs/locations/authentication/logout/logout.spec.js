@@ -5,7 +5,7 @@ describe('Logout', () => {
   it('logs the user out', () => {
     cy.getByCy('createGroup').should('exist');
     cy.getByCy('dropdownMenuTrigger').click();
-    cy.getByCy('dropdownMenu').contains('Log out').click({ force: true });
+    cy.getByCy('logout').click();
     cy.getByCy('loginPage').should('exist');
     cy.get('#email').should('exist');
   });

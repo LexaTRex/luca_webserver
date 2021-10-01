@@ -4,4 +4,5 @@ export const SUPPORTED_SORMAS_VERSIONS = {
   '"1.59.2"': true,
   '"1.61.1"': true,
   '"1.62.3"': true,
+  '"1.63.1"': true,
 };

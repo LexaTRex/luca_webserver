@@ -128,6 +128,7 @@ router.post(
           tableCount: request.body.tableCount,
           isIndoor: request.body.isIndoor,
           type: request.body.type,
+          averageCheckinTime: request.body.averageCheckinTime || null,
         },
         { transaction }
       );
@@ -200,6 +201,7 @@ router.patch(
       radius: request.body.radius || 0,
       shouldProvideGeoLocation: request.body.radius > 0,
       isIndoor: request.body.isIndoor,
+      averageCheckinTime: request.body.averageCheckinTime,
     });
 
     return response.send(getOperatorLocationDTO(location));

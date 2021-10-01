@@ -9,8 +9,10 @@ import { BASE_GROUP_ROUTE, BASE_LOCATION_ROUTE } from 'constants/routes';
 import { createGroup as createGroupRequest } from 'network/api';
 import { useModal } from 'components/hooks/useModal';
 
-import { AutomaticCheckout } from '../generalOnboarding/AutomaticCheckout';
-import { TableInput } from '../generalOnboarding/TableInput';
+import { AutomaticCheckout } from 'components/App/modals/generalOnboarding/AutomaticCheckout';
+import { TableInput } from 'components/App/modals/generalOnboarding/TableInput';
+import { IndoorInput } from 'components/App/modals/generalOnboarding/IndoorInput';
+import { AverageCheckinTime } from 'components/App/modals/generalOnboarding/AverageCheckinTime';
 import {
   RESTAURANT_TYPE,
   NURSING_HOME_TYPE,
@@ -23,6 +25,7 @@ import {
   PHONE_INPUT_STEP,
   TABLE_INPUT_STEP,
   AUTOMATIC_CHECKOUT_STEP,
+  AVERAGE_CHECKIN_TIME_STEP,
   COMPLETE_STEP,
   QR_CODES_STEP,
   PATIENT_STEP,
@@ -31,6 +34,7 @@ import {
   getRestaurantGroupPayload,
   getBaseGroupPayload,
   IS_INDOOR_STEP,
+  GOOGLE_PLACES_OPT_IN_STEP,
 } from './CreateGroupModal.helper';
 
 import { SelectGroupType } from './steps/SelectGroupType';
@@ -41,7 +45,7 @@ import { PatientInput } from './steps/PatientInput';
 import { AreaSelection } from './steps/AreaSelection';
 import { Complete } from './steps/Complete';
 import { QRDownload } from './steps/QRDownload';
-import { IndoorInput } from '../generalOnboarding/IndoorInput';
+import { GooglePlacesInput } from './steps/GooglePlacesInput';
 
 export const CreateGroupModal = () => {
   const intl = useIntl();
@@ -51,8 +55,10 @@ export const CreateGroupModal = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [groupType, setGroupType] = useState(null);
   const [groupName, setGroupName] = useState(null);
+  const [googlePlaces, setGooglePlaces] = useState(true);
   const [address, setAddress] = useState(null);
   const [phone, setPhone] = useState(null);
+  const [averageCheckinTime, setAverageCheckinTime] = useState(null);
   const [isIndoor, setIsIndoor] = useState(true);
   const [tableCount, setTableCount] = useState(null);
   const [patientRequired, setPatientRequired] = useState(null);
@@ -100,7 +106,8 @@ export const CreateGroupModal = () => {
       radius,
       areas,
       groupType,
-      isIndoor
+      isIndoor,
+      averageCheckinTime
     );
 
     createGroupRequest(createBaseGroupPayload)
@@ -121,7 +128,8 @@ export const CreateGroupModal = () => {
       radius,
       patientRequired,
       groupType,
-      isIndoor
+      isIndoor,
+      averageCheckinTime
     );
 
     createGroupRequest(createNursingHomeGroupPayload)
@@ -141,8 +149,10 @@ export const CreateGroupModal = () => {
       radius,
       tableCount,
       groupType,
-      isIndoor
+      isIndoor,
+      averageCheckinTime
     );
+
     createGroupRequest(createRestaurantGroupPayload)
       .then(response => {
         handleResponse(response);
@@ -272,12 +282,23 @@ export const CreateGroupModal = () => {
       ),
     },
     {
+      id: GOOGLE_PLACES_OPT_IN_STEP,
+      content: (
+        <GooglePlacesInput
+          setEnabled={setGooglePlaces}
+          next={nextStep}
+          back={previousStep}
+        />
+      ),
+    },
+    {
       id: ADDRESS_INPUT_STEP,
       content: (
         <AddressInput
           groupType={groupType}
           address={address}
           setAddress={setAddress}
+          googleEnabled={googlePlaces}
           next={nextStep}
           back={previousStep}
         />
@@ -289,6 +310,17 @@ export const CreateGroupModal = () => {
         <PhoneInput
           phone={phone}
           setPhone={setPhone}
+          next={nextStep}
+          back={previousStep}
+        />
+      ),
+    },
+    {
+      id: AVERAGE_CHECKIN_TIME_STEP,
+      content: (
+        <AverageCheckinTime
+          averageCheckinTime={averageCheckinTime}
+          setAverageCheckinTime={setAverageCheckinTime}
           next={nextStep}
           back={previousStep}
         />

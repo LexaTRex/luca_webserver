@@ -1,3 +1,5 @@
+import { getMinutesFromTimeString } from 'utils/time';
+
 export const RESTAURANT_TYPE = 'restaurant';
 export const NURSING_HOME_TYPE = 'nursing_home';
 export const HOTEL_TYPE = 'hotel';
@@ -6,10 +8,12 @@ export const BASE_TYPE = 'base';
 
 export const SELECT_GROUP_STEP = 'SELECT_GROUP_STEP';
 export const NAME_INPUT_STEP = 'NAME_INPUT_STEP';
+export const GOOGLE_PLACES_OPT_IN_STEP = 'GOOGLE_PLACES_OPT_IN_STEP';
 export const ADDRESS_INPUT_STEP = 'ADDRESS_INPUT_STEP';
 export const PHONE_INPUT_STEP = 'PHONE_INPUT_STEP';
 export const TABLE_INPUT_STEP = 'TABLE_INPUT_STEP';
 export const AUTOMATIC_CHECKOUT_STEP = 'AUTOMATIC_CHECKOUT_STEP';
+export const AVERAGE_CHECKIN_TIME_STEP = 'AVERAGE_CHECKIN_TIME_STEP';
 export const COMPLETE_STEP = 'COMPLETE_STEP';
 export const QR_CODES_STEP = 'QR_CODES_STEP';
 export const PATIENT_STEP = 'PATIENT_STEP';
@@ -23,7 +27,8 @@ export const getRestaurantGroupPayload = (
   radius,
   tableCount,
   groupType,
-  isIndoor
+  isIndoor,
+  averageCheckinTime
 ) => ({
   type: groupType,
   name: groupName,
@@ -38,6 +43,7 @@ export const getRestaurantGroupPayload = (
   radius: radius ? parseInt(radius, 10) : 0,
   tableCount: tableCount ? parseInt(tableCount, 10) : null,
   isIndoor,
+  averageCheckinTime: getMinutesFromTimeString(averageCheckinTime),
 });
 
 export const getNursingHomeGroupPayload = (
@@ -48,7 +54,8 @@ export const getNursingHomeGroupPayload = (
   radius,
   patientRequired,
   groupType,
-  isIndoor
+  isIndoor,
+  averageCheckinTime
 ) => ({
   type: groupType,
   name: groupName,
@@ -71,6 +78,7 @@ export const getNursingHomeGroupPayload = (
       ]
     : [],
   isIndoor,
+  averageCheckinTime: getMinutesFromTimeString(averageCheckinTime),
 });
 
 export const getBaseGroupPayload = (
@@ -80,7 +88,8 @@ export const getBaseGroupPayload = (
   radius,
   areas,
   groupType,
-  isIndoor
+  isIndoor,
+  averageCheckinTime
 ) => ({
   type: groupType,
   name: groupName,
@@ -95,4 +104,5 @@ export const getBaseGroupPayload = (
   radius: radius ? parseInt(radius, 10) : 0,
   areas,
   isIndoor,
+  averageCheckinTime: getMinutesFromTimeString(averageCheckinTime),
 });

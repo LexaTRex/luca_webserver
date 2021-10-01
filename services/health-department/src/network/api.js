@@ -154,7 +154,7 @@ export const findGroups = searchParameters => {
 };
 
 export const createLocationTransfer = data => {
-  return fetch(`${API_PATH}/v3/locationTransfers/`, {
+  return fetch(`${API_PATH}/v4/locationTransfers/`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers,

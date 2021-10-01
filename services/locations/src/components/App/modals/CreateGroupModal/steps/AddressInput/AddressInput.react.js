@@ -1,23 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Form } from 'antd';
 import {
   PrimaryButton,
   SecondaryButton,
 } from 'components/general/Buttons.styled';
-import { LoadScript } from '@react-google-maps/api';
-
-import { GOOGLE_LIBRARIES, GOOGLE_MAPS_API_KEY } from 'constants/googleApi';
-import { LocationSearch } from './LocationSearch';
-import { FormFields } from './FormFields';
-import { ManualAddressText } from '../../../generalOnboarding/ManualAddressText';
+import { ManualAddressText } from 'components/App/modals/generalOnboarding/ManualAddressText';
+import { GooglePlacesWrapper } from 'components/App/modals/generalOnboarding/GooglePlacesWrapper';
 import {
+  ButtonWrapper,
+  Description,
+  Header,
   ManualInputButton,
   Wrapper,
-  Header,
-  Description,
-  ButtonWrapper,
-} from '../../../generalOnboarding/Onboarding.styled';
+} from 'components/App/modals/generalOnboarding/Onboarding.styled';
+import { LocationSearch } from './LocationSearch';
+import { FormFields } from './FormFields';
 
 export const AddressInput = ({
   address: currentAddress,
@@ -25,14 +23,15 @@ export const AddressInput = ({
   groupType,
   back,
   next,
+  googleEnabled,
 }) => {
   const intl = useIntl();
   const formReference = useRef(null);
-  const [showManualInput, setShowManualInput] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(!googleEnabled);
   const [temporaryAddress, setTemporaryAddress] = useState(currentAddress);
   const [isError, setIsError] = useState(false);
   const [filled, setFilled] = useState(!!temporaryAddress);
-  const [disabled, setDisabled] = useState(true);
+  const [disabled, setDisabled] = useState(googleEnabled);
 
   const onFinish = values => {
     setTemporaryAddress(values);
@@ -59,32 +58,35 @@ export const AddressInput = ({
           id: 'modal.addressInput.help.description',
         })}
       </Description>
-      <LoadScript
-        googleMapsApiKey={GOOGLE_MAPS_API_KEY}
-        libraries={GOOGLE_LIBRARIES}
-      >
+      <GooglePlacesWrapper enabled={googleEnabled}>
         <Form
           ref={formReference}
           onFinish={onFinish}
           initialValues={temporaryAddress}
         >
-          <LocationSearch
-            formReference={formReference}
-            setFilled={setFilled}
-            setDisabled={setDisabled}
-            isError={isError}
-            setIsError={setIsError}
-          />
-          <ManualInputButton
-            data-cy="manuellSearch"
-            onClick={() => {
-              setDisabled(false);
-              setShowManualInput(true);
-            }}
-          >
-            {intl.formatMessage({ id: 'addressInput.manualInputTitle' })}
-          </ManualInputButton>
-          {showManualInput && <ManualAddressText />}
+          {googleEnabled ? (
+            <>
+              <LocationSearch
+                formReference={formReference}
+                setFilled={setFilled}
+                setDisabled={setDisabled}
+                isError={isError}
+                setIsError={setIsError}
+              />
+              <ManualInputButton
+                data-cy="manuellSearch"
+                onClick={() => {
+                  setDisabled(false);
+                  setShowManualInput(true);
+                }}
+              >
+                {intl.formatMessage({ id: 'addressInput.manualInputTitle' })}
+              </ManualInputButton>
+            </>
+          ) : (
+            <ManualAddressText />
+          )}
+
           <FormFields show={filled || showManualInput} disabled={disabled} />
           <ButtonWrapper multipleButtons>
             <SecondaryButton onClick={back}>
@@ -103,7 +105,7 @@ export const AddressInput = ({
             </PrimaryButton>
           </ButtonWrapper>
         </Form>
-      </LoadScript>
+      </GooglePlacesWrapper>
     </Wrapper>
   );
 };

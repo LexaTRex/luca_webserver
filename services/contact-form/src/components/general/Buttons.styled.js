@@ -18,10 +18,10 @@ const ButtonGeneral = {
 
 export const PrimaryButton = styled(Button)`
   ${{ ...ButtonGeneral }}
-  background: ${({ isButtonWhite }) =>
-    isButtonWhite ? '#fff' : 'rgb(195, 206, 217)'};
+  background: ${({ $isButtonWhite }) =>
+    $isButtonWhite ? '#fff' : 'rgb(195, 206, 217)'};
   border: 2px solid
-    ${({ isButtonWhite }) => (isButtonWhite ? '#fff' : 'rgb(195, 206, 217)')};
+    ${({ $isButtonWhite }) => ($isButtonWhite ? '#fff' : 'rgb(195, 206, 217)')};
   border-radius: 24px;
   color: rgba(0, 0, 0, 0.87);
   cursor: pointer;

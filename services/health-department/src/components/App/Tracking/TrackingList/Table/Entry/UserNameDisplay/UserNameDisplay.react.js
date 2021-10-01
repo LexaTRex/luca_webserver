@@ -8,7 +8,7 @@ import { IncompleteDataError } from 'errors/incompleteDataError';
 export const UserNameDisplay = ({ userTransferId, onProcessName }) => {
   const intl = useIntl();
   const { isLoading, error, data } = useQuery(
-    `userTransfer${userTransferId}`,
+    ['userTransfer', { userTransferId }],
     () =>
       decryptUserTransfer(userTransferId).then(processData => {
         onProcessName(userTransferId, processData?.fn + processData?.ln);

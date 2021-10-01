@@ -13,6 +13,7 @@ import {
 
 const SAFE_CHARACTERS_REGEX = /^[\w !&()+,./:@`|£À-ÿāăąćĉċčđēėęěĝğģĥħĩīįİıĵķĸĺļłńņōőœŗřśŝşšţŦũūŭůűųŵŷźżžơưếệ–-]*$/i;
 const NO_HTTP_REGEX = /^((?!http).)*$/i;
+const NO_FTP_REGEX = /^((?!ftp).)*$/i;
 
 const PASSWORD_REQUIREMENTS = {
   minLength: 9,
@@ -26,7 +27,13 @@ export const z = {
   ...zod,
 
   safeString: () =>
-    z.string().regex(SAFE_CHARACTERS_REGEX).regex(NO_HTTP_REGEX),
+    z
+      .string()
+      .regex(SAFE_CHARACTERS_REGEX)
+      .regex(NO_HTTP_REGEX)
+      .regex(NO_FTP_REGEX),
+
+  safeText: () => z.string().regex(NO_HTTP_REGEX).regex(NO_FTP_REGEX),
 
   phoneNumber: () =>
     zod

@@ -136,7 +136,7 @@ export const CheckInQuery = ({ location }) => {
           {isAdditionalDataEnabled && (
             <PrimaryButton
               onClick={addAdditionalData}
-              isButtonWhite
+              $isButtonWhite
               style={{ marginTop: 24 }}
               data-cy="addRequestButton"
             >

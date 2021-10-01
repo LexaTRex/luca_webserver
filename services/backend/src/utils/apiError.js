@@ -19,6 +19,10 @@ const API_ERRORS = {
     status: status.NOT_FOUND,
     message: 'Health department not found.',
   },
+  LOCATION_TRANSFER_NOT_FOUND: {
+    status: status.NOT_FOUND,
+    message: 'Location transfer not found.',
+  },
   SIGNED_KEYS_ALREADY_EXIST: {
     status: status.CONFLICT,
     message: 'Signed keys already exist.',
@@ -26,6 +30,22 @@ const API_ERRORS = {
   INVALID_SIGNED_KEYS: {
     status: status.BAD_REQUEST,
     message: 'Invalid signed keys.',
+  },
+  INVALID_SIGNATURE: {
+    status: status.BAD_REQUEST,
+    message: 'Signature invalid.',
+  },
+  FORBIDDEN: {
+    status: status.FORBIDDEN,
+    message: 'User not authorized to perform this action',
+  },
+  TOO_MANY_LOCATIONS: {
+    status: status.REQUEST_ENTITY_TOO_LARGE,
+    message: 'There are too many locations attatched to this request',
+  },
+  USER_TRANSFER_NOT_FOUND: {
+    status: status.NOT_FOUND,
+    message: 'User transfer not found.',
   },
 };
 

@@ -1,6 +1,6 @@
 export const E2E_DEFAULT_LOCATION_GROUP =
   'c951f526-f792-498b-838f-7d1312a792a1';
-export const E2E_LOCATION_GROUP_2 = 'c951f526-f792-498b-838f-7d1312a792a2';
+export const E2E_DEFAULT_LOCATION_GROUP_2 = 'c951f526-f792-498b-838f-7d1312a792a2';
 
 export const E2E_DEFAULT_GROUP_NAME = 'Nexenio_1 e2e';
 export const E2E_GROUP_NAME_2 = 'Nexenio_2 e2e';
