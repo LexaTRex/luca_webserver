@@ -83,6 +83,11 @@ module.exports = (Sequelize, DataTypes) => {
         defaultValue: '1.0.0',
         type: DataTypes.STRING(32),
       },
+      allowOperatorDevices: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
+      },
       isTrusted: {
         allowNull: false,
         defaultValue: false,

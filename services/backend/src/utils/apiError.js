@@ -39,6 +39,22 @@ const API_ERRORS = {
     status: status.FORBIDDEN,
     message: 'User not authorized to perform this action',
   },
+  UNAUTHORIZED: {
+    status: status.UNAUTHORIZED,
+    message: 'User is not signed in.',
+  },
+  CHALLENGE_NOT_FOUND: {
+    status: status.NOT_FOUND,
+    message: 'Challenge does not exist.',
+  },
+  DEVICE_NOT_FOUND: {
+    status: status.NOT_FOUND,
+    message: 'Device does not exist.',
+  },
+  DEVICE_EXPIRED: {
+    status: status.LOCKED,
+    message: 'Device refresh token has expired.',
+  },
   TOO_MANY_LOCATIONS: {
     status: status.REQUEST_ENTITY_TOO_LARGE,
     message: 'There are too many locations attatched to this request',
@@ -57,9 +73,23 @@ class ApiError extends Error {
   }
 }
 
-// add errors as static fields to ApiError class
-Object.keys(API_ERRORS).forEach(error => {
-  ApiError[String(error)] = error;
-});
-
-module.exports = ApiError;
+module.exports = {
+  ApiError,
+  ApiErrorType: {
+    UNKNOWN_API_ERROR: 'UNKNOWN_API_ERROR',
+    FEATURE_DISABLED: 'FEATURE_DISABLED',
+    ISSUER_NOT_FOUND: 'ISSUER_NOT_FOUND',
+    CHALLENGE_NOT_FOUND: 'CHALLENGE_NOT_FOUND',
+    HEALTH_DEPARTMENT_NOT_FOUND: 'HEALTH_DEPARTMENT_NOT_FOUND',
+    LOCATION_TRANSFER_NOT_FOUND: 'LOCATION_TRANSFER_NOT_FOUND',
+    SIGNED_KEYS_ALREADY_EXIST: 'SIGNED_KEYS_ALREADY_EXIST',
+    INVALID_SIGNED_KEYS: 'INVALID_SIGNED_KEYS',
+    INVALID_SIGNATURE: 'INVALID_SIGNATURE',
+    FORBIDDEN: 'FORBIDDEN',
+    UNAUTHORIZED: 'UNAUTHORIZED',
+    DEVICE_NOT_FOUND: 'DEVICE_NOT_FOUND',
+    DEVICE_EXPIRED: 'DEVICE_EXPIRED',
+    TOO_MANY_LOCATIONS: 'TOO_MANY_LOCATIONS',
+    USER_TRANSFER_NOT_FOUND: 'USER_TRANSFER_NOT_FOUND',
+  },
+};

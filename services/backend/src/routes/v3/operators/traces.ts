@@ -5,8 +5,13 @@ import moment from 'moment';
 import { UniqueConstraintError, Op } from 'sequelize';
 import database from 'database';
 import { validateSchema } from 'middlewares/validateSchema';
-import { requireOperator } from 'middlewares/requireUser';
 import { limitRequestsPerHour } from 'middlewares/rateLimit';
+import { OperatorDevice } from 'constants/operatorDevice';
+import {
+  requireOperatorDeviceRoles,
+  requireOperatorOROperatorDevice,
+} from 'middlewares/requireUser';
+
 import { checkinSchema, checkoutSchema } from './traces.schemas';
 
 const router = Router();
@@ -19,7 +24,7 @@ const router = Router();
 router.post<unknown, unknown, z.infer<typeof checkinSchema>>(
   '/checkin',
   limitRequestsPerHour('traces_checkin_post_ratelimit_hour'),
-  requireOperator,
+  requireOperatorOROperatorDevice,
   validateSchema(checkinSchema),
   async (request, response) => {
     const location = await database.Location.findOne({
@@ -71,7 +76,8 @@ router.post<unknown, unknown, z.infer<typeof checkinSchema>>(
 
 router.post<unknown, unknown, z.infer<typeof checkoutSchema>>(
   '/checkout',
-  requireOperator,
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRoles([OperatorDevice.employee, OperatorDevice.manager]),
   validateSchema(checkoutSchema),
   async (request, response) => {
     const trace = await database.Trace.findOne({

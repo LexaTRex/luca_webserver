@@ -5,7 +5,8 @@ const status = require('http-status');
 const { Op } = require('sequelize');
 
 const database = require('../../database');
-const ApiError = require('../../utils/apiError');
+const { ApiError, ApiErrorType } = require('../../utils/apiError');
+const { verifySignedPublicKeys } = require('../../utils/signedKeys');
 
 const {
   validateSchema,
@@ -17,7 +18,6 @@ const {
   requireHealthDepartmentAdmin,
 } = require('../../middlewares/requireUser');
 
-const { verifySignedPublicKeys } = require('../../utils/signedKeys');
 const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
 const { logEvent, entriesToPlainText } = require('../../utils/hdAuditLog');
 
@@ -38,12 +38,12 @@ router.post(
     );
 
     if (!department) {
-      throw new ApiError(ApiError.HEALTH_DEPARTMENT_NOT_FOUND);
+      throw new ApiError(ApiErrorType.HEALTH_DEPARTMENT_NOT_FOUND);
     }
 
     // check that signed keys do not exist yet
     if (department.signedPublicHDEKP || department.signedPublicHDSKP) {
-      throw new ApiError(ApiError.SIGNED_KEYS_ALREADY_EXIST);
+      throw new ApiError(ApiErrorType.SIGNED_KEYS_ALREADY_EXIST);
     }
 
     try {
@@ -54,7 +54,7 @@ router.post(
         request.body.signedPublicHDEKP
       );
     } catch (error) {
-      throw new ApiError(ApiError.INVALID_SIGNED_KEYS, error.message);
+      throw new ApiError(ApiErrorType.INVALID_SIGNED_KEYS, error.message);
     }
 
     await department.update({
@@ -78,7 +78,7 @@ router.get(
     );
 
     if (!department) {
-      throw new ApiError(ApiError.HEALTH_DEPARTMENT_NOT_FOUND);
+      throw new ApiError(ApiErrorType.HEALTH_DEPARTMENT_NOT_FOUND);
     }
 
     return response.send({

@@ -68,6 +68,11 @@ module.exports = {
     gateway: '',
   },
   luca: {
+    challenges: {
+      operatorDeviceCreation: {
+        maxAgeMinutes: moment.duration(30, 'minutes'),
+      },
+    },
     traces: {
       maximumRequestablePeriod: moment.duration(24, 'hours').as('hours'),
       maxAge: moment.duration(28, 'days').as('hours'),
@@ -88,6 +93,11 @@ module.exports = {
     operators: {
       deleted: {
         maxAgeHours: moment.duration(28, 'days').as('hours'),
+      },
+    },
+    operatorDevice: {
+      unactivated: {
+        maxAgeMinutes: moment.duration(30, 'minutes'),
       },
     },
     users: {
@@ -126,6 +136,21 @@ module.exports = {
     daily: {
       max: 28,
       minKeyAge: moment.duration(24, 'hours').as('hours'),
+    },
+    operatorDevice: {
+      expire: moment.duration(31, 'days').as('millisecond'),
+      maxReactivationAge: moment.duration(20, 'minutes').as('millisecond'),
+      // DEV ONLY TOKEN
+      publicKey: `-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEc0JU9Xhlom553niIAc4K9C/1ZXOT
+AQp4BE3MdB9LqeGgVw78Krp0/YoQRPZmvBzBwXUZFmB+ZmcMcywB7aAXTw==
+-----END PUBLIC KEY-----`,
+      // DEV ONLY TOKEN
+      privateKey: `-----BEGIN EC PRIVATE KEY-----
+MHcCAQEEIGEXxQ0ksJNT0AV4srZvxR86UTSUv63yuvfdqv5+ZyTfoAoGCCqGSM49
+AwEHoUQDQgAEc0JU9Xhlom553niIAc4K9C/1ZXOTAQp4BE3MdB9LqeGgVw78Krp0
+/YoQRPZmvBzBwXUZFmB+ZmcMcywB7aAXTw==
+-----END EC PRIVATE KEY-----`,
     },
     badge: {
       targetKeyId: 2,
@@ -192,6 +217,11 @@ module.exports = {
     operator_email_patch_ratelimit_hour: 5,
     keys_daily_rotate_post_ratelimit_hour: 5,
     location_transfer_post_ratelimit_hour: 5,
+    challenges_operatorDevice_get_ratelimit_hour: 50,
+    challenges_operatorDevice_post_ratelimit_day: 1000,
+    challenges_operatorDevice_post_ratelimit_hour: 100,
+    challenges_operatorDevice_patch_ratelimit_day: 8000,
+    challenges_operatorDevice_patch_ratelimit_hour: 800,
     notifications_traces_get_ratelimit_hour: 5,
     notifications_v4_health_departments_get_ratelimit_hour: 1000,
     notifications_v4_traces_active_chunk_get_ratelimit_hour: 1000,

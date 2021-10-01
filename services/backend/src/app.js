@@ -16,6 +16,7 @@ const { noCache } = require('./middlewares/noCache');
 const passportSession = require('./passport/session');
 const bearerBadgeGeneratorStrategy = require('./passport/bearerBadgeGenerator');
 const localOperatorStrategy = require('./passport/localOperator');
+const operatorDeviceStrategy = require('./passport/operatorDevice');
 const localHealthDepartmentEmployeeStrategy = require('./passport/localHealthDepartmentEmployee');
 const requestMetricsMiddleware = require('./middlewares/requestMetrics');
 
@@ -25,7 +26,7 @@ const licensesRouter = require('./routes/licenses');
 const internalRouter = require('./routes/internal');
 const v2Router = require('./routes/v2');
 const v3Router = require('./routes/v3');
-const v4Router = require('./routes/v4');
+const v4Router = require('./routes/v4').default;
 
 let app;
 
@@ -43,6 +44,7 @@ const configureApp = () => {
     'local-healthDepartmentEmployee',
     localHealthDepartmentEmployeeStrategy
   );
+  passport.use('jwt-operatorDevice', operatorDeviceStrategy);
 
   app = express();
   const router = express.Router();

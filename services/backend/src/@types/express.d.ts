@@ -4,17 +4,28 @@ interface IUser {
 
 interface IOperator extends IUser {
   type: 'Operator';
+  allowOperatorDevices: boolean;
+}
+
+interface IOperatorDevice extends IOperator {
+  type: 'OperatorDevice';
+  device: {
+    uuid: string;
+    name: string;
+    os: 'android' | 'ios';
+    role: 'scanner' | 'employee' | 'manager';
+  };
 }
 
 interface IHealthDepartmentEmployee extends IUser {
-  HealthDepartment: unknown;
-  departmentId: string;
   isAdmin: boolean;
+  departmentId: string;
+  HealthDepartment: unknown;
   type: 'HealthDepartmentEmployeee';
 }
 
 declare namespace Express {
   export interface Request {
-    user?: IUser | IOperator | IHealthDepartmentEmployee;
+    user?: IUser | IOperator | IOperatorDevice | IHealthDepartmentEmployee;
   }
 }

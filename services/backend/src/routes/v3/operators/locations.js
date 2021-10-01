@@ -6,32 +6,39 @@
  * @see https://www.luca-app.de/securityoverview/properties/actors.html#term-Venue-Owner
  */
 
-/* eslint-disable sonarjs/no-duplicate-string */
+/* eslint-disable sonarjs/no-duplicate-string, max-lines */
 const router = require('express').Router();
 const status = require('http-status');
 const { Op } = require('sequelize');
-
-const {
-  createSchema,
-  updateSchema,
-  locationIdParametersSchema,
-} = require('./locations.schemas');
-const { getOperatorLocationDTO } = require('./locations.helper');
+const moment = require('moment');
 
 const database = require('../../../database');
 const {
   validateSchema,
+  validateQuerySchema,
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
 const {
   requireOperator,
   requireNonDeletedUser,
+  requireOperatorDeviceRoles,
+  requireOperatorOROperatorDevice,
 } = require('../../../middlewares/requireUser');
+const { OperatorDevice } = require('../../../constants/operatorDevice');
+const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
+
+const {
+  createSchema,
+  updateSchema,
+  locationTracesQuerySchema,
+  locationIdParametersSchema,
+} = require('./locations.schemas');
+const { getOperatorLocationDTO } = require('./locations.helper');
 
 /**
  * Get all locations (venues) operated by the currently logged-in owner
  */
-router.get('/', requireOperator, async (request, response) => {
+router.get('/', requireOperatorOROperatorDevice, async (request, response) => {
   const locations = await database.Location.findAll({
     where: {
       operator: request.user.uuid,
@@ -46,7 +53,7 @@ router.get('/', requireOperator, async (request, response) => {
 router.get(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
-  requireOperator,
+  requireOperatorOROperatorDevice,
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -242,7 +249,8 @@ router.delete(
 router.post(
   '/:locationId/check-out',
   validateParametersSchema(locationIdParametersSchema),
-  requireOperator,
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRoles([OperatorDevice.employee, OperatorDevice.manager]),
   requireNonDeletedUser,
   async (request, response) => {
     const location = await database.Location.findOne({
@@ -259,6 +267,73 @@ router.post(
     await database.Location.checkoutAllTraces({ location });
 
     return response.sendStatus(status.NO_CONTENT);
+  }
+);
+
+/**
+ * Get the guest list of a location, effectively fetching trace IDs and their
+ * associated encrypted data, decrypting contact data by a health department
+ * still requires the user to consent/share required data
+ * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html
+ */
+router.get(
+  '/traces/:locationId',
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRoles([OperatorDevice.employee, OperatorDevice.manager]),
+  validateQuerySchema(locationTracesQuerySchema),
+  validateParametersSchema(locationIdParametersSchema),
+  limitRequestsPerHour('locations_traces_get_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
+  async (request, response) => {
+    const location = await database.Location.findOne({
+      where: {
+        uuid: request.params.locationId,
+        operator: request.user.uuid,
+      },
+    });
+
+    if (!location) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    const traceQuery = {
+      locationId: location.uuid,
+      time: {
+        [Op.strictRight]: [null, moment().startOf('day')],
+      },
+    };
+
+    if (request.query.duration === 'week') {
+      traceQuery.time = {
+        [Op.strictRight]: [null, moment().subtract(7, 'days')],
+      };
+    }
+
+    const traces = await database.Trace.findAll({
+      where: traceQuery,
+      order: [['updatedAt', 'DESC']],
+      include: {
+        model: database.TraceData,
+      },
+    });
+
+    return response.send(
+      traces.map(trace => ({
+        traceId: trace.traceId,
+        deviceType: trace.deviceType,
+        checkin: moment(trace.time[0].value).unix(),
+        checkout: moment(trace.time[1].value).unix(),
+        data: trace.TraceDatum
+          ? {
+              data: trace.TraceDatum.data,
+              iv: trace.TraceDatum.iv,
+              mac: trace.TraceDatum.mac,
+              publicKey: trace.TraceDatum.publicKey,
+            }
+          : null,
+      }))
+    );
   }
 );
 

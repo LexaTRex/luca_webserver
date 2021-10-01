@@ -14,8 +14,12 @@ const { validateSchema } = require('../../middlewares/validateSchema');
 const {
   requireOperator,
   requireNonDeletedUser,
+  requireOperatorDeviceRoles,
+  requireOperatorOROperatorDevice,
 } = require('../../middlewares/requireUser');
 const { limitRequestsPerDay } = require('../../middlewares/rateLimit');
+
+const { OperatorDevice } = require('../../constants/operatorDevice');
 
 const {
   requireNonBlockedIp,
@@ -203,9 +207,14 @@ router.patch(
 );
 
 // get private key secret
-router.get('/privateKeySecret', requireOperator, (request, response) => {
-  return response.send({ privateKeySecret: request.user.privateKeySecret });
-});
+router.get(
+  '/privateKeySecret',
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRoles([OperatorDevice.employee, OperatorDevice.manager]),
+  (request, response) => {
+    return response.send({ privateKeySecret: request.user.privateKeySecret });
+  }
+);
 
 // request account deactivation
 router.delete('/', requireOperator, async (request, response) => {

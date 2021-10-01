@@ -21,6 +21,7 @@ const {
 const {
   requireOperator,
   requireNonDeletedUser,
+  requireOperatorOROperatorDevice,
   requireHealthDepartmentEmployee,
 } = require('../../middlewares/requireUser');
 
@@ -223,7 +224,7 @@ router.post(
 );
 
 // get all location groups
-router.get('/', requireOperator, async (request, response) => {
+router.get('/', requireOperatorOROperatorDevice, async (request, response) => {
   const groups = await database.LocationGroup.findAll({
     where: { operatorId: request.user.uuid },
     order: [['name', 'ASC']],

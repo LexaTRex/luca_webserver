@@ -5,12 +5,16 @@ const { combineMiddlewares } = require('../utils/middlewares');
 const { verifyCertificateAgainstDTrustChain } = require('../utils/signedKeys');
 
 const UserTypes = {
-  HD_EMPLOYEE: 'HealthDepartmentEmployee',
   OPERATOR: 'Operator',
+  OPERATOR_DEVICE: 'OperatorDevice',
+  HD_EMPLOYEE: 'HealthDepartmentEmployee',
 };
 
 const isUserOfType = (type, request) =>
   request.user && request.user.type === type;
+
+const isUserOfRoleType = (role, request) =>
+  request.user && request.user.device && request.user.device.role === role;
 
 const hasValidClientCertificate = (user, request) => {
   if (!request.headers['ssl-client-cert']) return false;
@@ -24,6 +28,59 @@ const hasValidClientCertificate = (user, request) => {
 
 const requireOperator = (request, response, next) => {
   if (isUserOfType(UserTypes.OPERATOR, request)) {
+    return next();
+  }
+  return response.sendStatus(status.UNAUTHORIZED);
+};
+
+const requireOperatorDevice = (request, response, next) => {
+  if (isUserOfType(UserTypes.OPERATOR_DEVICE, request)) {
+    return next();
+  }
+  return response.sendStatus(status.UNAUTHORIZED);
+};
+
+const requireOperatorDeviceRole = role => (request, response, next) => {
+  if (isUserOfType(UserTypes.OPERATOR, request)) {
+    return next();
+  }
+
+  if (isUserOfRoleType(role, request)) {
+    return next();
+  }
+
+  return response.sendStatus(status.FORBIDDEN);
+};
+const requireOperatorDeviceRoles = roles => {
+  const rolesMap = {};
+
+  for (const role of roles) {
+    // eslint-disable-next-line security/detect-object-injection
+    rolesMap[role] = true;
+  }
+
+  return (request, response, next) => {
+    if (isUserOfType(UserTypes.OPERATOR, request)) {
+      return next();
+    }
+
+    if (
+      request.user &&
+      request.user.device &&
+      rolesMap[request.user.device.role]
+    ) {
+      return next();
+    }
+
+    return response.sendStatus(status.FORBIDDEN);
+  };
+};
+
+const requireOperatorOROperatorDevice = (request, response, next) => {
+  if (
+    isUserOfType(UserTypes.OPERATOR, request) ||
+    isUserOfType(UserTypes.OPERATOR_DEVICE, request)
+  ) {
     return next();
   }
   return response.sendStatus(status.UNAUTHORIZED);
@@ -63,6 +120,10 @@ const requireHealthDepartmentAdmin = combineMiddlewares([
 
 module.exports = {
   requireOperator,
+  requireOperatorDevice,
+  requireOperatorDeviceRole,
+  requireOperatorDeviceRoles,
+  requireOperatorOROperatorDevice,
   requireHealthDepartmentEmployee,
   requireHealthDepartmentAdmin,
   requireNonDeletedUser,

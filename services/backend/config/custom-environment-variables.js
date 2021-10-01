@@ -53,6 +53,10 @@ module.exports = {
         v4: 'BADGE_ATTESTATION_KEY_PUBLIC_V4',
       },
     },
+    operatorDevice: {
+      publicKey: 'OPERATOR_DEVICE_PUBLIC_KEY',
+      privateKey: 'OPERATOR_DEVICE_PRIVATE_KEY',
+    }
   },
   proxy: {
     http: 'http_proxy',

@@ -1,7 +1,7 @@
 const config = require('config');
 const status = require('http-status');
 
-const ApiError = require('../utils/apiError');
+const { ApiError } = require('../utils/apiError');
 const { SessionError } = require('../passport/session');
 
 const handle404 = (request, response) => response.sendStatus(status.NOT_FOUND);
@@ -25,7 +25,7 @@ const handle500 = (error, request, response, next) => {
     return response.status(error.statusCode).send(errorDTO);
   }
 
-  if (config.get('debug')) {
+  if (config.get('debug') && next) {
     return next(error);
   }
   if (error.statusCode) {

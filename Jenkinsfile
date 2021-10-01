@@ -45,6 +45,18 @@ node {
       triggerDeploy('hotfix', GIT_VERSION)
     }
 
+    if (env.BRANCH_NAME.startsWith('preview-1/')) {
+      triggerDeploy('p1', GIT_VERSION)
+    }
+
+    if (env.BRANCH_NAME.startsWith('preview-2/')) {
+      triggerDeploy('p2', GIT_VERSION)
+    }
+
+    if (env.BRANCH_NAME.startsWith('preview-3/')) {
+      triggerDeploy('p3', GIT_VERSION)
+    }
+
     if (env.BRANCH_NAME == 'master') {
       triggerDeploy('preprod', GIT_VERSION)
     }

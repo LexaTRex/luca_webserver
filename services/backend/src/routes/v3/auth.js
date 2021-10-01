@@ -117,6 +117,7 @@ router.get('/me', requireOperator, (request, response) => {
     email: request.user.email,
     avvAccepted: request.user.avvAccepted,
     lastVersionSeen: request.user.lastVersionSeen,
+    allowOperatorDevices: request.user.allowOperatorDevices,
     deletedAt: request.user.deletedAt && moment(request.user.deletedAt).unix(),
     isTrusted: request.user.isTrusted,
   };

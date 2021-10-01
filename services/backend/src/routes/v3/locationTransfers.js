@@ -15,7 +15,10 @@ const {
   validateParametersSchema,
   validateQuerySchema,
 } = require('../../middlewares/validateSchema');
-const { requireOperator } = require('../../middlewares/requireUser');
+const {
+  requireOperatorDeviceRole,
+  requireOperatorOROperatorDevice,
+} = require('../../middlewares/requireUser');
 
 const {
   requireHealthDepartmentEmployee,
@@ -24,6 +27,7 @@ const {
 } = require('../../middlewares/requireUser');
 const logger = require('../../utils/logger');
 const { formatLocationName } = require('../../utils/format');
+const { OperatorDevice } = require('../../constants/operatorDevice');
 const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
 const { logEvent } = require('../../utils/hdAuditLog');
 
@@ -53,7 +57,8 @@ const logEmailError = error =>
  */
 router.get(
   '/',
-  requireOperator,
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRole(OperatorDevice.manager),
   validateQuerySchema(getSchema),
   async (request, response) => {
     const { completed, deleted } = request.query;
@@ -127,97 +132,102 @@ router.get(
   }
 );
 
-router.get('/uncompleted', requireOperator, async (request, response) => {
-  const operatorId = request.user.uuid;
-  const transfers = await database.LocationTransfer.findAll({
-    where: {
-      isCompleted: false,
-      contactedAt: {
-        [Op.ne]: null,
+router.get(
+  '/uncompleted',
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRole(OperatorDevice.manager),
+  async (request, response) => {
+    const operatorId = request.user.uuid;
+    const transfers = await database.LocationTransfer.findAll({
+      where: {
+        isCompleted: false,
+        contactedAt: {
+          [Op.ne]: null,
+        },
       },
-    },
-    include: [
-      {
-        model: database.LocationTransferTrace,
-        attributes: ['traceId'],
-        required: false,
-        include: {
-          required: true,
-          model: database.Trace,
+      include: [
+        {
+          model: database.LocationTransferTrace,
+          attributes: ['traceId'],
+          required: false,
           include: {
-            model: database.TraceData,
+            required: true,
+            model: database.Trace,
+            include: {
+              model: database.TraceData,
+            },
           },
         },
-      },
-      {
-        required: true,
-        model: database.Location,
-        attributes: ['name', 'groupId', 'operator', 'publicKey'],
-        include: {
-          attributes: ['uuid', 'name'],
-          model: database.LocationGroup,
+        {
+          required: true,
+          model: database.Location,
+          attributes: ['name', 'groupId', 'operator', 'publicKey'],
+          include: {
+            attributes: ['uuid', 'name'],
+            model: database.LocationGroup,
+            paranoid: false,
+          },
+          where: {
+            operator: operatorId,
+          },
           paranoid: false,
         },
-        where: {
-          operator: operatorId,
+        {
+          required: true,
+          model: database.HealthDepartment,
+          attributes: ['uuid', 'name', 'publicHDEKP'],
         },
-        paranoid: false,
-      },
-      {
-        required: true,
-        model: database.HealthDepartment,
-        attributes: ['uuid', 'name', 'publicHDEKP'],
-      },
-    ],
-  });
-
-  response.send(
-    transfers.map(transfer => ({
-      transferId: transfer.uuid,
-      department: {
-        uuid: transfer.HealthDepartment.uuid,
-        name: transfer.HealthDepartment.name,
-        publicHDEKP: transfer.HealthDepartment.publicHDEKP,
-      },
-      location: {
-        groupId: transfer.Location.LocationGroup.uuid,
-        groupName: transfer.Location.LocationGroup.name,
-        locationName: transfer.Location.name,
-        name: formatLocationName(
-          transfer.Location,
-          transfer.Location.LocationGroup
-        ),
-        publicKey: transfer.Location.publicKey,
-      },
-      time: [
-        moment(transfer.time[0].value).unix(),
-        moment(transfer.time[1].value).unix(),
       ],
-      traces: transfer.LocationTransferTraces.filter(
-        ({ Trace: trace }) => trace !== null
-      ).map(({ Trace: trace }) => ({
-        traceId: trace.traceId,
+    });
+
+    response.send(
+      transfers.map(transfer => ({
+        transferId: transfer.uuid,
+        department: {
+          uuid: transfer.HealthDepartment.uuid,
+          name: transfer.HealthDepartment.name,
+          publicHDEKP: transfer.HealthDepartment.publicHDEKP,
+        },
+        location: {
+          groupId: transfer.Location.LocationGroup.uuid,
+          groupName: transfer.Location.LocationGroup.name,
+          locationName: transfer.Location.name,
+          name: formatLocationName(
+            transfer.Location,
+            transfer.Location.LocationGroup
+          ),
+          publicKey: transfer.Location.publicKey,
+        },
         time: [
-          moment(trace.time[0].value).unix(),
-          moment(trace.time[1].value).unix(),
+          moment(transfer.time[0].value).unix(),
+          moment(transfer.time[1].value).unix(),
         ],
-        ...mapTraceEncryptedData(trace),
-        publicKey: trace.publicKey,
-        iv: trace.iv,
-        mac: trace.mac,
-        additionalData: trace.TraceDatum
-          ? {
-              data: trace.TraceDatum.data,
-              publicKey: trace.TraceDatum.publicKey,
-              mac: trace.TraceDatum.mac,
-              iv: trace.TraceDatum.iv,
-            }
-          : null,
-      })),
-      deletedAt: moment(transfer.deletedAt).unix(),
-    }))
-  );
-});
+        traces: transfer.LocationTransferTraces.filter(
+          ({ Trace: trace }) => trace !== null
+        ).map(({ Trace: trace }) => ({
+          traceId: trace.traceId,
+          time: [
+            moment(trace.time[0].value).unix(),
+            moment(trace.time[1].value).unix(),
+          ],
+          ...mapTraceEncryptedData(trace),
+          publicKey: trace.publicKey,
+          iv: trace.iv,
+          mac: trace.mac,
+          additionalData: trace.TraceDatum
+            ? {
+                data: trace.TraceDatum.data,
+                publicKey: trace.TraceDatum.publicKey,
+                mac: trace.TraceDatum.mac,
+                iv: trace.TraceDatum.iv,
+              }
+            : null,
+        })),
+        deletedAt: moment(transfer.deletedAt).unix(),
+      }))
+    );
+  }
+);
 
 /**
  * Get a single location transfer by ID, containing issuing health department,
@@ -544,7 +554,8 @@ const validateTransferId = async (request, response, next) => {
 router.post(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),
-  requireOperator,
+  requireOperatorOROperatorDevice,
+  requireOperatorDeviceRole(OperatorDevice.manager),
   validateTransferId,
   validateSchema(sendSchema, '20mb'),
   async (request, response) => {

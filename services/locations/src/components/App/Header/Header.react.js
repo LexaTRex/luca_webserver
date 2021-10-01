@@ -12,18 +12,20 @@ import { useTabletSize } from 'components/hooks/media';
 
 // Assets
 import LucaLogo from 'assets/LucaLogoWhite.svg';
-import { DetailsDropdown } from './DetailsDropdown';
+
+import { Devices } from './Devices';
+import { HelpCenter } from './HelpCenter';
 import { CreateGroup } from './CreateGroup';
 import { SelectGroup } from './SelectGroup';
 import { GroupDisplay } from './GroupDisplay';
 import { DataRequests } from './DataRequests';
-import { HelpCenter } from './HelpCenter';
+import { DetailsDropdown } from './DetailsDropdown';
 import {
-  HeaderWrapper,
   Logo,
-  SubTitle,
   Title,
+  SubTitle,
   MenuWrapper,
+  HeaderWrapper,
 } from './Header.styled';
 
 export const Header = ({ operator }) => {
@@ -57,6 +59,7 @@ export const Header = ({ operator }) => {
         {isActiveAccount && groupId && <SelectGroup groupId={groupId} />}
         {isActiveAccount && !isTablet && <CreateGroup />}
         <DataRequests />
+        {operator.allowOperatorDevices && <Devices />}
         <HelpCenter />
         <DetailsDropdown />
       </MenuWrapper>

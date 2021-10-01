@@ -1,5 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
+import { LICENSES_ROUTE } from 'constants/routes';
 import { FAQ_LINK, VIDEOS_LINK, TOOLKIT_LINK } from 'constants/links';
 
 import { ReactComponent as ExternalSvg } from 'assets/external.svg';
@@ -11,6 +12,7 @@ export const Links = () => {
     { url: VIDEOS_LINK, intlId: 'profile.services.videos' },
     { url: FAQ_LINK, intlId: 'profile.services.faq' },
     { url: TOOLKIT_LINK, intlId: 'profile.services.toolkit' },
+    { url: LICENSES_ROUTE, intlId: 'license.license' },
   ];
 
   const openInNewTab = url => {

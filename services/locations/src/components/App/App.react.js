@@ -19,17 +19,20 @@ import {
   GROUP_SETTINGS_ROUTE,
   LOCATION_SETTINGS_ROUTE,
   BASE_DATA_TRANSFER_ROUTE,
+  DEVICES_ROUTE,
 } from 'constants/routes';
 
 // Components
 import { ModalArea } from 'components/App/modals/ModalArea';
 import { Header } from './Header';
 import { Profile } from './Profile';
-import { HelpCenter } from './HelpCenter';
+import { Devices } from './Devices';
 import { Dashboard } from './Dashboard';
+import { HelpCenter } from './HelpCenter';
 import { GroupSettings } from './GroupSettings';
 import { DataTransfers } from './DataTransfers';
 import { LocationSettings } from './LocationSettings';
+
 import { AppWrapper } from './App.styled';
 
 export const App = () => {
@@ -77,6 +80,9 @@ export const App = () => {
         <Switch>
           <Route path={PROFILE_ROUTE}>
             <Profile operator={operator} refetch={refetch} />
+          </Route>
+          <Route path={DEVICES_ROUTE}>
+            <Devices />
           </Route>
           <Route path={HELP_CENTER_ROUTE}>
             <HelpCenter operator={operator} />

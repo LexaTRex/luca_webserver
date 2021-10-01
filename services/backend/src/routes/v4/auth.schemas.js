@@ -5,6 +5,11 @@ const authSchema = z.object({
   password: z.string().max(255),
 });
 
+const authOperatorDeviceSchema = z.object({
+  refreshToken: z.string().max(255),
+});
+
 module.exports = {
   authSchema,
+  authOperatorDeviceSchema,
 };

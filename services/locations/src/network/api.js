@@ -362,3 +362,49 @@ export const verifyTan = async data => {
 
   if (status !== 204) throw Error;
 };
+
+// Challenges
+export const getChallengeState = (
+  challengeId,
+  challengeType = 'operatorDevice'
+) => getRequest(`${API_PATH}/v4/challenges/${challengeType}/${challengeId}`);
+
+export const createChallenge = (
+  challengeType = 'operatorDevice',
+  state = 'READY'
+) =>
+  fetch(`${API_PATH}/v4/challenges/${challengeType}`, {
+    headers,
+    method: 'POST',
+    body: JSON.stringify({ state }),
+  })
+    .then(checkResponse)
+    .then(response => response.json());
+
+// Get Feature flags
+export const getClientConfig = () =>
+  getRequest(`${API_PATH}/v4/clientConfigs/locationFrontend`);
+
+// Device
+export const getOperatorDevices = () =>
+  getRequest(`${API_PATH}/v4/operatorDevices`);
+export const createDevice = role =>
+  fetch(`${API_PATH}/v4/operatorDevices`, {
+    headers,
+    method: 'POST',
+    body: JSON.stringify({ role }),
+  })
+    .then(checkResponse)
+    .then(response => response.json());
+export const reactivateDevice = deviceId =>
+  fetch(`${API_PATH}/v4/operatorDevices/${deviceId}/reactivate`, {
+    headers,
+    method: 'POST',
+  })
+    .then(checkResponse)
+    .then(response => response.json());
+export const deleteDevice = deviceId =>
+  fetch(`${API_PATH}/v4/operatorDevices/${deviceId}`, {
+    headers,
+    method: 'DELETE',
+  });

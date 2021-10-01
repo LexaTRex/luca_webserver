@@ -307,6 +307,43 @@ router.post('/regenerateBloomFilter', async (request, response) => {
   response.sendStatus(status.NO_CONTENT);
 });
 
+router.post('/deleteOldChallenges', async (request, response) => {
+  const t0 = performance.now();
+  const maxAge = config.get(
+    'luca.challenges.operatorDeviceCreation.maxAgeMinutes'
+  );
+  const affectedRows = await database.Challenge.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: moment().subtract(maxAge, 'minutes'),
+      },
+    },
+  });
+
+  response.send({
+    affectedRows,
+    time: performance.now() - t0,
+  });
+});
+
+router.post('/deleteUnactivatedDevices', async (request, response) => {
+  const t0 = performance.now();
+  const maxAge = config.get('luca.operatorDevice.unactivated.maxAgeMinutes');
+  const affectedRows = await database.OperatorDevice.destroy({
+    where: {
+      activated: false,
+      createdAt: {
+        [Op.lt]: moment().subtract(maxAge, 'minutes'),
+      },
+    },
+  });
+
+  response.send({
+    affectedRows,
+    time: performance.now() - t0,
+  });
+});
+
 router.post('/deleteOldAuditLogs', async (request, response) => {
   const t0 = performance.now();
   const maxAge = config.get('luca.auditLogs.maxAge');

@@ -15,7 +15,7 @@ import {
 import { limitRequestsByUserPerHour } from 'middlewares/rateLimit';
 import database from 'database/models';
 import { extractAndVerifyLocationTransfer } from 'utils/signedKeys';
-import ApiError from 'utils/apiError';
+import { ApiError, ApiErrorType } from 'utils/apiError';
 import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
 import { logEvent } from 'utils/hdAuditLog';
 import {
@@ -32,14 +32,13 @@ const router = Router();
 router.get(
   '/:transferId',
   validateParametersSchema(transferIdParametersSchema),
-  async (request, response) => {
+  async request => {
     const transfer = await database.LocationTransfer.findByPk(
       request.params.transferId
     );
 
     if (!transfer || !request.user) {
-      // @ts-ignore - ApiError fields are added dynamically
-      throw new ApiError(ApiError.LOCATION_TRANSFER_NOT_FOUND);
+      throw new ApiError(ApiErrorType.LOCATION_TRANSFER_NOT_FOUND);
     }
 
     if (
@@ -47,8 +46,7 @@ router.get(
       transfer.departmentId !==
         (request.user as IHealthDepartmentEmployee).departmentId
     ) {
-      // @ts-ignore - ApiError fields are added dynamically
-      throw new ApiError(ApiError.FORBIDDEN);
+      throw new ApiError(ApiErrorType.FORBIDDEN);
     }
 
     const location = await database.Location.findByPk(transfer.locationId, {
@@ -64,8 +62,7 @@ router.get(
       isUserOfType('Operator', request) &&
       location.operator !== request.user.uuid
     ) {
-      // @ts-ignore - ApiError fields are added dynamically
-      throw new ApiError(ApiError.FORBIDDEN);
+      throw new ApiError(ApiErrorType.FORBIDDEN);
     }
 
     return {
@@ -109,8 +106,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
         },
       });
 
-      // @ts-ignore - ApiError fields are added dynamically
-      throw new ApiError(ApiError.TOO_MANY_LOCATIONS);
+      throw new ApiError(ApiErrorType.TOO_MANY_LOCATIONS);
     }
 
     const tracingProcessId = await database
@@ -138,8 +134,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
               },
             });
 
-            // @ts-ignore - ApiError fields are added dynamically
-            throw new ApiError(ApiError.USER_TRANSFER_NOT_FOUND);
+            throw new ApiError(ApiErrorType.USER_TRANSFER_NOT_FOUND);
           }
 
           await userTransfer.update(
@@ -166,8 +161,8 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
             })
           );
         } catch (error) {
-          // @ts-ignore - ApiError fields are added dynamically
-          throw new ApiError(ApiError.INVALID_SIGNATURE, error.message);
+          // @ts-ignore error is unknown typed
+          throw new ApiError(ApiErrorType.INVALID_SIGNATURE, error.message);
         }
 
         await Promise.all(
@@ -258,12 +253,11 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
         });
 
         if (error instanceof ApiError) throw error;
-        // @ts-ignore - ApiError fields are added dynamically
-        throw new ApiError(ApiError.UNKNOWN_API_ERROR);
+        throw new ApiError(ApiErrorType.UNKNOWN_API_ERROR);
       });
 
     return response.send({ tracingProcessId });
   }
 );
 
-module.exports = router;
+export default router;

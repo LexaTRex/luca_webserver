@@ -58,8 +58,13 @@ const locationIdParametersSchema = z.object({
   locationId: z.uuid(),
 });
 
+const locationTracesQuerySchema = z.object({
+  duration: z.enum(['today', 'week']).optional(),
+});
+
 module.exports = {
   createSchema,
   updateSchema,
+  locationTracesQuerySchema,
   locationIdParametersSchema,
 };

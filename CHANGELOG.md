@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.2.0 (2021-10-01)
+* **backend** feat: add operator device support
+* **backend** feat: add operator device feature flag
+* **locations** feat: add devices list screen
+* **locations** feat: add device reactivation flow
+* **locations** feat: add device registration flow
+
 ### 2.1.0 (2021-10-01)
 * **backend** feat: add signed location transfer support
 * **backend** feat: add average checkin time

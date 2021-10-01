@@ -7,7 +7,7 @@ const {
 } = require('../../../middlewares/validateSchema');
 
 const database = require('../../../database');
-const ApiError = require('../../../utils/apiError');
+const { ApiError, ApiErrorType } = require('../../../utils/apiError');
 
 const { issuerIdParametersSchema } = require('./issuers.schemas');
 
@@ -40,7 +40,7 @@ router.get(
     );
 
     if (!healthDepartment) {
-      throw new ApiError(ApiError.HEALTH_DEPARTMENT_NOT_FOUND);
+      throw new ApiError(ApiErrorType.HEALTH_DEPARTMENT_NOT_FOUND);
     }
 
     return response.send({
