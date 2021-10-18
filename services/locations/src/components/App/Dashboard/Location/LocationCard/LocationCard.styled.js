@@ -16,6 +16,7 @@ export const StyledTitle = styled.div`
   font-size: 16px;
   font-weight: 600;
   padding: 24px 32px 32px;
+  white-space: nowrap;
   border-bottom: ${({ showBorder }) => (showBorder ? 1 : 0)}px solid
     rgb(151, 151, 151);
 `;

@@ -28,8 +28,10 @@ export const HelpCenter = ({ operator }) => {
       <Layout>
         <Content style={contentStyles}>
           <Wrapper>
-            <Header>{intl.formatMessage({ id: 'helpCenter.title' })}</Header>
-            <CardWrapper>
+            <Header data-cy="helpCenterTitle">
+              {intl.formatMessage({ id: 'helpCenter.title' })}
+            </Header>
+            <CardWrapper data-cy="helpCenterWrapper">
               <Links />
               <ContactSection operator={operator} />
             </CardWrapper>

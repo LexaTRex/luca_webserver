@@ -4,7 +4,7 @@ WORKDIR /app
 ARG NPM_CONFIG__AUTH
 
 COPY package.json yarn.lock .npmrc .yarnrc ./
-RUN yarn install --production --check-files
+RUN yarn install --check-files
 COPY jsconfig.json craco.config.js ant.theme.js ./
 COPY public/  ./public/
 COPY src/  ./src/

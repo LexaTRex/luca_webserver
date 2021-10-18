@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Form, Input, notification } from 'antd';
 import { PrimaryButton } from 'components/general/Buttons.styled';
@@ -12,22 +12,14 @@ import {
 } from 'components/hooks/useValidators';
 
 import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
-
 import { getDefaultNameRule, getUniqueNameRule } from 'utils/validatorRules';
 
-import {
-  Overview,
-  Heading,
-  ButtonWrapper,
-  AddressRow,
-  AddressHeader,
-  Address,
-} from './SettingsOverview.styled';
+import { Address } from 'components/general/Address';
+import { Overview, Heading, ButtonWrapper } from './SettingsOverview.styled';
 
 export const SettingsOverview = ({ location, isLast, refetch }) => {
   const intl = useIntl();
   const [form] = Form.useForm();
-  const formReference = useRef(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [isLocationNameTaken, setIsLocationNameTaken] = useState(false);
 
@@ -75,7 +67,7 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
     })
       .then(response => {
         refetch();
-        formReference.current?.setFieldsValue({
+        form.setFieldsValue({
           phone: formattedPhoneNumber,
           locationName: formattedLocationName,
         });
@@ -84,10 +76,6 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
       .catch(() => {
         handleServerError();
       });
-  };
-
-  const submitForm = () => {
-    formReference.current.submit();
   };
 
   const onValueUpdate = (_, values) => {
@@ -123,7 +111,6 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
         onFinish={onFinish}
         style={{ maxWidth: 350 }}
         form={form}
-        ref={formReference}
         initialValues={{
           locationName: location.name,
           phone: location.phone,
@@ -158,16 +145,18 @@ export const SettingsOverview = ({ location, isLast, refetch }) => {
           <Input />
         </Form.Item>
       </Form>
-      <Address>
-        <AddressHeader>
-          {intl.formatMessage({ id: 'settings.location.address' })}
-        </AddressHeader>
-        <AddressRow>{`${location.streetName} ${location.streetNr}`}</AddressRow>
-        <AddressRow>{`${location.zipCode} ${location.city}`}</AddressRow>
-      </Address>
+      <Address
+        location={location}
+        refetch={refetch}
+        streetName={location.streetName}
+        streetNr={location.streetNr}
+        city={location.city}
+        zipCode={location.zipCode}
+        isGroup={false}
+      />
       <ButtonWrapper>
         <PrimaryButton
-          onClick={submitForm}
+          onClick={form.submit}
           disabled={isButtonDisabled}
           data-cy="editLocation"
         >

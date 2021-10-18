@@ -33,7 +33,7 @@ export const Profile = ({ operator, refetch }) => {
               </>
             )}
             <GroupOverview />
-            <Services supportCode={operator.supportCode} />
+            <Services />
             <AccountDeletion operator={operator} refetch={refetch} />
             <LocationFooter />
           </Wrapper>

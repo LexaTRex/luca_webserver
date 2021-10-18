@@ -85,10 +85,12 @@ module.exports = {
       maxAge: moment.duration(45, 'days').as('hours'),
     },
     userTransfers: {
-      maxAge: moment.duration(48, 'hours').as('hours'),
+      maxAgeUnused: moment.duration(48, 'hours').as('hours'),
+      maxAge: moment.duration(28, 'days').as('hours'),
     },
     locations: {
       maxAge: moment.duration(28, 'days').as('hours'),
+      maxAdditionalData: 10,
     },
     operators: {
       deleted: {
@@ -121,6 +123,9 @@ module.exports = {
     healthDepartments: {
       maxAmount: 450,
     },
+    alerts: {
+      receiverEmail: '',
+    },
   },
   emails: {
     expiry: moment.duration(24, 'hours').as('hours'),
@@ -134,7 +139,7 @@ module.exports = {
   },
   keys: {
     daily: {
-      max: 28,
+      max: 35,
       minKeyAge: moment.duration(24, 'hours').as('hours'),
     },
     operatorDevice: {
@@ -174,6 +179,11 @@ AwEHoUQDQgAEc0JU9Xhlom553niIAc4K9C/1ZXOTAQp4BE3MdB9LqeGgVw78Krp0
       root: ROOT_CA,
       basic: BASIC_CA,
     },
+  },
+  blockListSources: {
+    netset: '',
+    singleCSV: '',
+    doubleCSV: '',
   },
   rate_limits: {
     default_rate_limit_minute: 5,
@@ -223,9 +233,15 @@ AwEHoUQDQgAEc0JU9Xhlom553niIAc4K9C/1ZXOTAQp4BE3MdB9LqeGgVw78Krp0
     challenges_operatorDevice_patch_ratelimit_day: 8000,
     challenges_operatorDevice_patch_ratelimit_hour: 800,
     notifications_traces_get_ratelimit_hour: 5,
-    notifications_v4_health_departments_get_ratelimit_hour: 1000,
     notifications_v4_traces_active_chunk_get_ratelimit_hour: 1000,
     notifications_v4_traces_archived_chunk_get_ratelimit_hour: 7500,
     notifications_v4_config_get_ratelimit_hour: 1000,
+    keys_alert_ratelimit_hour: 5,
+    audit_log_event_download_traces_ratelimit_hour: 20,
+    audit_log_event_export_traces_ratelimit_hour: 20,
+    audit_log_download_ratelimit_hour: 20,
+    audit_log_download_ratelimit_user_hour: 10,
+    audit_log_download_ratelimit_minute: 5,
+    audit_log_download_ratelimit_user_minute: 1,
   },
 };

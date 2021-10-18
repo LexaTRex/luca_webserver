@@ -134,7 +134,7 @@ paths:
         '400':
           $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Location not found
+          description: Location not found or not private Location
         '429':
           $ref: '#/components/schemas/TooManyRequestsHour'
   '/locations/{accessId}':
@@ -155,7 +155,7 @@ paths:
         '400':
           $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Location not found
+          description: Location not found or not private Location
         '429':
           $ref: '#/components/schemas/TooManyRequestsDay'
       description: Deletes a location (by accessId) and ends all ongoing traces.

@@ -102,8 +102,8 @@ router
    * Gets a tracing process by its Id.
    */
   .get(
-    validateParametersSchema(tracingProcessIdParametersSchema),
     requireHealthDepartmentEmployee,
+    validateParametersSchema(tracingProcessIdParametersSchema),
     async (request, response) => {
       const tracingProcess = await database.TracingProcess.findOne({
         where: {

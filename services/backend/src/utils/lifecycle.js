@@ -1,6 +1,6 @@
 const config = require('config');
 const moment = require('moment');
-const logger = require('./logger');
+const logger = require('./logger').default;
 const { sleep } = require('./sleep');
 
 const state = {
@@ -33,12 +33,12 @@ const sigtermHandler = () => {
 };
 
 const unhandledRejectionHandler = error => {
-  logger.error('unhandledRejection', error);
+  logger.error(error, 'unhandledRejection');
   process.exit(1);
 };
 
 const uncaughtExceptionHandler = error => {
-  logger.error('uncaughtException', error);
+  logger.error(error, 'uncaughtException');
   process.exit(1);
 };
 

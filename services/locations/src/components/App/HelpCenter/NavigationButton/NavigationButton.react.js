@@ -11,7 +11,7 @@ export const NavigationButton = () => {
   const navigate = () => history.goBack();
 
   return (
-    <Navigation onClick={navigate}>
+    <Navigation onClick={navigate} data-cy="helpCenterBackButton">
       <StyledLeftOutlined />
       {intl.formatMessage({
         id: 'header.profile.back',

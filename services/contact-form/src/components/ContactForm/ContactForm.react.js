@@ -1,8 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
-// Components
 import { InputForm } from 'components/InputForm';
 
 import {
@@ -14,13 +13,14 @@ import {
 export const ContactForm = ({ scanner, formId }) => {
   const intl = useIntl();
 
-  const title = intl.formatMessage({ id: 'contactForm.site.title' });
-  const meta = intl.formatMessage({ id: 'contactForm.site.meta' });
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'contactForm.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'contactForm.site.meta' })}
+        />
       </Helmet>
       <RegistrationWrapper>
         <RegistrationCard>

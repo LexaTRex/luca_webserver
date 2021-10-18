@@ -1,11 +1,10 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Tooltip } from 'antd';
 
 import { getDownloadLinks, getExternalLinks } from './Services.helper';
-import { Content, Heading, Wrapper, Link, Text } from './Services.styled';
+import { Content, Heading, Wrapper, Link } from './Services.styled';
 
-export const Services = ({ supportCode }) => {
+export const Services = () => {
   const intl = useIntl();
 
   const downloadLinks = getDownloadLinks(intl);
@@ -39,11 +38,6 @@ export const Services = ({ supportCode }) => {
             {externalLink.intlId}
           </Link>
         ))}
-        <Tooltip placement="topLeft" title={supportCode}>
-          <Text>
-            {intl.formatMessage({ id: 'profile.services.supportCode' })}
-          </Text>
-        </Tooltip>
       </Wrapper>
     </Content>
   );

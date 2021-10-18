@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
-// Components
 import { Header } from 'components/Header';
 import { ScanForm } from './ScanForm';
 import { ScannerWrapper } from './QrScanner.styled';
@@ -11,14 +10,14 @@ export const QrScanner = ({ scanner }) => {
   const intl = useIntl();
   const [outerFocus, setOuterFocus] = useState(false);
 
-  const title = intl.formatMessage({ id: 'scanner.site.title' });
-  const meta = intl.formatMessage({ id: 'scanner.site.meta' });
-
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'scanner.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'scanner.site.meta' })}
+        />
       </Helmet>
       <ScannerWrapper
         onClick={() => {

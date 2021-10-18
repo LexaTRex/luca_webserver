@@ -206,3 +206,98 @@ paths:
           description: Location not found
       tags:
         - Operators
+  '/operators/locations/{locationId}/address':
+    parameters:
+      - schema:
+          type: string
+        name: locationId
+        in: path
+        required: true
+    patch:
+      summary: 'Update Address of an existing Location'
+      operationId: patch-operators-locations-address-locationId
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/RequiredUserOfTypeOperator'
+        '403':
+          description: The operator account has been deactivated
+        '404':
+          description: Location not found
+        '409':
+          description: Location name not unique inside group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                radius:
+                  type: number
+                streetName:
+                  type: string
+                  minLength: 1
+                streetNr:
+                  type: string
+                  minLength: 1
+                zipCode:
+                  type: string
+                  minLength: 1
+                city:
+                  type: string
+                  minLength: 1
+                state:
+                  type: string
+                  minLength: 1
+                lat:
+                  type: number
+                lng:
+                  type: number
+      tags:
+        - Operators
+  '/operators/locations/traces/{locationId}':
+    parameters:
+      - schema:
+          type: string
+        name: accessId
+        in: path
+        required: true
+    get:
+      summary: Get traces for an access ID
+      operationId: get-locations-traces-accessId
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Location not found or not private Location
+        '429':
+          $ref: '#/components/schemas/TooManyRequestsHour'
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    traceId:
+                      type: string
+                      minLength: 1
+                    checkin:
+                      type: number
+                    checkout:
+                      type: number
+                    data:
+                      type: object
+                  required:
+                    - traceId
+                    - checkin
+                    - checkout
+      tags:
+        - Locations

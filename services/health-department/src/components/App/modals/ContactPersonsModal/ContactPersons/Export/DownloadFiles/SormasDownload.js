@@ -3,6 +3,7 @@ import moment from 'moment';
 import FileSaver from 'file-saver';
 import { useIntl } from 'react-intl';
 
+import { logDownload } from 'network/api';
 import { createCSV } from 'utils/exports/csv';
 import { getFormattedDateTime } from 'utils/time';
 
@@ -223,6 +224,12 @@ export const SormasDownload = ({ traces, location }) => {
         { type: 'text/csv;charset=utf-8' }
       );
       FileSaver.saveAs(blob, filename);
+
+      logDownload({
+        type: 'sormas',
+        transferId: location.transferId,
+        amount: traces.length,
+      });
     } catch {
       showErrorNotification(intl);
     }

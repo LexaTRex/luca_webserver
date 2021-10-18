@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { useIntl } from 'react-intl';
 import { notification } from 'antd';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 import parsePhoneNumber from 'libphonenumber-js/max';
 
@@ -35,11 +35,11 @@ import {
 } from './ContactInformation.styled';
 
 const ChallengeFormContent = ({ newPhoneNumber, setChallengeId }) => {
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
   return (
     <StyledContent>
       <StyledDescription>
-        {formatMessage({
+        {intl.formatMessage({
           id: 'OnBoarding.PhoneNumberInputStep.TANDescription',
         })}
       </StyledDescription>
@@ -47,12 +47,12 @@ const ChallengeFormContent = ({ newPhoneNumber, setChallengeId }) => {
         type="tel"
         name="tan"
         auto-complete="one-time-code"
-        label={formatMessage({ id: 'Form.Tan.Label' })}
-        placeholder={formatMessage({ id: 'Form.Tan.Placeholder' })}
+        label={intl.formatMessage({ id: 'Form.Tan.Label' })}
+        placeholder={intl.formatMessage({ id: 'Form.Tan.Placeholder' })}
         rules={[
           {
             required: true,
-            message: formatMessage({ id: 'Form.Validation.isRequired' }),
+            message: intl.formatMessage({ id: 'Form.Validation.isRequired' }),
           },
         ]}
       />
@@ -66,7 +66,7 @@ const ChallengeFormContent = ({ newPhoneNumber, setChallengeId }) => {
               .catch(() => setChallengeId(null));
           }}
         >
-          {formatMessage({ id: 'Form.Resend' })}
+          {intl.formatMessage({ id: 'Form.Resend' })}
         </StyledLink>
       </StyledFooter>
     </StyledContent>
@@ -175,7 +175,7 @@ function UserInformationFormContent({ user }) {
 
 export function ContactInformation() {
   const history = useHistory();
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
   const [user, setUser] = useState({});
   const [temporaryUser, setTemporaryUser] = useState({});
   const [newPhoneNumber, setNewPhoneNumber] = useState(null);
@@ -183,11 +183,11 @@ export function ContactInformation() {
 
   const internalIndexedDBError = useCallback(() => {
     notification.error({
-      message: formatMessage({
+      message: intl.formatMessage({
         id: 'IndexedDB.error.transaction',
       }),
     });
-  }, [formatMessage]);
+  }, [intl]);
 
   useEffect(() => {
     indexDB.users
@@ -199,7 +199,7 @@ export function ContactInformation() {
 
   const changeUserInfoError = () => {
     notification.error({
-      message: formatMessage({
+      message: intl.formatMessage({
         id: 'ContactInformation.error.changeUserInfo',
       }),
     });
@@ -207,7 +207,7 @@ export function ContactInformation() {
 
   const verificationFailedError = () => {
     notification.error({
-      message: formatMessage({
+      message: intl.formatMessage({
         id: 'OnBoarding.PhoneNumberInputStep.VerifyFailed',
       }),
     });
@@ -252,14 +252,16 @@ export function ContactInformation() {
   return (
     <>
       <Helmet>
-        <title>{formatMessage({ id: 'ContactInformation.PageTitle' })}</title>
+        <title>
+          {intl.formatMessage({ id: 'ContactInformation.PageTitle' })}
+        </title>
       </Helmet>
       <StyledForm initialValues={user} onFinish={onSubmit}>
         <AppLayout
           footerHeight={challengeId ? '92px' : '64px'}
           header={
             <AppHeadline>
-              {formatMessage({ id: 'ContactInformation.Headline' })}
+              {intl.formatMessage({ id: 'ContactInformation.Headline' })}
             </AppHeadline>
           }
           footer={
@@ -268,7 +270,7 @@ export function ContactInformation() {
                 htmlType="submit"
                 id={challengeId ? 'verifyTAN' : 'save'}
               >
-                {formatMessage({ id: 'ContactInformation.Submit' })}
+                {intl.formatMessage({ id: 'ContactInformation.Submit' })}
               </StyledSaveButton>
               {challengeId && (
                 <StyledLink
@@ -278,7 +280,7 @@ export function ContactInformation() {
                     setChallengeId(null);
                   }}
                 >
-                  {formatMessage({ id: 'Form.Cancel' })}
+                  {intl.formatMessage({ id: 'Form.Cancel' })}
                 </StyledLink>
               )}
             </StyledFooter>

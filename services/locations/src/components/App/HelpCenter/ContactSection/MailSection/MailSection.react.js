@@ -28,7 +28,10 @@ export const MailSection = ({ operator }) => {
       <StyledMailOutlined />
       <Heading>{intl.formatMessage({ id: 'helpCenter.mail.heading' })}</Heading>
       <Text>{intl.formatMessage({ id: 'helpCenter.mail.text' })}</Text>
-      <SecondaryButton onClick={openContactForm}>
+      <SecondaryButton
+        onClick={openContactForm}
+        data-cy="helpCenterModalTrigger"
+      >
         {intl.formatMessage({ id: 'helpCenter.mail.buttonText' })}
         <ArrowRightOutlined />
       </SecondaryButton>

@@ -11,6 +11,7 @@ import {
   TN_LOCATION_INFO_COLUMNS,
   TN_PERSON_INFO_COLUMNS,
 } from 'constants/octowareTNFields';
+import { logDownload } from 'network/api';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 import { sanitizeForCSV } from 'utils/sanitizer';
 import { DownloadButton } from '../Export.styled';
@@ -89,7 +90,15 @@ export const OctoWareTNDownload = ({ traces, location }) => {
     <ExcelFile
       filename={getSanitizedFilename(location.name, 'octoware')}
       element={
-        <DownloadButton>
+        <DownloadButton
+          onClick={() =>
+            logDownload({
+              type: 'octoware',
+              transferId: location.transferId,
+              amount: traces.length,
+            })
+          }
+        >
           {intl.formatMessage({ id: 'download.octoWareTN' })}
         </DownloadButton>
       }

@@ -9,7 +9,7 @@ const YAML = require('js-yaml');
 const fs = require('fs');
 const mergeWith = require('lodash/mergeWith');
 const isArray = require('lodash/isArray');
-const logger = require('../../utils/logger');
+const logger = require('../../utils/logger').default;
 
 const swaggerDefinition = {
   openapi: '3.0.0',

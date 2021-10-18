@@ -1,6 +1,7 @@
 const responseTime = require('response-time');
 
 const { client } = require('../utils/metrics');
+const normalizePath = require('../utils/normalizePath');
 
 const labelNames = ['method', 'statusCode', 'path', 'host'];
 
@@ -23,12 +24,16 @@ module.exports = responseTime((request, response, time) => {
     method,
     route,
     baseUrl,
+    originalUrl,
     headers: { host },
   } = request;
   const { statusCode, _contentLength } = response;
 
   if (!route) return;
-  const path = `${baseUrl}${route.path}`.toLowerCase();
+
+  const path = `${baseUrl || normalizePath(originalUrl, route.path)}${
+    baseUrl ? route.path : ''
+  }`.toLowerCase();
 
   const labels = {
     method,

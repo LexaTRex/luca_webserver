@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 
 import menu from 'assets/menu.svg';
@@ -28,7 +28,6 @@ import { VersionModal } from './VersionModal/VersionModal.react';
 export function Settings() {
   const intl = useIntl();
   const history = useHistory();
-  const { formatMessage } = useIntl();
   const [showResetAccount, setShowResetAccount] = useState(false);
   const [showVersion, setShowVersion] = useState(false);
 
@@ -41,7 +40,7 @@ export function Settings() {
         header={
           <>
             <AppHeadline>
-              {formatMessage({ id: 'Settings.Headline' })}
+              {intl.formatMessage({ id: 'Settings.Headline' })}
             </AppHeadline>
             <StyledHeaderMenuIconContainer
               id="close"
@@ -57,7 +56,7 @@ export function Settings() {
               id="close"
               onClick={() => history.push(HOME_PATH)}
             >
-              {formatMessage({ id: 'Settings.Back' })}
+              {intl.formatMessage({ id: 'Settings.Back' })}
             </StyledBackButton>
           </>
         }
@@ -67,43 +66,43 @@ export function Settings() {
             id="editContactInformations"
             onClick={() => history.push(EDIT_CONTACT_INFORMATION_SETTING)}
           >
-            {formatMessage({ id: 'Settings.ContactInformation' })}
+            {intl.formatMessage({ id: 'Settings.ContactInformation' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="privacy"
             onClick={() => window.open(PRIVACY_LINK, '_blank')}
           >
-            {formatMessage({ id: 'Settings.Privacy' })}
+            {intl.formatMessage({ id: 'Settings.Privacy' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="termsAndConditions"
             onClick={() => window.open(TERMS_CONDITIONS_LINK, '_blank')}
           >
-            {formatMessage({ id: 'Settings.TermsOfService' })}
+            {intl.formatMessage({ id: 'Settings.TermsOfService' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="repository"
             onClick={() => window.open(REPOSITORY_URL, '_blank')}
           >
-            {formatMessage({ id: 'Settings.Repository' })}
+            {intl.formatMessage({ id: 'Settings.Repository' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="version"
             onClick={() => setShowVersion(true)}
           >
-            {formatMessage({ id: 'version.version' })}
+            {intl.formatMessage({ id: 'version.version' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="licenses"
             onClick={() => window.open(LICENSES_ROUTE, '_blank')}
           >
-            {formatMessage({ id: 'license.license' })}
+            {intl.formatMessage({ id: 'license.license' })}
           </StyledSettingsButton>
           <StyledSettingsButton
             id="delete"
             onClick={() => setShowResetAccount(true)}
           >
-            {formatMessage({ id: 'Data.DeleteAccount.Title' })}
+            {intl.formatMessage({ id: 'Data.DeleteAccount.Title' })}
           </StyledSettingsButton>
         </AppContent>
       </AppLayout>

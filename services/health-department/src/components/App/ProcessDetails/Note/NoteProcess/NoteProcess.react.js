@@ -58,7 +58,7 @@ export const NoteProcess = ({
     updateProcessRequest(process.uuid, keys, note)
       .then(() => {
         setEditMode(false);
-        queryClient.invalidateQueries(`process${processId}`);
+        queryClient.invalidateQueries(['processes', { processId }]);
         notification.success({
           message: intl.formatMessage({
             id: 'processDetails.note.success',

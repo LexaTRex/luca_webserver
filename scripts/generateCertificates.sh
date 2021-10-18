@@ -28,8 +28,9 @@ else
 
  # generate client certificates
   openssl pkcs12 -export -inkey $CERTS_DIR/health-key.pem  -in $CERTS_DIR/health.pem -name health -passout pass:$PFX_PASS -out $CERTS_DIR/health.pfx
-
 fi
+
+echo "Copying certs..."
 # copy certificates to services
 # nginx
 cp $CERTS_DIR/ssl.pem services/elb/ssl/ssl.crt.pem
@@ -46,4 +47,8 @@ chmod 644 services/backend/certs/*.pem
 
 # e2e
 cp $CERTS_DIR/health.pfx e2e/certs/health.pfx
-chmod 644  e2e/certs/health.pfx
+printf $PFX_PASS > e2e/certs/health-passphrase.txt
+
+# e2e
+#cp $CERTS_DIR/health.pfx e2e/certs/health.pfx
+#chmod 644  e2e/certs/health.pfx

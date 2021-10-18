@@ -6,7 +6,7 @@ import { Alert } from 'antd';
 import { useIntl } from 'react-intl';
 
 import { confirmEmail } from 'network/api';
-import { AUTHENTICATION_ROUTE } from 'constants/routes';
+import { LOGIN_ROUTE } from 'constants/routes';
 import { Header } from 'components/Header';
 
 import { Main, Wrapper } from './ActivateEmail.styled';
@@ -27,7 +27,7 @@ const ActivateEmailRaw = () => {
         setStatus(response.status);
 
         setTimeout(() => {
-          dispatch(push(AUTHENTICATION_ROUTE));
+          dispatch(push(LOGIN_ROUTE));
         }, REDIRECT_TIMEOUT);
 
         setInterval(() => {

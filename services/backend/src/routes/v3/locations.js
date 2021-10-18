@@ -25,8 +25,8 @@ const {
 // create private event
 router.post(
   '/private',
-  validateSchema(privateEventCreateSchema),
   limitRequestsPerDay('locations_private_post_ratelimit_day'),
+  validateSchema(privateEventCreateSchema),
   async (request, response) => {
     const location = await database.Location.create({
       radius: 0,
@@ -56,7 +56,7 @@ router.delete(
         accessId: request.params.accessId,
       },
     });
-    if (!location) {
+    if (!location || !location.isPrivate) {
       return response.sendStatus(status.NOT_FOUND);
     }
 
@@ -115,11 +115,11 @@ router.get(
  */
 router.get(
   '/traces/:accessId',
-  validateQuerySchema(locationTracesQuerySchema),
-  validateParametersSchema(accessIdParametersSchema),
   limitRequestsPerHour('locations_traces_get_ratelimit_hour', {
     skipSuccessfulRequests: true,
   }),
+  validateQuerySchema(locationTracesQuerySchema),
+  validateParametersSchema(accessIdParametersSchema),
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -127,7 +127,7 @@ router.get(
       },
     });
 
-    if (!location) {
+    if (!location || !location.isPrivate) {
       return response.sendStatus(status.NOT_FOUND);
     }
 
@@ -151,10 +151,10 @@ router.get(
 
     const traces = await database.Trace.findAll({
       where: traceQuery,
+      order: [['updatedAt', 'DESC']],
       include: {
         model: database.TraceData,
       },
-      order: [['updatedAt', 'DESC']],
     });
 
     return response.send(

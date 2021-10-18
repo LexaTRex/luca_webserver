@@ -2,7 +2,9 @@
 import config from 'config';
 import database from 'database';
 import moment from 'moment-timezone';
+import { Transform } from 'stream';
 import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
+import type { TransformCallback } from 'stream';
 import logger from './logger';
 
 interface GenericEvent {
@@ -133,6 +135,30 @@ interface DownloadAuditLogEvent extends GenericEvent {
   };
 }
 
+export enum DownloadTracesType {
+  CSV = 'csv',
+  EXCEL = 'excel',
+  SORMAS = 'sormas',
+  OCTOWARE = 'octoware',
+}
+
+interface DownloadTracesEvent extends GenericEvent {
+  type: AuditLogEvents.DOWNLOAD_TRACES;
+  meta: {
+    type: DownloadTracesType;
+    transferId: string;
+    amount: number;
+  };
+}
+
+interface ExportTracesEvent extends GenericEvent {
+  type: AuditLogEvents.DOWNLOAD_TRACES;
+  meta: {
+    transferId: string;
+    amount: number;
+  };
+}
+
 type LogEvent =
   | GenericEvent
   | RekeyBadgeKeypairEvent
@@ -148,7 +174,9 @@ type LogEvent =
   | CreateEmployeeEvent
   | ResetPasswordEvent
   | ChangeRoleEvent
-  | DownloadAuditLogEvent;
+  | DownloadAuditLogEvent
+  | DownloadTracesEvent
+  | ExportTracesEvent;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function logEvent(employee: any, event: LogEvent) {
@@ -161,12 +189,27 @@ export async function logEvent(employee: any, event: LogEvent) {
       meta: event.meta,
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) logger.error(error);
   }
 }
 
 export const toReadableDate = (date: string) => {
   return moment(date).tz(config.get('tz')).format('YYYY-MM-DD HH:mm:ss');
+};
+
+const getReadableDownloadFormat = (type: DownloadTracesType): string => {
+  switch (type) {
+    case DownloadTracesType.CSV:
+      return 'als csv';
+    case DownloadTracesType.EXCEL:
+      return 'für Excel (xlsx)';
+    case DownloadTracesType.SORMAS:
+      return 'für SORMAS (csv)';
+    case DownloadTracesType.OCTOWARE:
+      return 'für OctoWareTN (xlsx)';
+    default:
+      return '';
+  }
 };
 
 const MESSAGES = {
@@ -263,6 +306,16 @@ const MESSAGES = {
     [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Badge Public Key nicht gefunden)`,
     [AuditStatusType.ERROR_INVALID_SIGNATURE]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Signatur nicht korrekt)`,
   }),
+  [AuditLogEvents.DOWNLOAD_TRACES]: (event: DownloadTracesEvent) => ({
+    [AuditStatusType.SUCCESS]: `hat für den Nachverfolgungsprozess ${
+      event.meta.transferId
+    } ${event.meta.amount} Traces ${getReadableDownloadFormat(
+      event.meta.type
+    )} heruntergeladen.`,
+  }),
+  [AuditLogEvents.EXPORT_TRACES]: (event: ExportTracesEvent) => ({
+    [AuditStatusType.SUCCESS]: `hat für ${event.meta.transferId} ${event.meta.amount} Traces für SORMAS (Schnittstelle) exportiert.`,
+  }),
 };
 
 export function toReadableEvent(event: LogEvent) {
@@ -290,7 +343,7 @@ export function toReadableEvent(event: LogEvent) {
 
 // any until models are typed
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function entriesToPlainText(entries: any[]) {
+function entriesToPlainText(entries: any[]) {
   return `${entries
     .map(entry => {
       const readableEvent = toReadableEvent(entry);
@@ -304,5 +357,13 @@ export function entriesToPlainText(entries: any[]) {
       } ${readableEvent}`;
     })
     .filter(event => !!event)
-    .join('\n')}`;
+    .join('\n')}\n`;
+}
+
+export class AuditLogTransformer extends Transform {
+  // any until models are typed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _transform = (chunk: any[], _: any, done: TransformCallback) => {
+    done(null, entriesToPlainText(chunk));
+  };
 }

@@ -52,17 +52,17 @@ router.post(
  *
  * @see https://www.luca-app.de/securityoverview/processes/tracing_access_to_history.html#accessing-the-infected-guest-s-tracing-secrets
  */
-router.get(
-  '/tan/:tan',
-  requireHealthDepartmentEmployee,
-  validateParametersSchema(tanParametersSchema),
+router.post(
+  '/tan',
   limitRequestsPerHour('usertransfers_get_ratelimit_hour', {
     skipSuccessfulRequests: true,
   }),
+  requireHealthDepartmentEmployee,
+  validateSchema(tanParametersSchema),
   async (request, response) => {
     const userTransfer = await database.UserTransfer.findOne({
       where: {
-        tan: request.params.tan.toUpperCase(),
+        tan: request.body.tan.toUpperCase(),
         departmentId: null,
       },
     });

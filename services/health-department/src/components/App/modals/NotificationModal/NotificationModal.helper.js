@@ -1,10 +1,10 @@
-import { NOTIFIEABLE_DEVICE_TYPES } from 'constants/deviceTypes';
+import { NOTIFIABLE_DEVICE_TYPES } from 'constants/deviceTypes';
 
 export const filterByDeviceType = contactPersons =>
   contactPersons.filter(
     contact =>
-      contact.deviceType === NOTIFIEABLE_DEVICE_TYPES.IOS ||
-      contact.deviceType === NOTIFIEABLE_DEVICE_TYPES.ANDROID
+      contact.deviceType === NOTIFIABLE_DEVICE_TYPES.IOS ||
+      contact.deviceType === NOTIFIABLE_DEVICE_TYPES.ANDROID
   );
 
 export const filterRiskLevels = (traceIdsToFilter, riskLevels, level) =>

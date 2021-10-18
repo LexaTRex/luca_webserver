@@ -82,9 +82,12 @@ export const AverageCheckinTime = ({ location }) => {
         </StyledSwitchContainer>
       </CardSectionTitle>
       <CardSectionDescription>
-        {intl.formatMessage({
-          id: 'settings.location.checkout.average.description',
-        })}
+        {intl.formatMessage(
+          {
+            id: 'settings.location.checkout.average.description',
+          },
+          { br: <br /> }
+        )}
       </CardSectionDescription>
       {isAverageTimeActive && (
         <PickerWrapper>

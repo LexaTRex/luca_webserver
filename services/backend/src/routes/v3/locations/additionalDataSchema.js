@@ -2,6 +2,7 @@
  * @overview Provides CRUD endpoints for additional data schemes of a given location
  * @see https://www.luca-app.de/securityoverview/processes/additional_data.html
  */
+const config = require('config');
 const router = require('express').Router();
 const status = require('http-status');
 
@@ -70,6 +71,14 @@ router.post(
 
     if (!location) {
       return response.sendStatus(status.NOT_FOUND);
+    }
+    const existingCount = await database.AdditionalDataSchema.count({
+      where: {
+        locationId: request.params.locationId,
+      },
+    });
+    if (existingCount > config.get('luca.locations.maxAdditionalData')) {
+      return response.sendStatus(status.FORBIDDEN);
     }
 
     const schema = await database.AdditionalDataSchema.create({

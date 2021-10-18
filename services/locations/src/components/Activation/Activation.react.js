@@ -9,7 +9,7 @@ import { Alert } from 'antd';
 import { Header } from 'components/Header';
 
 // Constants
-import { AUTHENTICATION_ROUTE } from 'constants/routes';
+import { LOGIN_ROUTE } from 'constants/routes';
 
 // Api
 import { activateAccount } from 'network/api';
@@ -39,7 +39,7 @@ const ActivationRaw = () => {
         }
         // luca locations shall redirect to login
         setTimeout(() => {
-          dispatch(push(AUTHENTICATION_ROUTE));
+          dispatch(push(LOGIN_ROUTE));
         }, REDIRECT_TIMEOUT);
 
         setInterval(() => {

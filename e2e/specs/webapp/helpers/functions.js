@@ -30,13 +30,13 @@ export async function registerDevice() {
         const authenticationKey = KDF_SHA256(userDataSecret, '02');
         const iv = GET_RANDOM_BYTES(16);
 
-        const lastName =  faker.name.lastName();
+        const lastName = faker.name.lastName();
         const firstName = faker.name.firstName();
         const phoneNumber = faker.phone.phoneNumber();
         const email = faker.internet.email();
         const street = faker.address.streetName();
         const houseNumber = faker.address.streetAddress();
-        const zip =  faker.address.zipCode();
+        const zip = faker.address.zipCode();
         const city = faker.address.city();
         const payload = {
           v: 3,
@@ -57,7 +57,6 @@ export async function registerDevice() {
           `${encryptedData}${mac}${iv}`
         );
 
-
         const { userId } = await fetch('https://localhost/api/v3/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -70,7 +69,7 @@ export async function registerDevice() {
           }),
         }).then(response => response.json());
         const db = await connect();
-        const transaction = db.transaction(["users", "secrets"], "readwrite");
+        const transaction = db.transaction(['users', 'secrets'], 'readwrite');
         const userObjectStore = transaction.objectStore('users');
         const secretsObjectStore = transaction.objectStore('secrets');
 

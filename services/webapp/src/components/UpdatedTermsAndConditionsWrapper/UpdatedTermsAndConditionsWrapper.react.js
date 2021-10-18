@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 import { indexDB } from 'db';
 

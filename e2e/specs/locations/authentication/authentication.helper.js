@@ -11,7 +11,6 @@ export const NO_SPECIAL_CHAR_PASSWORD = 'ABCDEFGHI1';
 
 export const enterEmail = email => {
   cy.get('#email').type(email);
-  cy.get('button').click();
 };
 
 export const confirmNewAccountRegistration = () => {

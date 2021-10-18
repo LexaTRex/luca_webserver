@@ -45,9 +45,9 @@ export const SelectAssignee = ({ process }) => {
 
       setCurrentAssignee(assignee.value);
 
-      queryClient.invalidateQueries('processes');
+      queryClient.invalidateQueries(['processes', { processId: process.uuid }]);
       if (processId) {
-        queryClient.invalidateQueries(`process${processId}`);
+        queryClient.invalidateQueries(['processes', { processId }]);
       }
       return assignee.value
         ? notification.success({

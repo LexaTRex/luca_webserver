@@ -1,6 +1,7 @@
 import React from 'react';
 import FileSaver from 'file-saver';
 import { useIntl } from 'react-intl';
+import { logDownload } from 'network/api';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 import { createCSV } from 'utils/exports/csv';
 
@@ -101,6 +102,12 @@ export const CSVDownload = ({ traces, location }) => {
         { type: 'text/csv;charset=utf-8' }
       );
       FileSaver.saveAs(blob, filename);
+
+      logDownload({
+        type: 'csv',
+        transferId: location.transferId,
+        amount: traces.length,
+      });
     } catch (error) {
       console.error(error);
       showErrorNotification(intl);

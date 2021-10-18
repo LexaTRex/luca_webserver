@@ -10,6 +10,7 @@ const DEFAULT_VALUES = {
   android_minimum_version: 57,
   ios_minimum_version: 24,
   lst_minimum_version: 'v1.0.0',
+  enable_level_4_notifications: false,
 };
 
 const get = async key => {

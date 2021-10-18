@@ -1,0 +1,66 @@
+import { loginLocations } from '../utils/auth';
+import {
+  E2E_DEFAULT_LOCATION_GROUP,
+  E2E_DEFAULT_LOCATION_GROUP_2,
+  E2E_DEFAULT_GROUP_NAME,
+  E2E_GROUP_NAME_2,
+} from '../constants/locations';
+import { createGroupPayload } from '../utils/payloads.helper';
+import { deleteGroup, resetGroups } from '../utils/groups';
+
+const GROUPS = ['Nexenio_3 e2e', 'Nexenio_4 e2e'];
+const GROUP_IDS = [];
+
+describe('Change groups', () => {
+  before(() => {
+    loginLocations();
+    resetGroups();
+    cy.logoutLocations();
+  });
+  beforeEach(() => loginLocations());
+
+  it('can change groups', () => {
+    cy.getByCy('groupName').should('contain', E2E_DEFAULT_GROUP_NAME);
+    cy.getByCy('selectGroupDropdown').click();
+    cy.getByCy(`groupItem-${E2E_DEFAULT_LOCATION_GROUP_2}`).click();
+    cy.getByCy('groupName').should('contain', E2E_GROUP_NAME_2);
+    cy.getByCy('selectGroupDropdown').click();
+    cy.getByCy(`groupItem-${E2E_DEFAULT_LOCATION_GROUP}`).click();
+    cy.getByCy('groupName').should('contain', E2E_DEFAULT_GROUP_NAME);
+  });
+
+  describe('when searchable select is present', () => {
+    before(() => {
+      loginLocations();
+      GROUPS.forEach(group => {
+        cy.createGroup({ ...createGroupPayload, name: group });
+        cy.get('@groupId').then(groupId => {
+          GROUP_IDS.push(groupId);
+        });
+      });
+      cy.logoutLocations();
+    });
+    after(() => {
+      loginLocations();
+      GROUP_IDS.forEach(id => deleteGroup(id));
+    });
+
+    it('can change groups in select', () => {
+      cy.getByCy('groupName').should('contain', E2E_DEFAULT_GROUP_NAME);
+      cy.getByCy('selectGroupDropdown').click();
+      cy.getByCy('groupSelect').click();
+      cy.getByCy(`groupItem-${E2E_DEFAULT_LOCATION_GROUP_2}`).click();
+      cy.getByCy('groupName').should('contain', E2E_GROUP_NAME_2);
+      cy.getByCy('selectGroupDropdown').click();
+      cy.getByCy('groupSelect').click();
+      cy.getByCy(`groupItem-${E2E_DEFAULT_LOCATION_GROUP}`).click();
+      cy.getByCy('groupName').should('contain', E2E_DEFAULT_GROUP_NAME);
+    });
+
+    it('can search for groups', () => {
+      cy.getByCy('selectGroupDropdown').click();
+      cy.getByCy('groupSelect').type(`${E2E_GROUP_NAME_2}{enter}`);
+      cy.getByCy('groupName').should('contain', E2E_GROUP_NAME_2);
+    });
+  });
+});

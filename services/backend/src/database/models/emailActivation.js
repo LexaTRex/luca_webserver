@@ -24,5 +24,10 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false,
     },
+    discarded: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   });
 };

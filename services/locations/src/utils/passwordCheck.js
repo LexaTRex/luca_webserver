@@ -3,9 +3,9 @@ const specialCharactersFormat = /[!"#$%&'()*+,./:;<=>?@[\\\]^_{|}\-]+/;
 
 const numberFormat = /\d/;
 
-const lowerCaseFormat = /[a-z]/;
+const lowerCaseFormat = /[a-zäöüß]/;
 
-const upperCaseFormat = /[A-Z]/;
+const upperCaseFormat = /[A-ZÄÖÜ]/;
 
 export const hasSufficientLength = password => password.length > 8;
 

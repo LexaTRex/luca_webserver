@@ -6,7 +6,7 @@ import { push } from 'connected-react-router';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
-import { AUTHENTICATION_ROUTE, PROFILE_ROUTE } from 'constants/routes';
+import { LOGIN_ROUTE, PROFILE_ROUTE } from 'constants/routes';
 
 import { usePrivateKey } from 'utils/privateKey';
 import { clearHasSeenPrivateKeyModal } from 'utils/storage';
@@ -40,7 +40,7 @@ const DetailsMenu = properties => {
           return;
         }
 
-        dispatch(push(AUTHENTICATION_ROUTE));
+        dispatch(push(LOGIN_ROUTE));
         queryClient.clear();
         clearPrivateKey(null);
         clearHasSeenPrivateKeyModal();
@@ -62,7 +62,7 @@ const DetailsMenu = properties => {
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Menu {...properties}>
-      <StyledMenuItem onClick={openProfile}>
+      <StyledMenuItem data-cy="profile" onClick={openProfile}>
         {intl.formatMessage({
           id: 'header.profile',
         })}

@@ -34,10 +34,7 @@ export const SelectGroup = ({ groupId }) => {
         />
       }
     >
-      <StyledButton
-        onClick={() => setDropdownOpen(!isDropdownOpen)}
-        data-cy="selectGroupDropdown"
-      >
+      <StyledButton data-cy="selectGroupDropdown">
         {intl.formatMessage({ id: 'header.changeGroup.dropdown' })}
         <DownOutlined />
       </StyledButton>

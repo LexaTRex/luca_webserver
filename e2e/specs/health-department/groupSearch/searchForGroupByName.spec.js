@@ -1,7 +1,9 @@
-import { login, logout, createGroup, deleteGroup } from '../../locations/helpers/functions';
 import { loginHealthDepartment } from '../helper/api/auth.helper';
 import { addHealthDepartmentPrivateKeyFile } from '../helper/ui/login.helper';
-import { createGroupPayload } from '../../locations/helpers/functions.helper';
+import { createGroupPayload } from '../../locations/utils/payloads.helper';
+import { APP_ROUTE } from '../../locations/constants/routes';
+import { deleteGroup } from '../../locations/utils/groups';
+import { signHealthDepartment } from '../helper/signHealthDepartment';
 
 const FIRST_GROUP_NAME = 'test group first';
 const SECOND_GROUP_NAME = 'second test@group';
@@ -12,41 +14,65 @@ const GROUP_IDS = [];
 const GROUP_PREFIX = 'group_';
 const SEARCH_TERM = 'tes';
 
-
 describe('Health Department / Group search / Search for a group', () => {
   //create groups with different names
   before(() => {
-    login();
+    cy.basicLoginLocations();
     GROUPS.forEach(group => {
-      createGroup({ ...createGroupPayload, name: group });
+      cy.createGroup({ ...createGroupPayload, name: group });
       cy.get('@groupId').then(groupId => {
         GROUP_IDS.push(groupId);
       });
     });
-    logout();
+    cy.logoutLocations();
   });
   //delete created groups
   after(() => {
-    login();
+    cy.basicLoginLocations();
+    cy.visit(APP_ROUTE);
+    cy.url().should('contain', APP_ROUTE);
     GROUP_IDS.forEach(id => deleteGroup(id));
   });
 
   describe('when searching for groups by name', () => {
     it('display groups matching search term', () => {
       loginHealthDepartment();
+      signHealthDepartment();
       addHealthDepartmentPrivateKeyFile();
       cy.getByCy('searchGroup').should('exist').should('be.visible').click();
       //search group by term
-      cy.get('.ant-modal-content').within(($modal) => {
-        cy.getByCy('groupNameInput').should('exist').should('be.visible').type(SEARCH_TERM);
-        cy.getByCy('startGroupSearch').should('exist').should('be.visible').click();
-        //verify 2 groups are found and one is noot
-        MATCHED_GROUPS.forEach((group) => {
-          cy.getByCy(GROUP_PREFIX + group).should('exist').should('be.visible');
-          cy.getByCy(GROUP_PREFIX + group).children().then(($group) => {
-            expect($group.text()).contains(group);
-            expect($group.text()).contains(createGroupPayload.streetName + ' ' + createGroupPayload.streetNr + ', ' + createGroupPayload.zipCode + ' ' + createGroupPayload.city);
-          });
+      cy.get('.ant-modal-content').within($modal => {
+        cy.getByCy('groupNameInput')
+          .should('exist')
+          .should('be.visible')
+          .type(SEARCH_TERM);
+        cy.getByCy('startGroupSearch')
+          .should('exist')
+          .should('be.visible')
+          .click();
+        // verify 2 groups are found and one is not
+        MATCHED_GROUPS.forEach(group => {
+          cy.getByCy(GROUP_PREFIX + group)
+            .first()
+            .scrollIntoView()
+            .should('exist')
+            .should('be.visible');
+          cy.getByCy(GROUP_PREFIX + group)
+            .first()
+            .scrollIntoView()
+            .children()
+            .then($group => {
+              expect($group.text()).contains(group);
+              expect($group.text()).contains(
+                createGroupPayload.streetName +
+                  ' ' +
+                  createGroupPayload.streetNr +
+                  ', ' +
+                  createGroupPayload.zipCode +
+                  ' ' +
+                  createGroupPayload.city
+              );
+            });
         });
         cy.getByCy(GROUP_PREFIX + THIRD_GROUP_NAME).should('not.exist');
       });

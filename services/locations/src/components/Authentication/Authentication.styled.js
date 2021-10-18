@@ -13,7 +13,7 @@ export const AuthenticationWrapper = styled.div`
   align-items: center;
   height: 100%;
 
-  @media (max-width: 900px) and (orientation: landscape) {
+  @media (max-height: 600px) and (orientation: landscape) {
     align-items: stretch;
     justify-content: flex-end;
   }

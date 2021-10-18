@@ -41,4 +41,5 @@ export const PrintLink = styled.div`
   font-size: 14px;
   font-weight: bold;
   margin-left: 4px;
+  white-space: nowrap;
 `;

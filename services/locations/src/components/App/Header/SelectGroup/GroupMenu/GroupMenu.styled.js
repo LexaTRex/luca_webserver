@@ -35,6 +35,10 @@ export const StyledMenuItem = styled(Menu.Item)`
 
 export const StyledSelect = styled(Select)`
   width: 200px;
+
+  & .ant-select-selection-item {
+    cursor: pointer !important;
+  }
 `;
 
 export const StyledLink = styled(Link)`

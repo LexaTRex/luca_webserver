@@ -6,12 +6,11 @@ require('express-async-errors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const helmet = require('helmet');
-const expressWinston = require('express-winston');
 const database = require('./database');
-const logger = require('./utils/logger');
 
 const error = require('./middlewares/error');
 const { noCache } = require('./middlewares/noCache');
+const { httpLogger } = require('./utils/logger');
 
 const passportSession = require('./passport/session');
 const bearerBadgeGeneratorStrategy = require('./passport/bearerBadgeGenerator');
@@ -55,16 +54,6 @@ const configureApp = () => {
 
   sequelizeStore.sync();
 
-  // Logging
-  const requestLogger = expressWinston.logger({
-    winstonInstance: logger,
-    statusLevels: true,
-    ignoredRoutes: ['/api/v3/health', '/api/v3/health/ready'],
-  });
-  const errorLogger = expressWinston.errorLogger({
-    winstonInstance: logger,
-  });
-
   app.disable('x-powered-by');
   app.disable('etag');
   app.enable('strict routing');
@@ -72,7 +61,7 @@ const configureApp = () => {
   app.set('trust proxy', 2);
 
   // Global Middlewares
-  app.use(requestLogger);
+  app.use(httpLogger);
   if (!config.get('debug')) {
     app.use(helmet.hsts());
   }
@@ -101,7 +90,6 @@ const configureApp = () => {
   app.use(noCache);
 
   app.use('/api', router);
-  app.use(errorLogger);
   app.use(error.handle404);
   app.use(error.handle500);
 

@@ -1,5 +1,4 @@
-import { TERMS_CONDITIONS_LINK, FAQ_LINK } from 'constants/links';
-import { LICENSES_ROUTE } from 'constants/routes';
+import { TERMS_CONDITIONS_LINK } from 'constants/links';
 import AVV from 'assets/documents/AVV_Luca.pdf';
 import TOMS from 'assets/documents/TOMS_Luca.pdf';
 import PRIVACY_MANDATORY from 'assets/documents/DSE_Luca_mandatory.pdf';
@@ -45,15 +44,5 @@ export const getExternalLinks = intl => [
     dataCy: 'termsLink',
     href: TERMS_CONDITIONS_LINK,
     intlId: intl.formatMessage({ id: 'profile.services.agb' }),
-  },
-  {
-    dataCy: 'licensesLink',
-    href: LICENSES_ROUTE,
-    intlId: intl.formatMessage({ id: 'license.license' }),
-  },
-  {
-    dataCy: 'faqLink',
-    href: FAQ_LINK,
-    intlId: intl.formatMessage({ id: 'profile.services.faq' }),
   },
 ];

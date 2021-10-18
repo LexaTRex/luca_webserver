@@ -5,7 +5,7 @@ import { getWarningLevelsForLocationTransfer, getMe } from 'network/api';
 
 import { useQuery } from 'react-query';
 
-import { NOTIFIEABLE_DEVICE_TYPES } from 'constants/deviceTypes';
+import { NOTIFIABLE_DEVICE_TYPES } from 'constants/deviceTypes';
 import { AdditionalData } from './AdditionalData';
 import { Notified } from './Notified';
 import { Name } from './Name';
@@ -98,8 +98,8 @@ export const GuestListTable = ({
           !healthDepartmentEmployee ||
           !healthDepartmentEmployee.notificationsEnabled ||
           !(
-            notificationTrace.deviceType === NOTIFIEABLE_DEVICE_TYPES.IOS ||
-            notificationTrace.deviceType === NOTIFIEABLE_DEVICE_TYPES.ANDROID
+            notificationTrace.deviceType === NOTIFIABLE_DEVICE_TYPES.IOS ||
+            notificationTrace.deviceType === NOTIFIABLE_DEVICE_TYPES.ANDROID
           )
         )
           return null;

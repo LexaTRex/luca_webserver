@@ -35,6 +35,7 @@ const departments = [
   {
     uuid: uuid(),
     name: 'neXenio Testing',
+    commonName: 'Dev Health Department',
     privateKeySecret: crypto.randomBytes(32).toString('base64'),
   },
 ];

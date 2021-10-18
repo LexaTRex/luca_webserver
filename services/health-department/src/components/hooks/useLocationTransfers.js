@@ -33,8 +33,9 @@ const enrichTransfersWithLocations = (transfers, locations) => {
 export const useLocationTransfers = processUuid => {
   const [locationTransfers, setLocationTransfers] = useState([]);
 
-  const { data: transfers } = useQuery(`transfers${processUuid}`, () =>
-    getLocationTransfers(processUuid)
+  const { data: transfers } = useQuery(
+    ['transfers', { processId: processUuid }],
+    () => getLocationTransfers(processUuid)
   );
 
   // enrich locationTransfers with location data

@@ -22,7 +22,8 @@ const mailClient = axios.create({
 });
 
 const { getMailId, getMailTitle } = require('./mailClient.helper');
-const logger = require('./logger');
+const logger = require('./logger').default;
+const { z } = require('./validation');
 
 const FROM_HELLO_LUCA = {
   Email: 'hello@luca-app.de',
@@ -39,18 +40,18 @@ const escapeVariables = variables => {
   return escapedVariables;
 };
 
-const sendTemplate = (templateId, subject, toEmail, toName, variables) => {
+const send = payload => {
   if (!config.get('mailer.apiKey' || !config.get('mailer.apiSecret'))) {
-    logger.warn('email not sent', {
-      templateId,
-      subject,
-      variables,
-    });
+    logger.warn('email not configured');
     return Promise.resolve();
   }
 
+  return mailClient.post('/v3.1/send', payload);
+};
+
+const sendTemplate = (templateId, subject, toEmail, toName, variables) => {
   try {
-    return mailClient.post('/v3.1/send', {
+    return send({
       Messages: [
         {
           From: FROM_HELLO_LUCA,
@@ -68,13 +69,48 @@ const sendTemplate = (templateId, subject, toEmail, toName, variables) => {
       ],
     });
   } catch (error) {
-    logger.warn('email not sent', {
-      error,
-      templateId,
-      subject,
-      variables,
+    logger.warn(
+      {
+        error,
+        templateId,
+        subject,
+        variables,
+      },
+      'email not sent'
+    );
+    throw error;
+  }
+};
+
+const sendPlain = (content, subject, toEmail, toName) => {
+  try {
+    const safeContent = z.safeString().parse(content);
+
+    return send({
+      Messages: [
+        {
+          From: FROM_HELLO_LUCA,
+          To: [
+            {
+              Email: toEmail,
+              Name: escape(toName || toEmail),
+            },
+          ],
+          TextPart: safeContent,
+          Subject: subject,
+        },
+      ],
     });
-    return Promise.resolve();
+  } catch (error) {
+    logger.warn(
+      {
+        error,
+        subject,
+        toEmail,
+      },
+      'email not sent'
+    );
+    throw error;
   }
 };
 
@@ -202,4 +238,5 @@ module.exports = {
   operatorUpdatePasswordNotification,
   hdUpdatePasswordNotification,
   locationTransferApprovalNotification,
+  sendPlain,
 };

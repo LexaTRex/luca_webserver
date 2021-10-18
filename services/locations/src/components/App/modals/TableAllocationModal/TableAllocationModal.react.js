@@ -31,7 +31,7 @@ export const TableAllocationModal = ({ privateKey, location }) => {
     error: fetchError,
     data: traces,
     refetch,
-  } = useQuery(`traces/${location.uuid}`, () => getTraces(location.accessId));
+  } = useQuery(`traces/${location.uuid}`, () => getTraces(location.uuid));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeTables = useMemo(() => extractTableNumbers(traces, privateKey), [

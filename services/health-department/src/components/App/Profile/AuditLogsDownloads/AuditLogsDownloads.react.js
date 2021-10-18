@@ -2,10 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { notification } from 'antd';
 
 // Api
-import { getAuditLog, getEmployees } from 'network/api';
+import { getEmployees } from 'network/api';
 
 import { SecondaryButton } from 'components/general';
 import { FILES } from './DownloadFiles';
@@ -17,6 +16,9 @@ import {
   ButtonWrapper,
 } from './AuditLogsDownloads.styled';
 
+const getDownloadLink = (startTime, endTime) =>
+  `/api/v4/healthDepartments/auditlog/download/?timeframe[0]=${startTime}&timeframe[1]=${endTime}`;
+
 export const AuditLogsDownloads = () => {
   const intl = useIntl();
 
@@ -26,33 +28,10 @@ export const AuditLogsDownloads = () => {
     { refetchOnWindowFocus: false }
   );
 
-  const downloadLogFile = logData => {
-    const blob = new Blob([logData], { type: 'text' });
-    const element = window.document.createElement('a');
-    element.href = window.URL.createObjectURL(blob);
-    element.download = `${intl.formatMessage({
-      id: 'auditlogDownload.filename',
-    })}.log-file`;
-    document.body.append(element);
-    element.click();
-    element.remove();
-  };
-
   const getLogs = () => {
     const startTime = moment().unix();
     const endTime = moment().subtract(1, 'years').unix();
-
-    getAuditLog({ timeframe: [startTime, endTime] })
-      .then(response => {
-        downloadLogFile(response);
-      })
-      .catch(() => {
-        notification.error({
-          message: intl.formatMessage({
-            id: 'notification.auditlogDownload.error',
-          }),
-        });
-      });
+    window.open(getDownloadLink(startTime, endTime), '_self');
   };
 
   if (isLoading || error) return null;

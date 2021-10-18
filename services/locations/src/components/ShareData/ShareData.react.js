@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import { Alert } from 'antd';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { usePrivateKey } from 'utils/privateKey';
 import {
@@ -13,9 +13,9 @@ import {
   getPrivateKeySecret,
 } from 'network/api';
 
-// Components
 import { Header } from 'components/Header';
 
+import { LOGIN_ROUTE } from 'constants/routes';
 import { Content, Main, RequestWrapper } from './ShareData.styled';
 import { PrivateKeyStep } from './PrivateKeyStep';
 import { ShareDataStep } from './ShareDataStep';
@@ -24,33 +24,22 @@ import { LocationFooter } from '../App/LocationFooter';
 
 export const ShareData = () => {
   const intl = useIntl();
+  const history = useHistory();
   const { transferId } = useParams();
+  const [currentStep, setCurrentStep] = useState(0);
   const [privateKey, setPrivateKey] = useState();
   const [isPrivateKeyPreloaded, setIsPrivateKeyPreloaded] = useState(false);
-  const { data: privateKeySecret } = useQuery(
+  const { error: privateKeyError, data: privateKeySecret } = useQuery(
     'privateKeySecret',
     getPrivateKeySecret,
     {
       retry: false,
     }
   );
+  if (privateKeyError) {
+    history.push(LOGIN_ROUTE);
+  }
   const [existingPrivateKey] = usePrivateKey(privateKeySecret);
-  const [currentStep, setCurrentStep] = useState(0);
-
-  useEffect(() => {
-    if (existingPrivateKey) {
-      if (!privateKey) {
-        setCurrentStep(1);
-        setIsPrivateKeyPreloaded(true);
-      }
-      setPrivateKey(existingPrivateKey);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [existingPrivateKey]);
-
-  const title = intl.formatMessage({ id: 'shareData.site.title' });
-  const meta = intl.formatMessage({ id: 'shareData.site.meta' });
-
   const { isLoading, error, data: transfers } = useQuery(
     `uncompletedTransfers/${transferId}`,
     () => {
@@ -65,6 +54,17 @@ export const ShareData = () => {
       });
     }
   );
+
+  useEffect(() => {
+    if (existingPrivateKey) {
+      if (!privateKey) {
+        setCurrentStep(1);
+        setIsPrivateKeyPreloaded(true);
+      }
+      setPrivateKey(existingPrivateKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingPrivateKey]);
 
   const progressStep = () => setCurrentStep(currentStep + 1);
 
@@ -105,8 +105,11 @@ export const ShareData = () => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'shareData.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'shareData.site.meta' })}
+        />
       </Helmet>
       <Main style={{ backgroundColor: 'black' }}>
         <Header title={intl.formatMessage({ id: 'shareData.header.title' })} />

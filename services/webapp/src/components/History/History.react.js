@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import moment from 'moment';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Steps, notification } from 'antd';
 import { useHistory } from 'react-router-dom';
 
@@ -44,7 +44,7 @@ const SHARE_TAN_MODAL_STEP = 1;
 
 export function History() {
   const history = useHistory();
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
   const [user, setUser] = useState([]);
   const [userHistory, setUserHistory] = useState([]);
   const [locations, setLocation] = useState({});
@@ -80,11 +80,11 @@ export function History() {
 
   const internalIndexedDBError = useCallback(() => {
     notification.error({
-      message: formatMessage({
+      message: intl.formatMessage({
         id: 'IndexedDB.error.transaction',
       }),
     });
-  }, [formatMessage]);
+  }, [intl]);
 
   useEffect(() => {
     indexDB.users
@@ -142,7 +142,7 @@ export function History() {
       .writeText(`Trace ID: ${traceId}`)
       .then(() =>
         alert(
-          `Trace ID: ${traceId}\n${formatMessage({
+          `Trace ID: ${traceId}\n${intl.formatMessage({
             id: 'History.Timeline.CopyTraceId',
           })}`
         )
@@ -153,11 +153,13 @@ export function History() {
   return (
     <>
       <Helmet>
-        <title>{formatMessage({ id: 'History.PageTitle' })}</title>
+        <title>{intl.formatMessage({ id: 'History.PageTitle' })}</title>
       </Helmet>
       <AppLayout
         header={
-          <AppHeadline>{formatMessage({ id: 'History.Headline' })}</AppHeadline>
+          <AppHeadline>
+            {intl.formatMessage({ id: 'History.Headline' })}
+          </AppHeadline>
         }
         footer={
           <>
@@ -166,12 +168,12 @@ export function History() {
                 id="home"
                 tabIndex="2"
                 onClick={() => history.push(HOME_PATH)}
-                aria-label={formatMessage({
+                aria-label={intl.formatMessage({
                   id: 'Home.AriaLabel',
                 })}
               >
                 <CheckinIcon />
-                {formatMessage({ id: 'Home.MenuItem' })}
+                {intl.formatMessage({ id: 'Home.MenuItem' })}
               </StyledFooterItem>
             </StyledFooterContainer>
             <StyledFooterContainer>
@@ -179,12 +181,12 @@ export function History() {
                 isActive
                 id="history"
                 tabIndex="3"
-                aria-label={formatMessage({
+                aria-label={intl.formatMessage({
                   id: 'History.AriaLabel',
                 })}
               >
                 <HistoryIcon color="rgb(195, 206, 217)" />
-                {formatMessage({ id: 'History.MenuItem' })}
+                {intl.formatMessage({ id: 'History.MenuItem' })}
               </StyledFooterItem>
             </StyledFooterContainer>
           </>
@@ -232,7 +234,7 @@ export function History() {
                           {(entryType === PRIVATE_MEETING_HOST_TYPE ||
                             entryType === PRIVATE_MEETING_CHECK_IN_TYPE) && (
                             <StyledHistoryInfoTitle>
-                              {formatMessage({
+                              {intl.formatMessage({
                                 id: 'History.Timeline.PrivateMeeting',
                               })}
                             </StyledHistoryInfoTitle>
@@ -264,7 +266,7 @@ export function History() {
                           moment
                             .unix(historyEntry.checkout)
                             .format('HH.mm')}{' '}
-                        {formatMessage({ id: 'Checkout.Clock' })}
+                        {intl.formatMessage({ id: 'Checkout.Clock' })}
                       </StyledHistoryContent>
                     }
                   />
@@ -279,7 +281,7 @@ export function History() {
               setShowShareModal(true);
             }}
           >
-            {formatMessage({ id: 'History.ShareHistory' })}
+            {intl.formatMessage({ id: 'History.ShareHistory' })}
           </StyledSecondaryButton>
         </StyledFooter>
       </AppLayout>

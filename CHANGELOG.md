@@ -1,5 +1,34 @@
 # Changelog
 
+### 2.3.0 (2021-10-18)
+* **backend** fix: change GET to POST for api/v3/userTransfers/tan/
+* **backend** fix: missing name of location in share data email
+* **backend** fix: multiple activation links being valid at the same time
+* **backend** fix: metrics path label for errors
+* **backend** feat: limit number of available tables
+* **backend** feat: limit number of checkin questions
+* **backend** feat: implement level 4 notifications
+* **backend** feat: keep daily keys for 35 days
+* **backend** feat: update ip lists from external sources
+* **backend** feat: add new events to audit log system
+* **backend** chore: replace winston with pino
+* **backend** chore: seperate private meeting endpoints
+* **health-department** feat: prevent unsigned HDs from requesting data from locations
+* **locations** fix: two emails are sent for sharing data request
+* **locations** fix: share data link in mail leads to blank page when operator is not logged in
+* **locations** fix: footer might overlap on small devices
+* **locations** fix: wording in check-out reminder
+* **locations** fix: QR-Print instructions text and alignment
+* **locations** fix: wording in checkin options to be consistent
+* **locations** fix: cursor property for change location while hovering
+* **locations** fix: German diacritic letters are not counted as upper/lower characters
+* **locations** feat: new registration/login flow
+* **locations** feat: update privacy policy documents
+* **locations** feat: update AVV document
+* **locations** feat: edit address for existing areas and locations
+* **locations** feat: move links from profile page to help center
+* chore: replace react-helmet in all frontend services
+
 ### 2.2.0 (2021-10-01)
 * **backend** feat: add operator device support
 * **backend** feat: add operator device feature flag

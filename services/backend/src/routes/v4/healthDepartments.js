@@ -9,6 +9,12 @@ const { ApiError, ApiErrorType } = require('../../utils/apiError');
 const { verifySignedPublicKeys } = require('../../utils/signedKeys');
 
 const {
+  limitRequestsByUserPerHour,
+  limitRequestsPerHour,
+  limitRequestsByUserPerMinute,
+  limitRequestsPerMinute,
+} = require('../../middlewares/rateLimit');
+const {
   validateSchema,
   validateParametersSchema,
   validateQuerySchema,
@@ -19,12 +25,14 @@ const {
 } = require('../../middlewares/requireUser');
 
 const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
-const { logEvent, entriesToPlainText } = require('../../utils/hdAuditLog');
+const { logEvent, AuditLogTransformer } = require('../../utils/hdAuditLog');
 
 const {
   storeSignedKeysSchema,
   departmentIdParametersSchema,
   auditLogDownloadQuerySchema,
+  auditLogDownloadEventSchema,
+  auditLogExportEventSchema,
 } = require('./healthDepartments.schemas');
 
 // set signed keys
@@ -98,10 +106,16 @@ router.get(
 
 router.get(
   '/auditlog/download',
+  limitRequestsPerMinute('audit_log_download_ratelimit_minute'),
+  limitRequestsPerHour('audit_log_download_ratelimit_hour'),
   requireHealthDepartmentAdmin,
+  limitRequestsByUserPerMinute('audit_log_download_ratelimit_user_minute'),
+  limitRequestsByUserPerHour('audit_log_download_ratelimit_user_hour'),
   validateQuerySchema(auditLogDownloadQuerySchema),
   async (request, response) => {
-    const entries = await database.HealthDepartmentAuditLog.findAll({
+    const entryStream = database.HealthDepartmentAuditLog.findAllWithStream({
+      batchSize: 500,
+      isObjectMode: true,
       where: {
         departmentId: request.user.departmentId,
         createdAt: {
@@ -121,8 +135,60 @@ router.get(
       },
     });
 
+    const filename = `auditlog_${moment
+      .unix(request.query.timeframe[1])
+      .format('YYYY-MM-DD--HH-mm')}_${moment
+      .unix(request.query.timeframe[0])
+      .format('YYYY-MM-DD--HH-mm')}.log.txt`;
+
     response.set('Content-Type', 'text/plain');
-    return response.send(entriesToPlainText(entries));
+    response.set('Content-Disposition', `attachment; filename="${filename}"`);
+    entryStream
+      .pipe(new AuditLogTransformer({ objectMode: true }))
+      .pipe(response);
+  }
+);
+
+router.post(
+  '/auditlog/event/downloadTraces',
+  requireHealthDepartmentEmployee,
+  limitRequestsByUserPerHour('audit_log_event_download_traces_ratelimit_hour'),
+  validateSchema(auditLogDownloadEventSchema),
+  async (request, response) => {
+    const { type, transferId, amount } = request.body;
+
+    logEvent(request.user, {
+      type: AuditLogEvents.DOWNLOAD_TRACES,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        type,
+        transferId,
+        amount,
+      },
+    });
+
+    return response.sendStatus(status.OK);
+  }
+);
+
+router.post(
+  '/auditlog/event/exportTraces',
+  requireHealthDepartmentEmployee,
+  limitRequestsByUserPerHour('audit_log_event_export_traces_ratelimit_hour'),
+  validateSchema(auditLogExportEventSchema),
+  async (request, response) => {
+    const { transferId, amount } = request.body;
+
+    logEvent(request.user, {
+      type: AuditLogEvents.EXPORT_TRACES,
+      status: AuditStatusType.SUCCESS,
+      meta: {
+        transferId,
+        amount,
+      },
+    });
+
+    return response.sendStatus(status.OK);
   }
 );
 

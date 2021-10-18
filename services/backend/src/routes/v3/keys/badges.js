@@ -21,7 +21,6 @@ const {
 } = require('../../../middlewares/validateSchema');
 
 const database = require('../../../database');
-const logger = require('../../../utils/logger');
 const {
   requireHealthDepartmentEmployee,
 } = require('../../../middlewares/requireUser');
@@ -249,7 +248,7 @@ router.post(
           status: AuditStatusType.ERROR_CONFLICT_KEY,
           meta: auditLogMeta,
         });
-        logger.warn('key already current.');
+        request.log.warn('key already current.');
       } else {
         await oldKey.update(newKey);
         logEvent(request.user, {
@@ -441,7 +440,7 @@ router.post(
       return response.sendStatus(status.OK);
     } catch (error) {
       await transaction.rollback();
-      logger.error(error);
+      request.log.error(error);
 
       logEvent(request.user, {
         type: AuditLogEvents.ISSUE_BADGE_KEYPAIR,

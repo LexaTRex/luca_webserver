@@ -21,6 +21,9 @@ services:
     environment:
       - SKIP_SMS_VERIFICATION
       - E2E
+      - DENY_LIST_NETSET_URLS
+      - DENY_LIST_SINGLE_IP_CSV_URLS
+      - DENY_LIST_DOUBLE_IP_CSV_URLS
   locations:
     image: lucaapp/locations:${IMAGE_TAG}
     build:

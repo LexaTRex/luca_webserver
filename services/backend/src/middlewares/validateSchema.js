@@ -1,6 +1,5 @@
 const express = require('express');
 const status = require('http-status');
-const logger = require('../utils/logger');
 const { waitForMiddleware } = require('../utils/middlewares');
 
 const defaultJsonMiddleware = express.json();
@@ -17,7 +16,7 @@ const validateSchema = (schema, limit) => {
       request.body = schema.parse(request.body);
       return next();
     } catch (error) {
-      logger.warn('validateSchema', error);
+      request.log.warn(error, 'validateSchema');
       response.status(status.BAD_REQUEST);
       return response.send(error);
     }
@@ -29,7 +28,7 @@ const validateQuerySchema = schema => async (request, response, next) => {
     request.query = schema.parse(request.query);
     return next();
   } catch (error) {
-    logger.warn('validateSchema', error);
+    request.log.warn(error, 'validateSchema');
     response.status(status.BAD_REQUEST);
     return response.send(error);
   }
@@ -40,7 +39,7 @@ const validateParametersSchema = schema => async (request, response, next) => {
     request.params = schema.parse(request.params);
     return next();
   } catch (error) {
-    logger.warn('validateSchema', error);
+    request.log.warn(error, 'validateSchema');
     response.status(status.BAD_REQUEST);
     return response.send(error);
   }

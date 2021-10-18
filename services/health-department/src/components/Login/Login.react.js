@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useIntl } from 'react-intl';
 import { Form, Input } from 'antd';
 import { PrimaryButton } from 'components/general';
@@ -7,17 +7,15 @@ import { useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
-// Assets
+import { login } from 'network/api';
+
+import { APP_ROUTE } from 'constants/routes';
+
+import { clearPrivateKeys } from 'utils/cryptoKeyOperations';
+
 import LucaLogo from 'assets/LucaLogo.svg';
 import Login1 from 'assets/Login1.jpg';
 
-// Api
-import { login } from 'network/api';
-
-// Constants
-import { APP_ROUTE } from 'constants/routes';
-
-// Components
 import { Footer } from './Footer';
 import {
   LoginWrapper,
@@ -32,15 +30,11 @@ import {
   ErrorMessage,
   VersionFooterWrapper,
 } from './Login.styled';
-import { clearPrivateKeys } from '../../utils/cryptoKeyOperations';
 
 export const Login = () => {
   const intl = useIntl();
   const [error, setError] = useState(false);
   const dispatch = useDispatch();
-
-  const title = intl.formatMessage({ id: 'main.site.title' });
-  const meta = intl.formatMessage({ id: 'main.site.meta' });
 
   const onFinish = values => {
     clearPrivateKeys();
@@ -64,8 +58,11 @@ export const Login = () => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'main.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'main.site.meta' })}
+        />
       </Helmet>
       <Wrapper>
         <Left>

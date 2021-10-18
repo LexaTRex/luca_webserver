@@ -4,23 +4,31 @@
   "testFiles": [
     "workflow/**/*.spec.js",
     "webapp/**/*.spec.js",
-    "locations/downloadPDF/downloadPDF.spec.js",
+    "locations/**/*.spec.js",
     "health-department/**/*.spec.js",
     "scanner/**/*.spec.js",
-    "locations/authentication/**/*.spec.js",
-    "locations/checkinOptions/**/*.spec.js",
-    "locations/group/**/*.spec.js",
-    "locations/location/**/*.spec.js",
-    "locations/locationOverview/*.spec.js",
-    "locations/locationSettings/*.spec.js",
-    "locations/navigation/*.spec.js",
-    "locations/profile/*.spec.js"
+    "contact-form/**/*.spec.js"
   ],
   "integrationFolder": "./specs",
   "video": false,
   "supportFile": "./support",
   "downloadsFolder": "./downloads",
+  "viewportHeight": 1080,
+  "viewportWidth": 1920,
   "env": {
     "envName": "local"
-  }
+  },
+  "clientCertificates": [
+    {
+      "url": "https://localhost:9443/**",
+      "ca": [],
+      "certs": [
+        {
+          "pfx": "./certs/health.pfx",
+          "passphrase": "./certs/health-passphrase.txt"
+        }
+      ]
+    }
+  ],
+  "chromeWebSecurity": false
 }

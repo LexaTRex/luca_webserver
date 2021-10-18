@@ -28,11 +28,6 @@ export const Section = styled.div`
   margin-bottom: 32px;
 `;
 
-export const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
 export const StyledSwitch = styled(Switch)`
   width: 40px;
 `;

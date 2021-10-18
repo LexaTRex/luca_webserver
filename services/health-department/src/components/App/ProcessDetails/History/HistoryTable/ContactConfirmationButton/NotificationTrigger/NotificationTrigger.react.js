@@ -13,7 +13,7 @@ import { useModal } from 'components/hooks/useModal';
 import { NotificationModal } from 'components/App/modals/NotificationModal';
 
 import { BellIcon, ButtonWrapper } from './NotificationTrigger.styled';
-import { checkIfAnyContactPersonsAreNotifyable } from './NotificationTrigger.helper';
+import { checkIfAnyContactPersonsAreNotifiable } from './NotificationTrigger.helper';
 
 export const NotificationTrigger = ({ location }) => {
   const intl = useIntl();
@@ -66,7 +66,7 @@ export const NotificationTrigger = ({ location }) => {
   )
     return null;
 
-  const isNotificationEnabled = checkIfAnyContactPersonsAreNotifyable(
+  const isNotificationEnabled = checkIfAnyContactPersonsAreNotifiable(
     contactPersons,
     riskLevels
   );

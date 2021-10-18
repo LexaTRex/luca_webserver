@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd';
+import { Tooltip, notification } from 'antd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -46,9 +46,23 @@ export const CheckInQuery = ({ location }) => {
     createAdditionalData(location.uuid, {
       key: '',
     })
-      .then(refetch)
+      .then(response => {
+        if (response.status === 403)
+          notification.error({
+            message: intl.formatMessage({
+              id:
+                'settings.location.checkin.additionalData.notification.maxReachedError.title',
+            }),
+            description: intl.formatMessage({
+              id:
+                'settings.location.checkin.additionalData.notification.maxReachedError.desc',
+            }),
+          });
+
+        refetch();
+      })
       .catch(refetch);
-  }, [location.uuid, refetch]);
+  }, [location.uuid, refetch, intl]);
 
   const removeAdditionalData = useCallback(
     id => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import QRCode from 'qrcode.react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 
 import { HOME_PATH } from 'constants/routes';
@@ -27,7 +27,7 @@ import { useCheckActivePrivateMeeting } from './useCheckActivePrivateMeeting';
 
 function PrivateMeetingComponent() {
   const history = useHistory();
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isPeopleModalOpen, setIsPeopleModalOpen] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -42,19 +42,19 @@ function PrivateMeetingComponent() {
   return (
     <>
       <Helmet>
-        <title>{formatMessage({ id: 'PrivateMeeting.PageTitle' })}</title>
+        <title>{intl.formatMessage({ id: 'PrivateMeeting.PageTitle' })}</title>
       </Helmet>
       <AppLayout
         header={
           <AppHeadline color="#000">
-            {formatMessage({ id: 'PrivateMeeting.Headline' })}
+            {intl.formatMessage({ id: 'PrivateMeeting.Headline' })}
           </AppHeadline>
         }
         bgColor="#b8c0ca"
       >
         <StyledHeader flex="unset">
           <StyledInfoText>
-            {formatMessage({ id: 'PrivateMeeting.Description' })}
+            {intl.formatMessage({ id: 'PrivateMeeting.Description' })}
           </StyledInfoText>
           <InfoIcon onClick={() => setIsInfoModalOpen(true)} />
         </StyledHeader>
@@ -71,7 +71,7 @@ function PrivateMeetingComponent() {
         />
         <StyledFooter flex="unset">
           <StyledCloseButton onClick={() => setShowCheckoutModal(true)}>
-            {formatMessage({ id: 'PrivateMeeting.Close' })}
+            {intl.formatMessage({ id: 'PrivateMeeting.Close' })}
           </StyledCloseButton>
         </StyledFooter>
         {isInfoModalOpen && (

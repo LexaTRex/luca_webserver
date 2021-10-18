@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 const status = require('http-status');
 
-// error definitions
 const API_ERRORS = {
   UNKNOWN_API_ERROR: {
     status: status.INTERNAL_SERVER_ERROR,
@@ -57,7 +56,7 @@ const API_ERRORS = {
   },
   TOO_MANY_LOCATIONS: {
     status: status.REQUEST_ENTITY_TOO_LARGE,
-    message: 'There are too many locations attatched to this request',
+    message: 'There are too many locations attached to this request',
   },
   USER_TRANSFER_NOT_FOUND: {
     status: status.NOT_FOUND,
@@ -66,7 +65,7 @@ const API_ERRORS = {
 };
 
 class ApiError extends Error {
-  constructor(errorCode = ApiError.UNKNOWN_API_ERROR, message) {
+  constructor(errorCode = 'UNKNOWN_API_ERROR', message) {
     super(message || API_ERRORS[String(errorCode)].message);
     this.errorCode = errorCode;
     this.statusCode = API_ERRORS[String(errorCode)].status || 500;

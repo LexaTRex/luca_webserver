@@ -16,6 +16,7 @@ const HelpCenterIcon = isActive => (
   <Icon
     component={isActive ? HelpCenterActiveSvg : HelpCenterDefaultSvg}
     style={{ fontSize: 32 }}
+    data-cy="buttonHelpCenter"
   />
 );
 

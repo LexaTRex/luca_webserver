@@ -30,12 +30,21 @@ export const RequestStep = ({ operator, next, closeModal }) => {
   const requestTextValidator = useTextAreaValidator('requestText', 3000);
 
   const contactData = [
-    { intlId: 'contactForm.modal.supportCode', value: operator.supportCode },
+    {
+      intlId: 'contactForm.modal.supportCode',
+      value: operator.supportCode,
+      testId: 'contactFormOperatorSupportCode',
+    },
     {
       intlId: 'contactForm.modal.name',
       value: `${operator.firstName} ${operator.lastName}`,
+      testId: 'contactFormOperatorName',
     },
-    { intlId: 'contactForm.modal.email', value: operator.email },
+    {
+      intlId: 'contactForm.modal.email',
+      value: operator.email,
+      testId: 'contactFormOperatorEmail',
+    },
   ];
 
   const onFinish = values => {
@@ -68,7 +77,7 @@ export const RequestStep = ({ operator, next, closeModal }) => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper data-cy="contactFormModal">
       <Title>
         {intl.formatMessage({
           id: 'contactForm.modal.title',
@@ -78,7 +87,7 @@ export const RequestStep = ({ operator, next, closeModal }) => {
       {contactData.map(entry => (
         <ContactDataWrapper key={entry.intlId}>
           <Name>{`${intl.formatMessage({ id: entry.intlId })}:`}</Name>
-          <Value>{entry.value}</Value>
+          <Value data-cy={entry.testId}>{entry.value}</Value>
         </ContactDataWrapper>
       ))}
       <Form onFinish={onFinish}>

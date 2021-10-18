@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Form, Input, notification } from 'antd';
 import { PrimaryButton } from 'components/general';
 import { useHistory } from 'react-router';
@@ -9,7 +9,7 @@ import LucaLogoWhite from 'assets/LucaLogoWhite.svg';
 
 import { forgotPassword } from 'network/api';
 
-import { AUTHENTICATION_ROUTE } from 'constants/routes';
+import { LOGIN_ROUTE } from 'constants/routes';
 
 import {
   ButtonWrapper,
@@ -25,13 +25,9 @@ import {
 } from './ForgotPassword.styled';
 import { messageForResponse } from './ForgotPassword.helper';
 
-export const ForgotPassword = ({ location }) => {
+export const ForgotPassword = () => {
   const intl = useIntl();
-
-  const title = intl.formatMessage({ id: 'forgotPassword.site.title' });
-  const meta = intl.formatMessage({ id: 'forgotPassword.site.meta' });
   const history = useHistory();
-  const { email } = location;
 
   const onFinish = values => {
     forgotPassword({ email: values.email, lang: intl.locale })
@@ -67,8 +63,11 @@ export const ForgotPassword = ({ location }) => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'forgotPassword.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'forgotPassword.site.meta' })}
+        />
       </Helmet>
       <Wrapper data-cy="forgotPasswordPage">
         <HeaderWrapper>
@@ -86,7 +85,7 @@ export const ForgotPassword = ({ location }) => {
                 id: 'forgotPassword.title',
               })}
             </Title>
-            <Form onFinish={onFinish} initialValues={{ email }}>
+            <Form onFinish={onFinish}>
               <Form.Item
                 colon={false}
                 label={intl.formatMessage({
@@ -129,7 +128,7 @@ export const ForgotPassword = ({ location }) => {
               </ButtonWrapper>
             </Form>
             <LinkWrapper>
-              <Link href={AUTHENTICATION_ROUTE}>
+              <Link href={LOGIN_ROUTE}>
                 {intl.formatMessage({
                   id: 'forgotPassword.loginLink',
                 })}

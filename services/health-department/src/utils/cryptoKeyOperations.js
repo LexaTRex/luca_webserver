@@ -33,7 +33,7 @@ import {
 import { InvalidNoteSignatureError } from 'errors/InvalidNoteSignatureError';
 
 const MIN_DAILY_KEY_AGE_BEFORE_ROTATION_DAYS = 1;
-const MAX_DAILY_KEYS = 28;
+const MAX_DAILY_KEYS = 35;
 
 export const EMPTY_HISTORY = 'EMPTY_HISTORY';
 export const INVALID_VERSION = 'INVALID_VERSION';

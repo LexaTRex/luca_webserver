@@ -14,7 +14,7 @@ const createSchema = z.object({
   lat: z.number().optional().nullable(),
   lng: z.number().optional().nullable(),
   radius: z.number().int().nonnegative().max(5000).optional().nullable(),
-  tableCount: z.number().int().positive().optional().nullable(),
+  tableCount: z.number().int().positive().max(1000).optional().nullable(),
   additionalData: z
     .array(
       z.object({
@@ -41,7 +41,7 @@ const updateSchema = z.object({
   firstName: z.safeString().max(255).optional(),
   lastName: z.safeString().max(255).optional(),
   phone: z.phoneNumber().optional(),
-  tableCount: z.number().int().positive().optional().nullable(),
+  tableCount: z.number().int().positive().max(1000).optional().nullable(),
   radius: z.number().int().nonnegative().max(5000).optional().nullable(),
   isIndoor: z.boolean().optional(),
   averageCheckinTime: z
@@ -52,6 +52,17 @@ const updateSchema = z.object({
     .min(15)
     .optional()
     .nullable(),
+});
+
+const updateAddressSchema = z.object({
+  streetName: z.safeString().max(255).optional(),
+  streetNr: z.safeString().max(255).optional(),
+  zipCode: z.zipCode().optional(),
+  city: z.safeString().max(255).optional(),
+  state: z.safeString().max(255).optional().nullable(),
+  lat: z.number().optional().nullable(),
+  lng: z.number().optional().nullable(),
+  radius: z.number().optional(),
 });
 
 const locationIdParametersSchema = z.object({
@@ -65,6 +76,7 @@ const locationTracesQuerySchema = z.object({
 module.exports = {
   createSchema,
   updateSchema,
-  locationTracesQuerySchema,
   locationIdParametersSchema,
+  updateAddressSchema,
+  locationTracesQuerySchema,
 };

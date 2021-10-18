@@ -1,13 +1,13 @@
-import { NOTIFIEABLE_DEVICE_TYPES } from 'constants/deviceTypes';
+import { NOTIFIABLE_DEVICE_TYPES } from 'constants/deviceTypes';
 import { RISK_LEVEL_2, RISK_LEVEL_3 } from 'constants/riskLevels';
 
-export const checkIfAnyContactPersonsAreNotifyable = (
+export const checkIfAnyContactPersonsAreNotifiable = (
   contactPersons,
   riskLevels
 ) => {
   const allowedDeviceTypes = new Set([
-    NOTIFIEABLE_DEVICE_TYPES.IOS,
-    NOTIFIEABLE_DEVICE_TYPES.ANDROID,
+    NOTIFIABLE_DEVICE_TYPES.IOS,
+    NOTIFIABLE_DEVICE_TYPES.ANDROID,
   ]);
   const riskLevelsToCheck = [RISK_LEVEL_2, RISK_LEVEL_3];
 

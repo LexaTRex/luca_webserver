@@ -13,14 +13,8 @@ import {
 
 import { getFormattedPhoneNumber } from 'utils/parsePhoneNumber';
 
-import {
-  Overview,
-  Heading,
-  ButtonWrapper,
-  AddressRow,
-  AddressHeader,
-  Address,
-} from './SettingsOverview.styled';
+import { Address } from 'components/general/Address';
+import { Overview, Heading, ButtonWrapper } from './SettingsOverview.styled';
 
 export const SettingsOverview = ({ group, refetch }) => {
   const intl = useIntl();
@@ -123,13 +117,15 @@ export const SettingsOverview = ({ group, refetch }) => {
           <Input />
         </Form.Item>
       </Form>
-      <Address>
-        <AddressHeader>
-          {intl.formatMessage({ id: 'settings.location.address' })}
-        </AddressHeader>
-        <AddressRow>{`${baseLocation.streetName} ${baseLocation.streetNr}`}</AddressRow>
-        <AddressRow>{`${baseLocation.zipCode} ${baseLocation.city}`}</AddressRow>
-      </Address>
+      <Address
+        isGroup
+        location={baseLocation}
+        refetch={refetch}
+        streetName={baseLocation.streetName}
+        streetNr={baseLocation.streetNr}
+        city={baseLocation.city}
+        zipCode={baseLocation.zipCode}
+      />
       <ButtonWrapper>
         <PrimaryButton
           data-cy="editGroupName"

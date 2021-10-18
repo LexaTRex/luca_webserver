@@ -42,9 +42,14 @@ export const HistoryTable = ({ process }) => {
               id: 'modal.history.contact.success',
             }),
           });
-          queryClient.invalidateQueries(`transfers${process.uuid}`);
-          queryClient.invalidateQueries(`process${process.uuid}`);
-          queryClient.invalidateQueries('processes');
+          queryClient.invalidateQueries([
+            'transfers',
+            { processId: process.uuid },
+          ]);
+          queryClient.invalidateQueries([
+            'processes',
+            { processId: process.uuid },
+          ]);
         })
         .catch(() =>
           notification.error({

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import ReactExport from 'react-data-export';
+import { logDownload } from 'network/api';
 import { sanitizeForCSV } from 'utils/sanitizer';
 import { getFormattedDate, getFormattedTime } from 'utils/time';
 
@@ -80,7 +81,15 @@ export const ExcelDownload = ({ traces, location }) => {
     <ExcelFile
       filename={getSanitizedFilename(location.name, 'luca')}
       element={
-        <DownloadButton>
+        <DownloadButton
+          onClick={() =>
+            logDownload({
+              type: 'excel',
+              transferId: location.transferId,
+              amount: traces.length,
+            })
+          }
+        >
           {intl.formatMessage({ id: 'download.excel' })}
         </DownloadButton>
       }

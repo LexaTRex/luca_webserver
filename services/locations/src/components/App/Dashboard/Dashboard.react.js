@@ -7,7 +7,7 @@ import { Layout } from 'antd';
 import { useWhatsNew } from 'components/hooks/useWhatsNew';
 
 import {
-  AUTHENTICATION_ROUTE,
+  LOGIN_ROUTE,
   BASE_GROUP_ROUTE,
   GROUP_ROUTE,
   LOCATION_ROUTE,
@@ -37,18 +37,20 @@ export const Dashboard = ({ operator }) => {
   const [openModal, closeModal] = useModal();
   const { avvAccepted } = useWhatsNew(operator);
 
-  const { data: privateKeySecret, isLoading: isPrivateKeyLoading } = useQuery(
-    'privateKeySecret',
-    getPrivateKeySecret
-  );
+  const {
+    data: privateKeySecret,
+    isLoading: isPrivateKeyLoading,
+    error,
+  } = useQuery('privateKeySecret', getPrivateKeySecret);
 
   const [privateKey] = usePrivateKey(privateKeySecret);
 
   const { isTrusted: isOperatorTrusted } = operator;
 
   useEffect(() => {
+    if (isPrivateKeyLoading || error) return;
     if (!operator) {
-      history.push(AUTHENTICATION_ROUTE);
+      history.push(LOGIN_ROUTE);
     }
     if (operator && !operator.publicKey) {
       openModal({

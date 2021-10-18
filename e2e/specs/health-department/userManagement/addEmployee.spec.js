@@ -1,9 +1,5 @@
-import { loginToHD, openHDLoginPage } from '../helper/ui/login.helper';
-import { loginHealthDepartment, logout } from '../helper/api/auth.helper';
-import {
-  HEALTH_DEPARTMENT_TRACKING_ROUTE,
-  HEALTH_DEPARTMENT_USER_MANAGEMENT_ROUTE,
-} from '../helper/routes';
+import { loginHealthDepartment } from '../helper/api/auth.helper';
+import { HEALTH_DEPARTMENT_USER_MANAGEMENT_ROUTE } from '../helper/routes';
 
 const EMPLOYEE_FIRST_NAME = 'Luca';
 const EMPLOYEE_LAST_NAME = 'Tester';
@@ -61,6 +57,7 @@ describe('Health Department / User Management / Create new employee', () => {
           .click();
       });
       //verify employee is created
+      cy.wait(1000);
       cy.get('#employeeTable > div')
         .last()
         .then($row => {
@@ -70,13 +67,13 @@ describe('Health Department / User Management / Create new employee', () => {
           expect($row.text()).contains(EMPLOYEE_PHONE);
           expect($row.text()).contains(EMPLOYEE_EMAIL);
         });
-      logout();
+      cy.logoutHD();
       //login as a new employee
-      openHDLoginPage();
       cy.get('@password').then(password => {
-        loginToHD(EMPLOYEE_EMAIL, password);
+        cy.basicLoginHD(EMPLOYEE_EMAIL, password).then(response => {
+          expect(response.status).to.eq(200);
+        });
       });
-      cy.url().should('include', HEALTH_DEPARTMENT_TRACKING_ROUTE);
     });
   });
 });

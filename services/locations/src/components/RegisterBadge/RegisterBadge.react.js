@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 
@@ -13,9 +13,6 @@ import { Wrapper } from './RegisterBadge.styled';
 
 export const RegisterBadge = () => {
   const intl = useIntl();
-  const title = intl.formatMessage({ id: 'registerBadge.site.title' });
-  const meta = intl.formatMessage({ id: 'registerBadge.site.meta' });
-
   const { isLoading, error, data: operator } = useQuery('me', () => getMe(), {
     retry: false,
   });
@@ -25,8 +22,11 @@ export const RegisterBadge = () => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'registerBadge.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'registerBadge.site.meta' })}
+        />
       </Helmet>
       <Wrapper>
         <Header registrator={operator} />

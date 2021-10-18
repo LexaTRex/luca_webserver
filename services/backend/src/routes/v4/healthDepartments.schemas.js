@@ -1,3 +1,4 @@
+const { DownloadTracesType } = require('../../utils/hdAuditLog');
 const { z } = require('../../utils/validation');
 
 const storeSignedKeysSchema = z.object({
@@ -14,8 +15,21 @@ const auditLogDownloadQuerySchema = z.object({
   timeframe: z.array(z.string()).length(2),
 });
 
+const auditLogDownloadEventSchema = z.object({
+  type: z.nativeEnum(DownloadTracesType),
+  transferId: z.uuid(),
+  amount: z.number(),
+});
+
+const auditLogExportEventSchema = z.object({
+  transferId: z.uuid(),
+  amount: z.number(),
+});
+
 module.exports = {
   storeSignedKeysSchema,
   departmentIdParametersSchema,
   auditLogDownloadQuerySchema,
+  auditLogDownloadEventSchema,
+  auditLogExportEventSchema,
 };

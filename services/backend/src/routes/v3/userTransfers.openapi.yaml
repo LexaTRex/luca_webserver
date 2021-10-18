@@ -39,14 +39,8 @@ paths:
                   type: string
       tags:
         - UserTransfers
-  '/userTransfers/tan/{tan}':
-    parameters:
-      - schema:
-          type: string
-        name: tan
-        in: path
-        required: true
-    get:
+  '/userTransfers/tan':
+    post:
       summary: Get a user transfer by TAN
       tags:
         - UserTransfers
@@ -89,7 +83,15 @@ paths:
           $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
         '404':
           description: User transfer not found with provided TAN
-      operationId: get-userTransfers-tan-tan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tan:
+                  type: string
+      operationId: post-userTransfers-tan-tan
       description:
         'Get a [guest
         transfer](https://luca-app.de/securityconcept/properties/secrets.html#term-guest-data-transfer-object)

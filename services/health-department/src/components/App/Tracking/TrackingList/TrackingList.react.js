@@ -13,9 +13,10 @@ import { getProcesses } from 'network/api';
 // Components
 import { Table } from './Table';
 import { ListFilters } from './ListFilters';
+import { UnsignedWarning } from './UnsignedWarning';
 import { TrackingListWrapper } from './TrackingList.styled';
 
-export const TrackingList = () => {
+export const TrackingList = ({ isHealthDepartmentSigned }) => {
   const { isLoading, error, data: processes } = useQuery('processes', () =>
     getProcesses()
   );
@@ -30,12 +31,18 @@ export const TrackingList = () => {
 
   return (
     <TrackingListWrapper>
-      <ListFilters
-        filters={filters}
-        onChange={setFilters}
-        processes={processes}
-      />
-      <Table filters={filters} processes={processes} />
+      {isHealthDepartmentSigned ? (
+        <>
+          <ListFilters
+            filters={filters}
+            onChange={setFilters}
+            processes={processes}
+          />
+          <Table filters={filters} processes={processes} />
+        </>
+      ) : (
+        <UnsignedWarning />
+      )}
     </TrackingListWrapper>
   );
 };

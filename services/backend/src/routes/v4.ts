@@ -11,6 +11,7 @@ import signingToolRouter from './v4/signingToolDownload';
 import locationTransfersRouter from './v4/locationTransfers';
 import healthDepartmentsRouter from './v4/healthDepartments';
 import healthDepartmentEmployeesRouter from './v4/healthDepartmentEmployees';
+import alertsRouter from './v4/alerts';
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use('/riskLevels', riskLevelsRouter);
 router.use('/clientConfigs', clientConfigsRouter);
 router.use('/challenges', challengesRouter);
 router.use('/operatorDevices', operatorDevicesRouter);
+router.use('/alerts', alertsRouter);
 
 export default router;

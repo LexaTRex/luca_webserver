@@ -10,7 +10,7 @@ import { HOME_PATH } from 'constants/routes';
 import { checkin, registerDevice } from 'helpers/crypto';
 import { getCheckOutPath, getPrivateMeetingCheckInRoute } from 'helpers/routes';
 
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { StyledContainer } from './OnBoarding.styled';
 
 import { FinishStep } from './FinishStep';

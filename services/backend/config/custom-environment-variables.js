@@ -56,11 +56,21 @@ module.exports = {
     operatorDevice: {
       publicKey: 'OPERATOR_DEVICE_PUBLIC_KEY',
       privateKey: 'OPERATOR_DEVICE_PRIVATE_KEY',
-    }
+    },
+  },
+  luca: {
+    alerts: {
+      receiverEmail: 'ALERTS_MAILING_RECEIVER',
+    },
   },
   proxy: {
     http: 'http_proxy',
     https: 'http_proxy',
+  },
+  blockListSources: {
+    netset: 'DENY_LIST_NETSET_URLS',
+    singleCSV: 'DENY_LIST_SINGLE_IP_CSV_URLS',
+    doubleCSV: 'DENY_LIST_DOUBLE_IP_CSV_URLS',
   },
   certs: {
     dtrust: {
@@ -120,13 +130,22 @@ module.exports = {
       'LOCATION_TRANSFER_POST_RATELIMIT_HOUR',
     notifications_traces_get_ratelimit_hour:
       'NOTIFICATIONS_TRACES_GET_RATELIMIT_HOUR',
-    notifications_v4_health_departments_get_ratelimit_hour:
-      'NOTIFICATIONS_V4_HEALTH_DEPARTMENTS_GET_RATELIMIT_HOUR',
     notifications_v4_traces_active_chunk_get_ratelimit_hour:
       'NOTIFICATIONS_V4_TRACES_ACTIVE_CHUNK_GET_RATELIMIT_HOUR',
     notifications_v4_traces_archived_chunk_get_ratelimit_hour:
       'NOTIFICATIONS_V4_TRACES_ARCHIVED_CHUNK_GET_RATELIMIT_HOUR',
     notifications_v4_config_get_ratelimit_hour:
       'NOTIFICATIONS_V4_CONFIG_GET_RATELIMIT_HOUR',
+    keys_alert_ratelimit_hour: 'KEYS_ALERT_RATELIMIT_HOUR',
+    audit_log_event_download_traces_ratelimit_hour:
+      'AUDIT_LOG_EVENT_DOWNLOAD_TRACES_RATELIMIT_HOUR',
+    audit_log_event_export_traces_ratelimit_hour:
+      'AUDIT_LOG_EVENT_EXPORT_TRACES_RATELIMIT_HOUR',
+    audit_log_download_ratelimit_hour: 'AUDIT_LOG_DOWNLOAD_RATELIMIT_HOUR',
+    audit_log_download_ratelimit_user_hour:
+      'AUDIT_LOG_DOWNLOAD_RATELIMIT_USER_HOUR',
+    audit_log_download_ratelimit_minute: 'AUDIT_LOG_DOWNLOAD_RATELIMIT_MINUTE',
+    audit_log_download_ratelimit_user_minute:
+      'AUDIT_LOG_DOWNLOAD_RATELIMIT_USER_MINUTE',
   },
 };

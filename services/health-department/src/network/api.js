@@ -85,9 +85,12 @@ export const getSigningTool = () => {
 };
 
 // TAN
-export const getUserTransferByTan = tan => {
-  return getRequest(`${API_PATH}/v3/userTransfers/tan/${tan}`);
-};
+export const getUserTransferByTan = tan =>
+  fetch(`${API_PATH}/v3/userTransfers/tan`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ tan }),
+  }).then(response => response.json());
 
 export const getUserTransferById = userTransferId => {
   return getRequest(`${API_PATH}/v3/userTransfers/${userTransferId}`);
@@ -308,10 +311,19 @@ export const getNotificationConfig = () =>
   getRequest(`${API_PATH}/v4/notifications/config`);
 
 // AUDITS
-export const getAuditLog = data =>
-  getRequest(
-    `${API_PATH}/v4/healthDepartments/auditlog/download/?timeframe[0]=${data.timeframe[0]}&timeframe[1]=${data.timeframe[1]}`
-  );
+export const logDownload = ({ type, transferId, amount }) =>
+  fetch(`${API_PATH}/v4/healthDepartments/auditlog/event/downloadTraces`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ type, transferId, amount }),
+  });
+
+export const logExport = ({ transferId, amount }) =>
+  fetch(`${API_PATH}/v4/healthDepartments/auditlog/event/exportTraces`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ transferId, amount }),
+  });
 
 // PROFILE
 export const setContactInformation = payload =>

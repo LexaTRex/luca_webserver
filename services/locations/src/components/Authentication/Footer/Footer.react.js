@@ -15,17 +15,36 @@ export const Footer = () => {
 
   return (
     <LegalWrapper>
-      <Link href={FAQ_LINK} target="_blank" rel="noopener noreferrer">
+      <Link
+        data-cy="faqLink"
+        href={FAQ_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {intl.formatMessage({ id: 'location.footer.faq' })}
       </Link>
-      <Link href={GITLAB_LINK} target="_blank" rel="noopener noreferrer">
+      <Link
+        data-cy="gitLabLink"
+        href={GITLAB_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {intl.formatMessage({ id: 'location.footer.repository' })}
       </Link>
-      <Link href={TERMS_CONDITIONS_LINK} target="_blank">
+      <Link
+        data-cy="termsAndConditionsLink"
+        href={TERMS_CONDITIONS_LINK}
+        target="_blank"
+      >
         {intl.formatMessage({ id: 'authentication.background.legal.agb' })}
       </Link>
-      <Version>{isSuccess ? 'luca Locations' : ''}</Version>
-      <Version title={isSuccess ? `(${info.version}#${info.commit})` : ''}>
+      <Version data-cy="lucaVersionHeadline">
+        {isSuccess ? 'luca Locations' : ''}
+      </Version>
+      <Version
+        data-cy="lucaVersionNumber"
+        title={isSuccess ? `(${info.version}#${info.commit})` : ''}
+      >
         {isSuccess ? `(${info.version}#${info.commit})` : ''}
       </Version>
     </LegalWrapper>

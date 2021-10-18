@@ -27,7 +27,7 @@ export const GuestListModal = ({ location }) => {
     error,
     data: traces,
   } = useQuery(`traces/${location.uuid}/${duration}`, () =>
-    getTraces(location.accessId, duration !== ALL_OPTION ? duration : null)
+    getTraces(location.uuid, duration !== ALL_OPTION ? duration : null)
   );
 
   const renderCheckoutError = () =>

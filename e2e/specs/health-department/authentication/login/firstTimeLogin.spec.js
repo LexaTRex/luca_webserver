@@ -2,15 +2,15 @@ import {
   E2E_HEALTH_DEPARTMENT_USERNAME,
   E2E_HEALTH_DEPARTMENT_PASSWORD,
 } from '../../helper/user';
-import { logout } from '../../helper/api/auth.helper';
 import { RESET_HD_KEYS_QUERY } from '../../helper/dbQueries';
 import {
-  loginToHD,
   openHDLoginPage,
   downloadHealthDepartmentPrivateKey,
 } from '../../helper/ui/login.helper';
+import { HEALTH_DEPARTMENT_APP_ROUTE } from '../../helper/routes';
+import { signHealthDepartment } from '../../helper/signHealthDepartment';
 
-describe('Autentication', () => {
+describe('Authentication', () => {
   before(() => {
     cy.executeQuery(RESET_HD_KEYS_QUERY);
   });
@@ -22,11 +22,11 @@ describe('Autentication', () => {
   describe('Health Department / Authentication / Login', () => {
     describe('when a user login for the first time with correct password', () => {
       it('ask to download private key and redirect to tracking page', () => {
-        loginToHD(
-          E2E_HEALTH_DEPARTMENT_USERNAME,
-          E2E_HEALTH_DEPARTMENT_PASSWORD
-        );
-        cy.contains('Wrong Email or password').should('not.exist');
+        cy.basicLoginHD().then(response => {
+          expect(response.status).to.eq(200);
+        });
+        cy.visit(HEALTH_DEPARTMENT_APP_ROUTE);
+        signHealthDepartment();
         cy.url().should('include', '/app/tracking');
         cy.get('.ant-modal').within(() => {
           cy.contains('Setup').should('exist');
@@ -49,17 +49,24 @@ describe('Autentication', () => {
     });
     describe('when a user login with incorrect password', () => {
       it('error message is shown', () => {
-        loginToHD(E2E_HEALTH_DEPARTMENT_USERNAME, 'invalid');
-        cy.contains('Wrong Email or password').should('exist');
+        cy.basicLoginHD(E2E_HEALTH_DEPARTMENT_USERNAME, 'invalid').then(
+          response => {
+            expect(response.status).to.eq(401);
+          }
+        );
       });
     });
     describe('when an not existent user tries to login', () => {
       it('error message is shown', () => {
-        loginToHD('invalid', E2E_HEALTH_DEPARTMENT_PASSWORD);
-        cy.contains('Wrong Email or password').should('exist');
+        cy.basicLoginHD(
+          'invalid@nexenio.com',
+          E2E_HEALTH_DEPARTMENT_PASSWORD
+        ).then(response => {
+          expect(response.status).to.eq(401);
+        });
       });
     });
   });
 
-  afterEach(() => logout());
+  afterEach(() => cy.logoutHD());
 });

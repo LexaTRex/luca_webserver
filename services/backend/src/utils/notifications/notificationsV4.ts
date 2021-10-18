@@ -9,11 +9,7 @@ import {
 } from '@lucaapp/crypto';
 import database from 'database/models';
 import cache from 'utils/redisCache';
-import {
-  DEVICE_TYPE_IOS,
-  DEVICE_TYPE_ANDROID,
-  DEVICE_TYPE_WEBAPP,
-} from 'constants/deviceTypes';
+import { DEVICE_TYPE_IOS, DEVICE_TYPE_ANDROID } from 'constants/deviceTypes';
 import moment from 'moment';
 import config from 'config';
 import NodeCache from 'node-cache';
@@ -93,11 +89,7 @@ export const generateChunk = async () => {
           traceId: {
             [Op.not]: null,
           },
-          deviceType: [
-            DEVICE_TYPE_IOS,
-            DEVICE_TYPE_ANDROID,
-            DEVICE_TYPE_WEBAPP,
-          ],
+          deviceType: [DEVICE_TYPE_IOS, DEVICE_TYPE_ANDROID],
         },
       },
     ],
@@ -118,11 +110,7 @@ export const generateChunk = async () => {
             traceId: {
               [Op.not]: null,
             },
-            deviceType: [
-              DEVICE_TYPE_IOS,
-              DEVICE_TYPE_ANDROID,
-              DEVICE_TYPE_WEBAPP,
-            ],
+            deviceType: [DEVICE_TYPE_IOS, DEVICE_TYPE_ANDROID],
           },
           include: {
             required: true,

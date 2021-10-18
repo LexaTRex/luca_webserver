@@ -20,15 +20,9 @@ export const ProcessDetails = () => {
     isLoading: isLoadingProcess,
     error: processError,
     data: process,
-  } = useQuery(`process${processId}`, () => getProcess(processId), {
-    cacheTime: 0,
-    staleTime: 60000,
-    refetchInterval: 60000,
-    retry: false,
-  });
+  } = useQuery(['processes', { processId }], () => getProcess(processId));
 
-  if (processError || keyError) return null;
-  if (isLoadingProcess || isLoadingKey) return null;
+  if (processError || keyError || isLoadingProcess || isLoadingKey) return null;
 
   return (
     <PageWrapper>

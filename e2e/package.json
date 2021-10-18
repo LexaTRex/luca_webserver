@@ -1,6 +1,6 @@
 {
   "name": "e2e",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "main": "index.js",
   "private": true,
   "engines": {
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@lucaapp/crypto": "1.0.3",
-    "cypress": "7.4.0",
+    "cypress": "8.4.0",
     "cypress-file-upload": "5.0.7",
     "faker": "5.5.3",
     "fluent-ffmpeg": "2.1.2",

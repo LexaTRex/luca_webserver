@@ -11,18 +11,20 @@ import {
 } from './Tracking.styled';
 import { useKeyLoader } from '../../hooks/useKeyLoader';
 
-export const Tracking = () => {
+export const Tracking = ({ isHealthDepartmentSigned }) => {
   const { isLoading, error } = useKeyLoader();
 
   if (error || isLoading) return null;
 
   return (
     <TrackingWrapper>
-      <ButtonWrapper>
-        <ManualSearchButton />
-        <NewTrackingButton />
-      </ButtonWrapper>
-      <TrackingList />
+      {isHealthDepartmentSigned && (
+        <ButtonWrapper>
+          <ManualSearchButton />
+          <NewTrackingButton />
+        </ButtonWrapper>
+      )}
+      <TrackingList isHealthDepartmentSigned={isHealthDepartmentSigned} />
       <VersionFooterWrapper>
         <VersionFooter />
       </VersionFooterWrapper>

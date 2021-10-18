@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import QRCode from 'qrcode.react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 
 import { indexDB } from 'db';

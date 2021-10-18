@@ -1,12 +1,11 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
 import { Route, Switch, Redirect } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-// Constants
 import {
   PROFILE_ROUTE,
   TRACKING_ROUTE,
@@ -16,7 +15,6 @@ import {
 } from 'constants/routes';
 import { getMe } from 'network/api';
 
-// Components
 import { ModalArea } from 'components/App/modals/ModalArea';
 import { Header } from './Header';
 import { Navigation } from './Navigation';
@@ -31,10 +29,7 @@ export const App = () => {
   const history = useHistory();
   const currentRoute = useSelector(state => state.router.location.pathname);
   const isProfileRoute = currentRoute === PROFILE_ROUTE;
-
-  const title = intl.formatMessage({ id: 'main.site.title' });
-  const meta = intl.formatMessage({ id: 'main.site.meta' });
-  const { isLoading: isProfileLoading, data: profileData } = useQuery(
+  const { isLoading: isProfileLoading, data: healthDepartmentUser } = useQuery(
     'me',
     () => getMe(),
     {
@@ -47,29 +42,34 @@ export const App = () => {
 
   if (isProfileLoading) return null;
 
-  const { isAdmin } = profileData;
+  const { isAdmin, isSigned } = healthDepartmentUser;
 
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'main.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'main.site.meta' })}
+        />
       </Helmet>
       <AppWrapper>
-        <Header profileData={profileData} />
+        <Header profileData={healthDepartmentUser} />
         {!isProfileRoute && <Navigation />}
         <ModalArea />
         <Switch>
           <Route path={PROFILE_ROUTE}>
-            <Profile profileData={profileData} />
+            <Profile profileData={healthDepartmentUser} />
           </Route>
           <Route path={PROCESS_DETAILS_ROUTE}>
             <ProcessDetails />
           </Route>
-          <Route path={TRACKING_ROUTE} component={Tracking} />
+          <Route path={TRACKING_ROUTE}>
+            <Tracking isHealthDepartmentSigned={isSigned} />
+          </Route>
           {isAdmin && (
             <Route path={USER_MANAGEMENT_ROUTE}>
-              <UserManagement profileData={profileData} />
+              <UserManagement profileData={healthDepartmentUser} />
             </Route>
           )}
           <Redirect to={`${TRACKING_ROUTE}${window.location.search}`} />

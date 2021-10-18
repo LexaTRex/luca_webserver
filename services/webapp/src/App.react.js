@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { createBrowserHistory } from 'history';
@@ -9,7 +9,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import 'moment/locale/de';
 import moment from 'moment';
 
-// i18n
 import { IntlProvider } from 'react-intl';
 
 import {
@@ -30,7 +29,6 @@ import { getLanguage } from 'utils/language';
 
 import { ErrorWrapper } from 'components/ErrorWrapper';
 
-// Misc
 import { Home } from 'components/Home';
 import { History } from 'components/History';
 import { Licenses } from 'components/Licenses';
@@ -60,11 +58,11 @@ const queryClient = new QueryClient();
 
 export const Main = () => {
   return (
-    <>
-      <Helmet>
-        <meta name="apple-itunes-app" content="app-id=1531742708" />
-      </Helmet>
-      <AppWrapper>
+    <AppWrapper>
+      <HelmetProvider>
+        <Helmet>
+          <meta name="apple-itunes-app" content="app-id=1531742708" />
+        </Helmet>
         <Provider store={store}>
           <IntlProvider
             locale={getLanguage()}
@@ -123,7 +121,7 @@ export const Main = () => {
             </QueryClientProvider>
           </IntlProvider>
         </Provider>
-      </AppWrapper>
-    </>
+      </HelmetProvider>
+    </AppWrapper>
   );
 };

@@ -3,13 +3,15 @@ const { performance } = require('perf_hooks');
 const config = require('config');
 const router = require('express').Router();
 const moment = require('moment');
+const status = require('http-status');
 const crypto = require('crypto');
 const { Op, fn, col } = require('sequelize');
-const status = require('http-status');
 
 const { GET_RANDOM_BYTES, hexToBase64 } = require('@lucaapp/crypto');
 
 const database = require('../../database');
+
+const { updateBlockList } = require('../../utils/ipBlockList');
 const featureFlag = require('../../utils/featureFlag');
 const {
   generateNotifications,
@@ -19,6 +21,12 @@ const {
   generateArchiveChunk,
 } = require('../../utils/notifications/notificationsV4');
 const { updateBloomFilter } = require('../../utils/bloomFilter');
+
+router.post('/updateBlockList', async (_, response) => {
+  const t0 = performance.now();
+  await updateBlockList();
+  response.send({ time: performance.now() - t0 });
+});
 
 router.post('/deleteOldTraces', async (request, response) => {
   const t0 = performance.now();
@@ -114,11 +122,26 @@ router.post('/deleteUnusedUserTransfers', async (request, response) => {
     where: {
       createdAt: {
         [Op.lt]: moment().subtract(
-          config.get('luca.userTransfers.maxAge'),
+          config.get('luca.userTransfers.maxAgeUnused'),
           'hours'
         ),
       },
       departmentId: null,
+    },
+  });
+  response.send({ affectedRows, time: performance.now() - t0 });
+});
+
+router.post('/deleteOldUserTransfers', async (request, response) => {
+  const t0 = performance.now();
+  const affectedRows = await database.UserTransfer.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: moment().subtract(
+          config.get('luca.userTransfers.maxAge'),
+          'hours'
+        ),
+      },
     },
   });
   response.send({ affectedRows, time: performance.now() - t0 });

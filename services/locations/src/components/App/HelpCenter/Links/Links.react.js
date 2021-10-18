@@ -9,20 +9,30 @@ import { Wrapper, LinkWrapper, LinkText, StyledIcon } from './Links.styled';
 export const Links = () => {
   const intl = useIntl();
   const links = [
-    { url: VIDEOS_LINK, intlId: 'profile.services.videos' },
-    { url: FAQ_LINK, intlId: 'profile.services.faq' },
-    { url: TOOLKIT_LINK, intlId: 'profile.services.toolkit' },
-    { url: LICENSES_ROUTE, intlId: 'license.license' },
+    {
+      url: VIDEOS_LINK,
+      intlId: 'profile.services.videos',
+      testId: 'supportVideoLink',
+    },
+    { url: FAQ_LINK, intlId: 'profile.services.faq', testId: 'faqLink' },
+    {
+      url: TOOLKIT_LINK,
+      intlId: 'profile.services.toolkit',
+      testId: 'toolkitLink',
+    },
+    { url: LICENSES_ROUTE, intlId: 'license.license', testId: 'licenseLink' },
   ];
 
-  const openInNewTab = url => {
-    window.open(url, '_blank').focus();
-  };
   return (
-    <Wrapper>
+    <Wrapper data-cy="helpCenterLinks">
       {links.map(link => (
         <LinkWrapper key={link.intlId}>
-          <LinkText onClick={() => openInNewTab(link.url)}>
+          <LinkText
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cy={link.testId}
+          >
             {intl.formatMessage({ id: link.intlId })}
             <StyledIcon component={ExternalSvg} />
           </LinkText>

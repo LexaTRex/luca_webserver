@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Table } from 'antd';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
 import { getLicenses } from 'network/static';
 

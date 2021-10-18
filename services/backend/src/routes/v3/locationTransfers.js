@@ -1,4 +1,6 @@
 /* eslint-disable max-lines */
+import { checkForAndAddLevel4RiskLevels } from 'utils/notifications/notificationsHelper';
+
 const router = require('express').Router();
 const moment = require('moment-timezone');
 const config = require('config');
@@ -25,7 +27,6 @@ const {
   isUserOfType,
   UserTypes,
 } = require('../../middlewares/requireUser');
-const logger = require('../../utils/logger');
 const { formatLocationName } = require('../../utils/format');
 const { OperatorDevice } = require('../../constants/operatorDevice');
 const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
@@ -49,8 +50,8 @@ const mapTraceEncryptedData = trace => ({
     : trace.data,
 });
 
-const logEmailError = error =>
-  logger.error({ message: 'failed to send email', error });
+const logEmailError = (request, error) =>
+  request.log.error({ message: 'failed to send email', error });
 
 /**
  * Get all location transfers of the currently logged-in operator.
@@ -407,6 +408,11 @@ router.post(
       },
     });
 
+    await database.transaction(async transaction => {
+      await transfer.update({ contactedAt: moment() }, transaction);
+      await checkForAndAddLevel4RiskLevels(transfer, transaction);
+    });
+
     try {
       sendShareDataRequestNotification(
         transfer.Location.Operator.email,
@@ -420,9 +426,8 @@ router.post(
           }`,
         }
       );
-      transfer.update({ contactedAt: moment() });
     } catch (error) {
-      logEmailError(error);
+      logEmailError(request, error);
     }
     return response.sendStatus(status.NO_CONTENT);
   }
@@ -530,7 +535,7 @@ const validateTransferId = async (request, response, next) => {
         },
         {
           model: database.HealthDepartment,
-          attributes: ['name'],
+          attributes: ['name', 'uuid'],
         },
       ],
     }
@@ -662,12 +667,14 @@ router.post(
           timeFrameTo: moment(transfer.time[1].value)
             .tz(config.get('tz'))
             .format(dateFormat),
-          locationName:
-            transfer.Location.name || transfer.Location.LocationGroup.name,
+          locationName: formatLocationName(
+            transfer.Location,
+            transfer.Location.LocationGroup
+          ),
         }
       );
     } catch (error) {
-      logEmailError(error);
+      logEmailError(request, error);
     }
 
     return response.sendStatus(status.NO_CONTENT);

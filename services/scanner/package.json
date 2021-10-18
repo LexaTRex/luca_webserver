@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/scanner",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -21,26 +21,22 @@
     "@lucaapp/crypto": "2.1.2",
     "antd": "4.16.13",
     "bloomit": "1.1.1",
-    "compression-webpack-plugin": "6.1.1",
     "connected-react-router": "6.9.1",
     "craco-less": "1.20.0",
     "dexie": "3.0.3",
-    "generate-json-webpack-plugin": "1.0.0",
     "history": "5.0.1",
-    "license-webpack-plugin": "2.3.21",
     "modern-react-qr-reader": "1.0.12",
     "moment": "2.29.1",
     "react": "17.0.2",
     "react-app-polyfill": "2.0.0",
     "react-crude-animated-tick": "1.0.2",
     "react-dom": "17.0.2",
-    "react-helmet": "6.1.0",
+    "react-helmet-async": "1.1.2",
     "react-intl": "5.20.10",
     "react-query": "3.23.2",
     "react-redux": "7.2.5",
     "react-router": "5.2.1",
     "react-router-dom": "5.3.0",
-    "react-scripts": "4.0.3",
     "redux": "4.1.1",
     "redux-devtools-extension": "2.13.9",
     "redux-thunk": "2.3.0",
@@ -48,6 +44,7 @@
     "ua-parser-js": "0.7.28"
   },
   "devDependencies": {
+    "compression-webpack-plugin": "6.1.1",
     "eslint-config-airbnb": "18.2.1",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.2",
@@ -62,6 +59,9 @@
     "postcss": "8.3.6",
     "prettier": "2.2.1",
     "stylelint": "13.13.1",
+    "generate-json-webpack-plugin": "1.0.0",
+    "license-webpack-plugin": "2.3.16",
+    "react-scripts": "4.0.3",
     "stylelint-config-prettier": "8.0.2",
     "stylelint-config-recommended": "4.0.0",
     "stylelint-config-styled-components": "0.1.1",
@@ -82,9 +82,5 @@
       "not dead",
       "not op_mini all"
     ]
-  },
-  "resolutions": {
-    "glob-parent": "5.1.2",
-    "browserslist": "4.16.6"
   }
 }

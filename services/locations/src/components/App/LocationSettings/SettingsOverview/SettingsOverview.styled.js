@@ -22,20 +22,6 @@ export const Overview = styled.div`
   border-bottom: ${({ isLast }) => (isLast ? 0 : 1)}px solid rgb(151, 151, 151);
 `;
 
-export const Address = styled.div`
-  margin-bottom: 40px;
-`;
-
-export const AddressHeader = styled(Address)`
-  margin-bottom: 8px;
-`;
-
-export const AddressRow = styled.div`
-  color: rgba(0, 0, 0, 0.87);
-  font-size: 14px;
-  font-weight: 500;
-`;
-
 export const contentStyles = {
   backgroundColor: '#f3f5f7',
 };

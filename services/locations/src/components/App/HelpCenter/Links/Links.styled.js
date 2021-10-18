@@ -14,12 +14,12 @@ export const LinkWrapper = styled.div`
   padding: 0 32px;
 `;
 
-export const LinkText = styled.div`
+export const LinkText = styled.a`
   color: rgb(80, 102, 124);
   font-family: Montserrat-Bold, sans-serif;
   font-size: 14px;
   font-weight: bold;
-  cursor: pointer;
+  text-decoration: none;
 `;
 
 export const StyledIcon = styled(Icon)`

@@ -3,9 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const config = require('config');
 const Sequelize = require('sequelize');
+const sequelizeStream = require('node-sequelize-stream');
 
 const environment = config.util.getEnv('NODE_ENV');
-const logger = require('../../utils/logger');
+const logger = require('../../utils/logger').default;
 const { client } = require('../../utils/metrics');
 const databaseConfig = require('../config.js')[environment];
 
@@ -21,7 +22,10 @@ const database = new Sequelize({
     max: 60 * 2,
     backoffBase: 500,
     backoffExponent: 1,
-    report: message => logger.warn(message),
+    report: (_message, info) => {
+      if (info.$current === 1) return;
+      logger.warn(`Trying to connect to database (try #${info.$current})`);
+    },
     match: [
       Sequelize.ConnectionError,
       Sequelize.ConnectionRefusedError,
@@ -75,5 +79,7 @@ Object.keys(database).forEach(modelName => {
     database[modelName].associate(database);
   }
 });
+
+sequelizeStream(database);
 
 module.exports = database;

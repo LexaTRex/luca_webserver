@@ -7,12 +7,9 @@ describe('Health Department / Authentication / Logout', () => {
     addHealthDepartmentPrivateKeyFile();
   });
   describe('when an operator logs out', () => {
-    it('redirect to Login page', () => {
-      cy.getByCy('logout').should('exist').should('be.visible').click();
-      cy.get('form.ant-form').within(($form) => {
-        cy.get('#username').should('exist').should('be.visible');
-        cy.get('#password').should('exist').should('be.visible');
-        cy.get('button[type=submit]').should('exist').should('be.visible');
+    it('logs the user out successfully', () => {
+      cy.logoutHD().then(response => {
+        expect(response.status).to.eq(204);
       });
     });
   });

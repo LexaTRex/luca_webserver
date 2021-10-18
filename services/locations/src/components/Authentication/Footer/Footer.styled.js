@@ -7,6 +7,7 @@ export const Link = styled.a`
   font-weight: 600;
   color: white;
   display: block;
+  width: fit-content;
   text-decoration: none;
   ${Media.mobile`
     margin-right: 12px;
@@ -29,10 +30,6 @@ export const Version = styled.span`
 
 export const LegalWrapper = styled.div`
   position: absolute;
-  left: 42px;
-  bottom: 60px;
-  ${Media.mobile`
-    bottom: 12px;
-    display: flex;
-  `}
+  left: 24px;
+  bottom: 24px;
 `;

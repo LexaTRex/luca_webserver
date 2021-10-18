@@ -1,4 +1,4 @@
-import { AUTHENTICATION_ROUTE, FORGOT_PASSWORD_ROUTE } from 'constants/routes';
+import { LOGIN_ROUTE, FORGOT_PASSWORD_ROUTE } from 'constants/routes';
 
 export const messageForResponse = statusCode => {
   const responses = {
@@ -12,7 +12,7 @@ export const messageForResponse = statusCode => {
     },
     204: {
       message: 'notification.forgotPassword.success',
-      route: AUTHENTICATION_ROUTE,
+      route: LOGIN_ROUTE,
     },
   };
 

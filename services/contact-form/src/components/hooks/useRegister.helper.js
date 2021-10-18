@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   EC_KEYPAIR_GENERATE,
   ECDH,
@@ -95,6 +96,12 @@ export const getV3CheckinPayload = (
     venuePublicKey,
     payload
   );
+
+  if (
+    moment.duration(moment().diff(moment.unix(dailyKey.createdAt))).asDays() > 7
+  ) {
+    throw new Error('The current daily key is expired');
+  }
 
   return {
     traceId: hexToBase64(traceId),

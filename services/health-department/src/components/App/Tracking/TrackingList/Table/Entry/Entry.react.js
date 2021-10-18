@@ -23,11 +23,10 @@ export const Entry = ({ process, onProcessName }) => {
     history.push(`${PROCESS_DETAILS_BASE_ROUTE}${process.uuid}`);
   };
 
-  const {
-    isLoading,
-    error,
-    data: processDetails,
-  } = useQuery(`process${process.uuid}`, () => getProcess(process.uuid));
+  const { isLoading, error, data: processDetails } = useQuery(
+    ['processes', { processId: process.uuid }],
+    () => getProcess(process.uuid)
+  );
 
   if (isLoading || error) return null;
   return (

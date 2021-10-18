@@ -4,6 +4,7 @@ import { notification } from 'antd';
 import { useIntl } from 'react-intl';
 import { v1 as generateUUID } from 'uuid';
 
+import { logExport } from 'network/api';
 import { getSormasClient } from 'network/sormas';
 import { getSORMASCaseUIURL } from 'utils/sormas';
 import { useModal } from 'components/hooks/useModal';
@@ -58,6 +59,11 @@ export function SormasModal({ traces, location }) {
           location.name,
           newTraces
         );
+
+        logExport({
+          transferId: location.transferId,
+          amount: traces.length,
+        });
         notification.open({
           type: 'success',
           message: (
@@ -99,6 +105,7 @@ export function SormasModal({ traces, location }) {
       closeModal,
       sormasClient,
       location.name,
+      location.transferId,
       clientInformation.host,
     ]
   );

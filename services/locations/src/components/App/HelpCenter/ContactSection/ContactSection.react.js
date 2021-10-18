@@ -8,7 +8,7 @@ import { Wrapper, Heading } from './ContactSection.styled';
 export const ContactSection = ({ operator }) => {
   const intl = useIntl();
   return (
-    <Wrapper>
+    <Wrapper data-cy="helpCenterContact">
       <Heading>{intl.formatMessage({ id: 'helpCenter.heading' })}</Heading>
       <MailSection operator={operator} />
       <PhoneSection operator={operator} />

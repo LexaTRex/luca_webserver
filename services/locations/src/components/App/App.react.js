@@ -1,18 +1,16 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Route, Switch, Redirect, useHistory } from 'react-router';
 import { useQuery, useQueryClient } from 'react-query';
 
 import { getMe } from 'network/api';
 
-// UTILS
 import { usePrivateKey } from 'utils/privateKey';
 import { clearHasSeenPrivateKeyModal } from 'utils/storage';
 
-// Constants
 import {
-  AUTHENTICATION_ROUTE,
+  LOGIN_ROUTE,
   PROFILE_ROUTE,
   HELP_CENTER_ROUTE,
   APP_ROUTE,
@@ -22,7 +20,6 @@ import {
   DEVICES_ROUTE,
 } from 'constants/routes';
 
-// Components
 import { ModalArea } from 'components/App/modals/ModalArea';
 import { Header } from './Header';
 import { Profile } from './Profile';
@@ -42,13 +39,6 @@ export const App = () => {
 
   const [, clearPrivateKey] = usePrivateKey(null);
 
-  const title = intl.formatMessage({
-    id: 'locations.site.title',
-  });
-  const meta = intl.formatMessage({
-    id: 'locations.site.meta',
-  });
-
   const {
     isLoading: isOperatorLoading,
     error: operatorError,
@@ -63,7 +53,7 @@ export const App = () => {
     queryClient.clear();
     clearPrivateKey(null);
     clearHasSeenPrivateKeyModal();
-    history.push(AUTHENTICATION_ROUTE);
+    history.push(LOGIN_ROUTE);
   }
 
   if (isOperatorLoading || operatorError) return null;
@@ -71,8 +61,17 @@ export const App = () => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>
+          {intl.formatMessage({
+            id: 'locations.site.title',
+          })}
+        </title>
+        <meta
+          name="description"
+          content={intl.formatMessage({
+            id: 'locations.site.meta',
+          })}
+        />
       </Helmet>
       <AppWrapper>
         <Header operator={operator} />

@@ -3,22 +3,18 @@ import { Tick } from 'react-crude-animated-tick';
 
 import { useIntl } from 'react-intl';
 import moment from 'moment';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQueryClient, useQuery } from 'react-query';
 import QrReader from 'modern-react-qr-reader';
 import * as UAParser from 'ua-parser-js';
 import { RedoOutlined } from '@ant-design/icons';
 
-// Constants
 import { SCAN_TIMEOUT, REFETCH_INTERVAL_MS } from 'constants/timeouts';
 
-// Hooks
 import { useModal } from 'components/hooks/useModal';
 
-// Api
 import { getCurrentCount, getTotalCount, getAdditionalData } from 'network/api';
 
-// Utils
 import { Header } from 'components/Header';
 import { isMobile } from 'utils/environment';
 import { notifyScanError, handleScanData } from 'helpers';
@@ -46,9 +42,6 @@ export const CamScanner = ({ scanner }) => {
   const [canScanCode, setCanScanCode] = useState(true);
 
   const agent = useRef(new UAParser().getResult());
-
-  const title = intl.formatMessage({ id: 'camScanner.site.title' });
-  const meta = intl.formatMessage({ id: 'camScanner.site.meta' });
 
   const refetch = () => {
     queryClient.invalidateQueries('total');
@@ -126,8 +119,11 @@ export const CamScanner = ({ scanner }) => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'camScanner.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'camScanner.site.meta' })}
+        />
       </Helmet>
       <CamScannerWrapper>
         <Header />

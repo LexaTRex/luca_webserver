@@ -257,7 +257,7 @@ void e2eTest() {
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn migrate")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml run backend yarn seed")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} SKIP_SMS_VERIFICATION=true E2E=true docker-compose -f docker-compose.yml up -d")
-          sh("docker run --rm --network=host --ipc=host --entrypoint='' -v `pwd`/e2e:/e2e -w /e2e cypress/included:7.3.0 /bin/bash -c 'npx wait-on https://127.0.0.1/api/v3/keys/daily/ -t 30000 && yarn install && yarn cache clean && cypress run' ")
+          sh("docker run --rm --network=host --ipc=host --entrypoint='' -v `pwd`/e2e:/e2e -w /e2e cypress/included:8.4.0 /bin/bash -c 'npx wait-on https://127.0.0.1/api/v3/keys/daily/ -t 30000 && yarn install && yarn cache clean && cypress run' ")
           sh("IMAGE_TAG=e2e_${UNIQUE_TAG} docker-compose -f docker-compose.yml down --rmi all -v -t 0 ")
         }
       } finally {

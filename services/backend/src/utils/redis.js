@@ -1,13 +1,13 @@
 const config = require('config');
 const redis = require('redis');
 const { promisify } = require('util');
-const logger = require('./logger');
+const logger = require('./logger').default;
 const lifecycle = require('./lifecycle');
 
 const RETRY_INTERVAL_MS = 500;
 
 const retryStrategy = info => {
-  logger.warn(`retrying redis connection`, info);
+  logger.warn(info, `retrying redis connection`);
   return RETRY_INTERVAL_MS;
 };
 

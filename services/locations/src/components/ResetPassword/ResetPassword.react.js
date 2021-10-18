@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
 import { Form, Input, notification, Alert } from 'antd';
 import { useDispatch } from 'react-redux';
@@ -10,16 +10,12 @@ import { PrimaryButton } from 'components/general';
 
 import { passwordMeetsCriteria } from 'utils/passwordCheck';
 
-// Assets
 import LucaLogoWhite from 'assets/LucaLogoWhite.svg';
 
-// Api
 import { resetPassword, getPasswordResetRequest } from 'network/api';
 
-// Constants
-import { AUTHENTICATION_ROUTE } from 'constants/routes';
+import { LOGIN_ROUTE } from 'constants/routes';
 
-// Components
 import {
   ForgotPasswordWrapper,
   ForgotPasswordCard,
@@ -40,10 +36,6 @@ export const ResetPassword = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { requestId } = useParams();
-
-  const title = intl.formatMessage({ id: 'resetPassword.site.title' });
-  const meta = intl.formatMessage({ id: 'resetPassword.site.meta' });
-
   const {
     isLoading,
     error: requestError,
@@ -64,7 +56,7 @@ export const ResetPassword = () => {
               id: 'notification.resetPassword.success',
             }),
           });
-          dispatch(replace(AUTHENTICATION_ROUTE));
+          dispatch(replace(LOGIN_ROUTE));
         } else {
           notification.error({
             message: intl.formatMessage({
@@ -87,8 +79,11 @@ export const ResetPassword = () => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={meta} />
+        <title>{intl.formatMessage({ id: 'resetPassword.site.title' })}</title>
+        <meta
+          name="description"
+          content={intl.formatMessage({ id: 'resetPassword.site.meta' })}
+        />
       </Helmet>
 
       <Wrapper>

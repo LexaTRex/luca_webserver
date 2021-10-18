@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { AUTHENTICATION_ROUTE } from 'constants/routes';
+import { BASE_ROUTE } from 'constants/routes';
 import { PrivateKeyLoader } from 'components/PrivateKeyLoader';
 
 import { RequestContent, StepLabel, SubHeader } from '../ShareData.styled';
@@ -12,7 +12,7 @@ export const PrivateKeyStep = ({ next, title, setPrivateKey, publicKey }) => {
   const location = useLocation();
 
   const handleError = () => {
-    history.push(`${AUTHENTICATION_ROUTE}?redirect=${location.pathname}`);
+    history.push(`${BASE_ROUTE}?redirect=${location.pathname}`);
   };
 
   return (

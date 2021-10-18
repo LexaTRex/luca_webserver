@@ -48,6 +48,20 @@ router.patch(
       return response.sendStatus(status.CONFLICT);
     }
 
+    await database.EmailActivation.update(
+      {
+        discarded: true,
+      },
+      {
+        where: {
+          operatorId: operator.uuid,
+          type: 'EmailChange',
+          discarded: false,
+          closed: false,
+        },
+      }
+    );
+
     const activationMail = await database.EmailActivation.create({
       operatorId: operator.uuid,
       email,
@@ -87,6 +101,7 @@ router.get(
       where: {
         operatorId: operator.uuid,
         closed: false,
+        discarded: false,
         createdAt: {
           [Op.gt]: moment().subtract(config.get('emails.expiry'), 'hours'),
         },
@@ -138,6 +153,7 @@ router.post(
     const activationMail = await database.EmailActivation.findOne({
       where: {
         uuid: activationId,
+        discarded: false,
         type: 'EmailChange',
       },
     });

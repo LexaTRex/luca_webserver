@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { notification } from 'antd';
 import { useIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 import { base64UrlToBytes } from '@lucaapp/crypto';
 

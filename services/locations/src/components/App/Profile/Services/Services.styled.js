@@ -5,19 +5,6 @@ export const Content = styled.div`
   background-color: white;
 `;
 
-export const Text = styled.p`
-  color: rgb(80, 102, 124);
-  font-family: Montserrat-Bold, sans-serif;
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 24px;
-  text-decoration: none;
-  cursor: pointer;
-  :hover {
-    color: rgb(80, 102, 124);
-  }
-`;
-
 export const Heading = styled.div`
   color: rgba(0, 0, 0, 0.87);
   font-size: 16px;

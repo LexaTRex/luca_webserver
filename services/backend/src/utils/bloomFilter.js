@@ -4,7 +4,7 @@ const moment = require('moment');
 const { Worker } = require('worker_threads');
 const { Op } = require('sequelize');
 
-const logger = require('./logger');
+const logger = require('./logger').default;
 const lifecycle = require('./lifecycle');
 const { client } = require('./metrics');
 const {

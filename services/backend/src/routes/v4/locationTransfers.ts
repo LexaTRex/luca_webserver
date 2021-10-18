@@ -3,7 +3,6 @@ import moment from 'moment';
 import Sequelize, { Op } from 'sequelize';
 import { z } from 'zod';
 import config from 'config';
-import logger from 'utils/logger';
 import {
   isUserOfType,
   requireHealthDepartmentEmployee,
@@ -15,9 +14,9 @@ import {
 import { limitRequestsByUserPerHour } from 'middlewares/rateLimit';
 import database from 'database/models';
 import { extractAndVerifyLocationTransfer } from 'utils/signedKeys';
-import { ApiError, ApiErrorType } from 'utils/apiError';
 import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
 import { logEvent } from 'utils/hdAuditLog';
+import { ApiError, ApiErrorType } from 'utils/apiError';
 import {
   createSchema,
   transferIdParametersSchema,
@@ -84,12 +83,11 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
   limitRequestsByUserPerHour('location_transfer_post_ratelimit_hour'),
   validateSchema(createSchema),
   async (request, response) => {
-    const { user, body } = request;
     const {
       HealthDepartment,
       departmentId,
-    } = user as IHealthDepartmentEmployee;
-    const { userTransferId, locations } = body;
+    } = request.user as IHealthDepartmentEmployee;
+    const { userTransferId, locations } = request.body;
 
     const isUserTransfer = !!userTransferId;
 
@@ -98,7 +96,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
     );
 
     if (locations.length > maxLocations) {
-      logEvent(user, {
+      logEvent(request.user, {
         type: AuditLogEvents.CREATE_TRACING_PROCESS,
         status: AuditStatusType.ERROR_LIMIT_EXCEEDED,
         meta: {
@@ -126,7 +124,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
           );
 
           if (!userTransfer) {
-            logEvent(user, {
+            logEvent(request.user, {
               type: AuditLogEvents.CREATE_TRACING_PROCESS,
               status: AuditStatusType.ERROR_INVALID_USER,
               meta: {
@@ -161,8 +159,10 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
             })
           );
         } catch (error) {
-          // @ts-ignore error is unknown typed
-          throw new ApiError(ApiErrorType.INVALID_SIGNATURE, error.message);
+          throw new ApiError(
+            ApiErrorType.INVALID_SIGNATURE,
+            (error as Error).message
+          );
         }
 
         await Promise.all(
@@ -177,11 +177,11 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
             });
 
             if (!location) {
-              logger.error({
+              request.log.error({
                 message: 'Missing location for location transfer',
                 locations,
               });
-              logEvent(user, {
+              logEvent(request.user, {
                 type: AuditLogEvents.CREATE_TRACING_PROCESS,
                 status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
                 meta: {
@@ -229,7 +229,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
               { transaction }
             );
 
-            logEvent(user, {
+            logEvent(request.user, {
               type: AuditLogEvents.CREATE_TRACING_PROCESS,
               status: AuditStatusType.SUCCESS,
               meta: {
@@ -244,7 +244,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
         return tracingProcess.uuid;
       })
       .catch((error: Error) => {
-        logEvent(user, {
+        logEvent(request.user, {
           type: AuditLogEvents.CREATE_TRACING_PROCESS,
           status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
           meta: {
@@ -253,6 +253,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
         });
 
         if (error instanceof ApiError) throw error;
+
         throw new ApiError(ApiErrorType.UNKNOWN_API_ERROR);
       });
 

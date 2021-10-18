@@ -1,8 +1,10 @@
-export const AUTHENTICATION_ROUTE = '/';
+export const BASE_ROUTE = '/';
+export const LOGIN_ROUTE = '/login';
+export const REGISTER_ROUTE = '/register';
 export const FORGOT_PASSWORD_ROUTE = '/forgotPassword';
 export const RESET_PASSWORD_ROUTE = '/resetPassword/:requestId';
 export const APP_ROUTE = '/app';
-export const LICENSES_ROUTE = `/licenses`;
+export const LICENSES_ROUTE = '/licenses';
 
 export const BASE_GROUP_ROUTE = `${APP_ROUTE}/group/`;
 

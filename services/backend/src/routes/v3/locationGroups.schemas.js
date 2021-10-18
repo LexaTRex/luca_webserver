@@ -14,7 +14,7 @@ const createSchema = z.object({
   lat: z.number().optional().nullable(),
   lng: z.number().optional().nullable(),
   radius: z.number().int().nonnegative().optional().nullable(),
-  tableCount: z.number().int().positive().optional().nullable(),
+  tableCount: z.number().int().positive().max(1000).optional().nullable(),
   additionalData: z
     .array(
       z.object({

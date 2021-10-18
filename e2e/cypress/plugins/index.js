@@ -64,6 +64,10 @@ module.exports = (on, config) => {
       launchOptions.args.push(
         '--use-file-for-fake-video-capture=/tmp/luca/stream.mjpeg'
       );
+      launchOptions.args.push('--disable-site-isolation-trials');
+      launchOptions.args.push(
+        '--disable-features=CrossSiteDocumentBlockingIfIsolating,CrossSiteDocumentBlockingAlways,IsolateOrigins,site-per-process'
+      );
       launchOptions.preferences.default['download'] = {
         default_directory: path.join(__dirname, 'downloads'),
       };

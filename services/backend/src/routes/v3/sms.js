@@ -5,7 +5,6 @@ const config = require('config');
 const parsePhoneNumber = require('libphonenumber-js');
 
 const database = require('../../database');
-const logger = require('../../utils/logger');
 const featureFlag = require('../../utils/featureFlag');
 const { sendSMSTan: sendMMSMSTan } = require('../../utils/messagemobile');
 const { sendSMSTan: sendSinchTan } = require('../../utils/sinch');
@@ -54,6 +53,7 @@ const getProvider = async () => {
 
 router.post(
   '/request',
+  requireNonBlockedIp,
   limitRequestsPerHour('sms_request_post_ratelimit_hour'),
   limitRequestsPerMinute('sms_request_post_ratelimit_minute', {
     global: true,
@@ -63,7 +63,6 @@ router.post(
     'sms_request_post_ratelimit_fixed_phone_number'
   ),
   limitRequestsByPhoneNumberPerDay('sms_request_post_ratelimit_phone_number'),
-  requireNonBlockedIp,
   async (request, response) => {
     const tan = crypto.randomInt(1000000).toString().padStart(6, '0');
     const provider = config.get('skipSmsVerification')
@@ -95,7 +94,7 @@ router.post(
           break;
       }
     } catch (error) {
-      logger.error(`failed to send sms [${provider}]`, error);
+      request.log.error(error, `failed to send sms [${provider}]`);
       return response.sendStatus(status.SERVICE_UNAVAILABLE);
     }
 

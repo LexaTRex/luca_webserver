@@ -69,7 +69,7 @@ export const getMe = () => {
 
 export const getPrivateKeySecret = () =>
   getRequest(`${API_PATH}/v3/operators/privateKeySecret`).then(data =>
-    base64ToHex(data.privateKeySecret)
+    data && data.privateKeySecret ? base64ToHex(data.privateKeySecret) : null
   );
 
 export const checkEmail = email => {
@@ -232,6 +232,17 @@ export const updateLocation = parameters => {
   });
 };
 
+export const updateAddress = parameters => {
+  return fetch(
+    `${API_PATH}/v3/operators/locations/${parameters.locationId}/address`,
+    {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(parameters.data),
+    }
+  );
+};
+
 export const createLocation = data => {
   return fetch(`${API_PATH}/v3/operators/locations`, {
     method: 'POST',
@@ -319,9 +330,9 @@ export const deleteAdditionalData = additionalDataId => {
 };
 
 // TRACES
-export const getTraces = (accessId, duration) => {
+export const getTraces = (locationId, duration) => {
   return getRequest(
-    `${API_PATH}/v3/locations/traces/${accessId}/${
+    `${API_PATH}/v3/operators/locations/traces/${locationId}/${
       duration ? `?duration=${duration}` : ''
     }`
   );

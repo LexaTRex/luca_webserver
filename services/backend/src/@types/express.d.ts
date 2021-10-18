@@ -29,3 +29,14 @@ declare namespace Express {
     user?: IUser | IOperator | IOperatorDevice | IHealthDepartmentEmployee;
   }
 }
+
+declare module 'http' {
+  export interface IncomingMessage {
+    headers: Record<string, string>;
+    originalUrl: string;
+  }
+
+  export interface ServerResponse {
+    headers: Record<string, string>;
+  }
+}

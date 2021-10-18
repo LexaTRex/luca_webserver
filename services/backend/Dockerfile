@@ -1,9 +1,4 @@
 FROM node:14.17.3-alpine3.14 as builder
-
-# set timezone
-ENV TZ=Europe/Berlin
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
 WORKDIR /app
 ENV NODE_ENV=production
 
@@ -26,12 +21,17 @@ FROM node:14.17.3-alpine3.14
 WORKDIR /app
 ENV NODE_ENV=production
 
+# set timezone
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # copy build
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/build /app/build
 COPY --from=builder /app/licenses.txt /app/licenses.txt
 COPY --from=builder /app/version.json /app/version.json
+
 # copy aux files
 COPY .sequelizerc package.json ./
 COPY config/ ./config/

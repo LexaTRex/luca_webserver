@@ -24,3 +24,4 @@ cypress/plugins/downloads
 
 # certificates
 certs/*.pfx
+certs/*.txt

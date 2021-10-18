@@ -7,6 +7,8 @@ const { SessionError } = require('../passport/session');
 const handle404 = (request, response) => response.sendStatus(status.NOT_FOUND);
 
 const handle500 = (error, request, response, next) => {
+  response.err = error;
+
   if (error instanceof SessionError) {
     request.logout();
     request.session.destroy();
@@ -26,11 +28,11 @@ const handle500 = (error, request, response, next) => {
   }
 
   if (config.get('debug') && next) {
-    return next(error);
+    response.status(status.INTERNAL_SERVER_ERROR);
+    response.setHeader('Content-Type', 'text/plain');
+    return response.send(error.stack);
   }
-  if (error.statusCode) {
-    return response.sendStatus(error.statusCode);
-  }
+
   return response.sendStatus(status.INTERNAL_SERVER_ERROR);
 };
 

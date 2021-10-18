@@ -9,8 +9,8 @@
 /* eslint-disable sonarjs/no-duplicate-string, max-lines */
 const router = require('express').Router();
 const status = require('http-status');
-const { Op } = require('sequelize');
 const moment = require('moment');
+const { Op } = require('sequelize');
 
 const database = require('../../../database');
 const {
@@ -18,6 +18,7 @@ const {
   validateQuerySchema,
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
+const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
 const {
   requireOperator,
   requireNonDeletedUser,
@@ -25,13 +26,12 @@ const {
   requireOperatorOROperatorDevice,
 } = require('../../../middlewares/requireUser');
 const { OperatorDevice } = require('../../../constants/operatorDevice');
-const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
-
 const {
   createSchema,
   updateSchema,
   locationTracesQuerySchema,
   locationIdParametersSchema,
+  updateAddressSchema,
 } = require('./locations.schemas');
 const { getOperatorLocationDTO } = require('./locations.helper');
 
@@ -52,8 +52,8 @@ router.get('/', requireOperatorOROperatorDevice, async (request, response) => {
  */
 router.get(
   '/:locationId',
-  validateParametersSchema(locationIdParametersSchema),
   requireOperatorOROperatorDevice,
+  validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -215,12 +215,16 @@ router.patch(
   }
 );
 
-// delete location
-router.delete(
-  '/:locationId',
-  validateParametersSchema(locationIdParametersSchema),
+/**
+ * Update given location address, owned by the logged-in operator
+ * @param locationId of the venue to update
+ */
+router.patch(
+  '/:locationId/address',
   requireOperator,
   requireNonDeletedUser,
+  validateSchema(updateAddressSchema),
+  validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
     const location = await database.Location.findOne({
       where: {
@@ -229,9 +233,28 @@ router.delete(
       },
     });
 
-    if (!location) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
+    if (!location) return response.sendStatus(status.NOT_FOUND);
+
+    await location.update(request.body);
+    return response.send(status.NO_CONTENT);
+  }
+);
+
+// delete location
+router.delete(
+  '/:locationId',
+  requireOperator,
+  requireNonDeletedUser,
+  validateParametersSchema(locationIdParametersSchema),
+  async (request, response) => {
+    const location = await database.Location.findOne({
+      where: {
+        operator: request.user.uuid,
+        uuid: request.params.locationId,
+      },
+    });
+
+    if (!location) return response.sendStatus(status.NOT_FOUND);
 
     await database.transaction(async transaction => {
       await database.Location.checkoutAllTraces({ location, transaction });
@@ -260,12 +283,8 @@ router.post(
       },
     });
 
-    if (!location) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
-
+    if (!location) return response.sendStatus(status.NOT_FOUND);
     await database.Location.checkoutAllTraces({ location });
-
     return response.sendStatus(status.NO_CONTENT);
   }
 );

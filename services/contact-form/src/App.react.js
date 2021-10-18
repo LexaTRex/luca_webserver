@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { HelmetProvider } from 'react-helmet-async';
 
 import moment from 'moment';
 import 'moment/locale/de';
@@ -12,17 +13,13 @@ import 'moment/locale/de';
 import { getLanguage } from 'utils/language';
 import { ErrorWrapper } from 'components/ErrorWrapper';
 
-// Api
 import { getForm } from 'network/api';
 
-// i18n
 import { IntlProvider } from 'react-intl';
 import { messages } from 'messages';
 
-// Constants
 import { CONTACT_FORM_ROUTE, LICENSES_ROUTE } from 'constants/routes';
 
-// Misc
 import { Header } from 'components/Header';
 import { ErrorPage } from 'components/ErrorPage';
 import { LoadingScreen } from 'components/LoadingScreen';
@@ -62,27 +59,29 @@ const queryClient = new QueryClient();
 export const Main = () => {
   return (
     <Provider store={store}>
-      <IntlProvider
-        locale={getLanguage()}
-        messages={messages[getLanguage()]}
-        wrapRichTextChunksInFragment
-      >
-        <ConnectedRouter history={history}>
-          <QueryClientProvider client={queryClient}>
-            <ErrorWrapper>
-              <AppWrapper>
-                <Header />
-                <Switch>
-                  <Route path={LICENSES_ROUTE} component={Licenses} />
-                  <Route path={CONTACT_FORM_ROUTE}>
-                    <LoadContactFormHOC component={ContactForm} />
-                  </Route>
-                </Switch>
-              </AppWrapper>
-            </ErrorWrapper>
-          </QueryClientProvider>
-        </ConnectedRouter>
-      </IntlProvider>
+      <HelmetProvider>
+        <IntlProvider
+          locale={getLanguage()}
+          messages={messages[getLanguage()]}
+          wrapRichTextChunksInFragment
+        >
+          <ConnectedRouter history={history}>
+            <QueryClientProvider client={queryClient}>
+              <ErrorWrapper>
+                <AppWrapper>
+                  <Header />
+                  <Switch>
+                    <Route path={LICENSES_ROUTE} component={Licenses} />
+                    <Route path={CONTACT_FORM_ROUTE}>
+                      <LoadContactFormHOC component={ContactForm} />
+                    </Route>
+                  </Switch>
+                </AppWrapper>
+              </ErrorWrapper>
+            </QueryClientProvider>
+          </ConnectedRouter>
+        </IntlProvider>
+      </HelmetProvider>
     </Provider>
   );
 };

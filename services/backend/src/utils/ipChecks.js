@@ -1,7 +1,6 @@
-const { Address4 } = require('ip-address');
 const IPCIDR = require('ip-cidr');
 const { Sequelize, Op } = require('sequelize');
-const { isIP } = require('net');
+const { isIP, isIPv4 } = require('net');
 const database = require('../database');
 
 const CLASS_A_CIDR = new IPCIDR('10.0.0.0/8');
@@ -12,6 +11,7 @@ const CLASS_B_IPV6_CIDR = new IPCIDR('::ffff:172.16.0.0/108');
 const CLASS_C_IPV6_CIDR = new IPCIDR('::ffff:192.168.0.0/112');
 
 const isInternalIp = ipAddress => {
+  if (!isIP(ipAddress)) return false;
   return (
     CLASS_A_CIDR.contains(ipAddress) ||
     CLASS_B_CIDR.contains(ipAddress) ||
@@ -23,31 +23,31 @@ const isInternalIp = ipAddress => {
 };
 
 const isBlockedIp = async ipAddress => {
-  const ipAddressAsBigInt = new Address4(ipAddress).bigInteger();
-  const match = await database.IPAddressDenyList.findOne({
+  if (!isIPv4(ipAddress)) return true;
+  const ip = await database.IPAddressBlockList.findOne({
     where: {
-      ipStart: {
-        [Op.lte]: ipAddressAsBigInt,
+      startIp: {
+        [Op.lte]: ipAddress,
       },
-      ipEnd: {
-        [Op.gte]: ipAddressAsBigInt,
+      endIp: {
+        [Op.gte]: ipAddress,
       },
     },
   });
-
-  return !!match;
+  return ip !== null;
 };
 
 const isAllowedIp = async ipAddress => {
-  if (!isIP(ipAddress)) return false;
-  const count = await database.IPAddressAllowList.count({
+  if (!isIPv4(ipAddress)) return false;
+  if (isInternalIp(ipAddress)) return true;
+  const ip = await database.IPAddressAllowList.findOne({
     where: Sequelize.literal(`ip >>= ${database.escape(ipAddress)}`),
   });
-  return count !== 0;
+  return ip !== null;
 };
 
 const isRateLimitExemptIp = async ipAddress => {
-  if (!isIP(ipAddress)) return false;
+  if (!isIPv4(ipAddress)) return false;
   const entries = await database.IPAddressAllowList.findAll({
     where: Sequelize.literal(`ip >>= ${database.escape(ipAddress)}`),
     attributes: ['rateLimitFactor'],
