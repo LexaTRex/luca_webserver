@@ -1,19 +1,22 @@
 import React, { useState, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useQueryClient } from 'react-query';
-import { TimePicker, notification } from 'antd';
+import { Form, notification } from 'antd';
 
 import { updateLocation } from 'network/api';
 
-import {
-  DEFAULT_AVERAGE_CHECKIN_TIME,
-  MAX_AVERAGE_CHECKIN_TIME,
-  MIN_AVERAGE_CHECKIN_TIME,
-} from 'constants/checkout';
-import { getMinutesFromTimeString } from 'utils/time';
+import { DEFAULT_AVERAGE_CHECKIN_TIME } from 'constants/checkout';
+import { setAverageCheckoutTime } from 'utils/time';
 
-import { Wrapper, PickerWrapper } from './AverageCheckinTime.styled';
-import { getTimeStringFromMinutes } from './AverageCheckinTime.helper';
+import {
+  Wrapper,
+  PickerWrapper,
+  StyledTimePicker,
+} from './AverageCheckinTime.styled';
+import {
+  getTimeStringFromMinutes,
+  onChangeAverageCheckinTime,
+} from './AverageCheckinTime.helper';
 
 import { CardSectionDescription, CardSectionTitle } from '../../LocationCard';
 import { Switch } from '../../../Switch';
@@ -22,6 +25,7 @@ import { StyledSwitchContainer } from '../../GenerateQRCodes/GenerateQRCodes.sty
 
 export const AverageCheckinTime = ({ location }) => {
   const intl = useIntl();
+  const [form] = Form.useForm();
   const queryClient = useQueryClient();
   const [isAverageTimeActive, setIsAverageTimeActive] = useState(
     !!location.averageCheckinTime
@@ -56,21 +60,9 @@ export const AverageCheckinTime = ({ location }) => {
     }
   };
 
-  const onChangeAverageCheckinTime = (_, timeString) => {
-    const averageCheckinTimeMinutes = getMinutesFromTimeString(timeString);
-
-    if (
-      averageCheckinTimeMinutes >= MAX_AVERAGE_CHECKIN_TIME ||
-      averageCheckinTimeMinutes <= MIN_AVERAGE_CHECKIN_TIME
-    ) {
-      notification.error({
-        message: intl.formatMessage({
-          id: 'notification.updateAverageCheckinTime.constraint.error',
-        }),
-      });
-      return;
-    }
-    updateAverageCheckinTime(getMinutesFromTimeString(timeString));
+  const changeAverageTime = time => {
+    setAverageCheckoutTime(time, form);
+    onChangeAverageCheckinTime(time, intl, updateAverageCheckinTime);
   };
 
   return (
@@ -91,17 +83,24 @@ export const AverageCheckinTime = ({ location }) => {
       </CardSectionDescription>
       {isAverageTimeActive && (
         <PickerWrapper>
-          <TimePicker
-            style={{ width: 150 }}
-            onChange={onChangeAverageCheckinTime}
-            showNow={false}
-            format="HH:mm"
-            minuteStep={15}
-            value={getTimeStringFromMinutes(location)}
-            placeholder={intl.formatMessage({
-              id: 'settings.location.checkout.average.placeholder',
-            })}
-          />
+          <Form
+            form={form}
+            initialValues={{
+              averageCheckinTime: getTimeStringFromMinutes(location) || null,
+            }}
+          >
+            <Form.Item name="averageCheckinTime">
+              <StyledTimePicker
+                showNow={false}
+                format="HH:mm"
+                minuteStep={15}
+                onSelect={changeAverageTime}
+                placeholder={intl.formatMessage({
+                  id: 'settings.location.checkout.average.placeholder',
+                })}
+              />
+            </Form.Item>
+          </Form>
         </PickerWrapper>
       )}
     </Wrapper>

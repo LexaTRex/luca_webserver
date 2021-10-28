@@ -1,46 +1,40 @@
-import { DELETE_E2E_TRACE_QUERY } from '../../../constants/dbQueries';
+/* eslint-disable */
 import {
   verifyScannerCounter,
   verifyLocationOverview,
 } from '../../../ui-helpers/validations';
 import {
-  DEVICE_TYPES,
-  traceDataPayload,
-  createGroupPayload,
+  DYNAMIC_DEVICE_TYPES,
+  dynamicTraceDataPayload,
 } from '../../../utils/payloads.helper';
-import { loginLocations } from '../../../utils/auth';
-import { deleteGroup } from '../../../utils/groups';
-import { checkin } from '../../../utils/traces';
-
-const CHECKIN_GROUP_NAME = 'neXenio';
+import { dynamicCheckin } from '../../../utils/traces';
+import {
+  CHECKIN_GROUP_NAME,
+  checkinSetup,
+  removeGroup,
+} from './checkin.helper';
 
 describe('Location / Checkin Options / hardware scanner', () => {
   beforeEach(() => {
-    //remove trace if exists
-    cy.executeQuery(DELETE_E2E_TRACE_QUERY);
-    loginLocations();
-    cy.createGroup({ ...createGroupPayload, name: CHECKIN_GROUP_NAME });
+    checkinSetup();
   });
   afterEach(() => {
-    cy.get('@groupId').then(groupId => {
-      deleteGroup(groupId);
-    });
-    cy.logoutLocations();
+    removeGroup();
   });
 
   describe('when a user check-in to the location successfully and the location owner clicks on the reload button', () => {
     it('increment the check-in counter', () => {
       verifyLocationOverview();
-      //Open QR code reader tool
+      // Open QR code reader tool
       cy.stubNewWindow();
       cy.getByCy('scanner').click();
       verifyScannerCounter(CHECKIN_GROUP_NAME);
       // Checkin with scanner tool
       cy.get('@scannerId').then(scannerId => {
-        checkin({
-          ...traceDataPayload,
-          scannerId: scannerId,
-          deviceType: DEVICE_TYPES.mobile,
+        dynamicCheckin({
+          ...dynamicTraceDataPayload,
+          scannerId,
+          deviceType: DYNAMIC_DEVICE_TYPES.DEVICE_TYPE_WEBAPP,
         });
         cy.get('span[aria-label=redo]').click();
         cy.contains('1/1');

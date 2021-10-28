@@ -1,4 +1,18 @@
 import {
+  enterEmail,
+  enterName,
+  setNewPassword,
+  clearPasswordFields,
+  registerDoesNotExist,
+  confirmNewAccountRegistration,
+  getNewAccountButton,
+  getPasswordSubmitButton,
+  isValidationErrorShown,
+  getSetPassword,
+  getLegalTerms,
+} from '../authentication.helper';
+
+import {
   NEW_E2E_EMAIL,
   NEW_E2E_FIRST_NAME,
   NEW_E2E_LAST_NAME,
@@ -8,197 +22,89 @@ import {
   NO_UPPER_CASE_PASSWORD,
   NO_LOWER_CASE_PASSWORD,
   NO_SPECIAL_CHAR_PASSWORD,
-  enterEmail,
-  enterName,
-  setNewPassword,
-  setLegals,
-  confirmNewAccountRegistration,
-} from '../authentication.helper';
-import { DELETE_UNKOWN_OPERATOR } from '../../constants/dbQueries';
+  SOME_OTHER_INVALID_PASSWORD,
+} from '../../constants/inputs';
+
+import { DELETE_UNKOWN_OPERATOR } from '../../constants/databaseQueries';
+
+import {
+  AVV_CHECKBOX,
+  TERMS_AND_CONDITIONS_CHECKBOX,
+  FINISH_REGISTER,
+  LEGAL_TERMS_SUBMIT_BUTTON,
+  END_REGISTRATION_BUTTON,
+  EMAIL_FIELD,
+} from '../../constants/selectorKeys';
+
+import { REGISTER_ROUTE } from '../../constants/routes';
+
+import { shouldBeVisible } from '../../utils/assertions';
+import { getByCy, getDOMElement } from '../../utils/selectors';
 
 describe('Authentication', () => {
   before(() => cy.executeQuery(DELETE_UNKOWN_OPERATOR));
   beforeEach(() => {
-    cy.visit('/register');
+    cy.visit(REGISTER_ROUTE);
   });
-  describe('Register', () => {
-    it('asks for registration with an unknown email', () => {
+
+  describe('Registration', () => {
+    it('registers a new user and handles errors', () => {
+      // Enter new email
       enterEmail(NEW_E2E_EMAIL);
-      cy.get('button').click();
-      cy.get('#password').should('not.exist');
-      cy.getByCy('confirmRegister').should('exist');
-    });
-    it('collects the user name', () => {
-      enterEmail(NEW_E2E_EMAIL);
-      cy.get('button').click();
+      getNewAccountButton().click();
+      // Confirm mail correct
       confirmNewAccountRegistration();
       // Enter name
       enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-      cy.getByCy('setPassword').should('exist');
-    });
-    describe('Setting password', { retries: 3 }, () => {
-      describe('Password meets criteria', () => {
-        it('sets the password ', () => {
-          enterEmail(NEW_E2E_EMAIL);
-          cy.get('button').click();
-          confirmNewAccountRegistration();
-          // Enter name
-          enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-          // Set password
-          setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
-          cy.get('button[type=submit]').click();
-          cy.getByCy('legalTerms').should('exist');
-        });
-      });
-      describe('Password does not meet criteria', () => {
-        describe('Password not set', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set no password
-            cy.get('button[type=submit]').click();
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-        describe('Wrong password confirmation', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NEW_E2E_VALID_PASSWORD, 'Some0therVal1dPassword!');
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-        describe('Password too short', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(TOO_SHORT_PASSWORD, TOO_SHORT_PASSWORD);
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-        describe('Password with no number', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NO_NUMBER_PASSWORD, NO_NUMBER_PASSWORD);
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-        describe('Password with no upper case char', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NO_UPPER_CASE_PASSWORD, NO_UPPER_CASE_PASSWORD);
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-        describe('Password with no lower case char', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NO_LOWER_CASE_PASSWORD, NO_LOWER_CASE_PASSWORD);
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-        describe('Password with no special char', () => {
-          it('does not set the password ', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            // Confirm
-            cy.get('button[type=submit]').click();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NO_SPECIAL_CHAR_PASSWORD, NO_SPECIAL_CHAR_PASSWORD);
-            cy.getByCy('legalTerms').should('not.exist');
-          });
-        });
-      });
-    });
-    describe('Accept legals', () => {
-      describe('Not all legals accepted', () => {
-        describe('Terms not accepted', () => {
-          it('does not set the legals', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
-            // Set legal
-            setLegals(false, true);
-            cy.getByCy('finishRegister').should('not.exist');
-          });
-        });
-        describe('AVV not accepted', () => {
-          it('does not set the legals', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
-            // Set legal
-            setLegals(true, false);
-            cy.getByCy('finishRegister').should('not.exist');
-          });
-        });
-        describe('Both not accepted', () => {
-          it('does not set the legals', () => {
-            enterEmail(NEW_E2E_EMAIL);
-            cy.get('button').click();
-            confirmNewAccountRegistration();
-            // Enter name
-            enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-            // Set password
-            setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
-            // Set legal
-            setLegals(false, false);
-            cy.getByCy('finishRegister').should('not.exist');
-          });
-        });
-      });
-      describe('All legals accepted', () => {
-        it('finishes the rgistration', () => {
-          enterEmail(NEW_E2E_EMAIL);
-          cy.get('button').click();
-          confirmNewAccountRegistration();
-          // Enter name
-          enterName(NEW_E2E_FIRST_NAME, NEW_E2E_LAST_NAME);
-          // Set password
-          setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
-          // Set legal
-          setLegals(true, true);
-          cy.getByCy('finishRegister').should('exist');
-          cy.get('button').click();
-          cy.get('#email').should('exist');
-        });
-      });
+      // Set password - Starting with error handling
+      shouldBeVisible(getSetPassword());
+      // No input
+      getPasswordSubmitButton().click();
+      isValidationErrorShown();
+      // Incorrect PW repeat
+      setNewPassword(NEW_E2E_VALID_PASSWORD, SOME_OTHER_INVALID_PASSWORD);
+      isValidationErrorShown();
+      clearPasswordFields();
+      // PW too short
+      setNewPassword(TOO_SHORT_PASSWORD, TOO_SHORT_PASSWORD);
+      isValidationErrorShown();
+      clearPasswordFields();
+      // PW has no number
+      setNewPassword(NO_NUMBER_PASSWORD, NO_NUMBER_PASSWORD);
+      isValidationErrorShown();
+      clearPasswordFields();
+      // PW has no uppercase
+      setNewPassword(NO_UPPER_CASE_PASSWORD, NO_UPPER_CASE_PASSWORD);
+      isValidationErrorShown();
+      clearPasswordFields();
+      // PW has no lowercase
+      setNewPassword(NO_LOWER_CASE_PASSWORD, NO_LOWER_CASE_PASSWORD);
+      isValidationErrorShown();
+      clearPasswordFields();
+      // PW has no special char
+      setNewPassword(NO_SPECIAL_CHAR_PASSWORD, NO_SPECIAL_CHAR_PASSWORD);
+      isValidationErrorShown();
+      clearPasswordFields();
+      // Set password - Happy case
+      setNewPassword(NEW_E2E_VALID_PASSWORD, NEW_E2E_VALID_PASSWORD);
+      // Set legal - Starting with error handling
+      shouldBeVisible(getLegalTerms());
+      // None accepted
+      registerDoesNotExist();
+      //  No legals
+      getByCy(AVV_CHECKBOX).check();
+      registerDoesNotExist();
+      // No AVV
+      getByCy(AVV_CHECKBOX).uncheck();
+      getByCy(TERMS_AND_CONDITIONS_CHECKBOX).check();
+      registerDoesNotExist();
+      // Set legals - Happy case
+      getByCy(AVV_CHECKBOX).check();
+      getByCy(LEGAL_TERMS_SUBMIT_BUTTON).click();
+      // Finish
+      shouldBeVisible(getByCy(FINISH_REGISTER));
+      getByCy(END_REGISTRATION_BUTTON).click();
+      shouldBeVisible(getDOMElement(EMAIL_FIELD));
     });
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@lucaapp/web",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "license": "Apache-2.0",
   "author": "Culture4Life <hello@luca-app.de> (https://www.luca-app.de/)",
@@ -13,6 +13,7 @@
     "prepare": "git lfs install && husky install && yarn generate:certs",
     "update:version": "./scripts/updatePackageJsons.sh",
     "generate:certs": "./scripts/generateCertificates.sh",
+    "lint:e2e": "npm run lint --prefix e2e",
     "lint:backend": "npm run lint --prefix services/backend",
     "lint:contact-form": "npm run lint --prefix services/contact-form",
     "lint:health-department": "npm run lint --prefix services/health-department",
@@ -21,6 +22,9 @@
     "lint:webapp": "npm run lint --prefix services/webapp"
   },
   "lint-staged": {
+    "e2e/**/*.{js,jsx}": [
+      "npm run --silent lint:e2e"
+    ],
     "services/backend/**/*.{js,jsx}": [
       "npm run --silent lint:backend"
     ],

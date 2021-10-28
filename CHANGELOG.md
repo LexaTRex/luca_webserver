@@ -1,5 +1,26 @@
 # Changelog
 
+### 2.4.0 (2021-10-28)
+* **backend** feat: add search auditlog entry
+* **backend** feat: adjust and add rate limits
+* **backend** feat: add support routes
+* **backend** feat: expose average checkin time to public
+* **backend** feat: add additional authentication to internal routes
+* **backend** feat: invalidate sessions after password chang
+* **backend** perf: stream audit log download
+* **backend** chore: type sequelize models
+* **backend** chore: reduce email expiry to 1 hour
+* **locations** fix: emails with mutated vowel
+* **locations** fix: add minimum time for average checkin time
+* **locations** fix: keep check-out reminder time picker state
+* **locations** fix: redirect to created area or location when closing creation modal via cross
+* **locations** feat: adjust change email address process
+* **locations** feat: add back button to share data view
+* **locations** feat: prevent triggering multiple data sharing processes in share data view
+* **health-department** feat: improved help center
+* chore: setup lint, prettier and husky for e2e tests
+* chore: completely remove ua-parser-js from dependencies
+
 ### 2.3.0 (2021-10-18)
 * **backend** fix: change GET to POST for api/v3/userTransfers/tan/
 * **backend** fix: missing name of location in share data email

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { TimePicker } from 'antd';
 
 export const Wrapper = styled.div`
   padding: 24px 32px 0 32px;
@@ -6,3 +7,7 @@ export const Wrapper = styled.div`
 `;
 
 export const PickerWrapper = styled.div``;
+
+export const StyledTimePicker = styled(TimePicker)`
+  width: 150px;
+`;

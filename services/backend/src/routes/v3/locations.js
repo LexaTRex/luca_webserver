@@ -3,7 +3,13 @@ const status = require('http-status');
 const moment = require('moment');
 const { Op } = require('sequelize');
 
-const database = require('../../database');
+const {
+  database,
+  Location,
+  LocationGroup,
+  Trace,
+  TraceData,
+} = require('../../database');
 const {
   validateSchema,
   validateParametersSchema,
@@ -28,7 +34,7 @@ router.post(
   limitRequestsPerDay('locations_private_post_ratelimit_day'),
   validateSchema(privateEventCreateSchema),
   async (request, response) => {
-    const location = await database.Location.create({
+    const location = await Location.create({
       radius: 0,
       isPrivate: true,
       publicKey: request.body.publicKey,
@@ -51,7 +57,7 @@ router.delete(
   validateParametersSchema(accessIdParametersSchema),
   limitRequestsPerDay('locations_delete_ratelimit_day'),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         accessId: request.params.accessId,
       },
@@ -61,7 +67,7 @@ router.delete(
     }
 
     await database.transaction(async transaction => {
-      await database.Location.checkoutAllTraces({ location, transaction });
+      await location.checkoutAllTraces(transaction);
       await location.destroy({ transaction });
     });
 
@@ -77,12 +83,12 @@ router.get(
   '/:locationId',
   validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         uuid: request.params.locationId,
       },
       include: {
-        model: database.LocationGroup,
+        model: LocationGroup,
       },
       paranoid: false,
     });
@@ -101,6 +107,7 @@ router.get(
       lng: location.lng || 0,
       radius: location.shouldProvideGeoLocation ? location.radius : 0,
       isPrivate: location.isPrivate,
+      averageCheckinTime: location.averageCheckinTime,
     };
 
     return response.send(locationDTO);
@@ -121,7 +128,7 @@ router.get(
   validateQuerySchema(locationTracesQuerySchema),
   validateParametersSchema(accessIdParametersSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         accessId: request.params.accessId,
       },
@@ -149,11 +156,11 @@ router.get(
       default:
     }
 
-    const traces = await database.Trace.findAll({
+    const traces = await Trace.findAll({
       where: traceQuery,
       order: [['updatedAt', 'DESC']],
       include: {
-        model: database.TraceData,
+        model: TraceData,
       },
     });
 

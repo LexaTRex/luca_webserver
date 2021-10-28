@@ -137,3 +137,26 @@ paths:
           description: Success
         '401':
           $ref: '#/components/schemas/RequiredUserOfTypeOperator'
+  /operators/support:
+    post:
+      summary: Operator support message
+      tags:
+        - Operators
+      responses:
+        204:
+          description: Success
+        401:
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                requestText:
+                  type: string
+                phone:
+                  type: string
+              required:
+                - requestText

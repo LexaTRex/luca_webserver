@@ -10,7 +10,7 @@ const status = require('http-status');
 const config = require('config');
 const moment = require('moment');
 const { Op } = require('sequelize');
-const database = require('../../../database');
+const { database, Operator, PasswordReset } = require('../../../database');
 const mailClient = require('../../../utils/mailClient');
 const {
   validateParametersSchema,
@@ -74,7 +74,7 @@ router.post(
   limitRequestsPerHour('password_forgot_post_ratelimit_hour'),
   validateSchema(forgotPasswordSchema),
   async (request, response) => {
-    const operator = await database.Operator.findOne({
+    const operator = await Operator.findOne({
       where: {
         email: request.body.email,
       },
@@ -84,7 +84,7 @@ router.post(
 
     if (!operator.activated) return response.sendStatus(status.LOCKED);
 
-    await database.PasswordReset.update(
+    await PasswordReset.update(
       { closed: true },
       {
         where: {
@@ -94,7 +94,7 @@ router.post(
       }
     );
 
-    const forgotPasswordRequest = await database.PasswordReset.create({
+    const forgotPasswordRequest = await PasswordReset.create({
       operatorId: operator.uuid,
       email: operator.email,
     });
@@ -123,7 +123,7 @@ router.post(
   }),
   validateSchema(resetPasswordSchema),
   async (request, response) => {
-    const resetRequest = await database.PasswordReset.findOne({
+    const resetRequest = await PasswordReset.findOne({
       where: {
         uuid: request.body.resetId,
         closed: false,
@@ -133,7 +133,7 @@ router.post(
       },
     });
 
-    const operator = await database.Operator.findByPk(resetRequest.operatorId);
+    const operator = await Operator.findByPk(resetRequest.operatorId);
 
     if (!operator || !resetRequest) {
       return response.sendStatus(status.NOT_FOUND);
@@ -147,7 +147,7 @@ router.post(
           },
           { transaction }
         ),
-        database.PasswordReset.update(
+        PasswordReset.update(
           { closed: true },
           {
             where: {
@@ -174,7 +174,7 @@ router.get(
   async (request, response) => {
     const { resetId } = request.params;
 
-    const resetRequest = await database.PasswordReset.findOne({
+    const resetRequest = await PasswordReset.findOne({
       where: {
         uuid: resetId,
         closed: false,

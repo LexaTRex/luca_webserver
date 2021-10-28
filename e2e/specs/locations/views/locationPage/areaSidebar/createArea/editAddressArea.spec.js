@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../../../utils/auth';
 import {
   E2E_DEFAULT_LOCATION_GROUP,
@@ -31,7 +32,7 @@ describe('Update address for an area', () => {
     deleteCreateArea(NEW_RESTAURANT_LOCATION);
   });
 
-  describe('Update address manually', { retries: 3 }, () => {
+  describe('Update address manually', () => {
     it('can update the address manually', () => {
       openAreaOverviewSettings();
       changeAddressManually();
@@ -40,7 +41,7 @@ describe('Update address for an area', () => {
       checkRadiusExists();
     });
   });
-  describe('Update address via Google API', { retries: 3 }, () => {
+  describe('Update address via Google API', () => {
     it('can update the address using Google API', () => {
       openAreaOverviewSettings(true);
       changeAddressViaGoogleApi(RESTAURANT_ADDRESS);
@@ -50,40 +51,32 @@ describe('Update address for an area', () => {
       checkRadiusExists(true);
     });
   });
-  describe(
-    'Can update the address multiple times without affecting the radius checker',
-    { retries: 3 },
-    () => {
-      it('update manually and afterwards via Google Api', () => {
-        openAreaOverviewSettings();
-        changeAddressManually();
+  describe('Can update the address multiple times without affecting the radius checker', () => {
+    it('update manually and afterwards via Google Api', () => {
+      openAreaOverviewSettings();
+      changeAddressManually();
 
-        saveAddress();
+      saveAddress();
 
-        openAreaOverviewSettings(true);
-        changeAddressViaGoogleApi(RESTAURANT_ADDRESS);
-        saveAddress();
+      openAreaOverviewSettings(true);
+      changeAddressViaGoogleApi(RESTAURANT_ADDRESS);
+      saveAddress();
 
-        checkRadiusExists(true);
-      });
-      it(
-        'update via Google Api and afterwards manually',
-        { retries: 3 },
-        () => {
-          openAreaOverviewSettings(true);
-          changeAddressViaGoogleApi(RESTAURANT_ADDRESS);
-          saveAddress();
+      checkRadiusExists(true);
+    });
+    it('update via Google Api and afterwards manually', () => {
+      openAreaOverviewSettings(true);
+      changeAddressViaGoogleApi(RESTAURANT_ADDRESS);
+      saveAddress();
 
-          checkRadiusExists(true);
+      checkRadiusExists(true);
 
-          cy.getByCy('openSettings').click();
-          openAreaOverviewSettings();
-          changeAddressManually();
-          saveAddress();
+      cy.getByCy('openSettings').click();
+      openAreaOverviewSettings();
+      changeAddressManually();
+      saveAddress();
 
-          checkRadiusExists();
-        }
-      );
-    }
-  );
+      checkRadiusExists();
+    });
+  });
 });

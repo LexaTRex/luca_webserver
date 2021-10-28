@@ -27,6 +27,10 @@
   background-color: transparent !important;
 }
 
+.ant-picker-ranges {
+  display: none !important;
+}
+
 .ant-picker {
   background-color: transparent !important;
 }

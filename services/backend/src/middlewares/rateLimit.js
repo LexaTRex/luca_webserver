@@ -30,6 +30,11 @@ const globalKeyGenerator = request => {
   return `global:${request.baseUrl}${request.route.path}`.toLowerCase();
 };
 
+const userKeyGenerator = request => {
+  const { user } = request;
+  return !user ? ipKeyGenerator(request) : user.uuid;
+};
+
 const phoneNumberKeyGenerator = request => {
   const phone = parsePhoneNumber(request.body.phone, 'DE');
   const hashedPhoneNumber = SHA256(bytesToHex(phone.number));
@@ -129,20 +134,6 @@ const limitRequestsByFixedLinePhoneNumberPerDay = key =>
     }
   );
 
-const limitRequestsByUserPerHour = key =>
-  limitRequestsByFeatureFlag(
-    key || DEFAULT_RATE_LIMIT_HOUR,
-    {},
-    {
-      store: hourStore,
-      windowMs: hourDuration.as('ms'),
-      keyGenerator: request => {
-        const { user } = request;
-        return !user ? ipKeyGenerator(request) : user.uuid;
-      },
-    }
-  );
-
 const limitRequestsByUserPerMinute = key =>
   limitRequestsByFeatureFlag(
     key || DEFAULT_RATE_LIMIT_MINUTE,
@@ -157,12 +148,35 @@ const limitRequestsByUserPerMinute = key =>
     }
   );
 
+const limitRequestsByUserPerHour = key =>
+  limitRequestsByFeatureFlag(
+    key || DEFAULT_RATE_LIMIT_HOUR,
+    {},
+    {
+      store: hourStore,
+      windowMs: hourDuration.as('ms'),
+      keyGenerator: userKeyGenerator,
+    }
+  );
+
+const limitRequestsByUserPerDay = key =>
+  limitRequestsByFeatureFlag(
+    key || DEFAULT_RATE_LIMIT_DAY,
+    {},
+    {
+      store: dayStore,
+      windowMs: dayDuration.as('ms'),
+      keyGenerator: userKeyGenerator,
+    }
+  );
+
 module.exports = {
   limitRequestsPerMinute,
   limitRequestsPerHour,
   limitRequestsPerDay,
   limitRequestsByPhoneNumberPerDay,
   limitRequestsByFixedLinePhoneNumberPerDay,
-  limitRequestsByUserPerHour,
   limitRequestsByUserPerMinute,
+  limitRequestsByUserPerHour,
+  limitRequestsByUserPerDay,
 };

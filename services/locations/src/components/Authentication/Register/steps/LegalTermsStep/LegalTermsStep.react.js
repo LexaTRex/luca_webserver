@@ -53,7 +53,7 @@ export const LegalTermsStep = ({ next, back, navigation }) => {
             },
           ]}
         >
-          <Checkbox>
+          <Checkbox data-cy="termsAndConditionsCheckbox">
             {intl.formatMessage(
               { id: 'authentication.registration.acceptTerms' },
               {
@@ -88,7 +88,7 @@ export const LegalTermsStep = ({ next, back, navigation }) => {
             },
           ]}
         >
-          <Checkbox>
+          <Checkbox data-cy="avvCheckbox">
             {intl.formatMessage(
               { id: 'authentication.registration.acceptAvv' },
               {
@@ -116,7 +116,11 @@ export const LegalTermsStep = ({ next, back, navigation }) => {
               id: 'authentication.form.button.back',
             })}
           </SecondaryButton>
-          <PrimaryButton $isButtonWhite htmlType="submit">
+          <PrimaryButton
+            $isButtonWhite
+            htmlType="submit"
+            data-cy="legalTermsSubmitButton"
+          >
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

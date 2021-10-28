@@ -103,7 +103,7 @@ module.exports = {
       },
     },
     {
-      files: ['*.test.js', 'src/database/seeds/*.js'],
+      files: ['*.test.js', 'src/database/seeds/*.js', 'src/@types/*'],
       rules: {
         'max-lines': 0,
         'unicorn/filename-case': 0,

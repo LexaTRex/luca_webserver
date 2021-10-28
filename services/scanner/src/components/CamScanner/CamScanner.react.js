@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Tick } from 'react-crude-animated-tick';
 
 import { useIntl } from 'react-intl';
@@ -6,8 +6,8 @@ import moment from 'moment';
 import { Helmet } from 'react-helmet-async';
 import { useQueryClient, useQuery } from 'react-query';
 import QrReader from 'modern-react-qr-reader';
-import * as UAParser from 'ua-parser-js';
 import { RedoOutlined } from '@ant-design/icons';
+import platform from 'platform';
 
 import { SCAN_TIMEOUT, REFETCH_INTERVAL_MS } from 'constants/timeouts';
 
@@ -40,8 +40,6 @@ export const CamScanner = ({ scanner }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [latestUpdate, setLatestUpdate] = useState(moment().unix());
   const [canScanCode, setCanScanCode] = useState(true);
-
-  const agent = useRef(new UAParser().getResult());
 
   const refetch = () => {
     queryClient.invalidateQueries('total');
@@ -95,8 +93,7 @@ export const CamScanner = ({ scanner }) => {
   };
 
   useLayoutEffect(() => {
-    const parsed = agent.current;
-    if (parsed.os.name === 'iOS' && parsed.browser.name !== 'Mobile Safari') {
+    if (platform.os.family === 'iOS' && platform.name !== 'Safari Mobile') {
       setCanScanCode(false);
     }
   }, []);

@@ -77,6 +77,8 @@ paths:
                     type: number
                   isPrivate:
                     type: boolean
+                  averageCheckinTime:
+                    type: number
                 required:
                   - locationId
                   - publicKey
@@ -87,6 +89,7 @@ paths:
                   - lng
                   - radius
                   - isPrivate
+                  - averageCheckinTime
         '400':
           $ref: '#/components/schemas/BadRequest'
         '404':

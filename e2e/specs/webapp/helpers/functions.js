@@ -1,3 +1,4 @@
+/* eslint-disable */
 import faker from 'faker';
 import {
   KDF_SHA256,
@@ -57,6 +58,7 @@ export async function registerDevice() {
           `${encryptedData}${mac}${iv}`
         );
 
+        // eslint-disable-next-line promise/no-nesting
         const { userId } = await fetch('https://localhost/api/v3/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -68,8 +70,11 @@ export async function registerDevice() {
             publicKey: hexToBase64(userKeyPair.publicKey),
           }),
         }).then(response => response.json());
-        const db = await connect();
-        const transaction = db.transaction(['users', 'secrets'], 'readwrite');
+        const database = await connect();
+        const transaction = database.transaction(
+          ['users', 'secrets'],
+          'readwrite'
+        );
         const userObjectStore = transaction.objectStore('users');
         const secretsObjectStore = transaction.objectStore('secrets');
 

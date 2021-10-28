@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
 import status from 'http-status';
-import database from 'database/models';
+import { LocationTransfer, LocationTransferTrace, RiskLevel } from 'database';
 import {
   validateSchema,
   validateParametersSchema,
@@ -20,7 +20,7 @@ router.get(
   validateParametersSchema(getRiskLevelParameterSchema),
   async (request, response) => {
     const user = request.user as IHealthDepartmentEmployee;
-    const locationTransfer = await database.LocationTransfer.findOne({
+    const locationTransfer = await LocationTransfer.findOne({
       where: {
         uuid: request.params.locationTransferId,
         departmentId: user.departmentId,
@@ -29,22 +29,18 @@ router.get(
 
     if (!locationTransfer) return response.sendStatus(status.NOT_FOUND);
 
-    const locationTransferTraces = await database.LocationTransferTrace.findAll(
-      {
-        where: {
-          locationTransferId: request.params.locationTransferId,
-        },
-        include: {
-          model: database.RiskLevel,
-        },
-      }
-    );
+    const locationTransferTraces = await LocationTransferTrace.findAll({
+      where: {
+        locationTransferId: request.params.locationTransferId,
+      },
+      include: {
+        model: RiskLevel,
+      },
+    });
 
     const traceIdsWithRiskLevels = locationTransferTraces.map(
-      // @ts-ignore - any until models are typed
       locationTransferTrace => {
-        const riskLevels = locationTransferTrace.RiskLevels.map(
-          // @ts-ignore - any until models are typed
+        const riskLevels = locationTransferTrace.RiskLevels!.map(
           riskLevel => riskLevel.level
         );
         return { traceId: locationTransferTrace.traceId, riskLevels };
@@ -60,7 +56,7 @@ router.post(
   validateSchema(addRiskLevelTracesSchema),
   async (request, response) => {
     const user = request.user as IHealthDepartmentEmployee;
-    const locationTransfer = await database.LocationTransfer.findOne({
+    const locationTransfer = await LocationTransfer.findOne({
       where: {
         uuid: request.body.locationTransferId,
         departmentId: user.departmentId,
@@ -69,22 +65,19 @@ router.post(
 
     if (!locationTransfer) return response.sendStatus(status.NOT_FOUND);
 
-    const locationTransferTraces = await database.LocationTransferTrace.findAll(
-      {
-        where: {
-          locationTransferId: locationTransfer.uuid,
-          traceId: { [Op.in]: request.body.traceIds },
-        },
-      }
-    );
+    const locationTransferTraces = await LocationTransferTrace.findAll({
+      where: {
+        locationTransferId: locationTransfer.uuid,
+        traceId: { [Op.in]: request.body.traceIds },
+      },
+    });
 
-    // @ts-ignore - any until models are typed
     const riskLevels = locationTransferTraces.map(locationTransferTrace => ({
       level: request.body.riskLevel,
       locationTransferTraceId: locationTransferTrace.uuid,
     }));
 
-    database.RiskLevel.bulkCreate(riskLevels, { ignoreDuplicates: true });
+    RiskLevel.bulkCreate(riskLevels, { ignoreDuplicates: true });
 
     return response.sendStatus(status.NO_CONTENT);
   }

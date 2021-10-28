@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import database from 'database/models';
+import { Challenge } from 'database';
 import {
   validateSchema,
   validateParametersSchema,
@@ -30,7 +30,7 @@ router.post(
   limitRequestsPerDay('challenges_operatorDevice_post_ratelimit_day'),
   limitRequestsPerHour('challenges_operatorDevice_post_ratelimit_hour'),
   async (request, response) => {
-    const challenge = await database.Challenge.create({
+    const challenge = await Challenge.create({
       type: ChallengeType.OperatorDeviceCreation,
       state: OperatorDeviceCreationChallengeState.Ready,
     });
@@ -46,9 +46,7 @@ router.patch(
   validateSchema(operatorDeviceCreationChallengeSchema),
   validateParametersSchema(challengeIdParameterSchema),
   async (request, response) => {
-    const challenge = await database.Challenge.findByPk(
-      request.params.challengeId
-    );
+    const challenge = await Challenge.findByPk(request.params.challengeId);
 
     if (!challenge) {
       throw new ApiError(ApiErrorType.CHALLENGE_NOT_FOUND);
@@ -63,9 +61,7 @@ router.get(
   '/operatorDevice/:challengeId',
   validateParametersSchema(challengeIdParameterSchema),
   async (request, response) => {
-    const challenge = await database.Challenge.findByPk(
-      request.params.challengeId
-    );
+    const challenge = await Challenge.findByPk(request.params.challengeId);
 
     if (!challenge) {
       throw new ApiError(ApiErrorType.CHALLENGE_NOT_FOUND);

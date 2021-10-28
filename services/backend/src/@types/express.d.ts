@@ -28,6 +28,10 @@ declare namespace Express {
   export interface Request {
     user?: IUser | IOperator | IOperatorDevice | IHealthDepartmentEmployee;
   }
+
+  export interface Response {
+    headers: Record<string, string>;
+  }
 }
 
 declare module 'http' {

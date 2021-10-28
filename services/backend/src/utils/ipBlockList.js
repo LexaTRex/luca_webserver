@@ -4,7 +4,7 @@ const moment = require('moment');
 const { Op } = require('sequelize');
 const IPCIDR = require('ip-cidr');
 const parse = require('csv-parse/lib/sync');
-const database = require('../database');
+const { database, IPAddressBlockList } = require('../database');
 const logger = require('./logger').default;
 
 const getIpRange = input => {
@@ -104,11 +104,11 @@ const updateBlockList = async () => {
 
   try {
     await database.transaction(async transaction => {
-      await database.IPAddressBlockList.bulkCreate(ipsWithTimestamp, {
+      await IPAddressBlockList.bulkCreate(ipsWithTimestamp, {
         returning: false,
         transaction,
       });
-      await database.IPAddressBlockList.destroy({
+      await IPAddressBlockList.destroy({
         where: {
           createdAt: { [Op.lt]: now },
         },

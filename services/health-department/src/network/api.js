@@ -332,3 +332,12 @@ export const setContactInformation = payload =>
     body: JSON.stringify(payload),
     headers,
   });
+
+// SUPPORT
+export const sendSupportMail = data => {
+  return fetch(`${API_PATH}/v3/healthDepartmentEmployees/support`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers,
+  });
+};

@@ -2,15 +2,24 @@ import React from 'react';
 
 // Components
 import LucaLogoWhite from 'assets/LucaLogoWhite.svg';
-import { SubTitle, HeaderWrapper, Logo } from './Header.styled';
+import {
+  SubTitle,
+  HeaderWrapper,
+  Logo,
+  ActionsRow,
+  LogoWrapper,
+} from './Header.styled';
 
 // Assets
 
-const HeaderRaw = ({ title }) => {
+const HeaderRaw = ({ title, actions }) => {
   return (
     <HeaderWrapper>
-      <Logo src={LucaLogoWhite} />
-      <SubTitle>{title}</SubTitle>
+      <LogoWrapper>
+        <Logo src={LucaLogoWhite} />
+        <SubTitle>{title}</SubTitle>
+      </LogoWrapper>
+      {actions && <ActionsRow>{actions}</ActionsRow>}
     </HeaderWrapper>
   );
 };

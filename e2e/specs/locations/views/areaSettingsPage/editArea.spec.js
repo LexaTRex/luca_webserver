@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
 import {
   E2E_DEFAULT_LOCATION_NAME,
@@ -117,5 +118,3 @@ describe('Location settings', () => {
     });
   });
 });
-
-// TODO: CHECK IF THIS IS SUPPOSED TO BE INSIDE AREA SETTINGS

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Form } from 'antd';
 
 export const ProfileContent = styled.div`
   padding: 24px 32px;
@@ -30,3 +31,7 @@ export const sliderStyles = {
   ...contentStyles,
   borderRight: '1px solid rgb(151, 151, 151)',
 };
+
+export const StyledForm = styled(Form)`
+  max-width: 350px;
+`;

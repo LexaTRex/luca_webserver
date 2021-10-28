@@ -1,3 +1,11 @@
+import { shouldBeVisible, shouldNotExist, visit } from '../../utils/assertions';
+import { getByCy, getDOMElement } from '../../utils/selectors';
+import {
+  LOGIN_ERROR_NOTIFICATION,
+  FORGOT_PASSWORD_PAGE,
+  FORGOT_PASSWORD_LINK,
+} from '../../constants/selectorKeys';
+import { WRONG_PASSWORD } from '../../constants/inputs';
 import {
   E2E_EMAIL,
   E2E_LOCATION_PRIVATE_KEY_PATH,
@@ -5,9 +13,9 @@ import {
   E2E_LOCATION_WRONG_PRIVATE_KEY_PATH,
   E2E_LOCATION_WRONG_PRIVATE_KEY_NAME,
 } from '../../constants/users';
-import { RESET_LOCATION_KEY_QUERY } from '../../constants/dbQueries';
+import { RESET_LOCATION_KEY_QUERY } from '../../constants/databaseQueries';
 import { enterEmail, enterPassword } from '../authentication.helper';
-import { APP_ROUTE } from '../../constants/routes';
+import { APP_ROUTE, BASE_ROUTE } from '../../constants/routes';
 import {
   downloadLocationPrivateKeyFile,
   uploadLocationPrivateKeyFile,
@@ -22,48 +30,47 @@ describe('Location / Authentication / Login', () => {
   describe('Login as an operator for the first time and download a private key, after downloading the private key upload a wrong key and go back to download another key', () => {
     it('should show an error notification stating that the key is wrong to go back to regenerate a new download key', () => {
       cy.basicLoginLocations();
-      cy.visit(APP_ROUTE);
+      visit(APP_ROUTE);
       downloadLocationPrivateKeyFile();
       uploadLocationPrivateKeyFile(
         E2E_LOCATION_WRONG_PRIVATE_KEY_PATH,
         E2E_LOCATION_WRONG_PRIVATE_KEY_NAME
       );
-      cy.getByCy('regenerateKey').should('exist');
-      cy.getByCy('regenerateKey', { timeout: 1000 }).click();
+      shouldBeVisible(getByCy('regenerateKey', { timeout: 1000 })).click();
       downloadLocationPrivateKeyFile();
-      cy.get('.ant-notification-notice-content').should('exist');
+      shouldBeVisible(getDOMElement('.ant-notification-notice-content'));
     });
   });
   describe('Login as an operator for the first time and download private key, after downloading private double check if it is the correct key', () => {
     it('should close the modal successfully', () => {
       cy.basicLoginLocations();
-      cy.visit(APP_ROUTE);
+      visit(APP_ROUTE);
       downloadLocationPrivateKeyFile();
       uploadLocationPrivateKeyFile(
         E2E_LOCATION_PRIVATE_KEY_PATH,
         E2E_LOCATION_PRIVATE_KEY_NAME
       );
-      cy.getByCy('complete', { timeout: 1000 }).click();
-      cy.get('.ant-modal-body').should('not.exist');
+      getByCy('complete', { timeout: 1000 }).click();
+      shouldNotExist(getDOMElement('.ant-modal-body'));
     });
   });
   describe('Login as an operator with wrong password', () => {
     it('does not log in an existing user', () => {
-      cy.visit('/');
+      visit(BASE_ROUTE);
       enterEmail(E2E_EMAIL);
-      enterPassword('WRONG_PASSWORD');
-      cy.getByCy('loginError').should('exist');
+      enterPassword(WRONG_PASSWORD);
+      shouldBeVisible(getByCy(LOGIN_ERROR_NOTIFICATION));
     });
   });
   describe('Forgot password', () => {
     it('redirects to forgot password page', () => {
-      cy.visit('/');
+      visit(BASE_ROUTE);
       enterEmail(E2E_EMAIL);
-      enterPassword('WRONG_PASSWORD');
-      cy.getByCy('loginError').should('exist');
-      cy.getByCy('forgotPasswordPage').should('not.exist');
-      cy.getByCy('forgotPasswordLink').click();
-      cy.getByCy('forgotPasswordPage').should('exist');
+      enterPassword(WRONG_PASSWORD);
+      shouldBeVisible(getByCy(LOGIN_ERROR_NOTIFICATION));
+      shouldNotExist(getByCy(FORGOT_PASSWORD_PAGE));
+      getByCy(FORGOT_PASSWORD_LINK).click();
+      shouldBeVisible(getByCy(FORGOT_PASSWORD_PAGE));
     });
   });
 });

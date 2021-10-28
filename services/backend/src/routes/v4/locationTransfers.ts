@@ -6,13 +6,24 @@ import config from 'config';
 import {
   isUserOfType,
   requireHealthDepartmentEmployee,
+  requireOperatorOROperatorDevice,
 } from 'middlewares/requireUser';
 import {
   validateParametersSchema,
   validateSchema,
 } from 'middlewares/validateSchema';
 import { limitRequestsByUserPerHour } from 'middlewares/rateLimit';
-import database from 'database/models';
+import {
+  database,
+  Location,
+  LocationTransfer,
+  LocationTransferTrace,
+  LocationGroup,
+  Operator,
+  UserTransfer,
+  Trace,
+  TracingProcess,
+} from 'database';
 import { extractAndVerifyLocationTransfer } from 'utils/signedKeys';
 import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
 import { logEvent } from 'utils/hdAuditLog';
@@ -30,37 +41,25 @@ const router = Router();
  */
 router.get(
   '/:transferId',
+  requireOperatorOROperatorDevice,
   validateParametersSchema(transferIdParametersSchema),
   async request => {
-    const transfer = await database.LocationTransfer.findByPk(
-      request.params.transferId
-    );
+    const transfer = await LocationTransfer.findByPk(request.params.transferId);
 
     if (!transfer || !request.user) {
       throw new ApiError(ApiErrorType.LOCATION_TRANSFER_NOT_FOUND);
     }
 
-    if (
-      isUserOfType('HealthDepartmentEmployee', request) &&
-      transfer.departmentId !==
-        (request.user as IHealthDepartmentEmployee).departmentId
-    ) {
-      throw new ApiError(ApiErrorType.FORBIDDEN);
-    }
-
-    const location = await database.Location.findByPk(transfer.locationId, {
+    const location = await Location.findByPk(transfer.locationId, {
       include: {
-        model: database.LocationGroup,
+        model: LocationGroup,
         attributes: ['uuid', 'name'],
         paranoid: false,
       },
       paranoid: false,
     });
 
-    if (
-      isUserOfType('Operator', request) &&
-      location.operator !== request.user.uuid
-    ) {
+    if (location!.operator !== request.user.uuid) {
       throw new ApiError(ApiErrorType.FORBIDDEN);
     }
 
@@ -90,6 +89,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
     const { userTransferId, locations } = request.body;
 
     const isUserTransfer = !!userTransferId;
+    let isStatic = false;
 
     const maxLocations: number = config.get(
       'luca.locationTransfers.maxLocations'
@@ -109,7 +109,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
 
     const tracingProcessId = await database
       .transaction(async (transaction: Sequelize.Transaction) => {
-        const tracingProcess = await database.TracingProcess.create(
+        const tracingProcess = await TracingProcess.create(
           {
             departmentId,
             userTransferId,
@@ -118,10 +118,9 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
         );
 
         if (isUserTransfer) {
-          const userTransfer = await database.UserTransfer.findByPk(
-            userTransferId,
-            { transaction }
-          );
+          const userTransfer = await UserTransfer.findByPk(userTransferId, {
+            transaction,
+          });
 
           if (!userTransfer) {
             logEvent(request.user, {
@@ -134,6 +133,8 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
 
             throw new ApiError(ApiErrorType.USER_TRANSFER_NOT_FOUND);
           }
+
+          isStatic = !!userTransfer.tan && !userTransfer.tan.endsWith('1');
 
           await userTransfer.update(
             {
@@ -167,10 +168,10 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
 
         await Promise.all(
           locationData.map(async data => {
-            const location = await database.Location.findByPk(data.locationId, {
+            const location = await Location.findByPk(data.locationId, {
               include: {
                 required: true,
-                model: database.Operator,
+                model: Operator,
                 paranoid: false,
               },
               paranoid: false,
@@ -185,14 +186,15 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
                 type: AuditLogEvents.CREATE_TRACING_PROCESS,
                 status: AuditStatusType.ERROR_TARGET_NOT_FOUND,
                 meta: {
-                  locationId: data?.locationId || location?.uuid,
+                  locationId: data?.locationId,
                   viaTan: isUserTransfer,
+                  isStatic,
                 },
               });
               return null;
             }
 
-            const locationTransfer = await database.LocationTransfer.create(
+            const locationTransfer = await LocationTransfer.create(
               {
                 departmentId,
                 tracingProcessId: tracingProcess.uuid,
@@ -206,7 +208,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
               { transaction }
             );
 
-            const traces = await database.Trace.findAll({
+            const traces = await Trace.findAll({
               where: {
                 locationId: location.uuid,
                 time: {
@@ -218,8 +220,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
               },
             });
 
-            await database.LocationTransferTrace.bulkCreate(
-              // @ts-ignore - any until models are typed
+            await LocationTransferTrace.bulkCreate(
               traces.map(trace => ({
                 locationTransferId: locationTransfer.uuid,
                 traceId: trace.traceId,
@@ -235,6 +236,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
               meta: {
                 transferId: locationTransfer.uuid,
                 viaTan: isUserTransfer,
+                isStatic,
               },
             });
 
@@ -249,6 +251,7 @@ router.post<unknown, unknown, z.infer<typeof createSchema>>(
           status: AuditStatusType.ERROR_UNKNOWN_SERVER_ERROR,
           meta: {
             viaTan: isUserTransfer,
+            isStatic,
           },
         });
 

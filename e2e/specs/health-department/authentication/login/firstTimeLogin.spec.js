@@ -1,14 +1,12 @@
 import {
   E2E_HEALTH_DEPARTMENT_USERNAME,
   E2E_HEALTH_DEPARTMENT_PASSWORD,
-} from '../../helper/user';
-import { RESET_HD_KEYS_QUERY } from '../../helper/dbQueries';
-import {
-  openHDLoginPage,
-  downloadHealthDepartmentPrivateKey,
-} from '../../helper/ui/login.helper';
-import { HEALTH_DEPARTMENT_APP_ROUTE } from '../../helper/routes';
+} from '../../constants/user';
+import { RESET_HD_KEYS_QUERY } from '../../constants/databaseQueries';
+import { openHDLoginPage, verifyLoggedIn } from '../../helper/ui/login.helper';
+import { HEALTH_DEPARTMENT_APP_ROUTE } from '../../constants/routes';
 import { signHealthDepartment } from '../../helper/signHealthDepartment';
+import { downloadHealthDepartmentPrivateKey } from '../../helper/ui/handlePrivateKeyFile';
 
 describe('Authentication', () => {
   before(() => {
@@ -36,15 +34,7 @@ describe('Authentication', () => {
           cy.getByCy('downloadPrivateKey').should('exist').should('be.enabled');
         });
         downloadHealthDepartmentPrivateKey();
-        cy.getByCy('header')
-          .contains('Health-Department')
-          .should('exist')
-          .should('be.visible');
-        cy.getByCy('linkMenu').should('exist').should('be.visible');
-        cy.get('button').contains('LOG OUT').should('exist');
-
-        cy.get('.ant-menu-horizontal').should('exist').should('be.visible');
-        cy.getByCy('navigation').should('exist').should('be.visible');
+        verifyLoggedIn();
       });
     });
     describe('when a user login with incorrect password', () => {

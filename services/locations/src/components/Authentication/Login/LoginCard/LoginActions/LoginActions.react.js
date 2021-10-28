@@ -20,7 +20,7 @@ export const LoginActions = () => {
   return (
     <ButtonsWrapper>
       <ButtonWrapper>
-        <StyledPrimaryButton htmlType="submit">
+        <StyledPrimaryButton data-cy="loginSubmitButton" htmlType="submit">
           {intl.formatMessage({
             id: 'authentication.login.title',
           })}

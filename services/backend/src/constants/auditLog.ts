@@ -24,6 +24,8 @@ export enum AuditLogEvents {
 
   DOWNLOAD_TRACES = 'DOWNLOAD_TRACES',
   EXPORT_TRACES = 'EXPORT_TRACES',
+
+  SEARCH = 'SEARCH',
 }
 
 // eslint-disable-next-line no-shadow

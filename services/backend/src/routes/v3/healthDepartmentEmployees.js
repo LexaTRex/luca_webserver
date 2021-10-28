@@ -1,17 +1,25 @@
 const router = require('express').Router();
 const status = require('http-status');
 const crypto = require('crypto');
+const moment = require('moment-timezone');
+const config = require('config');
 
 const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
 const { generatePassword } = require('../../utils/generators');
 const { logEvent } = require('../../utils/hdAuditLog');
+const { checkPropertyChanges } = require('../../utils/diff');
 
+const mailClient = require('../../utils/mailClient');
 const database = require('../../database');
 const {
   validateSchema,
   validateQuerySchema,
   validateParametersSchema,
 } = require('../../middlewares/validateSchema');
+const {
+  limitRequestsPerHour,
+  limitRequestsPerDay,
+} = require('../../middlewares/rateLimit');
 const {
   requireHealthDepartmentAdmin,
   requireHealthDepartmentEmployee,
@@ -21,6 +29,7 @@ const locationsRouter = require('./healthDepartmentEmployees/locations');
 
 const {
   getSchema,
+  supportSchema,
   createSchema,
   updateSchema,
   employeeIdParametersSchema,
@@ -138,26 +147,23 @@ router.patch(
       });
     }
 
-    await employee.update({
+    const updatePayload = {
       isAdmin: request.body.isAdmin,
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       phone: request.body.phone,
-    });
+    };
 
     logEvent(request.user, {
       type: AuditLogEvents.UPDATE_EMPLOYEE,
       status: AuditStatusType.SUCCESS,
       meta: {
         target: employee.uuid,
-        attributes: {
-          firstName: request.body.firstName !== undefined,
-          lastName: request.body.lastName !== undefined,
-          phone: request.body.phone !== undefined,
-          isAdmin: request.body.isAdmin !== undefined,
-        },
+        attributes: checkPropertyChanges(updatePayload, employee),
       },
     });
+
+    await employee.update(updatePayload);
 
     return response.sendStatus(status.NO_CONTENT);
   }
@@ -168,6 +174,7 @@ router.post(
   '/',
   requireHealthDepartmentAdmin,
   validateSchema(createSchema),
+  limitRequestsPerHour('hd_employee_post_ratelimit_hour'),
   async (request, response) => {
     const initialPassword = generatePassword(8);
 
@@ -226,6 +233,44 @@ router.post(
 
     response.status(status.CREATED);
     return response.send({ password: initialPassword });
+  }
+);
+
+// support
+router.post(
+  '/support',
+  requireHealthDepartmentEmployee,
+  limitRequestsPerDay('hd_support_email_post_ratelimit_day'),
+  validateSchema(supportSchema),
+  async (request, response) => {
+    const { phone, requestText } = request.body;
+
+    const department = await database.HealthDepartment.findByPk(
+      request.user.departmentId
+    );
+
+    if (!department) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+
+    const requestTime = moment()
+      .tz(config.get('tz'))
+      .format('DD.MM.YYYY HH:mm');
+    mailClient.sendHdSupportMail(
+      'gesundheitsamt@luca-app.de',
+      'Gesundheitsamt Support Mail',
+      null,
+      {
+        departmentName: department.name,
+        userPhone: phone,
+        userEmail: request.user.email,
+        userName: `${request.user.firstName} ${request.user.lastName}`,
+        requestText,
+        requestTime,
+      }
+    );
+
+    return response.sendStatus(status.NO_CONTENT);
   }
 );
 

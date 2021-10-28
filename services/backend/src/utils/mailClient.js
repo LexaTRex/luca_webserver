@@ -154,6 +154,16 @@ const sendLocationsSupportMail = (toEmail, toName, lang = 'de', variables) => {
   );
 };
 
+const sendHdSupportMail = (toEmail, toName, lang = 'de', variables) => {
+  return sendTemplate(
+    getMailId('hdSupport', lang),
+    getMailTitle('hdSupport', lang),
+    toEmail,
+    toName,
+    variables
+  );
+};
+
 const sendActivationMail = (toEmail, toName, lang, variables) => {
   return sendTemplate(
     getMailId('activateAccount', lang),
@@ -233,6 +243,7 @@ module.exports = {
   sendForgotPasswordMail,
   sendActivationMail,
   sendLocationsSupportMail,
+  sendHdSupportMail,
   updateEmail,
   updateEmailNotification,
   operatorUpdatePasswordNotification,

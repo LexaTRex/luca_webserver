@@ -1,11 +1,12 @@
+/* eslint-disable */
 import moment from 'moment';
 import { loginHealthDepartment } from '../../helper/api/auth.helper';
-import { addHealthDepartmentPrivateKeyFile } from '../../helper/ui/login.helper';
 import {
   setDatePickerStartDate,
   setDatePickerEndDate,
 } from '../../helper/ui/tracking.helper';
 import { E2E_DEFAULT_GROUP_NAME } from '../../../locations/constants/locations';
+import { addHealthDepartmentPrivateKeyFile } from '../../helper/ui/handlePrivateKeyFile';
 
 const GROUP_PREFIX = 'group_';
 const YESTERDAY = moment().subtract(1, 'days').format('DD.MM.YYYY');
@@ -16,7 +17,7 @@ describe('Health Department / Tracking / Location tracking', () => {
     it('the process disappears from the list', () => {
       loginHealthDepartment();
       addHealthDepartmentPrivateKeyFile();
-      //search E2E group
+      // search E2E group
       cy.getByCy('searchGroup').should('exist').should('be.visible').click();
       cy.getByCy('groupNameInput')
         .should('exist')
@@ -30,22 +31,22 @@ describe('Health Department / Tracking / Location tracking', () => {
         .should('exist')
         .should('be.visible')
         .click();
-      //set tracking dates
+      // set tracking dates
       setDatePickerStartDate(YESTERDAY);
       setDatePickerEndDate(TODAY);
-      //open tracking process
+      // open tracking process
       cy.getByCy('requestGroupData').click();
       cy.getByCy('processEntry')
         .should('exist')
         .and('contain', E2E_DEFAULT_GROUP_NAME)
         .first()
         .click();
-      //close tracking process
+      // close tracking process
       cy.getByCy('complete').should('exist').click();
-      cy.get('.ant-popover-inner-content').within($popup => {
+      cy.get('.ant-popover-inner-content').within(() => {
         cy.get('.ant-btn-primary').should('exist').click();
       });
-      //verify process is not in the list
+      // verify process is not in the list
       cy.getByCy('emptyProcesses').should('exist').should('be.visible');
     });
   });

@@ -1,18 +1,22 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Form, TimePicker } from 'antd';
+import { Form } from 'antd';
 
 import {
   PrimaryButton,
   SecondaryButton,
 } from 'components/general/Buttons.styled';
 
+import { setAverageCheckoutTime } from 'utils/time';
+
 import {
   Wrapper,
   Header,
   ButtonWrapper,
   Description,
+  StyledTimePicker,
 } from '../Onboarding.styled';
+import { timeDiffValidator } from './AverageCheckinTime.helper';
 
 export const AverageCheckinTime = ({
   averageCheckinTime: currentAverageCheckinTime,
@@ -21,10 +25,11 @@ export const AverageCheckinTime = ({
   next,
 }) => {
   const intl = useIntl();
+  const [form] = Form.useForm();
 
   const onFinish = ({ averageCheckinTime }) => {
     setAverageCheckinTime(averageCheckinTime);
-    next();
+    timeDiffValidator(averageCheckinTime, next, intl);
   };
 
   return (
@@ -48,6 +53,7 @@ export const AverageCheckinTime = ({
         initialValues={{
           averageCheckinTime: currentAverageCheckinTime || null,
         }}
+        form={form}
         style={{ marginTop: 40 }}
       >
         <Form.Item
@@ -57,11 +63,13 @@ export const AverageCheckinTime = ({
           })}
           name="averageCheckinTime"
         >
-          <TimePicker
-            style={{ width: 200 }}
+          <StyledTimePicker
             showNow={false}
             format="HH:mm"
             minuteStep={15}
+            onSelect={time => {
+              setAverageCheckoutTime(time, form);
+            }}
             placeholder={intl.formatMessage({
               id: 'settings.location.checkout.average.placeholder',
             })}

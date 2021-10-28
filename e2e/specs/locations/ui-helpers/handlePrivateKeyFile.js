@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   E2E_LOCATION_PRIVATE_KEY_NAME,
   E2E_LOCATION_PRIVATE_KEY_PATH,
@@ -5,7 +6,7 @@ import {
 
 export const downloadLocationPrivateKeyFile = () => {
   cy.getByCy('downloadPrivateKey').click();
-  cy.getByCy('checkPrivateKeyIsDownloaded').click();
+  cy.getByCy('checkPrivateKeyIsDownloaded').check().should('be.checked');
   cy.getByCy('next').should('exist').click();
 };
 export const uploadLocationPrivateKeyFile = (filename, name) => {
@@ -17,8 +18,9 @@ export const uploadLocationPrivateKeyFile = (filename, name) => {
     });
   });
 };
+
 export const skipLocationPrivateKeyFile = () => {
-  cy.get('.ant-modal-content').within($modal => {
+  cy.get('.ant-modal-content').within(() => {
     cy.getByCy('skipPrivateKeyUpload')
       .should('exist')
       .should('be.visible')

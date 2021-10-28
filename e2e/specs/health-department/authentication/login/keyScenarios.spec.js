@@ -1,10 +1,19 @@
 import { loginHealthDepartment } from '../../helper/api/auth.helper';
+import { verifyLoggedIn } from '../../helper/ui/login.helper';
+
 import {
-  uploadWrongHealthDepartmentPrivateKeyFileType,
-  uploadWrongHealthDepartmentPrivateKeyFile,
-  uploadWrongHealthDepartmentPrivateKeyFileTypeReUploadCorrectFile,
+  ANT_MODAL,
+  ANT_NOTIFICATION_NOTICE,
+} from '../../constants/selectorKeys';
+
+import { getDOMElement } from '../../utils/selectors';
+import { shouldBeVisible } from '../../utils/assertions';
+import {
   uploadHealthDepartmentPrivateKeyFileLargeSize,
-} from '../../helper/ui/login.helper';
+  uploadWrongHealthDepartmentPrivateKeyFile,
+  uploadWrongHealthDepartmentPrivateKeyFileType,
+  uploadWrongHealthDepartmentPrivateKeyFileTypeReUploadCorrectFile,
+} from '../../helper/ui/handlePrivateKeyFile';
 
 describe('Authentication', () => {
   describe('Health Department / Authentication / Login / Private key upload', () => {
@@ -13,10 +22,10 @@ describe('Authentication', () => {
         it('A notification occours stating that the key is too large', () => {
           loginHealthDepartment();
           uploadHealthDepartmentPrivateKeyFileLargeSize();
-          cy.get('.ant-notification-notice', { timeout: 10000 }).should(
-            'be.visible'
+          shouldBeVisible(
+            getDOMElement(ANT_NOTIFICATION_NOTICE, { timeout: 10000 })
           );
-          cy.get('.ant-modal').should('exist');
+          shouldBeVisible(getDOMElement(ANT_MODAL));
           cy.logoutHD();
         });
       });
@@ -24,10 +33,10 @@ describe('Authentication', () => {
         it('A notification occours stating that a wrong key file has been uploaded', () => {
           loginHealthDepartment();
           uploadWrongHealthDepartmentPrivateKeyFileType();
-          cy.get('.ant-notification-notice', { timeout: 10000 }).should(
-            'be.visible'
+          shouldBeVisible(
+            getDOMElement(ANT_NOTIFICATION_NOTICE, { timeout: 10000 })
           );
-          cy.get('.ant-modal').should('exist');
+          shouldBeVisible(getDOMElement(ANT_MODAL));
           cy.logoutHD();
         });
       });
@@ -35,10 +44,10 @@ describe('Authentication', () => {
         it('it will reject the private key file and a notification should occur stating that a wrong key has been uploaded', () => {
           loginHealthDepartment();
           uploadWrongHealthDepartmentPrivateKeyFile();
-          cy.get('.ant-notification-notice', { timeout: 10000 }).should(
-            'be.visible'
+          shouldBeVisible(
+            getDOMElement(ANT_NOTIFICATION_NOTICE, { timeout: 10000 })
           );
-          cy.get('.ant-modal').should('exist');
+          shouldBeVisible(getDOMElement(ANT_MODAL));
           cy.logoutHD();
         });
       });
@@ -48,15 +57,7 @@ describe('Authentication', () => {
         it('it should reject the key upload and a notification should show stating that a wrong key has been uploaded, after that the correct private key is being uploaded and a notification occurs stating the the private key has been successfully uploaded as well the modal should close', () => {
           loginHealthDepartment();
           uploadWrongHealthDepartmentPrivateKeyFileTypeReUploadCorrectFile();
-          cy.getByCy('header')
-            .contains('Health-Department')
-            .should('exist')
-            .should('be.visible');
-          cy.getByCy('linkMenu').should('exist').should('be.visible');
-          cy.get('button').contains('LOG OUT').should('exist');
-
-          cy.get('.ant-menu-horizontal').should('exist').should('be.visible');
-          cy.getByCy('navigation').should('exist').should('be.visible');
+          verifyLoggedIn();
           cy.logoutHD();
         });
       });

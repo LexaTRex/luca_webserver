@@ -22,8 +22,14 @@ const employeeIdParametersSchema = z.object({
   employeeId: z.uuid(),
 });
 
+const supportSchema = z.object({
+  requestText: z.safeText().max(3000),
+  phone: z.safeString().max(255).optional(),
+});
+
 module.exports = {
   getSchema,
+  supportSchema,
   createSchema,
   updateSchema,
   employeeIdParametersSchema,

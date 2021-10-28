@@ -5,19 +5,20 @@ const moment = require('moment');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 
-const database = require('../../database/models');
+const { OperatorDevice } = require('../../database');
 const { logEvent } = require('../../utils/hdAuditLog');
 const { handle500 } = require('../../middlewares/error');
 const { ApiError, ApiErrorType } = require('../../utils/apiError');
 const { validateSchema } = require('../../middlewares/validateSchema');
 const { restrictOrigin } = require('../../middlewares/restrictOrigin');
 const { limitRequestsPerMinute } = require('../../middlewares/rateLimit');
-const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
 const {
-  UserTypes,
   isUserOfType,
   requireOperatorDevice,
 } = require('../../middlewares/requireUser');
+
+const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
+const { UserType } = require('../../constants/user');
 
 const { getOperatorDeviceDTO } = require('./operatorDevices.helper');
 const { authSchema, authOperatorDeviceSchema } = require('./auth.schemas');
@@ -84,7 +85,7 @@ router.post(
             throw new ApiError(ApiErrorType.FORBIDDEN);
           }
 
-          await database.OperatorDevice.update(
+          await OperatorDevice.update(
             {
               reactivatedAt: null,
               refreshedAt: moment(),
@@ -128,7 +129,7 @@ router.post(
 
 router.post('/logout', restrictOrigin, (request, response) => {
   const { user, logout, session } = request;
-  const isHDUser = isUserOfType(UserTypes.HD_EMPLOYEE, request);
+  const isHDUser = isUserOfType(UserType.HEALTH_DEPARTMENT_EMPLOYEE, request);
 
   logout();
   session.destroy(error => {

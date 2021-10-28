@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
 
 import {
@@ -19,6 +20,7 @@ import {
 } from '../../constants/locations';
 
 import { removeLocation } from '../../utils/locations';
+import { skipLocationDetails } from '../../ui-helpers/createLocation';
 
 describe('Download QR Codes PDF', { retries: 3 }, () => {
   beforeEach(() => loginLocations());
@@ -61,14 +63,7 @@ describe('Download QR Codes PDF', { retries: 3 }, () => {
       cy.getByCy('nextStep').click();
       cy.getByCy('yes').click();
       cy.get('#phone').type(RESTAURANT_PHONE);
-      cy.getByCy('nextStep').click();
-      cy.getByCy('nextStep').click();
-      cy.getByCy('indoorSelection').click();
-      cy.getByCy('selectIndoor').click();
-      cy.get('button[type=submit]').click();
-      cy.getByCy('no').click();
-      cy.getByCy('no').click();
-      cy.getByCy('done').click();
+      skipLocationDetails();
       cy.getByCy('yes').click();
       cy.getByCy('qrCodeDownload').click();
       cy.get('.ant-message-notice', { timeout: 20000 }).should('not.exist');

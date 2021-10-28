@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { SecondaryButton } from 'components/general';
 
 // Constants
 import { IS_MOBILE } from 'constants/environment';
@@ -101,4 +102,9 @@ export const UploadButton = styled.button`
 export const UploadProgress = styled.div`
   display: flex;
   width: 200px;
+`;
+
+export const StyledSecondaryButton = styled(SecondaryButton)`
+  border-color: white;
+  color: white;
 `;

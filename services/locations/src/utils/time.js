@@ -13,3 +13,9 @@ export const getMinutesFromTimeString = timeString => {
   const minutes = moment(timeString, 'HH:mm').minutes();
   return hours * HOUR_IN_MINUTES + minutes;
 };
+
+export const setAverageCheckoutTime = (time, form) => {
+  form.setFieldsValue({
+    averageCheckinTime: time,
+  });
+};

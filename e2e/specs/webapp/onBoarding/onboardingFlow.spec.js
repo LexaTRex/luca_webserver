@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { WEBAPP_ROUTE } from '../helpers/routes';
 import {
   WEBAPP_FIRSTNAME,
@@ -9,7 +10,7 @@ import {
   WEBAPP_ZIP,
   WEBAPP_CITY,
 } from '../helpers/users';
-import {clearDatabase} from "../helpers/database";
+import { clearDatabase } from '../helpers/database';
 
 describe('WebApp / Register', () => {
   beforeEach(() => {

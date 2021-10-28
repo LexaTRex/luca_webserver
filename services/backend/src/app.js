@@ -6,7 +6,7 @@ require('express-async-errors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const helmet = require('helmet');
-const database = require('./database');
+const { database } = require('./database');
 
 const error = require('./middlewares/error');
 const { noCache } = require('./middlewares/noCache');
@@ -14,6 +14,7 @@ const { httpLogger } = require('./utils/logger');
 
 const passportSession = require('./passport/session');
 const bearerBadgeGeneratorStrategy = require('./passport/bearerBadgeGenerator');
+const bearerInternalAccesStrategy = require('./passport/bearerInternalAccess');
 const localOperatorStrategy = require('./passport/localOperator');
 const operatorDeviceStrategy = require('./passport/operatorDevice');
 const localHealthDepartmentEmployeeStrategy = require('./passport/localHealthDepartmentEmployee');
@@ -38,6 +39,7 @@ const configureApp = () => {
   passport.serializeUser(passportSession.serializeUser);
   passport.deserializeUser(passportSession.deserializeUser);
   passport.use('bearer-badgeGenerator', bearerBadgeGeneratorStrategy);
+  passport.use('bearer-internalAccess', bearerInternalAccesStrategy);
   passport.use('local-operator', localOperatorStrategy);
   passport.use(
     'local-healthDepartmentEmployee',
@@ -50,9 +52,16 @@ const configureApp = () => {
 
   const sequelizeStore = new SequelizeStore({
     db: database,
+    table: 'Session',
+    extendDefaultFields: (defaults, data) => ({
+      data: defaults.data,
+      expires: defaults.expires,
+      userId: data.passport.user.uuid,
+      type: data.passport.user.type,
+    }),
   });
 
-  sequelizeStore.sync();
+  sequelizeStore.sync({ alter: true });
 
   app.disable('x-powered-by');
   app.disable('etag');

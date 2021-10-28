@@ -1,9 +1,10 @@
+/* eslint-disable */
 import { loginHealthDepartment } from '../helper/api/auth.helper';
-import { addHealthDepartmentPrivateKeyFile } from '../helper/ui/login.helper';
 import { createGroupPayload } from '../../locations/utils/payloads.helper';
 import { APP_ROUTE } from '../../locations/constants/routes';
 import { deleteGroup } from '../../locations/utils/groups';
 import { signHealthDepartment } from '../helper/signHealthDepartment';
+import { addHealthDepartmentPrivateKeyFile } from '../helper/ui/handlePrivateKeyFile';
 
 const FIRST_GROUP_NAME = 'test group first';
 const SECOND_GROUP_NAME = 'second test@group';
@@ -15,7 +16,7 @@ const GROUP_PREFIX = 'group_';
 const SEARCH_TERM = 'tes';
 
 describe('Health Department / Group search / Search for a group', () => {
-  //create groups with different names
+  // create groups with different names
   before(() => {
     cy.basicLoginLocations();
     GROUPS.forEach(group => {
@@ -26,7 +27,7 @@ describe('Health Department / Group search / Search for a group', () => {
     });
     cy.logoutLocations();
   });
-  //delete created groups
+  // delete created groups
   after(() => {
     cy.basicLoginLocations();
     cy.visit(APP_ROUTE);
@@ -40,8 +41,8 @@ describe('Health Department / Group search / Search for a group', () => {
       signHealthDepartment();
       addHealthDepartmentPrivateKeyFile();
       cy.getByCy('searchGroup').should('exist').should('be.visible').click();
-      //search group by term
-      cy.get('.ant-modal-content').within($modal => {
+      // search group by term
+      cy.get('.ant-modal-content').within(() => {
         cy.getByCy('groupNameInput')
           .should('exist')
           .should('be.visible')
@@ -64,13 +65,7 @@ describe('Health Department / Group search / Search for a group', () => {
             .then($group => {
               expect($group.text()).contains(group);
               expect($group.text()).contains(
-                createGroupPayload.streetName +
-                  ' ' +
-                  createGroupPayload.streetNr +
-                  ', ' +
-                  createGroupPayload.zipCode +
-                  ' ' +
-                  createGroupPayload.city
+                `${createGroupPayload.streetName} ${createGroupPayload.streetNr}, ${createGroupPayload.zipCode} ${createGroupPayload.city}`
               );
             });
         });

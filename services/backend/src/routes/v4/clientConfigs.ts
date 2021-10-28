@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 
-import database from 'database/models';
+import { FeatureFlag } from 'database';
 import { requireHealthDepartmentEmployee } from 'middlewares/requireUser';
 
 const router = Router();
@@ -15,7 +15,7 @@ function getClientConfigRoute(
     | 'operatorApp'
 ) {
   return async (request: Request, response: Response) => {
-    const flags = await database.FeatureFlag.findAll({
+    const flags = await FeatureFlag.findAll({
       where: { [clientName]: true },
     });
 

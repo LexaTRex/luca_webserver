@@ -125,7 +125,11 @@ export const SetPasswordStep = ({
             }),
           ]}
         >
-          <Input.Password style={inputStyle} autoFocus />
+          <Input.Password
+            style={inputStyle}
+            autoFocus
+            data-cy="setPasswordField"
+          />
         </Form.Item>
 
         <Form.Item
@@ -157,7 +161,10 @@ export const SetPasswordStep = ({
             }),
           ]}
         >
-          <Input.Password style={inputStyle} />
+          <Input.Password
+            style={inputStyle}
+            data-cy="setPasswordConfirmField"
+          />
         </Form.Item>
 
         <ButtonWrapper multipleButtons>
@@ -166,7 +173,11 @@ export const SetPasswordStep = ({
               id: 'authentication.form.button.back',
             })}
           </SecondaryButton>
-          <PrimaryButton $isButtonWhite htmlType="submit">
+          <PrimaryButton
+            $isButtonWhite
+            htmlType="submit"
+            data-cy="setPasswordSubmitButton"
+          >
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

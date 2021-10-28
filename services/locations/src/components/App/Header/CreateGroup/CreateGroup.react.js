@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Icon from '@ant-design/icons';
 import { useIntl } from 'react-intl';
 
 import { ReactComponent as CreateGroupSvg } from 'assets/CreateGroup.svg';
 
-import { useModal } from 'components/hooks/useModal';
 import { CreateGroupModal } from 'components/App/modals/CreateGroupModal';
 
 import { CreateGroupComp } from './CreateGroup.styled';
@@ -14,22 +13,22 @@ const CreateGroupIcon = () => (
 );
 
 export const CreateGroup = () => {
-  const [openModal] = useModal();
   const intl = useIntl();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onCreate = () => {
-    openModal({
-      content: <CreateGroupModal />,
-      emphasis: 'noHeader',
-    });
-  };
+  const onCloseModal = () => setIsModalOpen(false);
+  const onOpenModal = () => setIsModalOpen(true);
+
   return (
-    <CreateGroupComp
-      title={intl.formatMessage({ id: 'header.createGroup' })}
-      data-cy="createGroup"
-      onClick={onCreate}
-    >
-      <CreateGroupIcon />
-    </CreateGroupComp>
+    <>
+      <CreateGroupComp
+        title={intl.formatMessage({ id: 'header.createGroup' })}
+        data-cy="createGroup"
+        onClick={onOpenModal}
+      >
+        <CreateGroupIcon />
+      </CreateGroupComp>
+      {isModalOpen && <CreateGroupModal onClose={onCloseModal} />}
+    </>
   );
 };

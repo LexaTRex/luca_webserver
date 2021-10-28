@@ -7,7 +7,13 @@ import {
   SHA256,
   int8ToHex,
 } from '@lucaapp/crypto';
-import database from 'database/models';
+import {
+  NotificationChunk,
+  LocationTransfer,
+  LocationTransferTrace,
+  RiskLevel,
+  DummyTrace,
+} from 'database';
 import cache from 'utils/redisCache';
 import { DEVICE_TYPE_IOS, DEVICE_TYPE_ANDROID } from 'constants/deviceTypes';
 import moment from 'moment';
@@ -67,24 +73,26 @@ const hashWithRiskLevels = (
   );
 
 export const generateChunk = async () => {
-  const lastChunk = await database.NotificationChunk.findOne({
+  const lastChunk = await NotificationChunk.findOne({
     order: [['createdAt', 'DESC']],
   });
 
   const startTime = lastChunk
     ? lastChunk.createdAt
-    : moment().subtract(
-        config.get('luca.notificationChunks.initialChunkCoverage'),
-        'hours'
-      );
+    : moment()
+        .subtract(
+          config.get('luca.notificationChunks.initialChunkCoverage'),
+          'hours'
+        )
+        .toDate();
 
-  const completedLocationTransfers = await database.LocationTransfer.findAll({
+  const completedLocationTransfers = await LocationTransfer.findAll({
     attributes: ['departmentId'],
     include: [
       {
         required: false,
         attributes: ['traceId'],
-        model: database.LocationTransferTrace,
+        model: LocationTransferTrace,
         where: {
           traceId: {
             [Op.not]: null,
@@ -98,42 +106,41 @@ export const generateChunk = async () => {
     },
   });
 
-  const locationTransfersWithRiskLevels = await database.LocationTransfer.findAll(
-    {
-      attributes: ['departmentId'],
-      include: [
-        {
-          required: false,
-          attributes: ['traceId'],
-          model: database.LocationTransferTrace,
-          where: {
-            traceId: {
-              [Op.not]: null,
-            },
-            deviceType: [DEVICE_TYPE_IOS, DEVICE_TYPE_ANDROID],
+  const locationTransfersWithRiskLevels = await LocationTransfer.findAll({
+    attributes: ['departmentId'],
+    include: [
+      {
+        required: false,
+        attributes: ['traceId'],
+        model: LocationTransferTrace,
+        where: {
+          traceId: {
+            [Op.not]: null,
           },
-          include: {
+          deviceType: [DEVICE_TYPE_IOS, DEVICE_TYPE_ANDROID],
+        },
+        include: [
+          {
             required: true,
-            model: database.RiskLevel,
+            model: RiskLevel,
             where: {
               createdAt: { [Op.gt]: startTime },
             },
           },
-        },
-      ],
-    }
-  );
+        ],
+      },
+    ],
+  });
 
-  const dummyTraces = await database.DummyTrace.findAll({
+  const dummyTraces = await DummyTrace.findAll({
     attributes: ['healthDepartmentId', 'traceId'],
+    // @ts-ignore - any until models are typed
     where: { updatedAt: { [Op.gt]: startTime } },
   });
 
   const completedHashHexStrings: string[] = completedLocationTransfers.flatMap(
-    // @ts-ignore - any until models are typed
     completedLocationTransfer =>
-      completedLocationTransfer.LocationTransferTraces.flatMap(
-        // @ts-ignore - any until models are typed
+      completedLocationTransfer.LocationTransferTraces!.flatMap(
         completedLocationTransferTrace =>
           hashWithRiskLevels(
             completedLocationTransferTrace.traceId,
@@ -144,23 +151,21 @@ export const generateChunk = async () => {
   );
 
   const riskLevelHashHexStrings: string[] = locationTransfersWithRiskLevels.flatMap(
-    // @ts-ignore - any until models are typed
     locationTransfer =>
-      // @ts-ignore - any until models are typed
-      locationTransfer.LocationTransferTraces.flatMap(locationTransferTrace => {
-        const riskLevelsToHash = locationTransferTrace.RiskLevels.map(
-          // @ts-ignore - any until models are typed
-          riskLevel => riskLevel.level
-        );
-        return hashWithRiskLevels(
-          locationTransferTrace.traceId,
-          locationTransfer.departmentId,
-          riskLevelsToHash
-        );
-      })
+      locationTransfer.LocationTransferTraces!.flatMap(
+        locationTransferTrace => {
+          const riskLevelsToHash = locationTransferTrace.RiskLevels!.map(
+            riskLevel => riskLevel.level
+          );
+          return hashWithRiskLevels(
+            locationTransferTrace.traceId,
+            locationTransfer.departmentId,
+            riskLevelsToHash
+          );
+        }
+      )
   );
 
-  // @ts-ignore - any until models are typed
   const dummyHashHexStrings: string[] = dummyTraces.flatMap(dummyTrace =>
     hashWithRiskLevels(dummyTrace.traceId, dummyTrace.healthDepartmentId, [
       IS_COMPLETED_WARN_LEVEL,
@@ -196,7 +201,7 @@ export const generateArchiveChunk = async () => {
   const trimmedBase64Hash = hexToBase64(
     rawHash.slice(0, LAST_SLICE_ID_HASH_HEX_LENGTH)
   );
-  await database.NotificationChunk.create({ chunk, hash: trimmedBase64Hash });
+  await NotificationChunk.create({ chunk, hash: trimmedBase64Hash });
 };
 
 export const getActiveChunk = () =>
@@ -207,7 +212,7 @@ export const getActiveChunk = () =>
 export const getArchivedChunk = async (chunkId: string) => {
   let chunk = databaseCache.get(chunkId);
   if (!chunk) {
-    const notificationChunk = await database.NotificationChunk.findOne({
+    const notificationChunk = await NotificationChunk.findOne({
       where: { hash: chunkId },
       attributes: ['chunk'],
     });

@@ -3,7 +3,7 @@ import http from 'http';
 import config from 'config';
 import metrics from 'utils/metrics';
 import logger from 'utils/logger';
-import database from 'database';
+import { database } from 'database';
 import { loadCertificates } from 'utils/signedKeys';
 
 import { configureApp } from './app';

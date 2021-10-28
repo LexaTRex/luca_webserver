@@ -1,4 +1,5 @@
-import {WEBAPP_ROUTE} from "./routes";
+/* eslint-disable */
+import { WEBAPP_ROUTE } from './routes';
 
 export const DATABASE_NAME = 'luca';
 export const DATABASE_VERSION = 60;
@@ -12,7 +13,7 @@ export async function connect() {
   return new Cypress.Promise(
     (resolve, reject) => {
       const request = window.indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
-      request.onerror = reject;
+      request.addEventListener('error', reject);
       request.onsuccess = function (event) {
         resolve(event.target.result);
       };
@@ -21,6 +22,7 @@ export async function connect() {
   );
 }
 
+// eslint-disable-next-line require-await
 export async function clearDatabase() {
   return new Cypress.Promise(async (resolve, reject) => {
     try {

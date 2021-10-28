@@ -7,7 +7,10 @@ const {
   validateSchema,
   validateParametersSchema,
 } = require('../../middlewares/validateSchema');
-const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
+const {
+  limitRequestsPerHour,
+  limitRequestsByUserPerHour,
+} = require('../../middlewares/rateLimit');
 
 const {
   requireHealthDepartmentEmployee,
@@ -54,6 +57,9 @@ router.post(
  */
 router.post(
   '/tan',
+  limitRequestsByUserPerHour('usertransfers_get_user_ratelimit_hour', {
+    skipSuccessfulRequests: true,
+  }),
   limitRequestsPerHour('usertransfers_get_ratelimit_hour', {
     skipSuccessfulRequests: true,
   }),

@@ -404,9 +404,9 @@
     "anonymousCheckinsInfo": "Documentation of contact data for this location is not mandatory under current regulations. luca users can check in voluntarily and decide, whether they want to share their data with any health departments. Users who have checked in anonymously can be informed about infection risk via push notifications. Entries for anonymous checkins won't appear in exports.",
     "guestList.anonymousCheckin": "Anonymous checkin",
     "helpCenter.title": "Help center",
-    "helpCenter.heading": "Your question is not answered on our website or in the FAQ?",
-    "helpCenter.mail.heading": "Send a message via contact form",
-    "helpCenter.mail.text": "We will answer your questions as soon as possible.",
+    "helpCenter.heading": "There's no answer to your question in our FAQ?",
+    "helpCenter.mail.heading": "Get in touch via our contact form",
+    "helpCenter.mail.text": "If you have any questions or comments, please feel free to write a message - we will take care of your request promptly.",
     "helpCenter.mail.buttonText": "Send message",
     "helpCenter.phone.heading": "Call us",
     "helpCenter.phone.text": "We are available 24/7. Toll-free when calling from a German landline. Prices for calls from mobile phones may differ.",
@@ -421,7 +421,7 @@
     "contactForm.modal.submit": "Send",
     "error.requestText.invalid": "Please enter a valid value.",
     "contactForm.modal.success.heading": "Thank you for your request",
-    "contactForm.modal.success.text": "We will reply as soon as possible.",
+    "contactForm.modal.success.text": "We'll get back to you as soon as possible via email.",
     "contactForm.modal.success.button": "Close",
     "contactForm.modal.notification.error": "Error while sending the request. Please try again later.",
     "helpCenter.services.faq": "FAQ",
@@ -429,5 +429,7 @@
     "helpCenter.services.contactTracingPresentation": "Instruction: Intelligent contact tracing",
     "helpCenter.services.hdHandout": "Handout: luca health department at a glance",
     "helpCenter.services.shareHistoryHelpLink": "Instructions: Requesting a history",
-    "helpCenter.services.locationsHandout": "Handout: Information on luca\nLocations"
+    "helpCenter.services.locationsHandout": "Handout: Information on luca\nLocations",
+    "contactPersons.corruptedTracesCount": "{corruptedTracesCount} entries can't be decrypted because the data is damaged. This is probably due to improper luca use and doesn't concern real check-ins. These entries are not listed and won't appear in exports.",
+    "userManagement.error.requestText": "This field cannot be empty."
 }

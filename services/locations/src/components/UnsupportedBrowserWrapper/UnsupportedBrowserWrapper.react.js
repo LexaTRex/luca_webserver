@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import UAParser from 'ua-parser-js';
+import platform from 'platform';
 
 import LucaLogo from 'assets/LucaLogo.svg';
 import ErrorBrowser from 'assets/ErrorBrowser.svg';
@@ -20,12 +20,7 @@ import {
 export const UnsupportedBrowserWrapper = ({ children }) => {
   const intl = useIntl();
 
-  const browserIsNotSupported = () => {
-    const parser = new UAParser();
-    return parser.getBrowser().name === 'IE';
-  };
-
-  browserIsNotSupported();
+  const browserIsNotSupported = () => platform.name === 'IE';
 
   return (
     <>

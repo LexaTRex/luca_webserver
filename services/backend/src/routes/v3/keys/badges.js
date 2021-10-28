@@ -20,7 +20,11 @@ const {
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
 
-const database = require('../../../database');
+const {
+  database,
+  EncryptedBadgePrivateKey,
+  BadgePublicKey,
+} = require('../../../database');
 const {
   requireHealthDepartmentEmployee,
 } = require('../../../middlewares/requireUser');
@@ -59,7 +63,7 @@ router.get('/targetKeyId', async (request, response) => {
  * @see https://www.luca-app.de/securityoverview/badge/badge_generation.html
  */
 router.get('/current', async (request, response) => {
-  const badgePublicKey = await database.BadgePublicKey.findOne({
+  const badgePublicKey = await BadgePublicKey.findOne({
     order: [['createdAt', 'DESC']],
   });
 
@@ -86,14 +90,12 @@ router.get(
   requireHealthDepartmentEmployee,
   validateParametersSchema(keyIdParametersSchema),
   async (request, response) => {
-    const encryptedBadgePrivateKey = await database.EncryptedBadgePrivateKey.findOne(
-      {
-        where: {
-          keyId: request.params.keyId,
-          healthDepartmentId: request.user.departmentId,
-        },
-      }
-    );
+    const encryptedBadgePrivateKey = await EncryptedBadgePrivateKey.findOne({
+      where: {
+        keyId: request.params.keyId,
+        healthDepartmentId: request.user.departmentId,
+      },
+    });
 
     if (!encryptedBadgePrivateKey) {
       return response.sendStatus(status.NOT_FOUND);
@@ -121,13 +123,11 @@ router.get(
   requireHealthDepartmentEmployee,
   validateParametersSchema(keyIdParametersSchema),
   async (request, response) => {
-    const encryptedBadgePrivateKeys = await database.EncryptedBadgePrivateKey.findAll(
-      {
-        where: {
-          keyId: request.params.keyId,
-        },
-      }
-    );
+    const encryptedBadgePrivateKeys = await EncryptedBadgePrivateKey.findAll({
+      where: {
+        keyId: request.params.keyId,
+      },
+    });
 
     return response.send(
       encryptedBadgePrivateKeys.map(encryptedBadgePrivateKey => ({
@@ -147,9 +147,7 @@ router.get(
   '/:keyId',
   validateParametersSchema(keyIdParametersSchema),
   async (request, response) => {
-    const badgePublicKey = await database.BadgePublicKey.findByPk(
-      request.params.keyId
-    );
+    const badgePublicKey = await BadgePublicKey.findByPk(request.params.keyId);
 
     if (!badgePublicKey) {
       return response.sendStatus(status.NOT_FOUND);
@@ -206,7 +204,7 @@ router.post(
       }
     }
 
-    const badgePublicKey = await database.BadgePublicKey.findOne({
+    const badgePublicKey = await BadgePublicKey.findOne({
       where: { keyId, createdAt: moment.unix(createdAt) },
     });
 
@@ -233,7 +231,7 @@ router.post(
         signature: encryptedBadgePrivateKey.signature,
       };
 
-      const oldKey = await database.EncryptedBadgePrivateKey.findOne({
+      const oldKey = await EncryptedBadgePrivateKey.findOne({
         where: {
           keyId,
           healthDepartmentId: encryptedBadgePrivateKey.healthDepartmentId,
@@ -241,7 +239,15 @@ router.post(
       });
 
       if (!oldKey) {
-        await database.EncryptedBadgePrivateKey.create(newKey);
+        await EncryptedBadgePrivateKey.create(newKey);
+
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_BADGE_KEYPAIR,
+          status: AuditStatusType.SUCCESS,
+          meta: {
+            newKeyId: keyId,
+          },
+        });
       } else if (oldKey.createdAt === badgePublicKey.createdAt) {
         logEvent(request.user, {
           type: AuditLogEvents.REKEY_BADGE_KEYPAIR,
@@ -351,7 +357,7 @@ router.post(
     });
 
     try {
-      const badgePublicKey = await database.BadgePublicKey.findOne(
+      const badgePublicKey = await BadgePublicKey.findOne(
         {
           order: [['createdAt', 'DESC']],
         },
@@ -397,7 +403,7 @@ router.post(
         return response.sendStatus(status.CONFLICT);
       }
 
-      await database.BadgePublicKey.upsert(
+      await BadgePublicKey.upsert(
         {
           keyId: request.body.keyId,
           publicKey: request.body.publicKey,
@@ -425,7 +431,7 @@ router.post(
 
       await Promise.all(
         encryptedBadgePrivateKeys.map(key =>
-          database.EncryptedBadgePrivateKey.upsert(key, { transaction })
+          EncryptedBadgePrivateKey.upsert(key, { transaction })
         )
       );
 

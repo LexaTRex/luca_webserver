@@ -46,6 +46,7 @@ export const NameInputStep = ({ name, setName, next, back, navigation }) => {
         }
       >
         <Form.Item
+          data-cy="registerFirstName"
           colon={false}
           name="firstName"
           label={intl.formatMessage({
@@ -56,6 +57,7 @@ export const NameInputStep = ({ name, setName, next, back, navigation }) => {
           <Input style={inputStyle} autoFocus />
         </Form.Item>
         <Form.Item
+          data-cy="registerLastName"
           colon={false}
           name="lastName"
           label={intl.formatMessage({
@@ -72,7 +74,11 @@ export const NameInputStep = ({ name, setName, next, back, navigation }) => {
               id: 'authentication.form.button.back',
             })}
           </SecondaryButton>
-          <PrimaryButton $isButtonWhite htmlType="submit">
+          <PrimaryButton
+            $isButtonWhite
+            htmlType="submit"
+            data-cy="confirmNameButton"
+          >
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

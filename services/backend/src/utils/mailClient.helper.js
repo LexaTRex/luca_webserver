@@ -39,6 +39,10 @@ const MAIL_TEMPLATE_IDS = {
     de: 3148836,
     en: 3148836,
   },
+  hdSupport: {
+    de: 3245338,
+    en: 3245338,
+  },
 };
 
 const MAIL_TEMPLATE_TITLES = {
@@ -73,6 +77,10 @@ const MAIL_TEMPLATE_TITLES = {
   locationsSupport: {
     de: 'Neue Support Anfrage eines Betreibers',
     en: 'Neue Support Anfrage eines Betreibers',
+  },
+  hdSupport: {
+    de: 'Neue Support Anfrage eines Gesundheitsamts',
+    en: 'Neue Support Anfrage eines Gesundheitsamts',
   },
   hdUpdatePasswordNotification: {
     de: 'Passwort erfolgreich geändert',

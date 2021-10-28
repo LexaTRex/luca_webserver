@@ -102,30 +102,46 @@ module.exports = {
     users_patch_ratelimit_hour: 'USERS_PATCH_RATELIMIT_HOUR',
     users_delete_ratelimit_hour: 'USERS_DELETE_RATELIMIT_HOUR',
     usertransfers_post_ratelimit_hour: 'USERTRANSFER_POST_RATELIMIT_HOUR',
+    usertransfers_get_ratelimit_hour: 'USERTRANSFERS_GET_RATELIMIT_HOUR',
+    usertransfers_get_user_ratelimit_hour:
+      'USERTRANSFERS_GET_USER_RATELIMIT_HOUR',
     hd_password_change_post_ratelimit_hour:
       'HD_PASSWORD_CHANGE_POST_RATELIMIT_HOUR',
     hd_password_renew_patch_ratelimit_hour:
       'HD_PASSWORD_RENEW_PATCH_RATELIMIT_HOUR',
+    hd_employee_post_ratelimit_hour: 'HD_EMPLOYEE_POST_RATELIMIT_HOUR',
     password_change_post_ratelimit_hour: 'PASSWORD_CHANGE_POST_RATELIMIT_HOUR',
     password_forgot_post_ratelimit_hour: 'PASSWORD_FORGOT_POST_RATELIMIT_HOUR',
     password_reset_post_ratelimit_hour: 'PASSWORD_RESET_POST_RATELIMIT_HOUR',
     password_reset_get_ratelimit_hour: 'PASSWORD_RESET_GET_RATELIMIT_HOUR',
-    email_get_ratelimit_hour: 'EMAIL_GET_RATELIMIT_HOUR',
-    email_confirm_post_ratelimit_hour: 'EMAIL_CONFIRM_POST_RATELIMIT_HOUR',
     locations_private_post_ratelimit_day:
       'LOCATIONS_PRIVATE_POST_RATELIMIT_DAY',
     locations_delete_ratelimit_day: 'LOCATIONS_DELETE_RATELIMIT_DAY',
+    locationgroup_post_ratelimit_day: 'LOCATIONGROUP_POST_RATELIMIT_DAY',
     operators_post_ratelimit_day: 'OPERATORS_POST_RATELIMIT_DAY',
     operators_support_email_post_ratelimit_day:
       'OPERATORS_SUPPORT_MAIL_POSTRATELIMIT_DAY',
+    hd_support_email_post_ratelimit_day:
+      'HEALTH_DEPARTMENT_SUPPORT_MAIL_POSTRATELIMIT_DAY',
     dummy_max_tracings: 'DUMMY_MAX_TRACINGS',
     dummy_max_traces: 'DUMMY_MAX_TRACES',
     badges_post_ratelimit_hour: 'BADGES_POST_RATELIMIT_HOUR',
     badges_bloomfilter_get_ratelimit_hour:
       'BADGES_BLOOMFILTER_GET_RATELIMIT_HOUR',
-    operator_email_patch_ratelimit_hour: 'OPERATOR_EMAIL_PATCH_RATELIMIT_HOUR',
+    operator_email_confirm_post_ratelimit_hour:
+      'OPERATOR_EMAIL_CONFIRM_POST_RATELIMIT_HOUR',
+    operator_email_patch_ratelimit_day: 'OPERATOR_EMAIL_PATCH_RATELIMIT_DAY',
+    operator_email_patch_user_ratelimit_day:
+      'OPERATOR_EMAIL_PATCH_USER_RATELIMIT_DAY',
+    operator_email_get_ratelimit_day: 'OPERATOR_EMAIL_GET_RATELIMIT_DAY',
+    operator_location_post_ratelimit_day:
+      'OPERATOR_LOCATION_POST_RATELIMIT_DAY',
     keys_daily_rotate_post_ratelimit_hour:
       'KEYS_DAILY_ROTATE_POST_RATELIMIT_HOUR',
+    keys_daily_rotate_post_user_ratelimit_day:
+      'KEYS_DAILY_ROTATE_POST_USER_RATELIMIT_DAY',
+    keys_daily_rotate_post_ratelimit_day:
+      'KEYS_DAILY_ROTATE_POST_RATELIMIT_DAY',
     location_transfer_post_ratelimit_hour:
       'LOCATION_TRANSFER_POST_RATELIMIT_HOUR',
     notifications_traces_get_ratelimit_hour:

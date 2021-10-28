@@ -12,6 +12,7 @@ import {
   USER_MANAGEMENT_ROUTE,
   LOGIN_ROUTE,
   PROCESS_DETAILS_ROUTE,
+  HELP_CENTER_ROUTE,
 } from 'constants/routes';
 import { getMe } from 'network/api';
 
@@ -20,6 +21,7 @@ import { Header } from './Header';
 import { Navigation } from './Navigation';
 import { Profile } from './Profile';
 import { Tracking } from './Tracking';
+import { HelpCenter } from './HelpCenter';
 import { UserManagement } from './UserManagement';
 import { ProcessDetails } from './ProcessDetails';
 import { AppWrapper } from './App.styled';
@@ -60,6 +62,9 @@ export const App = () => {
         <Switch>
           <Route path={PROFILE_ROUTE}>
             <Profile profileData={healthDepartmentUser} />
+          </Route>
+          <Route path={HELP_CENTER_ROUTE}>
+            <HelpCenter profileData={healthDepartmentUser} />
           </Route>
           <Route path={PROCESS_DETAILS_ROUTE}>
             <ProcessDetails />

@@ -1,4 +1,4 @@
-import UAParser from 'ua-parser-js';
+import platform from 'platform';
 
 const supportsWebRTC = (name, version, osName) => {
   // on iOS only safari supports webRTC
@@ -26,16 +26,16 @@ const supportsWebRTC = (name, version, osName) => {
 };
 
 export const hasMobileCamAccess = () => {
-  const parser = new UAParser();
-  const { name, version } = parser.getBrowser();
-  const { name: osName } = parser.getOS();
+  const { name, version, os } = platform;
+  const { family: osName } = os;
+
   const isWebRTCsupported = supportsWebRTC(
     name,
     Number.parseInt(version, 10),
     osName
   );
-  const isMobile = parser.getDevice().type === 'mobile';
-  const isTablet = parser.getDevice().type === 'tablet';
+  const isMobile =
+    osName === 'Android' || osName === 'iOS' || osName === 'Windows Phone';
 
-  return !isTablet && !isMobile ? false : isWebRTCsupported;
+  return !isMobile ? false : isWebRTCsupported;
 };

@@ -1,3 +1,5 @@
+import { UserType } from 'constants/user';
+
 const router = require('express').Router();
 const status = require('http-status');
 const passport = require('passport');
@@ -11,7 +13,6 @@ const {
   requireOperator,
   requireHealthDepartmentEmployee,
   isUserOfType,
-  UserTypes,
 } = require('../../middlewares/requireUser');
 
 const { limitRequestsPerMinute } = require('../../middlewares/rateLimit');
@@ -79,7 +80,7 @@ router.get(
 
 router.post('/logout', restrictOrigin, (request, response) => {
   const { user, logout, session } = request;
-  const isHDUser = isUserOfType(UserTypes.HD_EMPLOYEE, request);
+  const isHDUser = isUserOfType(UserType.HEALTH_DEPARTMENT_EMPLOYEE, request);
 
   logout();
   session.destroy(error => {

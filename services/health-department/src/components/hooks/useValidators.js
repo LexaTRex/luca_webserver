@@ -7,6 +7,7 @@ import {
   getPhoneRule,
   getEmailRule,
   getSafeStringRule,
+  getTextSafeStringRule,
   getMaxLengthRule,
   getNoNumericRule,
 } from 'utils/validatorRules';
@@ -42,5 +43,22 @@ export const useEmailValidator = fieldName => {
       getMaxLengthRule(intl, MAX_EMAIL_LENGTH),
     ],
     [intl, fieldName]
+  );
+};
+
+export const useOptionalPhoneValidator = () => {
+  const intl = useIntl();
+  return useMemo(() => [getPhoneRule(intl)], [intl]);
+};
+
+export const useTextAreaValidator = (fieldName, maxValue) => {
+  const intl = useIntl();
+  return useMemo(
+    () => [
+      getRequiredRule(intl, fieldName),
+      getTextSafeStringRule(intl, fieldName),
+      getMaxLengthRule(intl, maxValue),
+    ],
+    [intl, fieldName, maxValue]
   );
 };

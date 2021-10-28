@@ -1,4 +1,6 @@
-import UAParser from 'ua-parser-js';
+import platform from 'platform';
 
-const parser = new UAParser();
-export const isMobile = parser.getDevice().type === 'mobile';
+export const isMobile =
+  platform.os.family === 'Android' ||
+  platform.os.family === 'iOS' ||
+  platform.os.family === 'Windows Phone';

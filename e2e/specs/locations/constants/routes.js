@@ -1,6 +1,10 @@
+import { E2E_DEFAULT_LOCATION_FORM_ID } from './locations';
+
+export const BASE_ROUTE = '/';
 export const LOGIN_ROUTE = '/login';
 export const REGISTER_ROUTE = '/register';
 export const APP_ROUTE = '/app/group';
+export const CONTACT_FORM_ROUTE = `/contact-form/${E2E_DEFAULT_LOCATION_FORM_ID}`;
 export const PROFILE_ROUTE = 'app/profile';
 export const DATA_TRANSFERS_ROUTE = 'app/dataTransfers';
 

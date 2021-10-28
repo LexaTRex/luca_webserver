@@ -14,6 +14,7 @@ BUILD_NUMBER = env.BUILD_NUMBER
 BRANCH_NAME_ESCAPED = BRANCH_NAME.replaceAll('/', '-')
 UNIQUE_TAG = "${BRANCH_NAME_ESCAPED}_build-${BUILD_NUMBER}"
 
+
 node {
   try {
     abortPreviousRunningBuilds()
@@ -29,8 +30,10 @@ node {
       parallel steps
     }
 
-    stage('e2e Tests') {
-      e2eTest()
+    if (shouldRunE2E()) {
+      stage('e2e Tests') {
+        e2eTest()
+      }
     }
 
     if (env.BRANCH_NAME == 'dev') {
@@ -39,6 +42,7 @@ node {
 
     if (env.BRANCH_NAME.startsWith('release/')) {
       triggerDeploy('release', GIT_VERSION)
+      triggerDeploy('aqs', GIT_VERSION)
     }
 
     if (env.BRANCH_NAME.startsWith('hotfix/')) {
@@ -85,6 +89,15 @@ void updateSourceCode() {
     }
 }
 
+boolean shouldRunE2E() {
+  skip = sh (script: "git log -1 | grep '\\[skip e2e\\]'", returnStatus: true)
+  if (skip == 0) {
+    return false
+  } else {
+    return true
+  }
+}
+
 void abortPreviousRunningBuilds() {
   echo 'Aborting previous builds'
   def jobname = env.JOB_NAME
@@ -115,7 +128,7 @@ void triggerDeploy(String env, String image_tag) {
     parallel steps
   }
 
-  stage('Deploy') {
+  stage("Deploy ${env}") {
     echo("deploying ${image_tag} to ${env}")
     build(
       job: 'luca/luca-web-deploy',

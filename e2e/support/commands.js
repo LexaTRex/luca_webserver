@@ -28,15 +28,16 @@ import { E2E_EMAIL, E2E_PASSWORD } from '../specs/locations/constants/users';
 import {
   E2E_HEALTH_DEPARTMENT_PASSWORD,
   E2E_HEALTH_DEPARTMENT_USERNAME,
-} from '../specs/health-department/helper/user';
+} from '../specs/health-department/constants/user';
 import { createGroupPayload } from '../specs/locations/utils/payloads.helper';
 import {
   APP_ROUTE,
   LOCATION_GROUPS_ROUTE,
 } from '../specs/locations/constants/routes';
+import 'cypress-fill-command';
 
-Cypress.Commands.add('getByCy', (selector, ...args) => {
-  return cy.get(`[data-cy="${selector}"]`, ...args);
+Cypress.Commands.add('getByCy', (selector, ...arguments_) => {
+  return cy.get(`[data-cy="${selector}"]`, ...arguments_);
 });
 
 Cypress.Commands.add('executeQuery', query => {
@@ -46,18 +47,20 @@ Cypress.Commands.add('executeQuery', query => {
 Cypress.Commands.add('stubNewWindow', () => {
   cy.window().then(win => {
     cy.stub(win, 'open').callsFake(link => {
+      // eslint-disable-next-line no-param-reassign
       win.location.href = link;
     });
   });
 });
 
-Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
+// eslint-disable-next-line consistent-return
+Cypress.Commands.overwrite('visit', (originalFunction, url, options) => {
   if (url.includes(':9443')) {
     cy.window().then(win => {
       return win.open(url, '_self');
     });
   } else {
-    return originalFn(url, options);
+    return originalFunction(url, options);
   }
 });
 
@@ -122,11 +125,9 @@ Cypress.Commands.add('logoutHD', () => {
     headers: {
       origin: Cypress.config().baseUrl,
       host: Cypress.env('host'),
-      Authorization:
-        'Basic ' +
-        btoa(
-          Cypress.env('basicAuthName') + ':' + Cypress.env('basicAuthPassword')
-        ),
+      Authorization: `Basic ${btoa(
+        `${Cypress.env('basicAuthName')}:${Cypress.env('basicAuthPassword')}`
+      )}`,
     },
   });
 });
@@ -136,19 +137,21 @@ Cypress.Commands.add(
   'createGroup',
   (group = createGroupPayload, redirect = true) => {
     cy.request('POST', `${LOCATION_GROUPS_ROUTE}/`, group).then(
+      // eslint-disable-next-line require-await
       async response => {
-        const groupId = response.body.groupId;
+        const { groupId, name, location } = response.body;
         cy.wrap(response.body).as('group');
-        cy.wrap(response.body.name).as('groupName');
-        cy.wrap(response.body.groupId).as('groupId');
-        cy.wrap(response.body.location.scannerId).as('scannerId');
+        cy.wrap(name).as('groupName');
+        cy.wrap(groupId).as('groupId');
+        cy.wrap(location.scannerId).as('scannerId');
         if (redirect) {
+          // eslint-disable-next-line promise/no-nesting
           cy.request('GET', `${LOCATION_GROUPS_ROUTE}/${groupId}`).then(
+            // eslint-disable-next-line no-shadow
             response => {
+              const { locations } = response.body;
               cy.wrap(response.body).as('group');
-              cy.visit(
-                `${APP_ROUTE}/${groupId}/location/${response.body.locations[0].uuid}`
-              );
+              cy.visit(`${APP_ROUTE}/${groupId}/location/${locations[0].uuid}`);
             }
           );
         }

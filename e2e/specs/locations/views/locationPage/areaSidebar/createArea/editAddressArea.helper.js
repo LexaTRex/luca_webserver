@@ -1,3 +1,6 @@
+/* eslint-disable */
+import { skipLocationDetails } from '../../../../ui-helpers/createLocation';
+
 export const deleteCreateArea = NEW_RESTAURANT_LOCATION => {
   cy.getByCy(`location-${NEW_RESTAURANT_LOCATION}`).click();
   cy.getByCy('openSettings').click();
@@ -14,13 +17,13 @@ export const createNewArea = (
   NEW_RESTAURANT_LOCATION,
   E2E_PHONE_NUMBER
 ) => {
-  //create new area
+  // create new area
   cy.get('#groupList').then($groupList => {
     if (
       $groupList.find(`div[data-cy=location-${NEW_RESTAURANT_LOCATION}]`)
         .length > 0
     ) {
-      //delete area if exists
+      // delete area if exists
       deleteCreateArea(NEW_RESTAURANT_LOCATION);
     }
   });
@@ -32,19 +35,7 @@ export const createNewArea = (
   // Keep address
   cy.getByCy('yes').click();
   cy.get('#phone').type(E2E_PHONE_NUMBER);
-  cy.getByCy('nextStep').click();
-  // Proceed by skipping average checkin time
-  cy.getByCy('nextStep').click();
-  // Select indoor
-  cy.getByCy('indoorSelection').click();
-  cy.getByCy('selectIndoor').click();
-  cy.get('button[type=submit]').click();
-  // No tables
-  cy.getByCy('no').click();
-  // Disable auto checkout
-  cy.getByCy('no').click();
-  // Create Area
-  cy.getByCy('done').click();
+  skipLocationDetails();
   // No qr codes
   cy.getByCy('no').click();
   // Check if Area got created

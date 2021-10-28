@@ -1,48 +1,41 @@
-import { loginLocations } from '../../../utils/auth';
+/* eslint-disable */
 import {
-  DEVICE_TYPES,
-  traceDataPayload,
-  createGroupPayload,
+  DYNAMIC_DEVICE_TYPES,
+  dynamicTraceDataPayload,
 } from '../../../utils/payloads.helper';
-import { DELETE_E2E_TRACE_QUERY } from '../../../constants/dbQueries';
 import {
   verifyScannerCounter,
   verifyLocationOverview,
 } from '../../../ui-helpers/validations';
-import { deleteGroup } from '../../../utils/groups';
-import { checkin } from '../../../utils/traces';
-
-const CHECKIN_GROUP_NAME = 'neXenio';
+import { dynamicCheckin } from '../../../utils/traces';
+import {
+  CHECKIN_GROUP_NAME,
+  checkinSetup,
+  removeGroup,
+} from './checkin.helper';
 
 describe('Location / Checkin Options / Cam scanner', () => {
   beforeEach(() => {
-    //remove trace if exists
-    cy.executeQuery(DELETE_E2E_TRACE_QUERY);
-    //create a new group with random name
-    loginLocations();
-    cy.createGroup({ ...createGroupPayload, name: CHECKIN_GROUP_NAME });
+    checkinSetup();
   });
   afterEach(() => {
-    cy.get('@groupId').then(groupId => {
-      deleteGroup(groupId);
-    });
-    cy.logoutLocations();
+    removeGroup();
   });
 
   describe('when a user check-in to the location successfully and the location owner clicks on the reload button', () => {
     it('increment the check-in counter', () => {
       verifyLocationOverview();
-      //Open QR code reader
+      // Open QR code reader
       cy.stubNewWindow();
       cy.getByCy('camScanner').click();
       cy.get('video').should('exist').should('be.visible');
       verifyScannerCounter(CHECKIN_GROUP_NAME);
       // Checkin with camera scanner
       cy.get('@scannerId').then(scannerId => {
-        checkin({
-          ...traceDataPayload,
-          scannerId: scannerId,
-          deviceType: DEVICE_TYPES.mobile,
+        dynamicCheckin({
+          ...dynamicTraceDataPayload,
+          scannerId,
+          deviceType: DYNAMIC_DEVICE_TYPES.DEVICE_TYPE_WEBAPP,
         });
         cy.get('span[aria-label=redo]').click();
         cy.contains('1/1');

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { checkRadiusInput } from './validations';
 
 export const addressFields = ['#streetName', '#streetNr', '#zipCode', '#city'];

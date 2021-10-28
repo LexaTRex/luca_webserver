@@ -1,14 +1,9 @@
 const status = require('http-status');
 const forge = require('node-forge');
 const config = require('config');
+const { UserType } = require('../constants/user');
 const { combineMiddlewares } = require('../utils/middlewares');
 const { verifyCertificateAgainstDTrustChain } = require('../utils/signedKeys');
-
-const UserTypes = {
-  OPERATOR: 'Operator',
-  OPERATOR_DEVICE: 'OperatorDevice',
-  HD_EMPLOYEE: 'HealthDepartmentEmployee',
-};
 
 const isUserOfType = (type, request) =>
   request.user && request.user.type === type;
@@ -27,21 +22,21 @@ const hasValidClientCertificate = (user, request) => {
 };
 
 const requireOperator = (request, response, next) => {
-  if (isUserOfType(UserTypes.OPERATOR, request)) {
+  if (isUserOfType(UserType.OPERATOR, request)) {
     return next();
   }
   return response.sendStatus(status.UNAUTHORIZED);
 };
 
 const requireOperatorDevice = (request, response, next) => {
-  if (isUserOfType(UserTypes.OPERATOR_DEVICE, request)) {
+  if (isUserOfType(UserType.OPERATOR_DEVICE, request)) {
     return next();
   }
   return response.sendStatus(status.UNAUTHORIZED);
 };
 
 const requireOperatorDeviceRole = role => (request, response, next) => {
-  if (isUserOfType(UserTypes.OPERATOR, request)) {
+  if (isUserOfType(UserType.OPERATOR, request)) {
     return next();
   }
 
@@ -60,7 +55,7 @@ const requireOperatorDeviceRoles = roles => {
   }
 
   return (request, response, next) => {
-    if (isUserOfType(UserTypes.OPERATOR, request)) {
+    if (isUserOfType(UserType.OPERATOR, request)) {
       return next();
     }
 
@@ -78,8 +73,8 @@ const requireOperatorDeviceRoles = roles => {
 
 const requireOperatorOROperatorDevice = (request, response, next) => {
   if (
-    isUserOfType(UserTypes.OPERATOR, request) ||
-    isUserOfType(UserTypes.OPERATOR_DEVICE, request)
+    isUserOfType(UserType.OPERATOR, request) ||
+    isUserOfType(UserType.OPERATOR_DEVICE, request)
   ) {
     return next();
   }
@@ -88,7 +83,7 @@ const requireOperatorOROperatorDevice = (request, response, next) => {
 
 const requireHealthDepartmentEmployee = (request, response, next) => {
   if (
-    isUserOfType(UserTypes.HD_EMPLOYEE, request) &&
+    isUserOfType(UserType.HEALTH_DEPARTMENT_EMPLOYEE, request) &&
     (hasValidClientCertificate(request.user, request) || config.get('e2e'))
   ) {
     return next();
@@ -128,5 +123,4 @@ module.exports = {
   requireHealthDepartmentAdmin,
   requireNonDeletedUser,
   isUserOfType,
-  UserTypes,
 };

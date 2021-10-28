@@ -1,98 +1,63 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
-import { Form, Input, Alert, notification } from 'antd';
+import { Input, Alert } from 'antd';
 import { PrimaryButton } from 'components/general/Buttons.styled';
-
-import { updateOperator, isEmailUpdatePending, updateEmail } from 'network/api';
 
 import {
   useEmailValidator,
   usePersonNameValidator,
 } from 'components/hooks/useValidators';
 
-import { nameChanged, mailChanged } from './ProfileOverview.helper';
+import {
+  onFinishHandler,
+  useMailChangeRequest,
+} from './ProfileOverview.helper';
 
 import {
   ProfileContent,
   Overview,
   Heading,
   ButtonWrapper,
+  StyledForm,
 } from './ProfileOverview.styled';
 
-export const ProfileOverview = ({ operator, refetch }) => {
+export const ProfileOverview = ({ operator, refetch: refetchOperator }) => {
   const intl = useIntl();
-  const formReference = useRef(null);
-  const [status, setStatus] = useState(null);
+  const [form] = StyledForm.useForm();
 
   const firstNameValidator = usePersonNameValidator('firstName');
   const lastNameValidator = usePersonNameValidator('lastName');
   const emailValidator = useEmailValidator();
 
-  const { data: emailChangeIsActive, refetch: refetchEmailPending } = useQuery(
-    'isMailChangeInProgress',
-    () =>
-      isEmailUpdatePending()
-        .then(() => true)
-        .catch(() => false),
-    { cacheTime: 0 }
-  );
-
-  const onUpdateEmail = email => {
-    setStatus(null);
-
-    updateEmail({ email, lang: intl.locale })
-      .then(response => setStatus(response.status))
-      .finally(refetchEmailPending)
-      .catch(() => {
-        notification.error({
-          message: intl.formatMessage({
-            id: 'notification.profile.updateEmail.error',
-          }),
-        });
-      });
-  };
+  const {
+    data: emailChangeIsActive,
+    refetch: refetchEmailPending,
+  } = useMailChangeRequest();
 
   const onFinish = values => {
-    if (nameChanged(operator, values)) {
-      updateOperator({
-        firstName: values.firstName,
-        lastName: values.lastName,
-      })
-        .finally(refetch)
-        .catch(() => {
-          notification.error({
-            message: intl.formatMessage({
-              id: 'notification.profile.updateUser.error',
-            }),
-          });
-        });
-    }
-
-    if (mailChanged(operator, values)) {
-      onUpdateEmail(values.email);
-    }
-  };
-
-  const submitForm = () => {
-    formReference.current.submit();
+    onFinishHandler({
+      values,
+      operator,
+      refetchOperator,
+      refetchEmailPending,
+      intl,
+    });
   };
 
   return (
     <ProfileContent>
       <Overview data-cy="profileOverview">
         <Heading>{intl.formatMessage({ id: 'profile.overview' })}</Heading>
-        <Form
+        <StyledForm
           onFinish={onFinish}
-          style={{ maxWidth: 350 }}
-          ref={formReference}
+          form={form}
           initialValues={{
             firstName: operator.firstName,
             lastName: operator.lastName,
             email: operator.email,
           }}
         >
-          <Form.Item
+          <StyledForm.Item
             colon={false}
             label={intl.formatMessage({
               id: 'generic.firstName',
@@ -101,8 +66,8 @@ export const ProfileOverview = ({ operator, refetch }) => {
             rules={firstNameValidator}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
+          </StyledForm.Item>
+          <StyledForm.Item
             colon={false}
             label={intl.formatMessage({
               id: 'generic.lastName',
@@ -111,8 +76,8 @@ export const ProfileOverview = ({ operator, refetch }) => {
             rules={lastNameValidator}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
+          </StyledForm.Item>
+          <StyledForm.Item
             colon={false}
             label={intl.formatMessage({
               id: 'registration.form.email',
@@ -120,8 +85,8 @@ export const ProfileOverview = ({ operator, refetch }) => {
             name="email"
             rules={emailValidator}
           >
-            <Input disabled={emailChangeIsActive} />
-          </Form.Item>
+            <Input />
+          </StyledForm.Item>
           {emailChangeIsActive && (
             <Alert
               data-cy="activeEmailChange"
@@ -131,17 +96,12 @@ export const ProfileOverview = ({ operator, refetch }) => {
               })}
             />
           )}
-          {status === 409 && (
-            <Alert
-              type="error"
-              message={intl.formatMessage({
-                id: 'profile.emailTaken',
-              })}
-            />
-          )}
-        </Form>
+        </StyledForm>
         <ButtonWrapper>
-          <PrimaryButton data-cy="changeOperatorName" onClick={submitForm}>
+          <PrimaryButton
+            data-cy="changeOperatorName"
+            onClick={() => form.submit()}
+          >
             {intl.formatMessage({ id: 'profile.overview.submit' })}
           </PrimaryButton>
         </ButtonWrapper>

@@ -171,7 +171,7 @@
     "notification.privat.success": "Event erstellt!",
     "notification.createGroup.error": "Fehler beim Erstellen des Standorts!",
     "notification.createGroup.success": "Neuer Standort erstellt!",
-    "notification.deleteLocation.error": "Fehler beim Löschen des Standorts!",
+    "notification.deleteLocation.error": "Fehler beim Löschen des Bereichs!",
     "notification.deleteLocation.success": "Dein Standort wurde gelöscht!",
     "notification.updateLocation.error": "Fehler beim Aktualisieren des Standorts!",
     "notification.updateLocation.success": "Dein Standort wurde erfolgreich aktualisiert!",
@@ -761,5 +761,6 @@
     "settings.location.entryPolicy.headline.main": "Nachweisregelung bei Check-in",
     "settings.location.entryPolicy.headline.description": "Deine Gäste haben die Möglichkeit ihren 2G/3G Status direkt in der luca App zu hinterlegen und zu teilen. Hier kannst du festlegen, ob für diesen Bereich ein solcher Nachweis erforderlich ist.",
     "settings.location.entryPolicy.2G": "2G - Status",
-    "settings.location.entryPolicy.3G": "3G - Status"
+    "settings.location.entryPolicy.3G": "3G - Status",
+    "shareData.progress.text": "Daten werden entschlüsselt. Bitte verlasse die Seite nicht."
 }

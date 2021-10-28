@@ -1,5 +1,6 @@
+/* eslint-disable */
 import { loginHealthDepartment } from '../../helper/api/auth.helper';
-import { addHealthDepartmentPrivateKeyFile } from '../../helper/ui/login.helper';
+import { addHealthDepartmentPrivateKeyFile } from '../../helper/ui/handlePrivateKeyFile';
 
 describe('Health Department / Authentication / Logout', () => {
   beforeEach(() => {

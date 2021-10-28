@@ -1,48 +1,72 @@
-export const NEW_E2E_EMAIL = 'unknown@nexenio.com';
-export const NEW_E2E_FIRST_NAME = 'E2E';
-export const NEW_E2E_LAST_NAME = 'User';
-export const NEW_E2E_VALID_PASSWORD = 'Nexenio123!';
+import { shouldBeVisible, shouldNotExist } from '../utils/assertions';
+import { getByCy, getDOMElement } from '../utils/selectors';
 
-export const TOO_SHORT_PASSWORD = 'Abc1!';
-export const NO_NUMBER_PASSWORD = 'Abcdefghi!';
-export const NO_UPPER_CASE_PASSWORD = 'abcdefghi1!';
-export const NO_LOWER_CASE_PASSWORD = 'ABCDEFGHI1!';
-export const NO_SPECIAL_CHAR_PASSWORD = 'ABCDEFGHI1';
+import {
+  EMAIL_FIELD,
+  CONFIRM_REGISTER_BUTTON,
+  ANT_VALIDATION_ERROR,
+  CREATE_NEW_ACCOUNT_BUTTON,
+  SET_PASSWORD_SUBMIT_BUTTON,
+  SET_PASSWORD,
+  LEGAL_TERMS,
+  LEGAL_TERMS_SUBMIT_BUTTON,
+  CONFIRM_REGISTER,
+  REGISTER_FIRST_NAME,
+  REGISTER_LAST_NAME,
+  CONFIRM_NAME_BUTTON,
+  PASSWORD,
+  SET_PASSWORD_FIELD,
+  SET_PASSWORD_CONFIRM_FIELD,
+  FINISH_REGISTER,
+  LOGIN_SUBMIT_BUTTON,
+} from '../constants/selectorKeys';
+
+export const isValidationErrorShown = () =>
+  shouldBeVisible(getDOMElement(ANT_VALIDATION_ERROR));
 
 export const enterEmail = email => {
-  cy.get('#email').type(email);
+  getDOMElement(EMAIL_FIELD).type(email);
 };
+
+export const getNewAccountButton = () => getByCy(CREATE_NEW_ACCOUNT_BUTTON);
 
 export const confirmNewAccountRegistration = () => {
   // wait for transition to next step
-  cy.getByCy('confirmRegister');
+  shouldBeVisible(getByCy(CONFIRM_REGISTER));
   // Confirm
-  cy.get('button[type=submit]').click();
-};
-
-export const enterPassword = password => {
-  cy.get('#password').type(password);
-  cy.get('button[type=submit]').click();
+  getByCy(CONFIRM_REGISTER_BUTTON).click();
 };
 
 export const enterName = (firstName, lastName) => {
-  cy.get('#firstName').type(firstName);
-  cy.get('#lastName').type(lastName);
-  cy.get('button[type=submit]').click();
+  getByCy(REGISTER_FIRST_NAME).type(firstName);
+  getByCy(REGISTER_LAST_NAME).type(lastName);
+  getByCy(CONFIRM_NAME_BUTTON).click();
+};
+
+export const getSetPassword = () => getByCy(SET_PASSWORD);
+
+export const getPasswordSubmitButton = () =>
+  getByCy(SET_PASSWORD_SUBMIT_BUTTON);
+
+export const enterPassword = password => {
+  getDOMElement(PASSWORD).type(password);
+  getByCy(LOGIN_SUBMIT_BUTTON).click();
 };
 
 export const setNewPassword = (password, confirmPassword) => {
-  cy.get('#password').type(password);
-  cy.get('#passwordConfirm').type(confirmPassword);
-  cy.get('button[type=submit]').click();
+  getByCy(SET_PASSWORD_FIELD).type(password);
+  getByCy(SET_PASSWORD_CONFIRM_FIELD).type(confirmPassword);
+  getPasswordSubmitButton().click();
 };
 
-export const setLegals = (terms, avv) => {
-  if (terms) {
-    cy.get('#termsAndConditions').click();
-  }
-  if (avv) {
-    cy.get('#avv').click();
-  }
-  cy.get('button[type=submit]').click();
+export const clearPasswordFields = () => {
+  getByCy(SET_PASSWORD_FIELD).clear();
+  getByCy(SET_PASSWORD_CONFIRM_FIELD).clear();
+};
+
+export const getLegalTerms = () => getByCy(LEGAL_TERMS);
+
+export const registerDoesNotExist = () => {
+  getByCy(LEGAL_TERMS_SUBMIT_BUTTON).click();
+  shouldNotExist(getByCy(FINISH_REGISTER));
 };

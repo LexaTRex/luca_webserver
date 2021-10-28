@@ -64,7 +64,6 @@ export const validateZipCode = (_, value) => {
 
 export const validateEmail = (_, value) => {
   if (
-    value?.trim() &&
     !validator.isEmail(value, {
       allow_display_name: false,
       require_display_name: false,

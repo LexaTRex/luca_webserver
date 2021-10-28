@@ -1,6 +1,6 @@
 {
   "name": "e2e",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "main": "index.js",
   "private": true,
   "engines": {
@@ -10,12 +10,17 @@
     "start": "cypress run",
     "open": "cypress open",
     "prettier": "prettier --write .",
+    "lint": "yarn eslint",
+    "lint:fix": "yarn eslint --fix specs",
+    "eslint": "eslint specs",
     "staging": "CYPRESS_BASE_URL=https://staging.luca-app.de cypress run"
   },
   "dependencies": {
     "@lucaapp/crypto": "1.0.3",
+    "babel-eslint": "10.1.0",
     "cypress": "8.4.0",
     "cypress-file-upload": "5.0.7",
+    "cypress-fill-command": "^1.0.2",
     "faker": "5.5.3",
     "fluent-ffmpeg": "2.1.2",
     "fs-extra": "10.0.0",
@@ -26,7 +31,21 @@
   "devDependencies": {
     "cypress-fail-fast": "3.1.0",
     "cypress-postgres": "1.1.1",
-    "eslint-plugin-sonarjs": "0.5.0",
+    "eslint": "7.32.0",
+    "eslint-config-airbnb": "18.2.1",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-config-prettier": "8.1.0",
+    "eslint-import-resolver-webpack": "0.13.1",
+    "eslint-plugin-chai-friendly": "^0.7.2",
+    "eslint-plugin-cypress": "2.12.1",
+    "eslint-plugin-import": "2.24.2",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-prettier": "3.3.1",
+    "eslint-plugin-promise": "4.3.1",
+    "eslint-plugin-react": "7.22.0",
+    "eslint-plugin-react-hooks": "4.2.0",
+    "eslint-plugin-sonarjs": "0.6.0",
+    "eslint-plugin-unicorn": "28.0.2",
     "prettier": "2.2.1"
   }
 }

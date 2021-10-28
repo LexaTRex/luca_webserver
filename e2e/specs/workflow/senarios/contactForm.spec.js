@@ -1,10 +1,10 @@
+/* eslint-disable */
 import moment from 'moment';
 
 import { fillForm } from '../../contact-form/helpers/functions';
 import { removeHDPrivateKeyFile } from '../helpers/functions';
 import { loginHealthDepartment } from '../../health-department/helper/api/auth.helper';
 import { signHealthDepartment } from '../../health-department/helper/signHealthDepartment';
-import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/login.helper';
 import {
   setDatePickerStartDate,
   setDatePickerEndDate,
@@ -22,6 +22,7 @@ import {
   downloadLocationPrivateKeyFile,
   uploadLocationPrivateKeyFile,
 } from '../../locations/ui-helpers/handlePrivateKeyFile';
+import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/handlePrivateKeyFile';
 
 const FORM_WORKFLOW_TESTING_GROUP_NAME = 'Form Workflow';
 const yesterdayDate = moment().subtract(1, 'days').format('DD.MM.YYYY');
@@ -47,6 +48,7 @@ context('Workflow', () => {
       cy.log('Setup Location');
       cy.basicLoginLocations(E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD);
       cy.visit(APP_ROUTE);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(800);
       downloadLocationPrivateKeyFile();
       uploadLocationPrivateKeyFile(
@@ -93,45 +95,44 @@ context('Workflow', () => {
       cy.get('.ant-popover-buttons button').should('exist');
       cy.get('.ant-popover-buttons button')
         .eq(1)
-        .then($el => {
-          cy.wrap($el).contains('Request data').click();
+        .then($element => {
+          cy.wrap($element).contains('Request data').click();
+          cy.logoutHD();
+
+          // Share testing data from testing Location
+          cy.log('Share testing data from testing Location');
+          cy.basicLoginLocations(E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD);
+          cy.visit(APP_ROUTE, {
+            onBeforeLoad: win => {
+              win.sessionStorage.clear();
+            },
+          });
+          uploadLocationPrivateKeyFile(
+            WORKFLOW_LOCATION_PRIVATE_KEY_PATH,
+            WORKFLOW_LOCATION_PRIVATE_KEY_NAME
+          );
+          cy.getByCy('dataRequests').click();
+          cy.stubNewWindow();
+          cy.getByCy('completeDataTransfer').first().click();
+          cy.getByCy('next').click();
+
+          // Check requested data in Health department
+          cy.log('Check requested data in Health department');
+          loginHealthDepartment();
+          addHealthDepartmentPrivateKeyFile();
+          cy.getByCy('processEntry').should('exist');
+          cy.getByCy('processEntry').first().click();
+          cy.getByCy(`confirmedLocation_${FORM_WORKFLOW_TESTING_GROUP_NAME}`)
+            .first()
+            .click();
+          cy.get('.ant-modal').should('exist');
+
+          for (const user of users) {
+            cy.get('#contactPersonsTable').contains(user.lastName);
+            cy.get('#contactPersonsTable').contains(user.firstName);
+            cy.get('#contactPersonsTable').contains(user.phoneNumber);
+          }
         });
-      cy.logoutHD();
-
-      // Share testing data from testing Location
-      cy.log('Share testing data from testing Location');
-      cy.basicLoginLocations(E2E_COMPLETE_EMAIL, E2E_COMPLETE_PASSWORD);
-      cy.visit(APP_ROUTE, {
-        onBeforeLoad: win => {
-          win.sessionStorage.clear();
-        },
-      });
-      uploadLocationPrivateKeyFile(
-        WORKFLOW_LOCATION_PRIVATE_KEY_PATH,
-        WORKFLOW_LOCATION_PRIVATE_KEY_NAME
-      );
-      cy.getByCy('dataRequests').click();
-      cy.stubNewWindow();
-      cy.getByCy('completeDataTransfer').first().click();
-      cy.getByCy('next').click();
-
-      // Check requested data in Health department
-      cy.log('Check requested data in Health department');
-      loginHealthDepartment();
-      addHealthDepartmentPrivateKeyFile();
-      cy.getByCy('processEntry').should('exist');
-      cy.getByCy('processEntry').first().click();
-      cy.getByCy(`confirmedLocation_${FORM_WORKFLOW_TESTING_GROUP_NAME}`)
-        .first()
-        .click();
-      cy.get('.ant-modal').should('exist');
-
-      for (let index = 0; index < users.length; index++) {
-        const user = users[index];
-        cy.get('#contactPersonsTable').contains(user.lastName);
-        cy.get('#contactPersonsTable').contains(user.firstName);
-        cy.get('#contactPersonsTable').contains(user.phoneNumber);
-      }
     });
   });
 });

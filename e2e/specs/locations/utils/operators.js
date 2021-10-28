@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { E2E_FIRSTNAME, E2E_LASTNAME, E2E_PASSWORD } from '../constants/users';
 
 export const resetUserName = () => {
@@ -23,7 +24,9 @@ export const undoAccountDeletion = () => {
   return cy.request('POST', 'api/v3/operators/restore');
 };
 
+// eslint-disable-next-line require-await
 export async function getMe() {
+  // eslint-disable-next-line require-await
   cy.request('GET', '/api/v3/auth/me').then(async response => {
     cy.wrap(response.body).as('operator');
     return response;

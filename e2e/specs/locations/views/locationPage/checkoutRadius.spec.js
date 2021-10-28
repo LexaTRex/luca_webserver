@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
 import {
   E2E_SECOND_LOCATION_NAME,
@@ -7,6 +8,7 @@ import {
   checkRadiusInput,
   checkRadiusInputEdgeCase,
 } from '../../ui-helpers/validations';
+
 const SETTING_NAME = 'checkoutRadius';
 
 describe('Checkout radius configuration ', () => {

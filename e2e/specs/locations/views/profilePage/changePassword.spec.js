@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
 import { PROFILE_ROUTE } from '../../constants/routes';
 import { E2E_PASSWORD, E2E_EMAIL } from '../../constants/users';

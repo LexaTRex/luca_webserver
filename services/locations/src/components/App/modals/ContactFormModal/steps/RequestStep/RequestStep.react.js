@@ -99,7 +99,7 @@ export const RequestStep = ({ operator, next, closeModal }) => {
           })}
           name="phone"
         >
-          <Input />
+          <Input data-cy="contactFormPhoneNumber" />
         </StyledFormItem>
         <Form.Item
           colon={false}
@@ -112,8 +112,9 @@ export const RequestStep = ({ operator, next, closeModal }) => {
         >
           <Input.TextArea
             maxLength={3000}
-            autoSize={{ minRows: 2, maxRows: 6 }}
             showCount
+            data-cy="contactFormMessage"
+            autoSize={{ minRows: 2, maxRows: 6 }}
           />
         </Form.Item>
         <ButtonWrapper multipleButtons>
@@ -122,7 +123,7 @@ export const RequestStep = ({ operator, next, closeModal }) => {
               id: 'contactForm.modal.cancel',
             })}
           </SecondaryButton>
-          <PrimaryButton htmlType="submit">
+          <PrimaryButton htmlType="submit" data-cy="contactFormSendButton">
             {intl.formatMessage({
               id: 'contactForm.modal.submit',
             })}

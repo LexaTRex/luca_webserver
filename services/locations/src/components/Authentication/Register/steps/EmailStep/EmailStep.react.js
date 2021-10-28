@@ -88,7 +88,11 @@ export const EmailStep = ({ email: currentEmail, setEmail, next }) => {
         </Form.Item>
         <ErrorMessage emailExists={emailExists} />
         <ButtonWrapper>
-          <PrimaryButton $isButtonWhite htmlType="submit">
+          <PrimaryButton
+            $isButtonWhite
+            htmlType="submit"
+            data-cy="createNewAccountButton"
+          >
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

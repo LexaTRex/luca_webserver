@@ -9,7 +9,7 @@ export const FinishStep = ({ done }) => {
   const intl = useIntl();
 
   return (
-    <Wrapper>
+    <Wrapper data-cy="successNotificationModal">
       <Success />
       <Heading>
         {intl.formatMessage({ id: 'contactForm.modal.success.heading' })}

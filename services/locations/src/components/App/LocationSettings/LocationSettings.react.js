@@ -41,7 +41,7 @@ export const LocationSettings = () => {
       <Layout>
         <Content style={contentStyles}>
           <Wrapper>
-            <Header>
+            <Header data-cy="areaSettingsHeading">
               {location.name ||
                 intl.formatMessage({ id: 'location.defaultName' })}
             </Header>

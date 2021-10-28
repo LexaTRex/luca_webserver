@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
 import {
   E2E_DEFAULT_LOCATION_GROUP as groupId,

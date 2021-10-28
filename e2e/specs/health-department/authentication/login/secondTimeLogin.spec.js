@@ -1,21 +1,14 @@
 import { loginHealthDepartment } from '../../helper/api/auth.helper';
-import { addHealthDepartmentPrivateKeyFile } from '../../helper/ui/login.helper';
+import { verifyLoggedIn } from '../../helper/ui/login.helper';
+import { addHealthDepartmentPrivateKeyFile } from '../../helper/ui/handlePrivateKeyFile';
 
-describe('Autentication', () => {
+describe('Authentication', () => {
   describe('Health Department / Authentication / Login', () => {
     describe('when a user login for the second time', () => {
       it('ask to upload private key and redirect to tracking page', () => {
         loginHealthDepartment();
         addHealthDepartmentPrivateKeyFile();
-        cy.getByCy('header')
-          .contains('Health-Department')
-          .should('exist')
-          .should('be.visible');
-        cy.getByCy('linkMenu').should('exist').should('be.visible');
-        cy.get('button').contains('LOG OUT').should('exist');
-
-        cy.get('.ant-menu-horizontal').should('exist').should('be.visible');
-        cy.getByCy('navigation').should('exist').should('be.visible');
+        verifyLoggedIn();
         cy.logoutHD();
       });
     });

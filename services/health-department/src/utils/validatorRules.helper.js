@@ -1,6 +1,6 @@
 import validator from 'validator';
 
-import { isValidCharacter } from './checkCharacter';
+import { isValidCharacter, isValidTextCharacter } from './checkCharacter';
 import { isValidPhoneNumber } from './checkPhoneNumber';
 
 export const validateZipCode = value => {
@@ -12,6 +12,13 @@ export const validateZipCode = value => {
 
 export const validateSafeString = (_, value) => {
   if (!isValidCharacter(value?.trim())) {
+    return Promise.reject();
+  }
+  return Promise.resolve();
+};
+
+export const validateTextSafeString = (_, value) => {
+  if (!isValidTextCharacter(value?.split('\n').join(' ').trim())) {
     return Promise.reject();
   }
   return Promise.resolve();

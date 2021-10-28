@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { checkRadiusInput } from './validations';
 
 export const openCreateLocationModal = group => {
@@ -37,4 +38,13 @@ export const setLocationRadius = radius => {
   // Valid radius input
   cy.get('#radius').clear().type(radius);
   cy.getByCy('nextStep').click();
+};
+
+export const skipLocationDetails = () => {
+  cy.getByCy('nextStep').click();
+  cy.getByCy('nextStep').click();
+  setLocationIndoorSelection();
+  cy.getByCy('no').click();
+  cy.getByCy('no').click();
+  cy.getByCy('done').click();
 };

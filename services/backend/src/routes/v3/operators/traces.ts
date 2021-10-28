@@ -3,7 +3,7 @@ import { z } from 'zod';
 import status from 'http-status';
 import moment from 'moment';
 import { UniqueConstraintError, Op } from 'sequelize';
-import database from 'database';
+import { Location, Trace } from 'database';
 import { validateSchema } from 'middlewares/validateSchema';
 import { limitRequestsPerHour } from 'middlewares/rateLimit';
 import { OperatorDevice } from 'constants/operatorDevice';
@@ -27,7 +27,7 @@ router.post<unknown, unknown, z.infer<typeof checkinSchema>>(
   requireOperatorOROperatorDevice,
   validateSchema(checkinSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         scannerId: request.body.scannerId,
         operator: request.user!.uuid,
@@ -38,7 +38,7 @@ router.post<unknown, unknown, z.infer<typeof checkinSchema>>(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const trace = await database.Trace.findByPk(request.body.traceId);
+    const trace = await Trace.findByPk(request.body.traceId);
 
     if (trace) {
       return response.sendStatus(status.CREATED);
@@ -53,10 +53,10 @@ router.post<unknown, unknown, z.infer<typeof checkinSchema>>(
     }
 
     try {
-      await database.Trace.create({
+      await Trace.create({
         traceId: request.body.traceId,
         locationId: location.uuid,
-        time: [requestTime, location.endsAt],
+        time: [requestTime.toDate(), location.endsAt!],
         data: request.body.data,
         iv: request.body.iv,
         mac: request.body.mac,
@@ -80,15 +80,16 @@ router.post<unknown, unknown, z.infer<typeof checkoutSchema>>(
   requireOperatorDeviceRoles([OperatorDevice.employee, OperatorDevice.manager]),
   validateSchema(checkoutSchema),
   async (request, response) => {
-    const trace = await database.Trace.findOne({
+    const trace = await Trace.findOne({
       where: {
         traceId: request.body.traceId,
+        // @ts-ignore weird sequelize OP.contains behaviour
         time: {
-          [Op.contains]: moment(),
+          [Op.contains]: moment().toDate(),
         },
       },
       include: {
-        model: database.Location,
+        model: Location,
         where: {
           operator: request.user!.uuid,
         },
@@ -107,7 +108,7 @@ router.post<unknown, unknown, z.infer<typeof checkoutSchema>>(
     }
 
     await trace.update({
-      time: [checkinTime, checkoutTime],
+      time: [checkinTime.toDate(), checkoutTime.toDate()],
     });
 
     return response.sendStatus(status.NO_CONTENT);

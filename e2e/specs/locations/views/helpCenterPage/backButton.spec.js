@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   HELP_CENTER_ROUTE,
   DATA_TRANSFERS_ROUTE,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { notification } from 'antd';
 import { PrimaryButton } from 'components/general';
@@ -43,7 +43,13 @@ export const ShareDataStep = ({
   showStepLabel,
 }) => {
   const intl = useIntl();
+  const [isShareDataButtonDisabled, setIsShareDataButtonDisabled] = useState(
+    false
+  );
+
   const onFinish = async () => {
+    // Disabled the button during decryption process
+    setIsShareDataButtonDisabled(true);
     await Promise.all(
       transfers.map(async transfer => {
         const traces = transfer.traces
@@ -81,6 +87,8 @@ export const ShareDataStep = ({
           traces: { traces },
           locationTransferId: transfer.transferId,
         });
+        // Enable the button again after decryption process
+        setIsShareDataButtonDisabled(false);
         if (result.status !== 204) {
           const emailLink = `mailto:${SUPPORT_EMAIL}`;
           notification.error({
@@ -128,7 +136,11 @@ export const ShareDataStep = ({
       <Checkins transfers={transfers} />
       <HealthDepartmentInfo transfers={transfers} />
       <FinishButtonWrapper align="flex-end">
-        <PrimaryButton data-cy="next" onClick={onFinish}>
+        <PrimaryButton
+          data-cy="next"
+          onClick={onFinish}
+          disabled={isShareDataButtonDisabled}
+        >
           {intl.formatMessage({ id: 'shareData.finish' })}
         </PrimaryButton>
       </FinishButtonWrapper>

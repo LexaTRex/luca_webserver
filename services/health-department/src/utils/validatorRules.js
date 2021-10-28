@@ -3,6 +3,7 @@ import {
   validateNoNumeric,
   validatePhoneNumber,
   validateSafeString,
+  validateTextSafeString,
 } from './validatorRules.helper';
 
 export const getRequiredRule = (intl, fieldName) => ({
@@ -21,6 +22,11 @@ export const getSafeStringRule = (intl, fieldName) => ({
   message: intl.formatMessage({
     id: `userManagement.error.${fieldName}.invalid`,
   }),
+});
+
+export const getTextSafeStringRule = (intl, fieldName) => ({
+  validator: validateTextSafeString,
+  message: intl.formatMessage({ id: `error.${fieldName}.invalid` }),
 });
 
 export const getNoNumericRule = (intl, fieldName) => ({

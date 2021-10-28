@@ -1,4 +1,5 @@
-import forge, { pkcs12 } from 'node-forge';
+/* eslint-disable */
+import forge from 'node-forge';
 import jwt from 'jsonwebtoken';
 
 const JWT_ALGORITHM = 'RS512';
@@ -91,24 +92,30 @@ const createSignedPublicKeys = (healthDepartment, p12file) => {
   };
 };
 
+// eslint-disable-next-line require-await
 export const signHealthDepartment = async () => {
   cy.request('GET', '/api/v3/auth/healthDepartmentEmployee/me')
     .then(response => response.body.departmentId)
     .then(departmentId =>
+      // eslint-disable-next-line promise/no-nesting
       cy
         .request('GET', `/api/v4/healthDepartments/${departmentId}`)
         .then(response => response.body)
         .then(healthDepartment =>
+          // eslint-disable-next-line promise/no-nesting
           cy.readFile('./certs/health.pfx', 'binary').then(pkcs12 => {
             const signedPublicKeys = createSignedPublicKeys(
               healthDepartment,
               pkcs12
             );
-            cy.request(
-              'POST',
-              '/api/internal/end2end/signHealthDepartment',
-              signedPublicKeys
-            );
+            cy.request({
+              method: 'POST',
+              url: '/api/internal/end2end/signHealthDepartment',
+              headers: {
+                'internal-access-authorization': 'bHVjYTpBOTNrcE01em1DdHZ2dEhO',
+              },
+              body: signedPublicKeys,
+            });
           })
         )
     );

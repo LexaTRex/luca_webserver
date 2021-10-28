@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { HELP_CENTER_ROUTE, LICENSES_ROUTE } from '../../constants/routes';
 import { FAQ_LINK, VIDEOS_LINK, TOOLKIT_LINK } from '../../constants/links';
 import { loginLocations } from '../../utils/auth';

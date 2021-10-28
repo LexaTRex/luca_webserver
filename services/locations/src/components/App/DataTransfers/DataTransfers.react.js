@@ -43,7 +43,7 @@ export const DataTransfers = () => {
       <Layout data-cy="dataTransfers">
         <Content style={contentStyles}>
           <Wrapper>
-            <Header>
+            <Header data-cy="dataTransfersTitle">
               {intl.formatMessage({
                 id: 'shareData.title',
               })}

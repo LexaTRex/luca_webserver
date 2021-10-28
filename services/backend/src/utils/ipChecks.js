@@ -41,7 +41,7 @@ const isAllowedIp = async ipAddress => {
   if (!isIPv4(ipAddress)) return false;
   if (isInternalIp(ipAddress)) return true;
   const ip = await database.IPAddressAllowList.findOne({
-    where: Sequelize.literal(`ip >>= ${database.escape(ipAddress)}`),
+    where: Sequelize.literal(`ip >>= ${database.database.escape(ipAddress)}`),
   });
   return ip !== null;
 };
@@ -49,7 +49,7 @@ const isAllowedIp = async ipAddress => {
 const isRateLimitExemptIp = async ipAddress => {
   if (!isIPv4(ipAddress)) return false;
   const entries = await database.IPAddressAllowList.findAll({
-    where: Sequelize.literal(`ip >>= ${database.escape(ipAddress)}`),
+    where: Sequelize.literal(`ip >>= ${database.database.escape(ipAddress)}`),
     attributes: ['rateLimitFactor'],
   });
   return entries.some(entry => entry.rateLimitFactor !== null);

@@ -1,5 +1,6 @@
+/* eslint-disable */
 import { loginHealthDepartment } from '../helper/api/auth.helper';
-import { HEALTH_DEPARTMENT_USER_MANAGEMENT_ROUTE } from '../helper/routes';
+import { HEALTH_DEPARTMENT_USER_MANAGEMENT_ROUTE } from '../constants/routes';
 
 const EMPLOYEE_FIRST_NAME = 'Luca';
 const EMPLOYEE_LAST_NAME = 'Tester';
@@ -12,8 +13,8 @@ describe('Health Department / User Management / Create new employee', () => {
       loginHealthDepartment();
       cy.visit(HEALTH_DEPARTMENT_USER_MANAGEMENT_ROUTE);
       cy.getByCy('addEmployee').should('exist').should('be.visible').click();
-      //fillin employee form
-      cy.get('.ant-modal').within($modal => {
+      // filling employee form
+      cy.get('.ant-modal').within(() => {
         cy.get('#firstName')
           .should('exist')
           .should('be.visible')
@@ -36,9 +37,9 @@ describe('Health Department / User Management / Create new employee', () => {
           .should('be.visible')
           .click();
       });
-      //save generated password
+      // save generated password
       cy.get('.ant-notification').should('exist').should('be.visible');
-      cy.get('.ant-modal').within($modal => {
+      cy.get('.ant-modal').within(() => {
         cy.getByCy('generatedPassword').then($password => {
           cy.wrap($password.text()).as('password');
         });
@@ -47,7 +48,7 @@ describe('Health Department / User Management / Create new employee', () => {
           .should('be.visible')
           .click();
       });
-      cy.get('.ant-popconfirm').within($popup => {
+      cy.get('.ant-popconfirm').within(() => {
         cy.get('.ant-popover-buttons > button:nth-child(1)')
           .should('exist')
           .should('be.visible');
@@ -56,20 +57,21 @@ describe('Health Department / User Management / Create new employee', () => {
           .should('be.visible')
           .click();
       });
-      //verify employee is created
+      // verify employee is created
       cy.wait(1000);
       cy.get('#employeeTable > div')
         .last()
         .then($row => {
           expect($row.text()).contains(
-            EMPLOYEE_FIRST_NAME + ' ' + EMPLOYEE_LAST_NAME
+            `${EMPLOYEE_FIRST_NAME} ${EMPLOYEE_LAST_NAME}`
           );
           expect($row.text()).contains(EMPLOYEE_PHONE);
           expect($row.text()).contains(EMPLOYEE_EMAIL);
         });
       cy.logoutHD();
-      //login as a new employee
+      // login as a new employee
       cy.get('@password').then(password => {
+        // eslint-disable-next-line promise/no-nesting
         cy.basicLoginHD(EMPLOYEE_EMAIL, password).then(response => {
           expect(response.status).to.eq(200);
         });

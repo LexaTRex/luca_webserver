@@ -1,8 +1,8 @@
-import { HEALTH_DEPARTMENT_APP_ROUTE } from '../routes';
+import { HEALTH_DEPARTMENT_APP_ROUTE } from '../../constants/routes';
 import {
   E2E_HEALTH_DEPARTMENT_USERNAME,
   E2E_HEALTH_DEPARTMENT_PASSWORD,
-} from '../user';
+} from '../../constants/user';
 
 const appTracking = '/app/tracking';
 

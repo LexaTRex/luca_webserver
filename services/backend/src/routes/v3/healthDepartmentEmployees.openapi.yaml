@@ -182,3 +182,28 @@ paths:
         [health
         department](https://luca-app.de/securityconcept/properties/actors.html#term-Health-Department),
         including the current user."
+  /healthDepartmentEmployees/support:
+    post:
+      summary: Health department employee support message
+      tags:
+        - HealthDepartmentEmployees
+      responses:
+        204:
+          description: Success
+        401:
+          $ref: '#/components/schemas/RequiredUserOfTypeHealthDepartmentEmployee'
+        404:
+          description: Health Department not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                requestText:
+                  type: string
+                phone:
+                  type: string
+              required:
+                - requestText

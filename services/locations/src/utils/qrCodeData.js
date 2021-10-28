@@ -1,5 +1,5 @@
 import { generateQRPayload } from '@lucaapp/cwa-event';
-import { RESTAURANT_TYPE } from '../components/App/modals/CreateLocationModal/CreateLocationModal.helper';
+import { RESTAURANT_TYPE } from 'components/App/modals/CreateLocationModal/CreateLocationModalContent/CreateLocationModalContent.helper';
 
 export const getLocationName = location =>
   location.name === null || location.name === undefined

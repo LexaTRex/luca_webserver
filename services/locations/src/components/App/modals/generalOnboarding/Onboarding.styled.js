@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Media } from 'utils/media';
+import { TimePicker } from 'antd';
 
 const font = 'Montserrat-Bold, sans-serif';
 
@@ -61,4 +62,8 @@ export const ButtonWrapper = styled.div`
     margin-top: 40px;
     flex-direction: column;  
   `}
+`;
+
+export const StyledTimePicker = styled(TimePicker)`
+  width: 200px;
 `;

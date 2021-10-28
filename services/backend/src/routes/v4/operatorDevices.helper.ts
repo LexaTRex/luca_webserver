@@ -1,14 +1,8 @@
 import moment from 'moment';
 import config from 'config';
+import { OperatorDeviceInstance } from 'database/models/operatorDevice';
 
-export const getOperatorDeviceDTO = (device: {
-  uuid: string;
-  os: string;
-  name: string;
-  role: string;
-  activated: boolean;
-  refreshedAt: number;
-}) => ({
+export const getOperatorDeviceDTO = (device: OperatorDeviceInstance) => ({
   os: device.os,
   name: device.name,
   role: device.role,

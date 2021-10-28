@@ -1,13 +1,14 @@
+/* eslint-disable */
 import { createGroupPayload } from '../../locations/utils/payloads.helper';
 import { clearDatabase } from '../helpers/database';
 import { registerDevice } from '../helpers/functions';
 import { removeHDPrivateKeyFile } from '../../workflow/helpers/functions';
-import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/login.helper';
 import { loginHealthDepartment } from '../../health-department/helper/api/auth.helper';
 import { signHealthDepartment } from '../../health-department/helper/signHealthDepartment';
 import { WEBAPP_ROUTE } from '../helpers/routes';
 import { APP_ROUTE } from '../../locations/constants/routes';
 import { deleteGroup } from '../../locations/utils/groups';
+import { addHealthDepartmentPrivateKeyFile } from '../../health-department/helper/ui/handlePrivateKeyFile';
 
 describe('WebApp / CheckIn', { retries: 3 }, () => {
   before(() => {
@@ -46,14 +47,14 @@ describe('WebApp / CheckIn', { retries: 3 }, () => {
     cy.clock(Date.now(), ['Date', 'setInterval', 'clearInterval']);
 
     // Simulate hook ticks
-    for (let i = 0; i < 10; i++) {
+    for (let index = 0; index < 10; index++) {
       cy.tick(1000);
     }
     // 2 Minutes
     cy.tick(120000);
 
     // Simulate hook ticks
-    for (let i = 0; i < 10; i++) {
+    for (let index = 0; index < 10; index++) {
       cy.tick(1000);
     }
     cy.getByCy('clockMinutes').should('contain', '02');

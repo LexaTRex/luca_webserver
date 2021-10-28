@@ -15,8 +15,13 @@ import {
 
 import { Header } from 'components/Header';
 
-import { LOGIN_ROUTE } from 'constants/routes';
-import { Content, Main, RequestWrapper } from './ShareData.styled';
+import { LOGIN_ROUTE, BASE_DATA_TRANSFER_ROUTE } from 'constants/routes';
+import {
+  Content,
+  Main,
+  RequestWrapper,
+  StyledSecondaryButton,
+} from './ShareData.styled';
 import { PrivateKeyStep } from './PrivateKeyStep';
 import { ShareDataStep } from './ShareDataStep';
 import { FinishStep } from './FinishStep';
@@ -102,6 +107,14 @@ export const ShareData = () => {
     },
   ];
 
+  const backToLocations = () => history.push(BASE_DATA_TRANSFER_ROUTE);
+
+  const getHeaderActions = () => (
+    <StyledSecondaryButton onClick={backToLocations}>
+      {intl.formatMessage({ id: 'shareData.backToLocations' })}
+    </StyledSecondaryButton>
+  );
+
   return (
     <>
       <Helmet>
@@ -112,7 +125,10 @@ export const ShareData = () => {
         />
       </Helmet>
       <Main style={{ backgroundColor: 'black' }}>
-        <Header title={intl.formatMessage({ id: 'shareData.header.title' })} />
+        <Header
+          title={intl.formatMessage({ id: 'shareData.header.title' })}
+          actions={getHeaderActions()}
+        />
         {error?.status === 410 && (
           <Alert
             style={{ textAlign: 'center', marginTop: 48 }}

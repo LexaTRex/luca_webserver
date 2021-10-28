@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   E2E_EMAIL,
   E2E_FIRSTNAME,

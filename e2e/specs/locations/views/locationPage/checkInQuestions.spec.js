@@ -1,4 +1,6 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
+
 const SETTING_NAME = 'additionalData';
 const TEST_DATA = 'Test Data';
 

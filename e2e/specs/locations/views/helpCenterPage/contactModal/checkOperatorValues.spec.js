@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { HELP_CENTER_ROUTE } from '../../../constants/routes';
 import { getMe } from '../../../utils/operators';
 

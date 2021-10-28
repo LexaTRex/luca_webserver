@@ -10,7 +10,7 @@ ENV NODE_ENV=test
 # install dependencies
 ARG NPM_CONFIG__AUTH
 COPY package.json yarn.lock .npmrc .yarnrc ./
-RUN yarn install --check-files && yarn cache clean
+RUN yarn install --check-files && yarn add sqlite3 && yarn cache clean
 
 # copy source files
 COPY * ./

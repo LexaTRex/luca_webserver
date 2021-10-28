@@ -3,7 +3,7 @@ import moment from 'moment';
 import { z } from 'zod';
 import status from 'http-status';
 import config from 'config';
-import database from 'database/models';
+import { DailyPublicKey, EncryptedDailyPrivateKey } from 'database';
 import { limitRequestsPerHour } from 'middlewares/rateLimit';
 import { requireHealthDepartmentEmployee } from 'middlewares/requireUser';
 import { validateSchema } from 'middlewares/validateSchema';
@@ -22,33 +22,33 @@ router.post<unknown, unknown, z.infer<typeof triggerKeyMismatchSchema>>(
     const user = request.user as IHealthDepartmentEmployee;
     const { keyId, expected, received } = request.body;
 
-    const dailyPublicKey = await database.DailyPublicKey.findOne({
+    const dailyPublicKey = await DailyPublicKey.findOne({
       where: {
         keyId,
       },
     });
 
-    const encryptedDailyPrivateKey = await database.EncryptedDailyPrivateKey.findOne(
-      {
-        where: {
-          keyId,
-          healthDepartmentId: user.departmentId,
-        },
-      }
-    );
+    const encryptedDailyPrivateKey = await EncryptedDailyPrivateKey.findOne({
+      where: {
+        keyId,
+        healthDepartmentId: user.departmentId,
+      },
+    });
 
     sendPlain(
       `
       Betroffenes Gesundheitsamt: ${user.departmentId}\n
-      Ausstellendes Gesundheitsamt: ${encryptedDailyPrivateKey.issuerId}\n
+      Ausstellendes Gesundheitsamt: ${encryptedDailyPrivateKey!.issuerId}\n
       Zeitstempel der Überprüfung: ${moment().toLocaleString()}\n
       Zeitstempel der Ausstellung: ${moment(
-        dailyPublicKey.createdAt
+        dailyPublicKey!.createdAt
       ).toLocaleString()}\n
       Überprüfungsergebnis: ${expected}\n
       Erwartetes Überprüfungsergebnis: ${received}
     `,
-      `ALERT – ACTION REQUIRED Invalides Schlüsselpaar von ${encryptedDailyPrivateKey.issuerId}`,
+      `ALERT – ACTION REQUIRED Invalides Schlüsselpaar von ${
+        encryptedDailyPrivateKey!.issuerId
+      }`,
       config.get('luca.alerts.receiverEmail')
     );
 

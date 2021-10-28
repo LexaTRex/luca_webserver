@@ -8,7 +8,7 @@ import { Router } from 'express';
 
 import { ApiError, ApiErrorType } from 'utils/apiError';
 
-import database from 'database/models';
+import { OperatorDevice } from 'database';
 import {
   validateSchema,
   validateParametersSchema,
@@ -38,10 +38,10 @@ router.post(
     const { role } = body;
     const { uuid: operatorId } = user as IOperator;
 
-    const device = await database.OperatorDevice.create({
+    const device = await OperatorDevice.create({
       role,
       operatorId,
-      refreshedAt: moment(),
+      refreshedAt: moment().toDate(),
     });
 
     const refreshToken = jwt.sign(
@@ -63,7 +63,7 @@ router.get(
   requireOperatorDeviceEnabled,
   async (request, response) => {
     const { uuid: operatorId } = request.user as IOperator;
-    const devices = await database.OperatorDevice.findAll({
+    const devices = await OperatorDevice.findAll({
       where: { operatorId },
     });
 
@@ -82,7 +82,7 @@ router.get(
   async (request, response) => {
     const { user, params } = request;
     const { uuid: operatorId } = user as IOperatorDevice;
-    const device = await database.OperatorDevice.findOne({
+    const device = await OperatorDevice.findOne({
       where: {
         operatorId,
         uuid: params.deviceId,
@@ -105,7 +105,7 @@ router.post(
   async (request, response) => {
     const { user, params } = request;
     const { uuid: operatorId } = user as IOperatorDevice;
-    const device = await database.OperatorDevice.findOne({
+    const device = await OperatorDevice.findOne({
       where: {
         operatorId,
         uuid: params.deviceId,
@@ -165,7 +165,7 @@ router.post(
             throw new ApiError(ApiErrorType.UNAUTHORIZED);
           }
 
-          const device = await database.OperatorDevice.findOne({
+          const device = await OperatorDevice.findOne({
             where: {
               activated: false,
               uuid: user.deviceId,
@@ -230,7 +230,7 @@ router.patch(
   validateParametersSchema(deviceIdParametersSchema),
   async (request, response) => {
     const user = request.user as IOperator;
-    const device = await database.OperatorDevice.findOne({
+    const device = await OperatorDevice.findOne({
       where: {
         activated: true,
         operatorId: user.uuid,
@@ -260,7 +260,7 @@ router.delete(
   async (request, response) => {
     const { user, params } = request;
     const { uuid: operatorId } = user as IOperator;
-    const device = await database.OperatorDevice.findOne({
+    const device = await OperatorDevice.findOne({
       where: {
         operatorId,
         uuid: params.deviceId,

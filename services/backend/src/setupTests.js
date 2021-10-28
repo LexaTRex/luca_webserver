@@ -6,7 +6,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const chaiAsPromised = require('chai-as-promised');
 const chaiArrays = require('chai-arrays');
-const database = require('./database');
+const { database } = require('./database');
 const { configureApp } = require('./app');
 const { gracefulShutdown } = require('./utils/lifecycle');
 

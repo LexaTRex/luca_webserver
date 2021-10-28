@@ -28,12 +28,17 @@ const {
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
 
-const database = require('../../../database');
+const {
+  database,
+  DailyPublicKey,
+  EncryptedDailyPrivateKey,
+} = require('../../../database');
 const {
   requireHealthDepartmentEmployee,
 } = require('../../../middlewares/requireUser');
 const {
-  limitRequestsByUserPerHour,
+  limitRequestsByUserPerDay,
+  limitRequestsPerDay,
 } = require('../../../middlewares/rateLimit');
 
 const {
@@ -50,7 +55,7 @@ const UNABLE_TO_SERIALIZE_ERROR_CODE = '40001';
  * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-daily-keypair
  */
 router.get('/', async (request, response) => {
-  const dailyPublicKeys = await database.DailyPublicKey.findAll({
+  const dailyPublicKeys = await DailyPublicKey.findAll({
     order: [['createdAt', 'DESC']],
   });
 
@@ -71,7 +76,7 @@ router.get('/', async (request, response) => {
  * @see https://www.luca-app.de/securityoverview/properties/secrets.html#term-daily-keypair
  */
 router.get('/current', async (request, response) => {
-  const dailyPublicKey = await database.DailyPublicKey.findOne({
+  const dailyPublicKey = await DailyPublicKey.findOne({
     order: [['createdAt', 'DESC']],
   });
 
@@ -93,14 +98,12 @@ router.get(
   requireHealthDepartmentEmployee,
   validateParametersSchema(keyIdParametersSchema),
   async (request, response) => {
-    const encryptedDailyPrivateKey = await database.EncryptedDailyPrivateKey.findOne(
-      {
-        where: {
-          keyId: request.params.keyId,
-          healthDepartmentId: request.user.departmentId,
-        },
-      }
-    );
+    const encryptedDailyPrivateKey = await EncryptedDailyPrivateKey.findOne({
+      where: {
+        keyId: request.params.keyId,
+        healthDepartmentId: request.user.departmentId,
+      },
+    });
 
     if (!encryptedDailyPrivateKey) {
       return response.sendStatus(status.NOT_FOUND);
@@ -125,13 +128,11 @@ router.get(
   requireHealthDepartmentEmployee,
   validateParametersSchema(keyIdParametersSchema),
   async (request, response) => {
-    const encryptedDailyPrivateKeys = await database.EncryptedDailyPrivateKey.findAll(
-      {
-        where: {
-          keyId: request.params.keyId,
-        },
-      }
-    );
+    const encryptedDailyPrivateKeys = await EncryptedDailyPrivateKey.findAll({
+      where: {
+        keyId: request.params.keyId,
+      },
+    });
 
     return response.send(
       encryptedDailyPrivateKeys.map(encryptedDailyPrivateKey => ({
@@ -151,9 +152,7 @@ router.get(
   '/:keyId',
   validateParametersSchema(keyIdParametersSchema),
   async (request, response) => {
-    const dailyPublicKey = await database.DailyPublicKey.findByPk(
-      request.params.keyId
-    );
+    const dailyPublicKey = await DailyPublicKey.findByPk(request.params.keyId);
 
     if (!dailyPublicKey) {
       return response.sendStatus(status.NOT_FOUND);
@@ -179,7 +178,8 @@ router.get(
 router.post(
   '/rotate',
   requireHealthDepartmentEmployee,
-  limitRequestsByUserPerHour('keys_daily_rotate_post_ratelimit_hour'),
+  limitRequestsPerDay('keys_daily_rotate_post_ratelimit_day'),
+  limitRequestsByUserPerDay('keys_daily_rotate_post_user_ratelimit_day'),
   validateSchema(rotateSchema, '600kb'),
   // eslint-disable-next-line sonarjs/cognitive-complexity
   async (request, response) => {
@@ -255,7 +255,7 @@ router.post(
     });
 
     try {
-      const dailyPublicKey = await database.DailyPublicKey.findOne(
+      const dailyPublicKey = await DailyPublicKey.findOne(
         {
           order: [['createdAt', 'DESC']],
         },
@@ -306,7 +306,7 @@ router.post(
         }
       }
 
-      await database.DailyPublicKey.upsert(
+      await DailyPublicKey.upsert(
         {
           keyId: request.body.keyId,
           publicKey: request.body.publicKey,
@@ -333,7 +333,7 @@ router.post(
 
       await Promise.all(
         encryptedDailyPrivateKeys.map(key =>
-          database.EncryptedDailyPrivateKey.upsert(key, { transaction })
+          EncryptedDailyPrivateKey.upsert(key, { transaction })
         )
       );
 
@@ -413,7 +413,7 @@ router.post(
       }
     }
 
-    const dailyPublicKey = await database.DailyPublicKey.findOne({
+    const dailyPublicKey = await DailyPublicKey.findOne({
       where: { keyId, createdAt: moment.unix(createdAt) },
     });
 
@@ -439,7 +439,7 @@ router.post(
         publicKey: encryptedDailyPrivateKey.publicKey,
         signature: encryptedDailyPrivateKey.signature,
       };
-      const oldKey = await database.EncryptedDailyPrivateKey.findOne({
+      const oldKey = await EncryptedDailyPrivateKey.findOne({
         where: {
           keyId,
           healthDepartmentId: encryptedDailyPrivateKey.healthDepartmentId,
@@ -447,7 +447,15 @@ router.post(
       });
 
       if (!oldKey) {
-        await database.EncryptedDailyPrivateKey.create(newKey);
+        await EncryptedDailyPrivateKey.create(newKey);
+
+        logEvent(request.user, {
+          type: AuditLogEvents.REKEY_DAILY_KEYPAIR,
+          status: AuditStatusType.SUCCESS,
+          meta: {
+            newKeyId: keyId,
+          },
+        });
       } else if (oldKey.createdAt === dailyPublicKey.createdAt) {
         logEvent(request.user, {
           type: AuditLogEvents.REKEY_DAILY_KEYPAIR,

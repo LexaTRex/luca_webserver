@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../../../utils/auth';
 import { E2E_PHONE_NUMBER } from '../../../../constants/users';
 import {

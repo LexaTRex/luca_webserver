@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { loginLocations } from '../../utils/auth';
 import {
   E2E_DEFAULT_LOCATION_NAME,
@@ -12,7 +13,7 @@ describe('Table configuration ', () => {
   beforeEach(() => {
     loginLocations();
     cy.getByCy(`locationCard-${SETTING_NAME}`).click();
-    // Expect the switch button to be inative by default
+    // Expect the switch button to be inactive by default
     cy.getByCy('activateTableSubdivision').should(
       'have.attr',
       'aria-checked',
@@ -20,7 +21,7 @@ describe('Table configuration ', () => {
     );
     // Activate
     cy.getByCy('activateTableSubdivision').click();
-    // Expect the switch button to be ative
+    // Expect the switch button to be active
     cy.getByCy('activateTableSubdivision').should(
       'have.attr',
       'aria-checked',
@@ -42,7 +43,7 @@ describe('Table configuration ', () => {
     // Test case: empty
     cy.get('#tableCount').clear();
     cy.get('.ant-form-item-explain-error').should('contain', ERROR);
-    // Test case: special charaters
+    // Test case: special characters
     cy.get('#tableCount').type('####');
     cy.get('.ant-form-item-explain-error').should('contain', ERROR);
     // Test case: text

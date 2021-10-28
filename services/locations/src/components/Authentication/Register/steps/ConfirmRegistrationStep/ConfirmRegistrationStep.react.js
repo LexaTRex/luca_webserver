@@ -12,6 +12,7 @@ import {
   ButtonWrapper,
   Step,
 } from 'components/Authentication/Authentication.styled';
+import { useEmailValidator } from 'components/hooks/useValidators';
 
 export const ConfirmRegistrationStep = ({
   email,
@@ -21,6 +22,7 @@ export const ConfirmRegistrationStep = ({
   navigation,
 }) => {
   const intl = useIntl();
+  const emailValidator = useEmailValidator();
 
   const onFinish = values => {
     setEmail(values.email);
@@ -47,20 +49,7 @@ export const ConfirmRegistrationStep = ({
             id: 'registration.form.email',
           })}
           name="email"
-          rules={[
-            {
-              type: 'email',
-              message: intl.formatMessage({
-                id: 'error.email',
-              }),
-            },
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'error.email',
-              }),
-            },
-          ]}
+          rules={emailValidator}
         >
           <Input
             id="emailDisabled"
@@ -78,7 +67,11 @@ export const ConfirmRegistrationStep = ({
               id: 'authentication.form.button.back',
             })}
           </SecondaryButton>
-          <PrimaryButton $isButtonWhite htmlType="submit">
+          <PrimaryButton
+            $isButtonWhite
+            htmlType="submit"
+            data-cy="confirmRegisterButton"
+          >
             {intl.formatMessage({
               id: 'authentication.form.button.next',
             })}

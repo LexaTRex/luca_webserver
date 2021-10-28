@@ -1,10 +1,10 @@
 /* eslint-disable max-lines */
 import config from 'config';
-import database from 'database';
 import moment from 'moment-timezone';
 import { Transform } from 'stream';
-import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
 import type { TransformCallback } from 'stream';
+import { AuditLogEvents, AuditStatusType } from 'constants/auditLog';
+import { HealthDepartmentAuditLog } from 'database';
 import logger from './logger';
 
 interface GenericEvent {
@@ -61,6 +61,7 @@ interface CreateTracingProcessEvent extends GenericEvent {
     transferId: string;
     locationId?: string;
     viaTan?: boolean;
+    isStatic?: boolean;
   };
 }
 
@@ -116,6 +117,7 @@ interface RekeyDailyKeypairEvent extends GenericEvent {
     newKeyId: string;
     oldKeyId?: string;
     oldKeyHd?: string;
+    keyId?: string;
   };
 }
 
@@ -125,6 +127,7 @@ interface RekeyBadgeKeypairEvent extends GenericEvent {
     newKeyId: string;
     oldKeyId?: string;
     oldKeyHd?: string;
+    keyId?: string;
   };
 }
 
@@ -181,12 +184,15 @@ type LogEvent =
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function logEvent(employee: any, event: LogEvent) {
   try {
-    await database.HealthDepartmentAuditLog.create({
+    await HealthDepartmentAuditLog.create({
       departmentId: employee.departmentId,
       employeeId: employee.uuid,
       type: event.type,
       status: event.status,
-      meta: event.meta,
+      meta: event.meta as Record<
+        string,
+        string | number | Array<string | number>
+      >,
     });
   } catch (error) {
     if (error instanceof Error) logger.error(error);
@@ -249,27 +255,41 @@ const MESSAGES = {
       event.meta.target
     } ${event.meta.isAdmin ? 'hinzugefügt' : 'entfernt'}.`,
   }),
+
   [AuditLogEvents.CREATE_TRACING_PROCESS]: (
     event: CreateTracingProcessEvent
-  ) => ({
-    [AuditStatusType.SUCCESS]: `hat einen Nachverfolgungsprozess ${
-      event.meta?.viaTan ? 'via TAN ' : ''
-    }erstellt: ${event.meta.transferId}`,
-    [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht einen Nachverfolgungsprozess  ${
-      event.meta?.viaTan ? 'via TAN ' : ''
-    }zu erstellen (Fehlgeschlagen: Location ${
-      event.meta.locationId
-    } des Locations Transfers wurde nicht gefunden)`,
-    [AuditStatusType.ERROR_LIMIT_EXCEEDED]: `hat versucht einen Nachverfolgungsprozess  ${
-      event.meta?.viaTan ? 'via TAN ' : ''
-    }zu erstellen (Fehlgeschlagen: Zu viele Locations)`,
-    [AuditStatusType.ERROR_INVALID_USER]: `hat versucht einen Nachverfolgungsprozess via TAN zu erstellen (Fehlgeschlagen: Initiierter User Transfer nicht vorhanden)`,
-  }),
+  ) => {
+    if (event.meta?.viaTan) {
+      return {
+        [AuditStatusType.SUCCESS]: `hat einen Nachverfolgungsprozess via TAN erstellt: ${event.meta.transferId}`,
+        [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht einen Nachverfolgungsprozess via TAN zu erstellen (Fehlgeschlagen: Location ${event.meta.locationId} des Locations Transfers wurde nicht gefunden)`,
+        [AuditStatusType.ERROR_LIMIT_EXCEEDED]: `hat versucht einen Nachverfolgungsprozess via TAN zu erstellen (Fehlgeschlagen: Zu viele Locations)`,
+        [AuditStatusType.ERROR_INVALID_USER]: `hat versucht einen Nachverfolgungsprozess via TAN zu erstellen (Fehlgeschlagen: Initiierter User Transfer nicht vorhanden)`,
+      };
+    }
+
+    if (event.meta?.isStatic) {
+      return {
+        [AuditStatusType.SUCCESS]: `hat einen Nachverfolgungsprozess via TAN durch einen Badge erstellt: ${event.meta.transferId}`,
+        [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht einen Nachverfolgungsprozess via TAN durch einen Badge zu erstellen (Fehlgeschlagen: Location ${event.meta.locationId} des Locations Transfers wurde nicht gefunden)`,
+        [AuditStatusType.ERROR_LIMIT_EXCEEDED]: `hat versucht einen Nachverfolgungsprozess via TAN durch einen Badge zu erstellen (Fehlgeschlagen: Zu viele Locations)`,
+        [AuditStatusType.ERROR_INVALID_USER]: `hat versucht einen Nachverfolgungsprozess via TAN durch einen Badge zu erstellen (Fehlgeschlagen: Initiierter User Transfer nicht vorhanden)`,
+      };
+    }
+
+    return {
+      [AuditStatusType.SUCCESS]: `hat einen Nachverfolgungsprozess erstellt: ${event.meta.transferId}`,
+      [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht einen Nachverfolgungsprozess zu erstellen (Fehlgeschlagen: Location ${event.meta.locationId} des Locations Transfers wurde nicht gefunden)`,
+      [AuditStatusType.ERROR_LIMIT_EXCEEDED]: `hat versucht einen Nachverfolgungsprozess zu erstellen (Fehlgeschlagen: Zu viele Locations)`,
+      [AuditStatusType.ERROR_INVALID_USER]: `hat versucht einen Nachverfolgungsprozess via TAN zu erstellen (Fehlgeschlagen: Initiierter User Transfer nicht vorhanden)`,
+    };
+  },
+
   [AuditLogEvents.REQUEST_DATA]: (event: RequestDataEvent) => ({
     [AuditStatusType.SUCCESS]: `hat die Anfrage ${event.meta.transferId} an die Location ${event.meta.locationId} gestellt`,
   }),
   [AuditLogEvents.RECEIVE_DATA]: (event: ReceiveDataEvent) => ({
-    [AuditStatusType.SUCCESS]: `hat die Freigabe ${event.meta.transferId} von der Location ${event.meta.locationId} erhalten`,
+    [AuditStatusType.SUCCESS]: `Es wurde die Freigabe ${event.meta.transferId} von der Location ${event.meta.locationId} erhalten`,
   }),
   [AuditLogEvents.VIEW_DATA]: (event: ViewDataEvent) => ({
     [AuditStatusType.SUCCESS]: `hat den Nachverfolgungsprozess ${event.meta.transferId} angesehen`,
@@ -295,16 +315,20 @@ const MESSAGES = {
     [AuditStatusType.ERROR_LIMIT_EXCEEDED]: `hat versucht einen neuen Badge Key auszustellen (Fehlgeschlagen: maximale Anzahl an täglichen Badges erreicht)`,
   }),
   [AuditLogEvents.REKEY_DAILY_KEYPAIR]: (event: RekeyDailyKeypairEvent) => ({
-    [AuditStatusType.SUCCESS]: `hat den Daily Key ${event.meta.oldKeyId} des Gesundheitsamtes ${event.meta.oldKeyHd} synchronisiert. (Neuer Daily Key: ${event.meta.newKeyId})`,
-    [AuditStatusType.ERROR_CONFLICT_KEY]: `hat versucht die Daily Keys zu synchronisieren (Fehlgeschlagen: Key ist bereits der aktuelle)`,
-    [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht die Daily Keys zu synchronisieren (Fehlgeschlagen: Daily Public Key nicht gefunden)`,
-    [AuditStatusType.ERROR_INVALID_SIGNATURE]: `hat versucht die Daily Keys zu synchronisieren (Fehlgeschlagen: Signatur nicht korrekt)`,
+    [AuditStatusType.SUCCESS]: event.meta.oldKeyId
+      ? `hat den Daily Key ${event.meta.oldKeyId} des Gesundheitsamtes ${event.meta.oldKeyHd} synchronisiert. (Neuer Daily Key: ${event.meta.newKeyId})`
+      : `hat den Daily Key ${event.meta.newKeyId} erstellt.`,
+    [AuditStatusType.ERROR_CONFLICT_KEY]: `hat versucht die Daily Keys zu synchronisieren (Fehlgeschlagen: Key ist bereits der aktuelle. KeyId: ${event.meta.keyId})`,
+    [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht die Daily Keys zu synchronisieren (Fehlgeschlagen: Daily Public Key nicht gefunden. KeyId: ${event.meta.keyId})`,
+    [AuditStatusType.ERROR_INVALID_SIGNATURE]: `hat versucht die Daily Keys zu synchronisieren (Fehlgeschlagen: Signatur nicht korrekt. KeyId: ${event.meta.keyId})`,
   }),
   [AuditLogEvents.REKEY_BADGE_KEYPAIR]: (event: RekeyBadgeKeypairEvent) => ({
-    [AuditStatusType.SUCCESS]: `hat den Badge Key ${event.meta.oldKeyId} des Gesundheitsamtes ${event.meta.oldKeyHd} synchronisiert. (Neuer Badge Key: ${event.meta.newKeyId})`,
-    [AuditStatusType.ERROR_CONFLICT_KEY]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Key ist bereits der aktuelle)`,
-    [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Badge Public Key nicht gefunden)`,
-    [AuditStatusType.ERROR_INVALID_SIGNATURE]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Signatur nicht korrekt)`,
+    [AuditStatusType.SUCCESS]: event.meta.oldKeyId
+      ? `hat den Badge Key ${event.meta.oldKeyId} des Gesundheitsamtes ${event.meta.oldKeyHd} synchronisiert. (Neuer Badge Key: ${event.meta.newKeyId})`
+      : `hat den Badge Key ${event.meta.newKeyId} erstellt.`,
+    [AuditStatusType.ERROR_CONFLICT_KEY]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Key ist bereits der aktuelle. KeyId: ${event.meta.keyId})`,
+    [AuditStatusType.ERROR_TARGET_NOT_FOUND]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Badge Public Key nicht gefunden. KeyId: ${event.meta.keyId})`,
+    [AuditStatusType.ERROR_INVALID_SIGNATURE]: `hat versucht die Badge Keys zu synchronisieren (Fehlgeschlagen: Signatur nicht korrekt. KeyId: ${event.meta.keyId})`,
   }),
   [AuditLogEvents.DOWNLOAD_TRACES]: (event: DownloadTracesEvent) => ({
     [AuditStatusType.SUCCESS]: `hat für den Nachverfolgungsprozess ${
@@ -315,6 +339,9 @@ const MESSAGES = {
   }),
   [AuditLogEvents.EXPORT_TRACES]: (event: ExportTracesEvent) => ({
     [AuditStatusType.SUCCESS]: `hat für ${event.meta.transferId} ${event.meta.amount} Traces für SORMAS (Schnittstelle) exportiert.`,
+  }),
+  [AuditLogEvents.SEARCH]: (_: GenericEvent) => ({
+    [AuditStatusType.SUCCESS]: `hat eine Suche durchgeführt.`,
   }),
 };
 
@@ -352,9 +379,13 @@ function entriesToPlainText(entries: any[]) {
         return null;
       }
 
-      return `[${toReadableDate(entry.createdAt)}] ${
-        entry.employeeId
-      } ${readableEvent}`;
+      return [
+        `[${toReadableDate(entry.createdAt)}]`,
+        entry.employeeId,
+        readableEvent,
+      ]
+        .filter(partial => !!partial)
+        .join(' ');
     })
     .filter(event => !!event)
     .join('\n')}\n`;

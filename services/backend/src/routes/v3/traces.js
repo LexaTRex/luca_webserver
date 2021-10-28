@@ -256,7 +256,6 @@ router.post(
     if (!trace || declinedDeviceTypes.has(trace.deviceType)) {
       return response.sendStatus(status.NOT_FOUND);
     }
-
     const checkinTime = moment(trace.time[0].value);
     const checkoutTime = moment.unix(request.body.timestamp);
 

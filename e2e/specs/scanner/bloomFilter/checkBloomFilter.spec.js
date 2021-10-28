@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   DELETED_REGISTERED_BADGE,
   REGISTERED_BADGE,

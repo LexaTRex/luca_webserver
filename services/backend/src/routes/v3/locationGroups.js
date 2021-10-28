@@ -11,19 +11,28 @@ const {
   updateSchema,
 } = require('./locationGroups.schemas');
 
-const database = require('../../database');
+const {
+  database,
+  Location,
+  LocationGroup,
+  Operator,
+  AdditionalDataSchema,
+} = require('../../database');
 const {
   validateSchema,
   validateParametersSchema,
   validateQuerySchema,
 } = require('../../middlewares/validateSchema');
-
+const { limitRequestsPerDay } = require('../../middlewares/rateLimit');
 const {
   requireOperator,
   requireNonDeletedUser,
   requireOperatorOROperatorDevice,
   requireHealthDepartmentEmployee,
 } = require('../../middlewares/requireUser');
+
+const { AuditLogEvents, AuditStatusType } = require('../../constants/auditLog');
+const { logEvent } = require('../../utils/hdAuditLog');
 
 // HD search for location group
 router.get(
@@ -36,7 +45,7 @@ router.get(
 
     const { name, zipCode } = request.query;
 
-    const matchedGroups = await database.LocationGroup.findAll({
+    const matchedGroups = await LocationGroup.findAll({
       where: {
         name: {
           [Op.iLike]: `%${name}%`,
@@ -44,7 +53,7 @@ router.get(
       },
       include: [
         {
-          model: database.Location,
+          model: Location,
           attributes: ['uuid'],
           where: {
             name: null,
@@ -56,18 +65,18 @@ router.get(
       offset: offset || 0,
     });
 
-    const groups = await database.LocationGroup.findAll({
+    const groups = await LocationGroup.findAll({
       where: {
         uuid: matchedGroups.map(group => group.uuid),
       },
       include: [
         {
-          model: database.Operator,
+          model: Operator,
           attributes: ['uuid', 'email'],
           required: true,
         },
         {
-          model: database.Location,
+          model: Location,
           attributes: [
             'uuid',
             'name',
@@ -80,10 +89,15 @@ router.get(
           as: 'BaseLocation',
         },
         {
-          model: database.Location,
+          model: Location,
           attributes: ['uuid'],
         },
       ],
+    });
+
+    logEvent(request.user, {
+      type: AuditLogEvents.SEARCH,
+      status: AuditStatusType.SUCCESS,
     });
 
     return response.send(
@@ -114,8 +128,9 @@ router.post(
   requireOperator,
   requireNonDeletedUser,
   validateSchema(createSchema),
+  limitRequestsPerDay('locationgroup_post_ratelimit_day'),
   async (request, response) => {
-    const operator = await database.Operator.findOne({
+    const operator = await Operator.findOne({
       where: {
         uuid: request.user.uuid,
       },
@@ -129,7 +144,7 @@ router.post(
     let location;
 
     await database.transaction(async transaction => {
-      group = await database.LocationGroup.create(
+      group = await LocationGroup.create(
         {
           name: request.body.name,
           operatorId: request.user.uuid,
@@ -138,7 +153,7 @@ router.post(
         { transaction }
       );
 
-      location = await database.Location.create(
+      location = await Location.create(
         {
           operator: request.user.uuid,
           groupId: group.uuid,
@@ -167,7 +182,7 @@ router.post(
       if (request.body.additionalData) {
         await Promise.all(
           request.body.additionalData.map(data =>
-            database.AdditionalDataSchema.create(
+            AdditionalDataSchema.create(
               {
                 locationId: location.uuid,
                 ...data,
@@ -181,7 +196,7 @@ router.post(
       if (request.body.areas) {
         await Promise.all(
           request.body.areas.map(area =>
-            database.Location.create(
+            Location.create(
               {
                 operator: request.user.uuid,
                 groupId: group.uuid,
@@ -225,11 +240,11 @@ router.post(
 
 // get all location groups
 router.get('/', requireOperatorOROperatorDevice, async (request, response) => {
-  const groups = await database.LocationGroup.findAll({
+  const groups = await LocationGroup.findAll({
     where: { operatorId: request.user.uuid },
     order: [['name', 'ASC']],
     include: {
-      model: database.Location,
+      model: Location,
       attributes: ['uuid', 'name'],
       order: [['name', 'ASC']],
     },
@@ -249,10 +264,10 @@ router.get(
   '/:groupId',
   validateParametersSchema(groupIdSchema),
   async (request, response) => {
-    const group = await database.LocationGroup.findOne({
+    const group = await LocationGroup.findOne({
       where: { uuid: request.params.groupId },
       include: {
-        model: database.Location,
+        model: Location,
         attributes: [
           'uuid',
           'name',
@@ -289,7 +304,7 @@ router.patch(
   validateParametersSchema(groupIdSchema),
   validateSchema(updateSchema),
   async (request, response) => {
-    const group = await database.LocationGroup.findOne({
+    const group = await LocationGroup.findOne({
       where: { uuid: request.params.groupId, operatorId: request.user.uuid },
     });
 
@@ -297,7 +312,7 @@ router.patch(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const baseLocation = await database.Location.findOne({
+    const baseLocation = await Location.findOne({
       where: { groupId: request.params.groupId, name: null },
     });
 
@@ -333,13 +348,13 @@ router.delete(
   requireNonDeletedUser,
   validateParametersSchema(groupIdSchema),
   async (request, response) => {
-    const group = await database.LocationGroup.findOne({
+    const group = await LocationGroup.findOne({
       where: {
         uuid: request.params.groupId,
         operatorId: request.user.uuid,
       },
       include: {
-        model: database.Location,
+        model: Location,
       },
     });
 

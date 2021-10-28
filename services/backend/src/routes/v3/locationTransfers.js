@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { UserType } from 'constants/user';
 import { checkForAndAddLevel4RiskLevels } from 'utils/notifications/notificationsHelper';
 
 const router = require('express').Router();
@@ -7,7 +8,17 @@ const config = require('config');
 const status = require('http-status');
 const { Op } = require('sequelize');
 
-const database = require('../../database');
+const {
+  database,
+  Location,
+  Operator,
+  LocationTransfer,
+  Trace,
+  TraceData,
+  LocationTransferTrace,
+  LocationGroup,
+  HealthDepartment,
+} = require('../../database');
 const {
   sendShareDataRequestNotification,
   locationTransferApprovalNotification,
@@ -24,8 +35,6 @@ const {
 
 const {
   requireHealthDepartmentEmployee,
-  isUserOfType,
-  UserTypes,
 } = require('../../middlewares/requireUser');
 const { formatLocationName } = require('../../utils/format');
 const { OperatorDevice } = require('../../constants/operatorDevice');
@@ -84,16 +93,16 @@ router.get(
       whereClause.deletedAt = null;
     }
 
-    const transfers = await database.LocationTransfer.findAll({
+    const transfers = await LocationTransfer.findAll({
       where: whereClause,
       order: [['createdAt', 'DESC']],
       include: [
         {
           required: true,
-          model: database.Location,
+          model: Location,
           attributes: ['name'],
           include: {
-            model: database.LocationGroup,
+            model: LocationGroup,
             attributes: ['name'],
             paranoid: false,
           },
@@ -103,7 +112,7 @@ router.get(
           paranoid: false,
         },
         {
-          model: database.HealthDepartment,
+          model: HealthDepartment,
           attributes: ['name'],
         },
       ],
@@ -139,7 +148,7 @@ router.get(
   requireOperatorDeviceRole(OperatorDevice.manager),
   async (request, response) => {
     const operatorId = request.user.uuid;
-    const transfers = await database.LocationTransfer.findAll({
+    const transfers = await LocationTransfer.findAll({
       where: {
         isCompleted: false,
         contactedAt: {
@@ -148,24 +157,24 @@ router.get(
       },
       include: [
         {
-          model: database.LocationTransferTrace,
+          model: LocationTransferTrace,
           attributes: ['traceId'],
           required: false,
           include: {
             required: true,
-            model: database.Trace,
+            model: Trace,
             include: {
-              model: database.TraceData,
+              model: TraceData,
             },
           },
         },
         {
           required: true,
-          model: database.Location,
+          model: Location,
           attributes: ['name', 'groupId', 'operator', 'publicKey'],
           include: {
             attributes: ['uuid', 'name'],
-            model: database.LocationGroup,
+            model: LocationGroup,
             paranoid: false,
           },
           where: {
@@ -175,7 +184,7 @@ router.get(
         },
         {
           required: true,
-          model: database.HealthDepartment,
+          model: HealthDepartment,
           attributes: ['uuid', 'name', 'publicHDEKP'],
         },
       ],
@@ -236,67 +245,50 @@ router.get(
  */
 router.get(
   '/:transferId',
+  requireOperatorOROperatorDevice,
   validateParametersSchema(transferIdParametersSchema),
   async (request, response) => {
-    if (!request.user) {
-      return response.sendStatus(status.NOT_FOUND);
-    }
-
-    const transfer = await database.LocationTransfer.findByPk(
-      request.params.transferId
-    );
+    const transfer = await LocationTransfer.findByPk(request.params.transferId);
 
     if (!transfer) {
       return response.sendStatus(status.NOT_FOUND);
-    }
-
-    if (
-      isUserOfType(UserTypes.HD_EMPLOYEE, request) &&
-      transfer.departmentId !== request.user.departmentId
-    ) {
-      return response.sendStatus(status.FORBIDDEN);
     }
 
     if (transfer.isCompleted) {
       return response.sendStatus(status.GONE);
     }
 
-    const department = await database.HealthDepartment.findByPk(
-      transfer.departmentId
-    );
+    const department = await HealthDepartment.findByPk(transfer.departmentId);
 
     if (!department) {
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const location = await database.Location.findByPk(transfer.locationId, {
+    const location = await Location.findByPk(transfer.locationId, {
       include: {
-        model: database.LocationGroup,
+        model: LocationGroup,
         attributes: ['uuid', 'name'],
         paranoid: false,
       },
       paranoid: false,
     });
 
-    if (
-      isUserOfType(UserTypes.OPERATOR, request) &&
-      location.operator !== request.user.uuid
-    ) {
+    if (location.operator !== request.user.uuid) {
       return response.sendStatus(status.FORBIDDEN);
     }
 
-    const transferTraces = await database.LocationTransferTrace.findAll({
+    const transferTraces = await LocationTransferTrace.findAll({
       where: {
         locationTransferId: transfer.uuid,
       },
     });
 
-    const traces = await database.Trace.findAll({
+    const traces = await Trace.findAll({
       where: {
         traceId: transferTraces.map(trace => trace.traceId),
       },
       include: {
-        model: database.TraceData,
+        model: TraceData,
       },
     });
 
@@ -356,14 +348,14 @@ router.post(
   requireHealthDepartmentEmployee,
   validateParametersSchema(transferIdParametersSchema),
   async (request, response) => {
-    const transfer = await database.LocationTransfer.findOne({
+    const transfer = await LocationTransfer.findOne({
       where: {
         uuid: request.params.transferId,
       },
       include: [
         {
           required: true,
-          model: database.HealthDepartment,
+          model: HealthDepartment,
           attributes: ['name'],
           where: {
             uuid: request.user.departmentId,
@@ -371,9 +363,9 @@ router.post(
         },
         {
           required: true,
-          model: database.Location,
+          model: Location,
           include: {
-            model: database.Operator,
+            model: Operator,
             attributes: ['uuid', 'email', 'lastName', 'firstName'],
             paranoid: false,
           },
@@ -382,7 +374,7 @@ router.post(
       ],
     });
 
-    const amount = await database.LocationTransferTrace.count({
+    const amount = await LocationTransferTrace.count({
       where: {
         locationTransferId: transfer.uuid,
       },
@@ -443,7 +435,7 @@ router.get(
   requireHealthDepartmentEmployee,
   validateParametersSchema(transferIdParametersSchema),
   async (request, response) => {
-    const transfer = await database.LocationTransfer.findOne({
+    const transfer = await LocationTransfer.findOne({
       where: {
         uuid: request.params.transferId,
         departmentId: request.user.departmentId,
@@ -461,7 +453,7 @@ router.get(
       return response.sendStatus(status.NOT_FOUND);
     }
 
-    const traces = await database.LocationTransferTrace.findAll({
+    const traces = await LocationTransferTrace.findAll({
       where: {
         locationTransferId: request.params.transferId,
       },
@@ -508,38 +500,35 @@ router.get(
  * large JSON payloads
  */
 const validateTransferId = async (request, response, next) => {
-  const transfer = await database.LocationTransfer.findByPk(
-    request.params.transferId,
-    {
-      include: [
-        {
-          required: true,
-          model: database.Location,
-          where: {
-            operator: request.user.uuid,
+  const transfer = await LocationTransfer.findByPk(request.params.transferId, {
+    include: [
+      {
+        required: true,
+        model: Location,
+        where: {
+          operator: request.user.uuid,
+        },
+        attributes: ['uuid', 'name'],
+        include: [
+          {
+            model: LocationGroup,
+            attributes: ['name'],
+            paranoid: false,
           },
-          attributes: ['name'],
-          include: [
-            {
-              model: database.LocationGroup,
-              attributes: ['name'],
-              paranoid: false,
-            },
-            {
-              model: database.Operator,
-              attributes: ['email', 'firstName', 'lastName'],
-              paranoid: false,
-            },
-          ],
-          paranoid: false,
-        },
-        {
-          model: database.HealthDepartment,
-          attributes: ['name', 'uuid'],
-        },
-      ],
-    }
-  );
+          {
+            model: Operator,
+            attributes: ['email', 'firstName', 'lastName'],
+            paranoid: false,
+          },
+        ],
+        paranoid: false,
+      },
+      {
+        model: HealthDepartment,
+        attributes: ['name', 'uuid'],
+      },
+    ],
+  });
 
   if (!transfer) {
     return response.sendStatus(status.NOT_FOUND);
@@ -567,7 +556,7 @@ router.post(
     const { transfer, body } = request;
     const { traces } = body;
 
-    const transferTraces = await database.LocationTransferTrace.findAll({
+    const transferTraces = await LocationTransferTrace.findAll({
       where: {
         locationTransferId: transfer.uuid,
       },
@@ -633,7 +622,6 @@ router.post(
 
     logEvent(
       {
-        uuid: transfer.HealthDepartment.uuid,
         departmentId: transfer.HealthDepartment.uuid,
       },
       {

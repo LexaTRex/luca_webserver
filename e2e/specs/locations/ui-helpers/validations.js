@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   E2E_DEFAULT_LOCATION_NAME,
   E2E_SECOND_LOCATION_NAME,

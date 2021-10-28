@@ -12,13 +12,24 @@ const status = require('http-status');
 const moment = require('moment');
 const { Op } = require('sequelize');
 
-const database = require('../../../database');
+const {
+  database,
+  Location,
+  LocationGroup,
+  AdditionalDataSchema,
+  Trace,
+  TraceData,
+} = require('../../../database');
+
 const {
   validateSchema,
   validateQuerySchema,
   validateParametersSchema,
 } = require('../../../middlewares/validateSchema');
-const { limitRequestsPerHour } = require('../../../middlewares/rateLimit');
+const {
+  limitRequestsPerHour,
+  limitRequestsPerDay,
+} = require('../../../middlewares/rateLimit');
 const {
   requireOperator,
   requireNonDeletedUser,
@@ -39,7 +50,7 @@ const { getOperatorLocationDTO } = require('./locations.helper');
  * Get all locations (venues) operated by the currently logged-in owner
  */
 router.get('/', requireOperatorOROperatorDevice, async (request, response) => {
-  const locations = await database.Location.findAll({
+  const locations = await Location.findAll({
     where: {
       operator: request.user.uuid,
     },
@@ -55,14 +66,14 @@ router.get(
   requireOperatorOROperatorDevice,
   validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         uuid: request.params.locationId,
         operator: request.user.uuid,
       },
       include: [
         {
-          model: database.LocationGroup,
+          model: LocationGroup,
           attributes: ['name'],
         },
       ],
@@ -85,9 +96,10 @@ router.post(
   '/',
   requireOperator,
   requireNonDeletedUser,
+  limitRequestsPerDay('operator_location_post_ratelimit_day'),
   validateSchema(createSchema),
   async (request, response) => {
-    const group = await database.LocationGroup.findOne({
+    const group = await LocationGroup.findOne({
       where: { uuid: request.body.groupId, operatorId: request.user.uuid },
     });
 
@@ -96,7 +108,7 @@ router.post(
     }
 
     const trimmedLocationName = request.body.locationName.trim();
-    const existingLocation = await database.Location.findOne({
+    const existingLocation = await Location.findOne({
       where: {
         name: trimmedLocationName,
         groupId: request.body.groupId,
@@ -107,14 +119,14 @@ router.post(
       return response.sendStatus(status.CONFLICT);
     }
 
-    const baseLocation = await database.Location.findOne({
+    const baseLocation = await Location.findOne({
       where: { groupId: request.body.groupId },
     });
 
     let location;
 
     await database.transaction(async transaction => {
-      location = await database.Location.create(
+      location = await Location.create(
         {
           operator: request.user.uuid,
           publicKey: baseLocation.publicKey,
@@ -143,7 +155,7 @@ router.post(
       if (request.body.additionalData) {
         await Promise.all(
           request.body.additionalData.map(data =>
-            database.AdditionalDataSchema.create(
+            AdditionalDataSchema.create(
               {
                 locationId: location.uuid,
                 key: data.key,
@@ -173,7 +185,7 @@ router.patch(
   validateSchema(updateSchema),
   validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         operator: request.user.uuid,
         uuid: request.params.locationId,
@@ -185,7 +197,7 @@ router.patch(
     }
 
     if (request.body.locationName) {
-      const existingLocation = await database.Location.findOne({
+      const existingLocation = await Location.findOne({
         where: {
           name: request.body.locationName.trim(),
           groupId: location.groupId,
@@ -226,7 +238,7 @@ router.patch(
   validateSchema(updateAddressSchema),
   validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         operator: request.user.uuid,
         uuid: request.params.locationId,
@@ -247,7 +259,7 @@ router.delete(
   requireNonDeletedUser,
   validateParametersSchema(locationIdParametersSchema),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         operator: request.user.uuid,
         uuid: request.params.locationId,
@@ -257,7 +269,7 @@ router.delete(
     if (!location) return response.sendStatus(status.NOT_FOUND);
 
     await database.transaction(async transaction => {
-      await database.Location.checkoutAllTraces({ location, transaction });
+      await location.checkoutAllTraces(transaction);
       await location.destroy({ transaction });
     });
 
@@ -276,15 +288,17 @@ router.post(
   requireOperatorDeviceRoles([OperatorDevice.employee, OperatorDevice.manager]),
   requireNonDeletedUser,
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         operator: request.user.uuid,
         uuid: request.params.locationId,
       },
     });
 
-    if (!location) return response.sendStatus(status.NOT_FOUND);
-    await database.Location.checkoutAllTraces({ location });
+    if (!location) {
+      return response.sendStatus(status.NOT_FOUND);
+    }
+    await location.checkoutAllTraces();
     return response.sendStatus(status.NO_CONTENT);
   }
 );
@@ -305,7 +319,7 @@ router.get(
     skipSuccessfulRequests: true,
   }),
   async (request, response) => {
-    const location = await database.Location.findOne({
+    const location = await Location.findOne({
       where: {
         uuid: request.params.locationId,
         operator: request.user.uuid,
@@ -329,11 +343,11 @@ router.get(
       };
     }
 
-    const traces = await database.Trace.findAll({
+    const traces = await Trace.findAll({
       where: traceQuery,
       order: [['updatedAt', 'DESC']],
       include: {
-        model: database.TraceData,
+        model: TraceData,
       },
     });
 

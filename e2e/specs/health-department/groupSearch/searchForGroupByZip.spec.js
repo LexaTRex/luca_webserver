@@ -1,9 +1,10 @@
+/* eslint-disable */
 import { loginHealthDepartment } from '../helper/api/auth.helper';
-import { addHealthDepartmentPrivateKeyFile } from '../helper/ui/login.helper';
 import { createGroupPayload } from '../../locations/utils/payloads.helper';
 import { APP_ROUTE } from '../../locations/constants/routes';
 import { deleteGroup } from '../../locations/utils/groups';
 import { signHealthDepartment } from '../helper/signHealthDepartment';
+import { addHealthDepartmentPrivateKeyFile } from '../helper/ui/handlePrivateKeyFile';
 
 const FIRST_GROUP_NAME = 'test group first';
 const SECOND_GROUP_NAME = 'test group second';
@@ -20,7 +21,7 @@ const GROUP_PREFIX = 'group_';
 const SEARCH_TERM = 'tes';
 
 describe('Health Department / Group search / Search for a group by Name and Zip code', () => {
-  //create groups with different names and zip codes
+  // create groups with different names and zip codes
   before(() => {
     cy.basicLoginLocations();
     for (const [key, value] of Object.entries(GROUP_ZIP_MAP)) {
@@ -38,7 +39,7 @@ describe('Health Department / Group search / Search for a group by Name and Zip 
     addHealthDepartmentPrivateKeyFile();
   });
 
-  //delete created groups
+  // delete created groups
   after(() => {
     cy.basicLoginLocations();
     cy.visit(APP_ROUTE);
@@ -49,8 +50,8 @@ describe('Health Department / Group search / Search for a group by Name and Zip 
   describe('when searching for groups by zip code', () => {
     it('disables the search button', () => {
       cy.getByCy('searchGroup').should('exist').should('be.visible').click();
-      //search group by term
-      cy.get('.ant-modal-content').within($modal => {
+      // search group by term
+      cy.get('.ant-modal-content').within(() => {
         cy.get('#zipCode')
           .should('exist')
           .should('be.visible')
@@ -63,8 +64,8 @@ describe('Health Department / Group search / Search for a group by Name and Zip 
   describe('when searching for a groups by Name and Zip code', () => {
     it('displays groups matching search criteria', () => {
       cy.getByCy('searchGroup').should('exist').should('be.visible').click();
-      //search groups by name and zip
-      cy.get('.ant-modal-content').within($modal => {
+      // search groups by name and zip
+      cy.get('.ant-modal-content').within(() => {
         cy.getByCy('groupNameInput')
           .should('exist')
           .should('be.visible')
@@ -77,7 +78,7 @@ describe('Health Department / Group search / Search for a group by Name and Zip 
           .should('exist')
           .should('be.visible')
           .click();
-        //verify one group matching name and zip is found
+        // verify one group matching name and zip is found
         cy.getByCy(GROUP_PREFIX + FIRST_GROUP_NAME)
           .should('exist')
           .should('be.visible');
@@ -89,7 +90,7 @@ describe('Health Department / Group search / Search for a group by Name and Zip 
               `${createGroupPayload.streetName} ${createGroupPayload.streetNr}, ${ZIP_CODE_MATCHED} ${createGroupPayload.city}`
             );
           });
-        //verify groups with different name or zip are not found
+        // verify groups with different name or zip are not found
         cy.getByCy(GROUP_PREFIX + SECOND_GROUP_NAME).should('not.exist');
         cy.getByCy(GROUP_PREFIX + THIRD_GROUP_NAME).should('not.exist');
       });

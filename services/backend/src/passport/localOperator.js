@@ -1,9 +1,9 @@
 /* eslint-disable promise/no-callback-in-promise */
 /* eslint-disable no-param-reassign */
+import { UserType } from 'constants/user';
 
 const LocalStrategy = require('passport-local').Strategy;
 const database = require('../database');
-const { UserTypes } = require('../middlewares/requireUser');
 
 const localStrategy = new LocalStrategy(
   {
@@ -27,7 +27,7 @@ const localStrategy = new LocalStrategy(
     if (!user.activated) {
       return done({ errorType: 'UNACTIVATED' }, null);
     }
-    user.type = UserTypes.OPERATOR;
+    user.type = UserType.OPERATOR;
     return done(null, user);
   }
 );

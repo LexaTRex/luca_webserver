@@ -6,7 +6,7 @@ const status = require('http-status');
 const moment = require('moment-timezone');
 const config = require('config');
 
-const database = require('../../database');
+const { database, Operator, EmailActivation } = require('../../database');
 const mailClient = require('../../utils/mailClient');
 const { generateSupportCode } = require('../../utils/generators');
 const { validateSchema } = require('../../middlewares/validateSchema');
@@ -44,7 +44,7 @@ router.post(
   validateSchema(createSchema),
   requireNonBlockedIp,
   async (request, response) => {
-    const existingOperator = await database.Operator.findOne({
+    const existingOperator = await Operator.findOne({
       where: {
         username: request.body.email,
       },
@@ -59,7 +59,7 @@ router.post(
     let activationMail;
 
     await database.transaction(async transaction => {
-      operator = await database.Operator.create(
+      operator = await Operator.create(
         {
           firstName: request.body.firstName,
           lastName: request.body.lastName,
@@ -75,7 +75,7 @@ router.post(
         { transaction }
       );
 
-      activationMail = await database.EmailActivation.create(
+      activationMail = await EmailActivation.create(
         {
           operatorId: operator.uuid,
           email: operator.email,
@@ -108,7 +108,7 @@ router.post(
   async (request, response) => {
     const { activationId, lang } = request.body;
 
-    const activationMail = await database.EmailActivation.findOne({
+    const activationMail = await EmailActivation.findOne({
       where: {
         uuid: activationId,
         type: 'Registration',
@@ -130,9 +130,7 @@ router.post(
       return response.sendStatus(status.GONE);
     }
 
-    const operator = await database.Operator.findByPk(
-      activationMail.operatorId
-    );
+    const operator = await Operator.findByPk(activationMail.operatorId);
 
     if (!operator) {
       return response.sendStatus(status.NOT_FOUND);
@@ -224,7 +222,7 @@ router.delete('/', requireOperator, async (request, response) => {
 
   await database.transaction(async transaction => {
     for (const location of locations) {
-      await database.Location.checkoutAllTraces({ location, transaction });
+      await location.checkoutAllTraces(transaction);
     }
     await operator.destroy({ transaction });
   });

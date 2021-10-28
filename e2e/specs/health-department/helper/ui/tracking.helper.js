@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const setDatePickerTime = () => {
   cy.get('.ant-picker-dropdown')
     .not('.ant-picker-dropdown-hidden')

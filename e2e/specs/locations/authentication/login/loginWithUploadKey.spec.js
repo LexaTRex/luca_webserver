@@ -1,7 +1,5 @@
-import { loginLocations } from '../../utils/auth';
+/* eslint-disable */
 import {
-  E2E_EMAIL,
-  E2E_PASSWORD,
   E2E_LOCATION_PRIVATE_KEY_PATH,
   E2E_LOCATION_PRIVATE_KEY_NAME,
 } from '../../constants/users';
