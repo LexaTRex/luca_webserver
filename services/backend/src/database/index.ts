@@ -83,6 +83,11 @@ import {
 } from './models/tracingProcess';
 import { initUsers } from './models/users';
 import { initUserTransfers } from './models/userTransfer';
+import { initZipCodeMapping } from './models/zipCodeMapping';
+import {
+  initRetentionPolicy,
+  associateRetentionPolicy,
+} from './models/retentionPolicy';
 
 const environment = config.util.getEnv('NODE_ENV');
 const databaseConfig = dbConfig[environment as keyof typeof dbConfig];
@@ -157,15 +162,17 @@ export const PasswordReset = initPasswordReset(database);
 export const RiskLevel = initRiskLevels(database);
 export const SigningToolDownload = initSigningToolDownload(database);
 export const SMSChallenge = initSMSCHallenge(database);
-export const SupportedZipCodes = initSupportedZipCodes(database);
+export const SupportedZipCode = initSupportedZipCodes(database);
 export const TestProvider = initTestProviders(database);
 export const TestRedeem = initTestRedeems(database);
 export const Trace = initTraces(database);
 export const TraceData = initTraceData(database);
 export const TracingProcess = initTracingProcesses(database);
+export const RetentionPolicy = initRetentionPolicy(database);
 export const User = initUsers(database);
 export const UserTransfer = initUserTransfers(database);
 export const Session = initSessions(database);
+export const ZipCodeMapping = initZipCodeMapping(database);
 
 const models = {
   AdditionalDataSchema,
@@ -197,14 +204,16 @@ const models = {
   Session,
   SigningToolDownload,
   SMSChallenge,
-  SupportedZipCodes,
+  SupportedZipCode,
   TestProvider,
   TestRedeem,
   Trace,
   TraceData,
   TracingProcess,
+  RetentionPolicy,
   User,
   UserTransfer,
+  ZipCodeMapping,
 };
 
 export type Models = typeof models;
@@ -222,6 +231,7 @@ associateLocationTransferTrace(models);
 associateNotificationMessage(models);
 associateOperator(models);
 associateOperatorDevice(models);
+associateRetentionPolicy(models);
 associateRiskLevel(models);
 associateTrace(models);
 associateTraceDatum(models);

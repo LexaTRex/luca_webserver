@@ -11,6 +11,7 @@ import {
   requireOperatorDeviceRoles,
   requireOperatorOROperatorDevice,
 } from 'middlewares/requireUser';
+import { getRetentionPeriodForZipCode } from 'utils/retentionPolicy';
 
 import { checkinSchema, checkoutSchema } from './traces.schemas';
 
@@ -52,16 +53,21 @@ router.post<unknown, unknown, z.infer<typeof checkinSchema>>(
       return response.sendStatus(status.CONFLICT);
     }
 
+    const retentionPeriod = await getRetentionPeriodForZipCode(
+      location.zipCode
+    );
+
     try {
       await Trace.create({
         traceId: request.body.traceId,
         locationId: location.uuid,
-        time: [requestTime.toDate(), location.endsAt!],
+        time: [requestTime.toDate(), location.endsAt || null],
         data: request.body.data,
         iv: request.body.iv,
         mac: request.body.mac,
         publicKey: request.body.publicKey,
         deviceType: request.body.deviceType,
+        expiresAt: moment(requestTime).add(retentionPeriod, 'days').toDate(),
       });
     } catch (error) {
       if (error instanceof UniqueConstraintError) {

@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-import { UserType } from 'constants/user';
 import { checkForAndAddLevel4RiskLevels } from 'utils/notifications/notificationsHelper';
 
 const router = require('express').Router();

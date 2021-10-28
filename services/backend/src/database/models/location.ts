@@ -182,7 +182,7 @@ export const initLocations = (
     }
   );
 
-  model.prototype.checkoutAllTraces = async function (
+  model.prototype.checkoutAllTraces = async function checkoutAllTraces(
     transaction?: Transaction
   ) {
     return sequelize.models.Trace.update(

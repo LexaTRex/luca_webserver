@@ -93,7 +93,7 @@ export const CamScanner = ({ scanner }) => {
   };
 
   useLayoutEffect(() => {
-    if (platform.os.family === 'iOS' && platform.name !== 'Safari Mobile') {
+    if (platform.os.family === 'iOS' && platform.name !== 'Safari') {
       setCanScanCode(false);
     }
   }, []);

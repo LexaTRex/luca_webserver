@@ -17,6 +17,7 @@ interface Attributes {
   iv?: string;
   mac?: string;
   deviceType?: number;
+  expiresAt?: Date;
 }
 
 type CreationAttributes = Attributes;
@@ -62,6 +63,9 @@ export const initTraces = (sequelize: Sequelize): ModelCtor<TraceInstance> => {
     },
     deviceType: {
       type: DataTypes.INTEGER,
+    },
+    expiresAt: {
+      type: DataTypes.DATE,
     },
   });
 };

@@ -75,7 +75,7 @@ module.exports = {
     },
     traces: {
       maximumRequestablePeriod: moment.duration(24, 'hours').as('hours'),
-      maxAge: moment.duration(28, 'days').as('hours'),
+      maxAge: moment.duration(28, 'days'),
       maxDuration: moment.duration(24, 'hours').as('hours'),
     },
     locationTransfers: {
@@ -171,7 +171,7 @@ AwEHoUQDQgAEc0JU9Xhlom553niIAc4K9C/1ZXOTAQp4BE3MdB9LqeGgVw78Krp0
     },
     internalAccess: {
       keyLength: 64,
-    }
+    },
   },
   bloomFilter: {
     // One in 100 million badge users

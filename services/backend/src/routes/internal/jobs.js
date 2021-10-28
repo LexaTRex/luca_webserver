@@ -30,11 +30,33 @@ router.post('/updateBlockList', async (_, response) => {
 
 router.post('/deleteOldTraces', async (request, response) => {
   const t0 = performance.now();
-  const affectedRows = await database.Trace.destroy({
+  let affectedRows = await database.Trace.destroy({
     where: {
       time: {
         [Op.strictLeft]: [
-          moment().subtract(config.get('luca.traces.maxAge'), 'hours'),
+          moment().subtract(config.get('luca.traces.maxAge'), 'days'),
+          null,
+        ],
+      },
+    },
+  });
+  affectedRows += await database.Trace.destroy({
+    where: {
+      expiresAt: {
+        [Op.lte]: moment(),
+      },
+    },
+  });
+  response.send({ affectedRows, time: performance.now() - t0 });
+});
+
+router.post('/deleteOldTransferTraces', async (request, response) => {
+  const t0 = performance.now();
+  const affectedRows = await database.LocationTransferTrace.destroy({
+    where: {
+      time: {
+        [Op.strictLeft]: [
+          moment().subtract(config.get('luca.traces.maxAge'), 'days'),
           null,
         ],
       },

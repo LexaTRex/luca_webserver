@@ -4,7 +4,6 @@ import Sequelize, { Op } from 'sequelize';
 import { z } from 'zod';
 import config from 'config';
 import {
-  isUserOfType,
   requireHealthDepartmentEmployee,
   requireOperatorOROperatorDevice,
 } from 'middlewares/requireUser';

@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.4.1 (2021-10-28)
+* **backend** feat: allow different trace retention policies
+
 ### 2.4.0 (2021-10-28)
 * **backend** feat: add search auditlog entry
 * **backend** feat: adjust and add rate limits

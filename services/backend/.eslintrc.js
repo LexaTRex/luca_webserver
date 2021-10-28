@@ -69,6 +69,7 @@ module.exports = {
         tryExtensions: ['.js', '.ts'],
       },
     ],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
   settings: {
     node: {

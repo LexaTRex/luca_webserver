@@ -16,6 +16,8 @@ const {
 } = require('../../middlewares/requireUser');
 const { limitRequestsPerHour } = require('../../middlewares/rateLimit');
 
+const { getRetentionPeriodForZipCode } = require('../../utils/retentionPolicy');
+
 const {
   DEVICE_TYPE_IOS,
   DEVICE_TYPE_FORM,
@@ -98,6 +100,10 @@ router.post(
       return response.sendStatus(status.CONFLICT);
     }
 
+    const retentionPeriod = await getRetentionPeriodForZipCode(
+      location.zipCode
+    );
+
     try {
       await database.Trace.create({
         traceId: request.body.traceId,
@@ -108,6 +114,7 @@ router.post(
         mac: request.body.mac,
         publicKey: request.body.publicKey,
         deviceType: request.body.deviceType,
+        expiresAt: moment(requestTime).add(retentionPeriod, 'days'),
       });
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
